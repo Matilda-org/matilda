@@ -82,7 +82,7 @@ La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visuali
 
 La sezione "Utenti" consente di gestire gli utenti dell'applicazione e i relativi permessi.
 
-### Assistente virtuale
+### 🤖 Assistente virtuale
 
 L'assistente virtuale consente di sfruttare funzionalità di intelligenza artificiale all'interno dell'applicazione. L'assistente virtuale può essere utilizzato sotto forma di chatbot per interagire con i dati dell'applicazione o sotto forma di micro-servizi che semplificano le attività quotidiane.
 
