@@ -19,6 +19,11 @@ Consente di visualizzare in modo centralizzato tutte le task gestite. La visuali
 - **Calendario**: consente di visualizzare le task in un calendario settimanale per identificare le scadenze e il carico di lavoro giorno per giorno
 - **Utenti**: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team
 
+<div style="display: flex; justify-content: space-between;">
+    <img src="./screenshots/tasks-calendar.jpg" alt="Tasks calendar" style="width: 48%;">
+    <img src="./screenshots/tasks-users.jpg" alt="Tasks users" style="width: 48%;">
+</div>
+
 ### Progetti
 
 Consente di creare, modificare e cancellare progetti. Ogni progetto è composto dalle seguenti aree:
@@ -29,14 +34,6 @@ Consente di creare, modificare e cancellare progetti. Ogni progetto è composto 
 - **Board aziendali**: consente di inserire il progetto stesso all'interno di una o più board aziendali
 - **Allegati**: consente di caricare e gestire file allegati al progetto
 - **Presentazioni**: consente di creare presentazioni visuali legate al progetto
-
-### Bacheca
-
-La bacheca consente di pubblicare articoli e notizie aziendali.
-
-### Utenti
-
-Consente di gestire gli utenti dell'applicazione e i relativi permessi.
 
 ### Board
 
@@ -54,6 +51,14 @@ Consente di gestire le credenziali aziendali, che possono essere utilizzate per 
 ### Presentazioni
 
 Consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda.
+
+### Utenti
+
+Consente di gestire gli utenti dell'applicazione e i relativi permessi.
+
+### Bacheca
+
+La bacheca consente di pubblicare articoli e notizie aziendali.
 
 ## Installazione
 
