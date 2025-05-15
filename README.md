@@ -60,6 +60,7 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 - `SMTP_USER_NAME`: Nome utente per l'invio delle email (se non specificato, l'applicazione non invierà email)
 - `SMTP_PASSWORD`: Password per l'invio delle email (se non specificato, l'applicazione non invierà email)
 - `SMTP_ADDRESS`: Indirizzo del server SMTP (se non specificato, l'applicazione non invierà email)
+- `SMTP_DOMAIN`: Dominio del server SMTP (se non specificato, l'applicazione non invierà email)
 - `SMTP_PORT`: Porta del server SMTP (se non specificato, l'applicazione non invierà email)
 
 #### Configurazione del bucket S3 compatibile
