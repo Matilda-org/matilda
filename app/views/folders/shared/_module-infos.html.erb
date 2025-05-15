@@ -1,0 +1,30 @@
+<%
+
+folder ||= Folder.new
+
+%>
+
+<table class="table">
+  <tbody>
+    <tr>
+      <th scope="row">Nome</th>
+      <td><%= folder.name %></td>
+    </tr>
+    <tr>
+      <th scope="row">Tot. progetti</th>
+      <td><%= folder.total_projects %></td>
+    </tr>
+    <tr>
+      <th scope="row">Ultimo progetto</th>
+      <td><%= folder.last_project&.created_at&.strftime('%m/%Y') ||  ' - ' %></td>
+    </tr>
+    <tr>
+      <th scope="row">Tot. credenziali</th>
+      <td><%= folder.total_credentials %></td>
+    </tr>
+    <tr>
+      <th scope="row">Ultima credenziale</th>
+      <td><%= folder.last_credential&.created_at&.strftime('%m/%Y') || ' - ' %></td>
+    </tr>
+  </tbody>
+</table>

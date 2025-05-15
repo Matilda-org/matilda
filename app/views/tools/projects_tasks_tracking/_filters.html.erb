@@ -1,0 +1,58 @@
+<form class="row">
+
+  <div class="col col-12 mb-3">
+    <label for="date_start" class="form-label">Dal</label>
+    <input type="date" class="form-control" id="date_start" name="date_start" value="<%= @date_start.strftime('%Y-%m-%d') %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="date_end" class="form-label">Al</label>
+    <input type="date" class="form-control" id="date_end" name="date_end" value="<%= @date_end.strftime('%Y-%m-%d') %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="user_id" class="form-label">Utente</label>
+     <%= select_tag 'user_id', options_for_select([['TUTTI', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, @user_id), class: 'form-control' %>
+  </div>
+
+  <% if @project %>
+    <div class="col col-12 mb-3">
+      <label for="project" class="form-label">Progetto</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="project" name="project" value="<%= @project.complete_code_name %>" disabled>
+        <%= link_to request.params.except(:project_id), class: 'btn btn-danger' do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @procedure %>
+    <div class="col col-12 mb-3">
+      <label for="procedure" class="form-label">Board</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="procedure" name="procedure" value="<%= @procedure.name %>" disabled>
+        <%= link_to request.params.except(:procedure_id), class: 'btn btn-danger' do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @procedure_status %>
+    <div class="col col-12 mb-3">
+      <label for="procedure_status" class="form-label">Stato</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="procedure_status" name="procedure_status" value="<%= @procedure_status.title %>" disabled>
+        <%= link_to request.params.except(:procedure_status_id), class: 'btn btn-danger' do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit">Conferma</button>
+  </div>
+
+</form>

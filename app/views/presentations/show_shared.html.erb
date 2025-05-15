@@ -1,0 +1,27 @@
+<% if @presentation&.shareable? %>
+
+<% if @page %>
+  <div class="w-100 mt-3 d-flex justify-content-center align-items-center" style="height: calc(100vh - 58px - 30px);">
+    <%= render 'presentations/shared/player', presentation: @presentation, page: @page, ratio: true %>
+  </div>
+<% else %>
+<div class="card mt-5 mb-5">
+  <div class="card-body text-center">
+    <div class="mb-3" style="font-size: 50px;"><i class="bi bi-exclamation-circle"></i></div>
+    <h2 class="fs-2">Pagina non disponibile</h2>
+    <p>Ci dispiace ma la pagina non è più disponibile.</p>
+  </div>
+</div>
+<% end %>
+
+<% else %>
+
+<div class="card mt-5 mb-5">
+  <div class="card-body text-center">
+    <div class="mb-3" style="font-size: 50px;"><i class="bi bi-alarm"></i></div>
+    <h2 class="fs-2">Link scaduto</h2>
+    <p>Ci dispiace ma il link che stai visualizzando non è più disponibile.</p>
+  </div>
+</div>
+
+<% end %>

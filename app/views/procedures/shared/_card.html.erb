@@ -1,0 +1,27 @@
+<%
+
+procedure ||= Procedure.new
+item_details ||= nil
+
+%>
+
+<%= render 'shared/card',
+  title: procedure.name,
+  subtitle: "#{procedure.items_count} #{procedure.resources_items_string} inclusi",
+  type: procedure.color_type,
+  resource_id: procedure.archived || procedure.model ? nil : procedure.id,
+  resource_type: procedure.archived || procedure.model ? nil : 'Procedure',
+  render_actions: 'procedures/shared/card-actions',
+  render_actions_args: { procedure: procedure },
+  header_title: procedure.project&.name || (procedure.resources_type_projects? ? 'Board aziendale' : 'Board di progetto'),
+  header_link: procedure.project_id ? projects_show_path(procedure.project_id) : nil,
+  custom_action: procedure.project_id ? {
+    label: procedure.project_primary ? 'Non importante' : 'Rendi importante',
+    icon: procedure.project_primary ? 'bi bi-star-fill' : 'bi bi-star',
+    href: procedures_edit_action_path(procedure.id, project_primary: !procedure.project_primary, turbo_frame_key: '_top'),
+    policy: 'procedures_edit'
+  } : nil do %>
+
+<%= render 'procedures/shared/card-content', procedure: procedure, item_details: item_details %>
+
+<% end %>

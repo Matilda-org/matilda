@@ -1,0 +1,16 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+bucket:
+  service: S3
+  access_key_id: <%= ENV['BUCKET_ACCESS_KEY'] || Rails.application.credentials.dig(:bucket, :access_key_id) %>
+  secret_access_key: <%= ENV['BUCKET_ACCESS_KEY_SECRET'] || Rails.application.credentials.dig(:bucket, :access_key_secret) %>
+  region: <%= ENV['BUCKET_REGION'] || Rails.application.credentials.dig(:bucket, :region) %>
+  bucket: <%= ENV['BUCKET_NAME'] || Rails.application.credentials.dig(:bucket, :bucket) %>
+  upload:
+    storage_class: INTELLIGENT_TIERING

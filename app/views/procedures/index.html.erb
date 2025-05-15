@@ -1,0 +1,20 @@
+<%= render 'shared/page-header', title: 'Board', render_actions: 'procedures/index-actions' %>
+
+<%= render 'shared/page-preferred',
+    query: @procedures_preferred,
+    type: 'Procedure',
+    render_item: 'procedures/shared/card',
+    render_item_param: :procedure
+  %>
+
+<%= render 'shared/page-index',
+    query: @procedures,
+    render_item: 'procedures/shared/card',
+    render_item_param: :procedure,
+    search: true,
+    filters: [
+      { label: 'Attivi', value: 'not-archived', default: true },
+      { label: 'Archiviati', value: 'archived' },
+      { label: 'Modelli', value: 'model' }
+    ]
+  %>

@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Condividi presentazione' do %>
+  <%= render 'shared/confirmer', path: presentations_share_action_path(id: @presentation.id) %>
+<% end %>

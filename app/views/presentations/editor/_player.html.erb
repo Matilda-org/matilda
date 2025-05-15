@@ -1,0 +1,39 @@
+<%
+
+page ||= nil
+
+%>
+
+<%= turbo_frame_tag 'presentation-editor-player' do %>
+  <div class="card shadow">
+    <div class="card-header">
+      <%= page&.title || 'Player' %>
+    </div>
+    <div class="card-body h-fullscroll d-flex justify-content-center align-items-center" style="overflow: hidden;">
+      <% if page %>
+        <%= render 'presentations/shared/player', presentation: @presentation, page: page, ratio: false, editor: true %>
+      <% else %>
+        <%= render 'shared/placeholder' %>
+      <% end %>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <% if page %>
+        <div class="btn-group">
+          <button data-turbo-frame="action" class="btn btn-secondary" data-presentation-editor-target="toggleAction" data-action="presentation-editor#toggleAction"><i class="bi bi-mouse"></i></button>
+          <button data-turbo-frame="action" class="btn btn-secondary" data-presentation-editor-target="toggleNote" data-action="presentation-editor#toggleNote"><i class="bi bi-journal"></i></button>
+          <a type="button" href="<%= presentations_actions_path(type: 'edit-page', id: @presentation.id, page_id: page.id) %>" data-turbo-frame="action" class="btn btn-primary"><i class="bi bi-pencil"></i></a>
+          <a type="button" href="<%= presentations_actions_path(type: 'remove-page', id: @presentation.id, page_id: page.id) %>" data-turbo-frame="action" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+        </div>
+
+        <div class="d-none">
+          <a href="<%= presentations_actions_path(type: 'add-action', id: @presentation.id, presentations_page_id: page.id) %>" data-turbo-frame="action" data-presentation-editor-target="actionAddAction"></a>
+          <a href="<%= presentations_actions_path(type: 'add-note', id: @presentation.id, presentations_page_id: page.id) %>" data-turbo-frame="action" data-presentation-editor-target="actionAddNote"></a>
+        </div>
+      <% else %>
+        <div class="btn-group">
+          <a href="<%= presentations_actions_path(type: 'add-page', id: @presentation.id) %>" data-turbo-frame="action" class="btn btn-primary"><i class="bi bi-plus-circle"></i></a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

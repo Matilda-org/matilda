@@ -1,0 +1,58 @@
+<%
+
+procedure ||= Procedure.new
+item ||= Procedures::Item.new
+procedures_status_id ||= nil
+turbo_frame_key ||= nil
+
+path ||= item.persisted? ? procedures_edit_item_action_path(id: procedure.id, item_id: item.id) : procedures_add_item_action_path(id: procedure)
+
+%>
+
+<% if !procedure.model && procedure.resources_type_projects? %>
+  <%= render 'projects/shared/form', project: item.resource || Project.new, procedures_status_id: procedures_status_id, turbo_frame_key: turbo_frame_key %>
+<% elsif !procedure.model && procedure.resources_type_tasks? %>
+  <%= render 'tasks/shared/form', task: item.resource || Task.new, procedures_status_id: procedures_status_id, turbo_frame_key: turbo_frame_key %>
+<% elsif procedure.model && procedure.resources_type_tasks? %>
+  <%= render 'shared/form-errors', item: item %>
+
+  <% task = Task.new(item.model_data) %>
+
+  <%= form_tag path, class: 'row', data: { controller: 'form-loading tasks-form' } do %>
+    <% if procedures_status_id %>
+      <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
+    <% end %>
+    <% if turbo_frame_key %>
+      <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
+    <% end %>
+
+    <%= render 'tasks/shared/form-inputs-base', task: task, show_default: false %>
+
+    <div class="accordion mb-3" id="formTaskAccordion">
+      <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
+      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task %>
+      <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+<% else %>
+  <%= render 'shared/form-errors', item: item %>
+
+  <%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+    <% if procedures_status_id %>
+      <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
+    <% end %>
+
+    <div class="col col-12 mb-3">
+      <label for="title" class="form-label">Titolo</label>
+      <input type="text" class="form-control" id="title" name="title" value="<%= item.title %>" required>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+<% end %>

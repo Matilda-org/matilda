@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Rimuovi stato' do %>
+  <%= render 'shared/confirmer', path: procedures_remove_status_action_path(id: @procedure.id, status_id: @status.id) %>
+<% end %>

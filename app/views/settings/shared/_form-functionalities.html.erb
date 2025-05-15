@@ -1,0 +1,21 @@
+<%= turbo_frame_tag 'form_functionalities' do %>
+
+  <%= form_tag settings_edit_functionalities_action_path, multipart: true, class: 'd-flex flex-column', data: { turbo_frame: '_self', controller: 'form-loading' } do %>
+    <div class="col col-12 mb-3">
+      <label for="functionalities_task_acceptance" class="form-label">Accettazione task</label>
+      <div class="alert alert-info py-1 px-1" role="alert" style="font-size: 12px;">
+        L'accettazione task permette di utilizzare e completare un task solo in seguito alla approvazione da parte di un utente autorizzato.
+      </div>
+      <select class="form-control" id="functionalities_task_acceptance" name="functionalities_task_acceptance">
+        <option value="1" <%= Setting.get('functionalities_task_acceptance') ? 'selected' : '' %>>Attivo</option>
+        <option value="0" <%= !Setting.get('functionalities_task_acceptance') ? 'selected' : '' %>>Disattivo</option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <a href="<%= settings_reset_action_path(key: 'functionalities') %>" data-turbo-method="post" data-turbo-confirm="Sei sicuro di procedere?" class="btn btn-link">Reset</a>
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+
+<% end %>

@@ -1,0 +1,45 @@
+<%
+
+
+
+tasks = procedure.tasks_items.not_completed.order(deadline: :asc)
+tasks = tasks.joins(:procedures_items).where(procedures_items: { procedures_status_id: params[:tasks_status_id] }) if params[:tasks_status_id].present?
+statuses ||= procedure.procedures_statuses.order(order: :asc)
+
+turbo_frame_key = "module-procedure-#{procedure.id}"
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key do %>
+
+  <div class="pt-1 pb-2 border-bottom d-flex align-items-center justify-content-between" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95); width: calc(100% + 2px); margin-left: -1px;">
+    <ul class="nav nav-pills d-flex flex-row flex-nowrap" style="overflow-x: auto; overflow-y: hidden; flex: 1;">
+      <li class="nav-item">
+        <a class="nav-link h-text-oneline <%= params[:tasks_status_id].blank? ? 'active' : '' %>" href="" data-turbo-frame="<%= turbo_frame_key %>">TUTTI</a>
+      </li>
+      <% statuses.each_with_index do |status, index| %>
+        <li class="nav-item">
+          <a
+            class="nav-link h-text-oneline <%= status.id == params[:tasks_status_id].to_i ? 'active' : '' %>"
+            href="?tasks_status_id=<%= status.id %>"
+            data-turbo-frame="<%= turbo_frame_key %>"
+          ><%= status.title %></a>
+        </li>
+      <% end %>
+    </ul>
+
+    <span class="badge rounded-pill bg-primary ms-2"><%= tasks.length %></span>
+  </div>
+
+  <div class="mt-3">
+    <% if tasks.length.zero? %>
+      <%= render 'shared/placeholder' %>
+    <% else %>
+      <% tasks.each do |task| %>
+        <div class="mb-3">
+          <%= render 'tasks/shared/card', task: task, turbo_frame_key: turbo_frame_key %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

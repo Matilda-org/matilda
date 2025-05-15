@@ -1,0 +1,31 @@
+$white: #ffffff;
+$black: #121418;
+$light: #dde5f2;
+$dark: #181d22;
+$primary: #181d45;
+$secondary: #19405d;
+$info: #474787;
+$success: #27ae60;
+$warning: #f39c12;
+$danger: #c0392b;
+
+$body-bg: lighten($light, 2.5%);
+
+$input-bg: lighten($light, 5%);
+$accordion-bg: $white;
+
+$border-radius: 14px;
+$border-radius-lg: 28px;
+$border-radius-sm: 7px;
+
+$modal-backdrop-opacity: 0.75;
+
+$gradient: linear-gradient(45deg, $primary, $secondary);
+
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
+@import "bootstrap";
+@import "trix";
+@import './vendors/*';
+@import './helpers';
+@import './custom';
+@import './components/*';

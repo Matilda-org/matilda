@@ -1,0 +1,17 @@
+<%= turbo_frame_tag "vectorsearch_#{@session_user_id}_form" do %>
+  <%= form_tag vectorsearch_send_message_path, class: 'd-flex align-items-center' do %>
+    <div class="me-3" style="flex: 1">
+      <textarea
+        class="form-control"
+        name="message"
+        rows="2"
+        placeholder="Scrivi un messaggio..."
+        data-vectorsearch-target="textarea"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" data-vectorsearch-target="submit">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  <% end %>
+<% end %>

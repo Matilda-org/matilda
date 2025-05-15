@@ -1,0 +1,25 @@
+<%
+
+tasks_per_user ||= {}
+users = User.where(id: tasks_per_user.keys).order(:surname, :name)
+
+%>
+
+<%= turbo_frame_tag 'tasks-people' do %>
+  <% if users.length.positive? %>
+    <div
+      class="c-kanban"
+    >
+      <div class="c-kanban__prev"><i class="bi bi-arrow-left-circle"></i></div>
+      <div class="c-kanban__scrollable">
+        <% users.each do |user| %>
+          <%= render 'tasks/people-status', user: user, tasks: tasks_per_user[user.id] %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center pt-5 pb-5">
+      <%= render 'shared/placeholder' %>
+    </div>
+  <% end %>
+<% end %>

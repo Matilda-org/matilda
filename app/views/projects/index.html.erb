@@ -1,0 +1,19 @@
+<%= render 'shared/page-header', title: 'Progetti', subtitle: @folder && "<i class=\"bi bi-folder-fill\"></i> <a class=\"text-muted h-text-primary-hover\" href='#{folders_show_path(@folder)}' data-turbo='false'>#{@folder&.name}</a>", render_actions: 'projects/index-actions' %>
+
+<%= render 'shared/page-preferred',
+    query: @projects_preferred,
+    type: 'Project',
+    render_item: 'projects/shared/card-interactive',
+    render_item_param: :project
+  %>
+
+<%= render 'shared/page-index',
+  query: @projects,
+  render_item: 'projects/shared/card-interactive',
+  render_item_param: :project,
+  search: true,
+  filters: [
+    { label: 'Attivi', value: 'not-archived', default: true },
+    { label: 'Archiviati', value: 'archived' }
+  ]
+%>

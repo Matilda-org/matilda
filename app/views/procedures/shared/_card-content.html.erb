@@ -1,0 +1,32 @@
+<%
+
+procedure ||= Procedure.new
+item_details ||= nil
+
+badge_type = procedure.color_type
+badge_type = 'primary' if badge_type.blank?
+
+%>
+
+<% if item_details %>
+  <span class="badge bg-primary"><%= item_details.procedures_status.title %></span>
+<% end %>
+<% if procedure.resources_type_projects? %>
+  <% procedure.cached_project_items.sample(3).each do |project| %>
+    <a class="badge bg-<%= badge_type %>" data-turbo-frame="_top" href="<%= projects_show_path(project[:id]) %>"><%= nav_icon('projects') %> <%= project[:name].truncate(40) %></a>
+  <% end %>
+  <% if procedure.cached_project_items.size > 3 %>
+    <span class="badge bg-<%= badge_type %>">+ <%= procedure.cached_project_items.size - 3 %></span>
+  <% end %>
+<% end %>
+<% if procedure.resources_type_tasks? %>
+  <% if procedure.cached_task_items_expired_count.positive? %>
+    <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill"></i> <%= procedure.cached_task_items_expired_count %> scaduti</span>
+  <% end %>
+  <% if procedure.cached_task_items_not_completed_count.positive? %>
+    <span class="badge bg-info"><i class="bi bi-dash-circle-fill"></i> <%= procedure.cached_task_items_not_completed_count %> non completati</span>
+  <% end %>
+  <% if procedure.cached_task_items_completed_count.positive? %>
+    <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> <%= procedure.cached_task_items_completed_count %> completati</span>
+  <% end %>
+<% end %>

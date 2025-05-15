@@ -1,0 +1,7 @@
+<%
+
+procedure ||= Procedure.new
+
+%>
+
+<%= link_to 'Dettagli', request.params.merge(project_id: procedure.project_id, procedure_id: procedure.id), class: 'card-link', data: { turbo_frame: '_top' } %>

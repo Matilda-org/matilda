@@ -1,0 +1,9 @@
+<%= render 'shared/page-header',
+  title: @procedure.name,
+  subtitle: @procedure.project ? link_to(@procedure.project.name, projects_show_path(@procedure.project), data: { turbo_frame: '_top' }) : '',
+  render_actions: 'procedures/show-actions',
+  back: true
+%>
+
+<%= render 'procedures/kanban', procedure: @procedure %>
+

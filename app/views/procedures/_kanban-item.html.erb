@@ -1,0 +1,40 @@
+<%
+
+item ||= Procedure::Item.new
+procedure = item.procedure
+turbo_frame_status_key ||= nil
+turbo_frame_key = dom_id(item, 'kanban-item')
+
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key, data: { item: item.id } do %>
+  <li class="c-kanban__item list-group-item">
+    <div class="mb-1 d-flex justify-content-between align-items-start">
+      <div>
+        <span class="c-kanban__item-title"><%= item.secure_title %></span>
+      </div>
+      <div class="d-flex justify-content-end">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline me-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action">Modifica</a></li>
+            <li data-user-policies-target="item" data-policy="procedures_edit"><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_status_key) %>" data-turbo-frame="action">Elimina</a></li>
+          </ul>
+        </div>
+        <button data-user-policies-target="item" data-policy="procedures_edit" class="btn btn-sm btn-outline-primary kanban_controller-move-button"><i class="bi bi-arrows-move kanban_controller-move-button"></i></button>
+        <a
+          class="d-none kanban_controller-item-updater"
+          href="<%= procedures_move_item_action_path(id: procedure.id, item_id: item.id) %>"
+          data-turbo-method="post"
+          data-turbo-frame="<%= turbo_frame_key %>"
+        ></a>
+      </div>
+    </div>
+    <div class="c-kanban__item-card">
+      <%= render 'procedures/shared/card-item', item: item, turbo_frame_key: turbo_frame_key %>
+    </div>
+  </li>
+<% end %>

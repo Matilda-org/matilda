@@ -1,0 +1,44 @@
+<%
+
+procedure ||= Procedure.new
+
+path ||= procedure.persisted? ? procedures_edit_action_path(procedure) : procedures_create_action_path
+
+
+%>
+
+<%= render 'shared/form-errors', item: procedure %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="name" class="form-label">Nome</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" required>
+  </div>
+  <div class="col col-12 mb-3">
+    <label for="description" class="form-label">Breve descrizione</label>
+    <textarea class="form-control" rows="5" id="description" name="description"><%= procedure.description %></textarea>
+  </div>
+
+  <% unless procedure.persisted? %>
+    <div class="col col-12 mb-3">
+      <label for="resources_type" class="form-label">Utilizzabile con</label>
+      <%= select_tag :resources_type, options_for_select(Procedure.resources_types.map {|key, value| [Procedure.resources_type_string(key.to_s), Procedure.resources_types.key(value)]}.reverse, procedure.resources_type), class: 'form-control', required: true %>
+      <div class="form-text">Questa impostazione non potrà più essere modificata in seguito.</div>
+    </div>
+
+    <div class="col col-12 mb-3">
+      <input type="hidden" name="model" value="0">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="formProceduremodel" name="model" value="1">
+        <label class="form-check-label" for="formProceduremodel">Utilizza come modello per altre board</label>
+      </div>
+      <div class="form-text">Questa impostazione non potrà più essere modificata in seguito.</div>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
+

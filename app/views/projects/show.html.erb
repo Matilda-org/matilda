@@ -1,0 +1,177 @@
+<%= render 'shared/page-header',
+  title: @project.complete_code,
+  render_actions: 'projects/show-actions',
+  back: true
+%>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Dettagli",
+      always_open: true,
+      render_content: 'projects/shared/module-infos',
+      render_content_args: {
+        project: @project
+      },
+      render_footer: 'projects/shared/module-infos-actions',
+      render_footer_args: {
+        project: @project
+      }
+    %>
+
+  <% end %>
+
+  <% @project.procedures.not_archived.not_as_model.where(project_primary: true).each do |procedure| %>
+    <%= render 'shared/page-grid-item', policy: 'projects_manage_procedures' do %>
+      <%= turbo_frame_tag 'module-procedures', class: 'w-100' do %>
+        <%= render 'shared/page-card',
+          title: procedure.name,
+          render_content: 'projects/shared/module-procedure',
+          render_content_args: {
+            procedure: procedure
+          },
+          render_footer: 'projects/shared/module-procedure-actions',
+          render_footer_args: {
+            procedure: procedure
+          }
+        %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_procedures' do %>
+
+    <%= turbo_frame_tag 'module-procedures', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Board di progetto",
+        counter: @project.procedures.size,
+        render_content: 'projects/shared/module-procedures',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-procedures-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_logs' do %>
+
+    <%= turbo_frame_tag 'module-logs', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Note",
+        counter: @project.projects_logs.size,
+        render_content: 'projects/shared/module-logs',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-logs-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_members' do %>
+
+    <%= turbo_frame_tag 'module-members', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Partecipanti",
+        counter: @project.cached_projects_members_count,
+        render_content: 'projects/shared/module-members',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-members-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_procedures_items' do %>
+
+    <%= turbo_frame_tag 'module-procedures-items', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Board aziendali",
+        counter: @project.procedures_items.size,
+        render_content: 'projects/shared/module-procedures-items',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-procedures-items-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_attachments' do %>
+
+    <%= turbo_frame_tag 'module-attachments', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Allegati",
+        counter: @project.projects_attachments.size,
+        render_content: 'projects/shared/module-attachments',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-attachments-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_events' do %>
+
+    <%= turbo_frame_tag 'module-events', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Eventi",
+        counter: @project.projects_events.count,
+        render_content: 'projects/shared/module-events',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-events-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_presentations' do %>
+
+    <%= turbo_frame_tag 'module-presentations', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Presentazioni",
+        counter: @project.presentations.size,
+        render_content: 'projects/shared/module-presentations',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-presentations-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+<% end %>

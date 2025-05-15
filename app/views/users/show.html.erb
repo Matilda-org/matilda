@@ -1,0 +1,103 @@
+<%= render 'shared/page-header',
+  title: @_is_dashboard ? "#{I18n.t('date.day_names')[Time.now.wday].capitalize} #{Time.now.strftime('%d/%m')}" : @user.complete_name,
+  render_actions: 'users/show-actions',
+  back: !@_is_dashboard
+%>
+
+<% if @_is_dashboard %>
+  <%= turbo_stream_from dom_id(@user) %>
+  <%= render 'users/stats', user: @user %>
+<% end %>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <% if @_is_dashboard %>
+      <%= render 'shared/page-card',
+        title: "Ricerca rapida",
+        full: true,
+        render_content: 'users/shared/module-search',
+        render_content_args: {
+          search: @search,
+          search_results: @search_results,
+          projects: @projects
+        },
+        render_footer: 'users/shared/module-projects-actions'
+      %>
+    <% else %>
+      <%= render 'shared/page-card',
+        title: "Progetti attivi",
+        classes: 'dashboard-projects',
+        full: true,
+        render_content: 'users/shared/module-projects',
+        render_content_args: {
+          projects: @projects
+        },
+        render_footer: nil
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Task assegnati",
+      full: true,
+      always_open: @_is_dashboard,
+      render_content: 'users/shared/module-tasks',
+      render_content_args: {
+        tasks: @tasks,
+        tasks_projects: @tasks_projects
+      },
+      render_footer: @user == @session_user ? 'users/shared/module-tasks-actions' : nil
+    %>
+
+  <% end %>
+  
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Task seguiti",
+      full: true,
+      always_open: @_is_dashboard,
+      render_content: 'users/shared/module-tasks',
+      render_content_args: {
+        tasks: @tasks_followed,
+        type: 'followed'
+      },
+      render_footer: nil
+    %>
+
+  <% end %>
+
+  <% if @_is_dashboard %>
+
+    <%
+    
+    last_used_credentials_ids = @session_user.cached_users_logs_credential_values
+    
+    %>
+
+    <% if last_used_credentials_ids.length.positive? %>
+
+      <div class="col col-12 col-lg-6 col-xl-12 mb-4">
+        <%= render 'shared/page-card',
+          title: "Credenziali",
+          full: false,
+          auto: true,
+          always_open: false,
+          render_content: 'users/shared/module-credentials',
+          render_content_args: {
+            credentials: Credential.where(id: last_used_credentials_ids).order('updated_at DESC')
+          },
+          render_footer: nil
+        %>
+      </div>
+
+    <% end %>
+
+  <% end %>
+
+<% end %>

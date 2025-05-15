@@ -1,0 +1,9 @@
+<%
+
+presentation ||= Presentation.new
+
+%>
+
+<a class="card-link" href="<%= presentations_show_path(id: presentation.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="presentations_show">
+  Visualizza
+</a>

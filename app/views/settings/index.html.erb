@@ -1,0 +1,45 @@
+<%= render 'shared/page-header', title: 'Impostazioni' %>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Anagrafica azienda",
+      render_content: 'settings/shared/form-infos',
+      render_footer_args: { key: 'infos' }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Funzionalità aggiuntive",
+      render_content: 'settings/shared/form-functionalities',
+      render_footer_args: { key: 'functionalities' }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Assistente virtuale",
+      render_content: 'settings/shared/form-vectorsearch',
+      render_footer_args: { key: 'vectorsearch' }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Integrazione Slack",
+      render_content: 'settings/shared/form-slack',
+      render_footer_args: { key: 'slack' }
+    %>
+
+  <% end %>
+
+<% end %>

@@ -1,0 +1,53 @@
+
+<table style="width: 100%; display: table;">
+  <thead>
+    <tr class="table-header-space"></tr>
+    <tr>
+      <th>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span><%= @log.project.name %></span>
+          <span><%= @log.date.strftime('%d/%m/%Y') %></span>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="custom-print">
+        <%= render 'projects/shared/log-content', log: @log %>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr class="table-footer-space"></tr>
+  </tfoot>
+</table>
+
+<style>
+.custom-print h1 {
+  font-size: 1.45em;
+}
+.custom-print h2 {
+  font-size: 1.35em;
+}
+.custom-print h3 {
+  font-size: 1.25em;
+}
+.custom-print h4 {
+  font-size: 1.15em;
+}
+.custom-print h5 {
+  font-size: 1.05em;
+}
+.custom-print h6 {
+  font-size: 1em;
+}
+
+.custom-print action-text-attachment {
+  display: none;
+}
+
+.custom-print .attachment-gallery {
+  display: none;
+}
+</style>

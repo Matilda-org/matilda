@@ -1,0 +1,47 @@
+<%= turbo_frame_tag 'form_infos' do %>
+
+  <%= form_tag settings_edit_infos_action_path, multipart: true, class: 'd-flex flex-column', data: { turbo_frame: '_self', controller: 'form-loading' } do %>
+    <div class="col col-12 mb-3">
+      <label for="infos_company_name" class="form-label">Nome azienda</label>
+      <input type="text" class="form-control" id="infos_company_name" name="infos_company_name" value="<%= Setting.get('infos_company_name') %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="infos_company_website" class="form-label">Website azienda</label>
+      <input type="text" class="form-control" id="infos_company_website" name="infos_company_website" value="<%= Setting.get('infos_company_website') %>">
+      <div class="form-text">Inserire il dominio senza protocollo (esempio www.miosito.com).</div>
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="infos_company_vat" class="form-label">P.Iva azienda</label>
+      <input type="text" class="form-control" id="infos_company_vat" name="infos_company_vat" value="<%= Setting.get('infos_company_vat') %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="infos_company_email" class="form-label">Email azienda</label>
+      <input type="text" class="form-control" id="infos_company_email" name="infos_company_email" value="<%= Setting.get('infos_company_email') %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="infos_company_pec" class="form-label">PEC azienda</label>
+      <input type="text" class="form-control" id="infos_company_pec" name="infos_company_pec" value="<%= Setting.get('infos_company_pec') %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="infos_company_logo" class="form-label">Logo azienda</label>
+      <div class="input-group">
+        <input type="file" class="form-control" id="infos_company_logo" name="infos_company_logo">
+        <% if Setting.get('infos_company_logo') %>
+          <a class="btn btn-primary" href="<%= Setting.get('infos_company_logo') %>" download><i class="bi bi-cloud-arrow-down"></i></a>
+        <% end %>
+      </div>
+      <div class="form-text">Caricare un logo .png valido per sfondi scuri.</div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <a href="<%= settings_reset_action_path(key: 'infos_company') %>" data-turbo-method="post" data-turbo-confirm="Sei sicuro di procedere?" class="btn btn-link">Reset</a>
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+
+<% end %>

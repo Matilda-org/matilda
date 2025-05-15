@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= nav_title(@_navbar) %></title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+        --accent: #333;
+      }
+      :root {
+        color-scheme: dark;
+        --accent: #f0f0f0;
+      }
+      body {
+        font-size: 14px;
+      }
+      header h1 {
+        font-size: 1.3em;
+      }
+      .table-header-space {
+        display: none;
+      }
+      .table-footer-space {
+        display: none;
+      }
+    </style>
+    <style type="text/css" media="print">
+    @page {
+      size: auto;
+      margin: 0;
+      padding-top: 3cm;
+    }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+    }
+    table { page-break-inside: always; }
+    tr { page-break-inside: avoid; }
+    .table-header-space {
+      page-break-inside: always;
+      display: block;
+      height: 30mm;
+    }
+    .table-footer-space {
+      page-break-inside: always;
+      display: block;
+      height: 20mm;
+      border: none;
+    }
+    </style>
+  </head>
+  <body>
+    <header style="padding-bottom: 0">
+      <h1><%= Setting.get('infos_company_name') %></h1>
+      <% if @_print_title %>
+        <p><%= @_print_title %></p>
+      <% end %>
+    </header>
+    <main>
+      <%= yield %>
+    </main>
+    <footer>
+      <a target="_blank" href="https://<%= Setting.get('infos_company_website') || root_url %>"><%= Setting.get('infos_company_website') || root_url %></a>
+      <% if Setting.get('infos_company_vat') %>
+        | p.iva: <%= Setting.get('infos_company_vat') %>
+      <% end %>
+      <% if Setting.get('infos_company_email') %>
+        | email: <%= Setting.get('infos_company_email') %>
+      <% end %>
+      <% if Setting.get('infos_company_pec') %>
+        | pec: <%= Setting.get('infos_company_pec') %>
+      <% end %>
+    </footer>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', () => window.print())
+    </script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<%
+
+presentation ||= Presentation.new
+page ||= Presentation::Page.new
+ratio ||= false
+editor ||= false
+
+%>
+
+<div
+  class="c-presentation-player"
+  data-controller="presentation-player"
+  data-presentation-player-width-value="<%= presentation.width_px %>"
+  data-presentation-player-height-value="<%= presentation.height_px %>"
+  data-presentation-player-ratio-value="<%= ratio %>"
+
+  <% if editor %>
+    data-presentation-editor-target="player"
+    data-action="click->presentation-editor#clickPlayer"
+  <% end %>
+>
+  <div class="c-presentation-player__scrollable">
+    <div class="c-presentation-player__container">
+      <img class="c-presentation-player__image" src="<%= url_for(page.image_preview) %>">
+
+      <% page.presentations_actions.each do |action| %>
+        <div
+          class="c-presentation-player__item c-presentation-player__item--action"
+          style="top: <%= action.position_y %>%; left: <%= action.position_x %>%;"
+        >
+          <a
+            class="c-presentation-player__item-link"
+            <% if editor %>
+              href="<%= presentations_show_path(id: presentation.id, page_id: action.page_destination) %>"
+              data-turbo-frame="_top"
+            <% else %>
+              href="<%= presentations_player_path(id: presentation.id, page_id: action.page_destination) %>"
+            <% end %>
+          >
+            
+          </a>
+
+          <% if editor %>
+            <div
+              class="c-presentation-player__item-action"
+            >
+              <a
+                class="bg-danger"
+                href="<%= presentations_actions_path(id: presentation.id, action_id: action.id, type: 'remove-action') %>"
+                data-turbo-frame="action"
+              ><i class="bi bi-trash"></i></a>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% page.presentations_notes.each do |note| %>
+        <div
+          class="c-presentation-player__item c-presentation-player__item--note"
+          style="top: <%= note.position_y %>%; left: <%= note.position_x %>%;"
+          data-controller="tooltip"
+          data-tooltip="<%= note.content %>"
+        >
+          <% if editor %>
+            <div
+              class="c-presentation-player__item-action"
+            >
+              <a
+                class="bg-danger"
+                href="<%= presentations_actions_path(id: presentation.id, note_id: note.id, type: 'remove-note') %>"
+                data-turbo-frame="action"
+              ><i class="bi bi-trash"></i></a>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

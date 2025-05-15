@@ -1,0 +1,11 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<% if User.where.not(id: @project.projects_members.pluck(:user_id)).size.positive? %>
+<a href="<%= projects_actions_path(type: 'add-member', id: project.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" >Aggiungi partecipante</a>
+<% else %>
+<button class="btn btn-primary w-100" disabled>Aggiungi partecipante</button>
+<% end %>

@@ -1,0 +1,20 @@
+<%
+
+procedure ||= Procedure.new
+
+projects_ok = Project.not_archived.joins(:procedures_items).where(procedures_items: { procedure_id: procedure.id }).distinct.pluck(:id)
+projects = Project.not_archived.where.not(id: projects_ok).order(name: :asc)
+
+%>
+
+<% if projects.length.positive? %>
+  <div class="d-flex justify-content-between align-items-center"><h4 class="fs-5 mb-0">Progetti mancanti:</h4> <span class="badge bg-danger"><%= projects.length %></span></div>
+  <hr>
+  <% projects.each do |project| %>
+    <div class="mb-3">
+      <%= render 'projects/shared/card', project: project %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>

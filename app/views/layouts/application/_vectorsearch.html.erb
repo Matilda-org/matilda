@@ -1,0 +1,36 @@
+<% if @session_user %>
+
+  <div class="vectorsearch" data-controller="vectorsearch">
+    <button class="vectorsearch__opener shadow" data-action="click->vectorsearch#open">
+      <i class="bi bi-robot"></i>
+    </button>
+
+    <div class="vectorsearch__content" data-vectorsearch-target="content">
+      <div class="card shadow bg-primary">
+        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+          <h2 class="fs-5 mb-0">Assistente virtuale</h2>
+          <div>
+            <%= link_to vectorsearch_clear_messages_path, data: { turbo_method: :post }, class: 'btn btn-outline-light rounded btn-sm' do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+            <button class="btn btn-outline-light rounded btn-sm" data-action="click->vectorsearch#close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body bg-white">
+          <%= turbo_frame_tag "vectorsearch_#{@session_user_id}_chat", src: vectorsearch_chat_path do %><% end %>
+        </div>
+        <div class="card-footer bg-light">
+          <%= render 'layouts/application/vectorsearch__form' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="vectorsearch__background" data-vectorsearch-target="background" data-action="click->vectorsearch#close"></div>
+  </div>
+
+  <%= turbo_stream_from "vectorsearch_#{@session_user_id}" %>
+
+<% end %>
+

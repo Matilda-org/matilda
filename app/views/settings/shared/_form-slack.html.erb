@@ -1,0 +1,31 @@
+<%= turbo_frame_tag 'form_slack' do %>
+
+  <div class="alert alert-secondary" role="alert">
+    L'integrazione Slack permette:
+    <ul>
+      <li>Creazione automatica di un canale per ogni progetto.</li>
+      <li>Aggiunta e rimozione automatica delle persone dal canale in base ai partecipanti del progetto.</li>
+      <li>Archiviazione automatica del canale in caso di archiviazione/eliminazione del progetto.</li>
+      <li>Invio notifiche automatiche in base ai cambiamenti del progetto.</li>
+      <li>Utilizzo di appositi comandi per interagire con il progetto direttamente da Slack.</li>
+    </ul>
+  </div>
+
+  <%= form_tag settings_edit_slack_action_path, class: 'd-flex flex-column', data: { turbo_frame: '_self', controller: 'form-loading' } do %>
+    <div class="col col-12 mb-3">
+      <label for="slack_bot_user_oauth_token" class="form-label">Bot user OAUTH Token</label>
+      <input type="password" class="form-control" id="slack_bot_user_oauth_token" name="slack_bot_user_oauth_token" value="<%= Setting.get('slack_bot_user_oauth_token') %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="slack_verification_token" class="form-label">Verification Token</label>
+      <input type="password" class="form-control" id="slack_verification_token" name="slack_verification_token" value="<%= Setting.get('slack_verification_token') %>">
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <a href="<%= settings_reset_action_path(key: 'slack') %>" data-turbo-method="post" data-turbo-confirm="Sei sicuro di procedere?" class="btn btn-link">Reset</a>
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+
+<% end %>

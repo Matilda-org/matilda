@@ -1,0 +1,29 @@
+<%
+
+users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }
+
+%>
+
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#formTaskAccordionUsers" aria-expanded="true" aria-controls="formTaskAccordionUsers">
+      Assegnazione
+    </button>
+  </h2>
+  <div id="formTaskAccordionUsers" class="accordion-collapse collapse" data-bs-parent="#formTaskAccordion">
+    <div class="accordion-body">
+      <div class="row">
+        <div class="col col-12 mb-3">
+          <label for="user_id" class="form-label">Assegnato a</label>
+          <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + users_for_select, task.persisted? ? task.user_id : (task.user_id || @session_user_id)), class: 'form-control' %>
+        </div>
+
+        <div class="col col-12 mb-3">
+          <%= hidden_field_tag 'tasks_followers_user_ids[]', '' %>
+          <label for="tasks_followers_user_ids" class="form-label">Seguito da</label>
+          <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, task.tasks_followers_user_ids), class: 'form-control', multiple: true %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

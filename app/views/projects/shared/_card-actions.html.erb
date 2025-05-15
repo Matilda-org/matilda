@@ -1,0 +1,7 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<a class="card-link" href="<%= projects_show_path(id: project.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="projects_show">Visualizza</a>

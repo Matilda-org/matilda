@@ -1,0 +1,37 @@
+<%
+
+task ||= Task.new
+show_default ||= false
+
+%>
+
+<div class="col col-12 mb-3">
+  <label for="title" class="form-label">Titolo</label>
+  <input type="text" class="form-control" id="title" name="title" value="<%= task.title %>" required>
+</div>
+
+<div class="col col-6 mb-3">
+  <label for="deadline" class="form-label">Scadenza</label>
+  <input type="date" class="form-control" id="deadline" name="deadline" value="<%= !show_default ? task.deadline : (task.deadline || Date.today.strftime('%Y-%m-%d')) %>">
+</div>
+
+<div class="col col-6 mb-3">
+  <label for="time_estimate" class="form-label">Tempo stimato</label>
+  <%= select_tag 'time_estimate', options_for_select([
+    [900, '15 minuti'].reverse,
+    [1800, '30 minuti'].reverse,
+    [3600, '1 ora'].reverse,
+    [7200, '2 ore'].reverse,
+    [10800, '3 ore'].reverse,
+    [14400, '4 ore'].reverse,
+    [21600, '6 ore'].reverse,
+    [28800, '8 ore'].reverse,
+    [43200, '12 ore'].reverse,
+    [57600, '2 giorni'].reverse,
+    [86400, '3 giorni'].reverse,
+    [144000, '5 giorni'].reverse,
+    [288000, '10 giorni'].reverse,
+    [576000, '20 giorni'].reverse,
+    [1152000, '40 giorni'].reverse,
+  ], !show_default ? task.time_estimate : (task.time_estimate || 30)), class: 'form-control' %>
+</div>

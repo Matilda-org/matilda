@@ -1,0 +1,14 @@
+<%
+
+procedure ||= Procedure.new
+
+%>
+
+<%= render 'shared/card',
+  title: procedure.name,
+  subtitle: "#{procedure.items_count} #{procedure.resources_items_string} inclusi",
+  type: procedure.color_type,
+  render_actions: 'tools/projects_tasks_tracking/card-procedure-actions',
+  render_actions_args: { procedure: procedure } do %>
+  <span class="fs-6 badge bg-primary">⌛️ <%= track_time(procedure.time_spent) %></span>
+<% end %>

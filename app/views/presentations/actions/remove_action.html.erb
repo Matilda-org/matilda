@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Rimuovi azione" do %>
+  <%= render 'shared/confirmer', path: presentations_remove_action_action_path(id: @presentation.id, action_id: @action.id, turbo_frame_key: params[:turbo_frame_key]) %>
+<% end %>

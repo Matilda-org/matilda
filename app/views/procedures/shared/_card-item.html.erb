@@ -1,0 +1,16 @@
+<%
+
+item ||= Procedures::Item.new
+turbo_frame_key ||= nil
+
+%>
+
+<% if item.resource && item.procedure.resources_type_projects? %>
+  <%= render 'projects/shared/card', project: item.resource %>
+<% elsif item.resource && item.procedure.resources_type_tasks? %>
+  <%= render 'tasks/shared/card', task: item.resource, turbo_frame_key: turbo_frame_key %>
+<% elsif item.procedure.model && item.procedure.resources_type_tasks? %>
+  <%= render 'tasks/shared/card', task: Task.new(item.model_data) %>
+<% else %>
+  <%= render 'shared/card', title: item.title %>
+<% end %>

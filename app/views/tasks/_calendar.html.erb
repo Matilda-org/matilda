@@ -1,0 +1,20 @@
+<%
+
+date_start ||= Date.today
+date_end ||= Date.today
+tasks_per_date ||= {}
+
+%>
+
+<%= turbo_frame_tag 'tasks-calendar' do %>
+  <div
+    class="c-kanban"
+  >
+    <div class="c-kanban__prev"><i class="bi bi-arrow-left-circle"></i></div>
+    <div class="c-kanban__scrollable">
+      <% (date_start..date_end).each do |date| %>
+        <%= render 'tasks/calendar-status', date: date, tasks: tasks_per_date[date] %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

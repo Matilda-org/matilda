@@ -1,0 +1,13 @@
+<%
+
+procedure_status ||= Procedures::Status.new
+
+%>
+
+<%= render 'shared/card',
+  title: procedure_status.title,
+  subtitle: "#{procedure_status.items_count} task inclusi",
+  render_actions: 'tools/projects_tasks_tracking/card-procedure-status-actions',
+  render_actions_args: { procedure_status: procedure_status } do %>
+  <span class="fs-6 badge bg-primary">⌛️ <%= track_time(procedure_status.time_spent) %></span>
+<% end %>

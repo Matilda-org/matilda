@@ -1,0 +1,35 @@
+<%
+
+presentation ||= Presentation.new
+page ||= Presentations::Page.new
+
+path ||= page.persisted? ? presentations_edit_page_action_path(id: presentation.id, page_id: page.id) : presentations_add_page_action_path(presentation)
+
+%>
+
+<%= render 'shared/form-errors', item: page %>
+
+<%= form_tag path, class: 'row', multipart: true, data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="title" class="form-label">Titolo</label>
+    <input type="text" class="form-control" id="title" name="title" value="<%= page.title %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <div class="row">
+      <div class="col col-auto mb-3">
+        <img src="<%= page.image.attached? ? url_for(page.image_thumb) : '/statics/placeholder.jpg' %>" style="width: 100px; height: 100px; object-fit: cover;" class="img-thumbnail">
+      </div>
+      <div class="col mb-3">
+        <label for="image" class="form-label">Immagine</label>
+        <input type="file" class="form-control" id="image" name="image" <%= page.persisted? ? '' : 'required' %>>
+        <div class="form-text">Sono accettati i formati .jpg e .png</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

@@ -1,0 +1,12 @@
+<%
+
+task ||= Task.new
+turbo_frame_key = dom_id(task, 'tasks-people-item')
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key do %>
+  <li class="c-kanban__item list-group-item">
+    <%= render 'tasks/shared/card', task: task, turbo_frame_key: 'tasks-people' %>
+  </li>
+<% end %>

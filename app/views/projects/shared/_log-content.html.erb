@@ -1,0 +1,11 @@
+<%
+
+log ||= Projects::Log.new
+
+%>
+
+<% # turbo_stream_from dom_id(log) %>
+
+<div id="<%= dom_id(log, 'content') %>">
+  <%= log.content %>
+</div>

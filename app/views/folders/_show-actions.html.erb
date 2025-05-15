@@ -1,0 +1,8 @@
+<div class="btn-group" role="group">
+  <a type="button" href="<%= folders_actions_path(type: 'edit', id: @folder.id) %>" data-turbo-frame="action" class="btn btn-primary" data-user-policies-target="item" data-policy="folders_edit">
+    <i class="bi bi-pencil"></i>
+  </a>
+  <a type="button" href="<%= folders_actions_path(type: 'destroy', id: @folder.id) %>" data-turbo-frame="action" class="btn btn-danger" data-user-policies-target="item" data-policy="folders_destroy">
+    <i class="bi bi-trash"></i>
+  </a>
+</div>

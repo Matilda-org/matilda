@@ -1,0 +1,35 @@
+.c-imagezoom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($black, 0.75);
+  z-index: -1;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
+
+  &.is-active {
+    z-index: 1000;
+    visibility: visible;
+    opacity: 1;
+    cursor: zoom-out;
+  }
+
+  img {
+    position: absolute;
+    top: calc(50% + 28px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: $border-radius;
+    box-shadow: var(--bs-shadow-lg);
+    display: block;
+  }
+}
+
+[data-controller="imagezoom"] {
+  cursor: zoom-in;
+}

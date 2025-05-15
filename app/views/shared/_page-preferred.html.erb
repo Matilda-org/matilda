@@ -1,0 +1,39 @@
+<%
+
+query ||= ApplicationRecord.all
+type ||= nil
+render_item ||= ''
+render_item_param ||= 'item'
+
+%>
+
+<% if query.length.positive? %>
+
+<%= turbo_frame_tag 'page-preferred' do %>
+
+<div class="mb-4">
+  <div class="row mb-3 d-flex justify-content-between align-items-center">
+    <div class="col">
+      <h1 class="fs-5 mb-0 h-text-oneline">Preferiti</h1>
+    </div>
+    <% if type %>
+      <div class="col d-flex justify-content-end">
+        <span class="badge rounded-pill bg-primary"><%= @session_user.users_prefers.where(resource_type: type).size %> preferiti</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="row align-items-stretch">
+    <% query.each do |item| %>
+      <div class="col col-12 col-md-12 col-lg-6 col-xl-4 mb-3 d-flex align-items-stretch">
+        <%= render render_item, { "#{render_item_param}": item } %>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+</div>
+
+<% end %>
+
+<% end %>

@@ -1,0 +1,108 @@
+<%
+
+id ||= nil
+classes ||= ''
+title ||= 'Title'
+subtitle ||= nil
+description ||= nil
+description_protected ||= false
+type ||= ''
+resource_id ||= nil
+resource_type ||= nil
+folders_item ||= nil
+render_actions ||= nil
+render_actions_args ||= {}
+header_title ||= nil
+header_link ||= nil
+custom_action ||= nil
+
+has_prefer = false
+has_prefer = @session_user.prefer?(resource_id, resource_type) if @session_user && resource_id && resource_type
+
+background = 'white'
+background = type unless type.blank?
+background = 'primary' if has_prefer
+
+%>
+
+<div id="<%= id %>" class="c-card card w-100 h-100 bg-<%= background %> <%= classes %>">
+  <% if header_title %>
+    <div class="card-header d-flex" style="border-bottom: solid 1px rgba(var(--bs-dark-rgb), 0.1) !important;">
+      <% if header_link %>
+        <a class="text-decoration-none h-text-oneline h-tex--underline-hover" data-turbo-frame="_top" href="<%= header_link %>"><%= header_title.truncate(40) %></a>
+      <% else %>
+        <span><%= header_title.truncate(40) %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="card-body d-flex flex-column justify-content-between">
+    <div class="h-100 mb-3 d-flex flex-column">
+      <div class="mb-3 d-flex justify-content-between align-items-start">
+        <div class="w-100" style="min-width: 0">
+          <h5 class="card-title"><%= raw title %></h5>
+          <% if subtitle %>
+            <h6 class="card-subtitle text-muted"><%= raw subtitle %></h6>
+          <% end %>
+        </div>
+        <div class="ms-1 d-flex justify-content-end" style="min-width: 75px">
+          <% if custom_action %>
+            <a
+              href="<%= custom_action[:href] %>"
+              data-turbo-method="post"
+              data-turbo-frame="action"
+              class="ms-2 fs-4 text-primary"
+              data-controller="tooltip"
+              data-tooltip="<%= custom_action[:label] %>"
+              data-user-policies-target="item" data-policy="<%= custom_action[:policy] %>"
+            ><i class="<%= custom_action[:icon] %>"></i></a>
+          <% end %>
+          <% if folders_item %>
+            <a
+              href="<%= folders_actions_path(type: 'manage-resource', item_id: folders_item[:id], resource_id: resource_id, resource_type: resource_type) %>"
+              data-turbo-frame="action"
+              class="ms-2 fs-4 text-primary"
+              data-controller="tooltip"
+              data-tooltip="<%= folders_item[:folder_id] ? folders_item[:folder_name] : 'Aggiungi a cartella' %>"
+              data-user-policies-target="item" data-policy="folders_manage_resources"
+            ><i class="bi <%= folders_item[:folder_id] ? 'bi-folder-fill' : 'bi-folder' %>"></i></a>
+          <% end %>
+          <% if @session_user && resource_id && resource_type %>
+            <a
+              href="<%= users_toggle_prefer_action_path(resource_id: resource_id, resource_type: resource_type) %>"
+              data-turbo-method="post"
+              data-turbo-frame="action"
+              class="ms-2 fs-4 text-<%= has_prefer ? 'warning' : 'primary' %>"
+              data-controller="tooltip"
+              data-tooltip="<%= has_prefer ? 'Rimuovi preferito' : 'Aggiungi ai preferiti' %>"
+            ><i class="bi <%= has_prefer ? 'bi-bookmark-check-fill' : 'bi-bookmark' %>"></i></a>
+          <% end %>
+        </div>
+      </div>
+
+      <% unless description.blank? %>
+        <div
+          class="card-text c-card__description h-100"
+          <% if description_protected %>
+            data-controller="protector"
+          <% end %>
+        >
+          <div data-protector-target="content" style="opacity: <% description_protected ? 0 : 1 %>;"><%= simple_format description.truncate(100) %></div>
+        </div>
+      <% end %>
+    </div>
+
+    <div>
+      <div>
+        <%= yield %>
+      </div>
+
+      <% if render_actions %>
+        <hr>
+        <div>
+          <%= render render_actions, render_actions_args %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="fw-lighter text-muted">
+<% if project.archived %>
+  Il progetto è stato archiviato per <b><%= project.archived_reason_string.upcase %></b>
+<% else %>
+  Il progetto è <b>ATTIVO</b> dal <b><%= project.created_at.strftime('%d/%m/%Y') %></b>
+<% end %>
+</div>

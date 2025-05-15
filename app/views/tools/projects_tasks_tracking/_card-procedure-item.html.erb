@@ -1,0 +1,11 @@
+<%
+
+procedure_item ||= Procedures::Item.new
+
+%>
+
+<%= render 'shared/card',
+  title: procedure_item.secure_title,
+  type: procedure_item.resource.color_type do %>
+  <span class="fs-6 badge bg-primary">⌛️ <%= track_time(procedure_item.time_spent) %></span>
+<% end %>

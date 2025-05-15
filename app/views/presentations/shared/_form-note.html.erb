@@ -1,0 +1,33 @@
+<%
+
+presentation ||= Presentation.new
+presentations_page_id ||= nil
+position_x ||= 0
+position_y ||= 0
+note ||= Presentations::Note.new
+
+path ||= note.persisted? ? presentations_edit_note_action_path(id: presentation.id, note_id: note.id) : presentations_add_note_action_path(presentation)
+
+%>
+
+<%= render 'shared/form-errors', item: note %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+  <% if presentations_page_id %>
+    <input type="hidden" name="presentations_page_id" value="<%= presentations_page_id %>">
+  <% end %>
+  <% if position_x %>
+    <input type="hidden" name="position_x" value="<%= position_x %>">
+  <% end %>
+  <% if position_y %>
+    <input type="hidden" name="position_y" value="<%= position_y %>">
+  <% end %>
+
+  <div class="col col-12 mb-3">
+    <textarea class="form-control" rows="5" id="content" name="content" value="" required><%= note.content %></textarea>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

@@ -1,0 +1,21 @@
+<%
+
+page ||= nil
+
+%>
+
+<%= turbo_frame_tag 'presentation-editor-nav' do %>
+  <div class="card shadow d-flex flex-direction-column justify-content-between">
+    <div class="card-header">
+      Pagine
+    </div>
+    <ul class="list-group list-group-flush h-fullscroll" data-presentation-editor-target="nav">
+      <% @presentation.presentations_pages.order(order: :asc).each do |p_page| %>
+        <%= render 'presentations/editor/nav-page', page: p_page, active: p_page.id == page&.id %>
+      <% end %>
+    </ul>
+    <div class="card-footer">
+      <a href="<%= presentations_actions_path(type: 'add-page', id: @presentation.id) %>" data-turbo-frame="action" class="btn btn-primary w-100">Aggiungi pagina</a>
+    </div>
+  </div>
+<% end %>

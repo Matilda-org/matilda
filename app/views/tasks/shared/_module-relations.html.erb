@@ -1,0 +1,18 @@
+<% if @task.user %>
+<div class="mb-4">
+  <h3 class="fs-4 text-muted">Assegnato a</h3>
+  <%= render 'users/shared/card', user: @task.user %>
+</div>
+<% end %>
+<% if @task.procedure_as_item&.project %>
+<div class="mb-4">
+  <h3 class="fs-4 text-muted">Progetto</h3>
+  <%= render 'projects/shared/card', project: @task.procedure_as_item&.project %>
+</div>
+<% end %>
+<% if @task.procedure_as_item %>
+<div class="mb-4">
+  <h3 class="fs-4 text-muted">Board</h3>
+  <%= render 'procedures/shared/card', procedure: @task.procedure_as_item %>
+</div>
+<% end %>

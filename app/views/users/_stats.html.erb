@@ -1,0 +1,53 @@
+<%
+
+user ||= User.new
+
+%>
+
+<%= turbo_frame_tag dom_id(user, 'stats') do %>
+
+  <div class="row mb-4 d-lg-none">
+    <div class="col col-4">
+      <a href="<%= tasks_path %>" data-turbo-frame="_top" class="card bg-<%= user.tasks.not_completed.today.count.positive? ? 'warning' : 'success' %> text-white text-decoration-none shadow-lg">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div>
+              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.today.count %></span><br>
+              Task<br class="d-md-none">
+              per oggi
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col col-4">
+      <div class="card bg-<%= user.tasks.not_completed.expired.count.positive? ? 'danger' : 'dark' %> text-white shadow-lg">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div>
+              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.expired.count %></span><br>
+              Task<br class="d-md-none">
+              scaduti
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-4">
+      <div class="card bg-<%= user.tasks.not_completed.count.positive? ? 'primary' : 'dark' %> text-white shadow-lg">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div>
+              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.count %></span><br>
+              Task<br class="d-md-none">
+              totali
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end %>

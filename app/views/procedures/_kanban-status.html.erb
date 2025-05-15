@@ -1,0 +1,105 @@
+<%
+
+status ||= Procedure::Status.new
+procedure = status.procedure
+turbo_frame_key = dom_id(status, 'kanban-status')
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key do %>
+  <div class="card d-flex flex-direction-column justify-content-between me-3" style="width: 360px; flex: 0 0 auto;">
+    <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
+      <div
+        class="h-text-oneline"
+        <% unless status.description.blank? %>
+        data-controller="tooltip"
+        data-tooltip="<%= status.description %>"
+        <% end %>
+      >
+        <% unless status.description.blank? %>
+          <span class="bg-primary rounded-circle me-1 d-inline-block" style="width: 10px; height: 10px;"></span>
+        <% end %>
+        <%= status.title %>
+      </div>
+      <div class="ms-3 d-flex">
+        <div class="dropdown" data-user-policies-target="item" data-policy="procedures_edit">
+          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'show-status-automations', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Automazioni</a></li>
+            <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Modifica</a></li>
+            <% if status.can_move?('left-full') %>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left-full') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                  data-user-policies-target="item" data-policy="procedures_edit"
+                >Sposta all'inizio</a>
+              </li>
+            <% end %>
+            <% if status.can_move?('right-full') %>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'right-full') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                  data-user-policies-target="item" data-policy="procedures_edit"
+                >Sposta in fondo</a>
+              </li>
+            <% end %>
+            <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
+          </ul>
+        </div>
+        <% if status.can_move?('left') %>
+          <a
+            class="btn btn-sm ms-1"
+            href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left') %>"
+            data-turbo-method="post"
+            data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+            data-user-policies-target="item" data-policy="procedures_edit"
+          ><i class="bi bi-arrow-left"></i></a>
+        <% end %>
+        <% if status.can_move?('right') %>
+          <a
+            class="btn btn-sm ms-1"
+            href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'right') %>"
+            data-turbo-method="post"
+            data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+            data-user-policies-target="item" data-policy="procedures_edit"
+          ><i class="bi bi-arrow-right"></i></a>
+        <% end %>
+      </div>
+    </div>
+    <ul class="list-group list-group-flush h-fullscroll" data-kanban-target="container" data-container="<%= status.id %>">
+      <% if status.procedures_items.length.positive? %>
+        <% status.procedures_items_ordered_and_filtered.each do |item| %>
+          <%= render 'procedures/kanban-item', item: item, turbo_frame_status_key: turbo_frame_key %>
+        <% end %>
+      <% end %>
+    </ul>
+    <div class="card-footer d-flex">
+      <% if procedure.resources_type_tasks? && !procedure.model %>
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="tasks_create">
+          Aggiungi task
+        </a>
+      <% elsif procedure.resources_type_projects? && !procedure.model %>
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 me-1" data-user-policies-target="item" data-policy="projects_create">
+          Nuovo
+        </a>
+        <a href="<%= procedures_actions_path(type: 'add-item-existing', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 ms-1" >Esistente</a>
+      <% elsif procedure.resources_type_projects? && procedure.model %>
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="procedures_edit">
+          Aggiungi progetto
+        </a>
+      <% elsif procedure.resources_type_tasks? && procedure.model %>
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="procedures_edit">
+          Aggiungi task
+        </a>
+      <% end %>
+    </div>
+  </div>
+<% end %>

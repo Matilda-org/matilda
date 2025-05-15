@@ -1,0 +1,15 @@
+.c-flatpickr-marker {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  box-shadow: var(--bs-shadow);
+}
+
+.c-flatpickr-marker.visible {
+  display: block;
+}

@@ -1,0 +1,23 @@
+<%
+
+project ||= Project.new
+interactive ||= false
+
+interactive = false if project.archived # archived projects are always not interactive
+
+%>
+
+<%= render 'shared/card',
+  title: project.name,
+  subtitle: project.complete_code,
+  description: project.description_with_budget,
+  description_protected: true,
+  type: project.color_type,
+  resource_id: interactive ? project.id : nil,
+  resource_type: interactive ? 'Project' : nil,
+  folders_item: interactive ? (project.cached_folder_item_data || {}) : nil,
+  render_actions: 'projects/shared/card-actions',
+  render_actions_args: { project: project } do
+%>
+  <%= render 'projects/shared/card-content', project: project %>
+<% end %>

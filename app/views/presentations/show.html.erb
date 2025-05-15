@@ -1,0 +1,8 @@
+<%= render 'shared/page-header',
+  title: @presentation.name,
+  subtitle: @presentation.project ? "<a href='#{projects_show_path(@presentation.project)}' data-turbo-frame=_top>#{@presentation.project.name}</a>" : nil,
+  render_actions: 'presentations/show-actions',
+  back: true
+%>
+
+<%= render 'presentations/editor' %>

@@ -1,0 +1,7 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<a href="<%= projects_actions_path(type: 'add-attachment', id: project.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" >Aggiungi allegato</a>

@@ -1,0 +1,17 @@
+<%
+
+user_id ||= nil
+size ||= nil
+type ||= nil
+
+style = 'width: 1.5em; height: 1.5em; object-fit: cover; margin-right: 0.1em; position: relative; top: -0.15em;'
+style = 'width: 2em; height: 2em; object-fit: cover; margin-right: 0.2em; position: relative; top: -0.15em;' if size == 'lg'
+
+data = User.cached_preview_data(user_id)
+
+%>
+
+<span class="align-middle">
+<img src="<%= data[:image_profile_url] %>" style="<%= style %>" class="rounded-circle border border-<%= type %> border-2">
+<%= data[:complete_name]  %>
+</span>

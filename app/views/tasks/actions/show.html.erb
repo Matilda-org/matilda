@@ -1,0 +1,110 @@
+<%
+  
+active_track = @task.open_tasks_track_for_user(@session_user_id)
+
+%>
+
+
+<%= render 'shared/action-container', title: 'Dettagli task', size: @task.description.blank? ? 'md' : 'lg' do %>
+
+<div class="d-flex flex-column flex-md-row-reverse">
+  <div class="w-100">
+    <h3 class="fs-5"><%= @task.title %></h3>
+    <h4 class="fs-6 text-muted"><%= @task.completed ? @task.completed_at_in_words : @task.deadline_in_words %></h4>
+    <%= render 'tasks/shared/card-content', task: @task %>
+    <% unless @task.description.blank? %>
+      <hr>
+      <%= @task.content %>
+    <% end %>
+    <% unless @task.tasks_checks.empty? %>
+      <hr>
+      <%= render 'tasks/shared/checks', task: @task, frame_id: SecureRandom.hex(3) %>
+    <% end %>
+  </div>
+
+  <hr class="d-md-none">
+  <div class="h-md-less-border-end-none d-flex flex-row justify-content-end flex-md-column justify-content-md-start border-end pe-md-3 me-md-3">
+    <% if @task.completed %>
+      <a
+        class="btn btn-warning d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_actions_path(type: 'uncomplete', id: @task.id) %>"
+        data-turbo-frame="action"
+        data-controller="tooltip"
+        data-tooltip="Riattiva"
+        data-user-policies-target="item" data-policy="tasks_uncomplete"
+      ><i class="bi bi-x-circle-fill"></i></a>
+    <% elsif @task.accepted %>
+      <a 
+        class="btn btn-success d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_actions_path(type: 'complete', id: @task.id) %>"
+        data-turbo-frame="action"
+        data-controller="tooltip"
+        data-tooltip="Completa"
+        data-user-policies-target="item" data-policy="tasks_complete"
+      ><i class="bi bi-check-circle-fill"></i></a>
+    <% end %>
+    
+    <% if active_track %>
+      <a
+        class="btn btn-info text-white d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_end_track_action_path(id: @task.id, track_id: active_track) %>"
+        data-turbo-method="post"
+        data-turbo-frame="tasks-tracker"
+        data-controller="tasks-tracker tooltip"
+        data-tasks-tracker-start-value="<%= active_track.start_at.to_i %>"
+        data-action="click->action#closeModal"
+        data-tooltip="Ferma tracking"
+        data-user-policies-target="item" data-policy="tasks_track"
+      ><i class="bi bi-stop-circle-fill"></i></a>
+    <% elsif @task.accepted %>
+      <a
+        class="btn btn-info text-white d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_start_track_action_path(id: @task.id) %>"
+        data-turbo-method="post"
+        data-turbo-frame="tasks-tracker"
+        data-action="click->action#closeModal"
+        data-controller="tooltip"
+        data-tooltip="Avvia tracking"
+        data-user-policies-target="item" data-policy="tasks_track"
+      ><i class="bi bi-play-circle-fill"></i></a>
+    <% end %>
+
+    <a
+      class="btn btn-primary d-block ms-1 ms-md-0 mb-md-1"
+      href="<%= tasks_show_path(id: @task.id) %>"
+      data-turbo-frame="_top"
+      data-controller="tooltip"
+      data-tooltip="Dettagli"
+    ><i class="bi bi-eye"></i></a>
+
+    <% if @task.repeat_original_task_id %>
+      <a
+        class="btn btn-secondary d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_actions_path(type: 'edit', id: @task.repeat_original_task_id) %>"
+        data-turbo-frame="action"
+        data-controller="tooltip"
+        data-tooltip="Modifica originale"
+        data-user-policies-target="item" data-policy="tasks_edit"
+      ><i class="bi bi-pencil"></i></a>
+    <% else %>
+      <a
+        class="btn btn-primary d-block ms-1 ms-md-0 mb-md-1"
+        href="<%= tasks_actions_path(type: 'edit', id: @task.id) %>"
+        data-turbo-frame="action"
+        data-controller="tooltip"
+        data-tooltip="Modifica"
+        data-user-policies-target="item" data-policy="tasks_edit"
+      ><i class="bi bi-pencil"></i></a>
+    <% end %>
+
+    <a
+      class="btn btn-danger d-block ms-1 ms-md-0 mb-md-1"
+      href="<%= tasks_actions_path(type: 'destroy', id: @task.id) %>"
+      data-turbo-frame="action"
+      data-controller="tooltip"
+      data-tooltip="Elimina"
+      data-user-policies-target="item" data-policy="tasks_destroy"
+    ><i class="bi bi-trash"></i></a>
+  </div>
+</div>
+<% end %>

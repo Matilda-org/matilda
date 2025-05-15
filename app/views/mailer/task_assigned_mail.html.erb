@@ -1,0 +1,22 @@
+Ciao<br><br>
+
+Ti informiamo che ti è stato assegnato un nuovo task da completare.<br><br>
+
+-----------------------------------<br><br>
+
+Task: <b><%= @task.title %></b><br>
+Scadenza: <b><%= @task.deadline_in_words %></b><br>
+<% if @task.time_estimate %>
+  Tempo stimato: <b><%= @task.time_estimate_as_string %></b><br>
+<% end %>
+<% if @task.project_id %>
+  Progetto: <b><%= @task.project.name %></b><br>
+<% end %>
+<br>
+<% unless @task.description.blank? %>
+  <%= @task.description %><br><br>
+<% end %>
+
+-----------------------------------<br><br>
+
+Buon lavoro ☺️

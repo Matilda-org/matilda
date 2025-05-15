@@ -1,0 +1,12 @@
+<h3 class="fs-5"><%= task.title %></h3>
+<h4 class="fs-6 text-muted"><%= task.completed ? task.completed_at_in_words : task.deadline_in_words %></h4>
+<%= render 'tasks/shared/card-content', task: task %>
+
+<hr />
+<% if task.description.blank? %>
+<p class="text-muted">
+Nessuna descrizione
+</p>
+<% else %>
+<%= task.content %>
+<% end %>

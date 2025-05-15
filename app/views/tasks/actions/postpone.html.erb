@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Rimanda task" do %>
+  <%= render 'shared/confirmer', path: tasks_postpone_action_path(id: @task.id, turbo_frame_key: params[:turbo_frame_key]) %>
+<% end %>

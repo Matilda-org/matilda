@@ -1,0 +1,10 @@
+<%
+
+project ||= Project.new
+
+%>
+
+
+<a href="<%= presentations_actions_path(type: 'create', project_id: project.id, turbo_frame_key: 'module-presentations') %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="presentations_create">
+  Aggiungi presentazione
+</a>

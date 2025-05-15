@@ -1,0 +1,27 @@
+<%
+
+procedure ||= Procedure.new
+status ||= Procedures::Status.new
+
+path ||= status.persisted? ? procedures_edit_status_action_path(id: procedure.id, status_id: status.id) : procedures_add_status_action_path(procedure)
+
+%>
+
+<%= render 'shared/form-errors', item: status %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="title" class="form-label">Titolo</label>
+    <input type="text" class="form-control" id="title" name="title" value="<%= status.title %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="description" class="form-label">Breve descrizione</label>
+    <textarea class="form-control" rows="5" id="description" name="description"><%= status.description %></textarea>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

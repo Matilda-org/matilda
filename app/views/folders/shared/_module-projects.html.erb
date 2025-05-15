@@ -1,0 +1,13 @@
+<%= turbo_frame_tag 'module-projects' do %>
+
+<% if projects.length.positive? %>
+  <% projects.each do |project| %>
+    <div class="mb-3">
+      <%= render 'projects/shared/card', project: project %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>
+
+<% end %>

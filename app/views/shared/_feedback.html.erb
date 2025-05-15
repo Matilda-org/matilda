@@ -1,0 +1,37 @@
+<%
+
+title ||= 'Titolo'
+type ||= 'light'
+subtitle ||= nil
+turbo_frame ||= '_top'
+render_content ||= nil
+render_content_args ||= {}
+
+%>
+
+<div class="text-center">
+  <% if type == 'success' %>
+    <div class="text-success mb-3" style="font-size: 50px">
+      <i class="bi bi-check-circle"></i>
+    </div>
+  <% end %>
+  <h3 class="fs-5 mb-1"><%= title %></h3>
+  <p class="mb-4"><%= raw subtitle %></p>
+  <a
+    type="button"
+    href=""
+    data-turbo-frame="<%= turbo_frame %>"
+    <% if turbo_frame != '_top' %>
+      data-action="click->action#closeModal"
+    <% end %>
+    class="btn btn-primary"
+  >Va bene</a>
+</div>
+
+<% if render_content %>
+  <div class="mt-5">
+    <hr>
+    <h3 class="fs-5 mb-3">Dettagli</h3>
+    <%= render render_content, render_content_args %>
+  </div>
+<% end %>

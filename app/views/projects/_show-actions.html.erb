@@ -1,0 +1,55 @@
+<%
+
+has_prefer = false
+has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session_user && @project
+
+%>
+
+<div class="d-flex justify-content-center align-items-center">
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <% if has_prefer %>
+        <li>
+          <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @project.id, resource_type: @project.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
+            Rimuovi dai preferiti
+          </a>
+        </li>
+      <% else %>
+        <li>
+          <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @project.id, resource_type: @project.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
+            Aggiungi ai preferiti
+          </a>
+        </li>
+      <% end %>
+
+      <li data-user-policies-target="item" data-policy="projects_edit">
+        <a class="dropdown-item" href="<%= projects_actions_path(type: 'edit', id: @project.id) %>" data-turbo-frame="action">
+          Modifica
+        </a>
+      </li>
+      
+      <% if @project.archived %>
+        <li data-user-policies-target="item" data-policy="projects_unarchive">
+          <a class="dropdown-item" href="<%= projects_actions_path(type: 'unarchive', id: @project.id) %>" data-turbo-frame="action">
+            Ri-attiva
+          </a>
+        </li>
+      <% else %>
+        <li data-user-policies-target="item" data-policy="projects_archive">
+          <a class="dropdown-item" href="<%= projects_actions_path(type: 'archive', id: @project.id) %>" data-turbo-frame="action">
+            Archivia
+          </a>
+        </li>
+      <% end %>
+
+      <li data-user-policies-target="item" data-policy="projects_destroy">
+        <a class="dropdown-item text-danger" href="<%= projects_actions_path(type: 'destroy', id: @project.id) %>" data-turbo-frame="action">
+          Elimina
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

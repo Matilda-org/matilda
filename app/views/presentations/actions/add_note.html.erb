@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Aggiungi nota' do %>
+  <%= render 'presentations/shared/form-note', presentation: @presentation, presentations_page_id: params[:presentations_page_id], position_x: params[:position_x], position_y: params[:position_y] %>
+<% end %>

@@ -1,0 +1,36 @@
+<%
+
+task ||= Task.new
+hide_project ||= false
+badge_type = task.color_type
+badge_type = 'secondary' if badge_type.blank?
+
+%>
+
+<% if !task.accepted %>
+  <span class="badge bg-danger"><i class="bi bi-bell-fill"></i> da approvare</span>
+<% end %>
+
+<% if task.repeat %>
+  <span class="badge bg-<%= badge_type %>"><i class="bi bi-repeat"></i> ripetuto</span>
+<% end %>
+
+<% if task.repeat_original_task_id %>
+  <span class="badge bg-<%= badge_type %>"><i class="bi bi-repeat-1"></i> ripetuto</span>
+<% end %>
+
+<% if task.time_estimate&.positive? %>
+  <span class="badge bg-<%= badge_type %>"><i class="bi bi-alarm-fill"></i> <%= distance_of_time_in_words(task.time_estimate) %> stimati</span>
+<% end %>
+
+<% if task.time_spent&.positive? %>
+  <span class="badge bg-<%= badge_type %>"><%= raw (task.time_alert ? '<i class="bi bi-exclamation-triangle-fill"></i>' : '<i class="bi bi-hourglass-split"></i>') %> <%= track_time(task.time_spent) %> consumati</span>
+<% end %>
+
+<% if !hide_project && task.project %>
+  <a class="badge bg-<%= badge_type %>" data-turbo-frame="_top" href="<%= projects_show_path(task.project_id) %>"><%= nav_icon('projects') %> <%= task.project.name.truncate(40) %></a>
+<% end %>
+
+<% if task.procedure_as_item %>
+  <a class="badge bg-<%= badge_type %>" data-turbo-frame="_top" href="<%= procedures_show_path(task.procedure_as_item) %>"><%= nav_icon('procedures') %> <%= task.procedure_as_item.name %></a>
+<% end %>

@@ -1,0 +1,25 @@
+<%
+
+procedure ||= Procedure.new
+
+%>
+
+<%= turbo_stream_from dom_id(procedure) %>
+
+<%= turbo_frame_tag dom_id(procedure, 'kanban') do %>
+  <div
+    class="c-kanban"
+    data-controller="kanban"
+    data-kanban-updater-param-container-value="procedures_status_id"
+    data-kanban-updater-param-item-value="item_id"
+    data-kanban-updater-param-order-value="order"
+  >
+    <div class="c-kanban__prev" data-kanban-target="prev"><i class="bi bi-arrow-left-circle"></i></div>
+    <div data-kanban-target="scrollable" class="c-kanban__scrollable">
+      <% procedure.procedures_statuses.order(order: :asc).each do |status| %>
+        <%= render 'procedures/kanban-status', status: status %>
+      <% end %>
+    </div>
+    <div class="c-kanban__next" data-kanban-target="next"><i class="bi bi-arrow-right-circle"></i></div>
+  </div>
+<% end %>

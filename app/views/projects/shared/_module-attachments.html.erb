@@ -1,0 +1,37 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<% if project.projects_attachments.length.positive? %>
+<ol class="list-group">
+  <% project.projects_attachments.order(date: :desc, created_at: :desc).each do |attachment| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <div class="fw-bold mb-1"><%= attachment.title %></div>
+        <div class="text-muted" style="font-size: 14px;"><%= attachment.date.strftime('%d/%m/%Y') %></div>
+        <div class="text-muted" style="font-size: 12px;"><%= attachment.typology_string %> (v<%= attachment.version %>)</div>
+      </div>
+      <div class="ms-3 d-flex">
+        <div class="dropdown me-1">
+          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action">Modifica</a></li>
+            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action">Elimina</a></li>
+          </ul>
+        </div>
+        <% if attachment.file.attached? %>
+          <a href="<%= url_for(attachment.file) %>" class="btn btn-sm btn-outline-primary" data-turbo="false" target="_blank"><i class="bi bi-cloud-arrow-down"></i></a>
+        <% else %>
+          <button class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-cloud-arrow-down"></i></button>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>

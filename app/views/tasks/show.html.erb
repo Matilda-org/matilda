@@ -1,0 +1,52 @@
+<%= render 'shared/page-header',
+  title: @task.title,
+  render_actions: 'tasks/show-actions',
+  back: true
+%>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Dettagli",
+      always_open: true,
+      render_content: 'tasks/shared/module-infos',
+      render_content_args: {
+        task: @task
+      },
+      render_footer: 'tasks/shared/module-infos-actions',
+      render_footer_args: {
+        task: @task
+      }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Relazioni",
+      render_content: 'tasks/shared/module-relations',
+      render_content_args: {
+        task: @task
+      }
+    %>
+
+  <% end %>
+
+  <% unless @task.tasks_checks.empty? %>
+    <%= render 'shared/page-grid-item' do %>
+
+      <%= render 'shared/page-card',
+        title: "Checklist",
+        render_content: 'tasks/shared/module-checks',
+        render_content_args: {
+          task: @task
+        }
+      %>
+
+    <% end %>
+  <% end %>
+
+<% end %>

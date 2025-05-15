@@ -1,0 +1,9 @@
+<% if project.presentations.length.positive? %>
+  <% project.presentations.order(name: :asc).each do |presentation| %>
+    <div class="mb-3">
+      <%= render 'presentations/shared/card', presentation: presentation %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>

@@ -1,0 +1,7 @@
+<div class="fw-lighter text-muted">
+<% if project.projects_events.count.positive? %>
+  Ultimo evento: <b><%= project.projects_events.order(created_at: :desc).limit(1).first.created_at.strftime('%d/%m/%Y %H:%M') %></b>
+<% else %>
+  Nessun evento registrato
+<% end %>
+</div>

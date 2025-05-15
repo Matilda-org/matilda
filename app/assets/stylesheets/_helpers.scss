@@ -1,0 +1,38 @@
+.h-text-oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.h-bg-slack {
+  background-color: #4a154b;
+}
+
+.h-fullscroll {
+  height: calc(100vh - 270px);
+  overflow-y: scroll;
+}
+
+.h-cursor-pointer {
+  cursor: pointer;
+}
+
+.h-text-primary-hover:hover {
+  color: var(--bs-primary) !important;
+}
+
+.h-tex--underline-hover:hover {
+  text-decoration: underline !important;
+}
+
+.h-list-none {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .h-md-less-border-end-none {
+    border-right-width: 0 !important;
+  }
+}

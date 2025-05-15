@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Rimuovi pagina' do %>
+  <%= render 'shared/confirmer', path: presentations_remove_page_action_path(id: @presentation.id, page_id: @page.id) %>
+<% end %>

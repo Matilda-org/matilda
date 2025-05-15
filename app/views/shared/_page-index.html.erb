@@ -1,0 +1,123 @@
+<%
+
+query ||= ApplicationRecord.all
+render_item ||= ''
+render_item_param ||= 'item'
+
+search ||= false
+filters ||= []
+sorts ||= []
+tags ||= []
+
+%>
+
+<% if search || filters.any? || sorts.any? %>
+  <%= form_tag '', method: :get, class: 'mb-2', data: { turbo_frame: 'page-index', controller: 'filters' } do %>
+    <div class="row justify-content-end">
+      <% if tags.length.positive? %>
+        <div class="col col-12 mb-3 col-xl-auto">
+          <div class="row align-items-center">
+            <div class="col-auto d-none">
+              <label for="tags" class="col-form-label">Tag</label>
+            </div>
+            <div class="col">
+              <select id="tags" class="form-control" name="tags" data-action="change->filters#submit">
+                <option value="">Seleziona un tag</option>
+                <% tags.each do |tag| %>
+                  <option value="<%= tag %>" <%= params[:tags] == tag ? 'selected' : '' %>><%= tag %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if search %>
+        <div class="col col-12 mb-3 col-xl-auto">
+          <div class="row align-items-center">
+            <div class="col-auto d-none">
+              <label for="search" class="col-form-label">Ricerca</label>
+            </div>
+            <div class="col">
+              <div class="input-group">
+                <input type="text" id="search" name="search" class="form-control" placeholder="Ricerca" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced">
+                <button class="btn btn-secondary" type="button" data-filters-target="buttonClear" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
+                <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if sorts.any? %>
+        <div class="col col-12 mb-3 col-xl-auto">
+          <div class="row align-items-center">
+            <div class="col-auto d-none">
+              <label for="sort" class="col-form-label">Ordina per</label>
+            </div>
+            <div class="col">
+              <select id="sort" class="form-control" name="sort" data-action="change->filters#submit">
+                <option>Ordina per</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if filters.any? %>
+        <div class="col col-12 mb-3 col-xl-auto">
+          <div class="row align-items-center">
+            <div class="col-auto d-none">
+              <label for="filters" class="col-form-label">Filtri</label>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <div class="btn-group" role="group">
+                <% filters.each do |filter| %>
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="filters"
+                    id="<%= filter[:value] %>"
+                    autocomplete="off"
+                    data-action="change->filters#submit"
+                    value="<%= filter[:value] %>"
+                    <%= params[:filers] == filter[:value] || (params[:filters].blank? && filter[:default]) ? 'checked' : '' %>
+                  >
+                  <label class="btn btn-outline-primary" for="<%= filter[:value] %>"><%= filter[:label] %></label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_frame_tag "page-index", class: 'w-100' do %>
+
+<% if query.length.positive? %>
+
+<div class="row align-items-stretch">
+  <% query.each do |item| %>
+    <div class="col col-12 col-md-12 col-lg-6 col-xl-4 mb-3 d-flex align-items-stretch">
+      <%= render render_item, { "#{render_item_param}": item } %>
+    </div>
+  <% end %>
+</div>
+
+<% if query.respond_to?('total_pages') && query.total_pages > 1 %>
+<div class="d-flex justify-content-center mt-3">
+  <%= paginate query, theme: 'bootstrap-5' %>
+</div>
+<% end %>
+
+<% else %>
+
+<div class="text-center pt-5 pb-5">
+  <%= render 'shared/placeholder' %>
+</div>
+
+<% end %>
+
+<% end %>

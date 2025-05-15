@@ -1,0 +1,41 @@
+<%
+
+date_start ||= Date.today
+date_end ||= Date.today
+user_id ||= nil
+project_id ||= nil
+
+%>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fs-4 mb-0"><%= date_start.strftime('%d/%m') %> - <%= date_end.strftime('%d/%m') %></h2>
+  </div>
+  <form class="row g-3" method="GET">
+    <div class="col-auto d-none d-lg-block" style="width: 150px">
+      <label for="project_id" class="visually-hidden">Project</label>
+      <%= select_tag 'project_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }, project_id), class: 'form-control' %>
+    </div>
+    <div class="col-auto d-none d-lg-block" style="width: 150px">
+      <label for="user_id" class="visually-hidden">User</label>
+      <%= select_tag 'user_id', options_for_select([['Assegnati a', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, user_id), class: 'form-control' %>
+    </div>
+    <div class="col-auto d-none d-lg-block">
+      <label for="date_start" class="visually-hidden">Date start</label>
+      <input type="date" class="form-control" id="date_start" name="date_start" placeholder="Date start" value="<%= date_start %>" required data-controller="tasks-inputdate">
+    </div>
+    <div class="col-auto d-none d-lg-block">
+      <label for="date_end" class="visually-hidden">Date end</label>
+      <input type="date" class="form-control" id="date_end" name="date_end" placeholder="Date end" value="<%= date_end %>" required data-controller="tasks-inputdate">
+    </div>
+    <div class="col-auto">
+      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week - 7.days, date_end: date_start.at_beginning_of_week - 1.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary' do %>
+        <i class="bi bi-arrow-left"></i>
+      <% end %>
+      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week + 7.days, date_end: date_start.at_beginning_of_week + 13.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary' do %>
+        <i class="bi bi-arrow-right"></i>
+      <% end %>
+      <button type="submit" class="btn btn-primary d-none d-lg-inline-block">Apply</button>
+    </div>
+  </form>
+</div>

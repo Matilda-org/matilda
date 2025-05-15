@@ -1,0 +1,18 @@
+<%= render 'shared/page-header', title: 'Bacheca', render_actions: 'posts/index-actions' %>
+
+<%= render 'shared/page-preferred',
+    query: @posts_preferred,
+    type: 'Post',
+    render_item: 'posts/shared/card',
+    render_item_param: :post
+  %>
+
+<%= render 'posts/feeds-index', feeds: @feeds %>
+
+<%= render 'shared/page-index',
+    query: @posts,
+    render_item: 'posts/shared/card',
+    render_item_param: :post,
+    tags: @tags,
+    search: true
+  %>

@@ -1,0 +1,19 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<%= render 'shared/form-errors', item: project %>
+
+<%= form_tag projects_archive_action_path(project), class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="name" class="form-label">Motivo dell'archivio</label>
+    <%= select_tag :archived_reason, options_for_select(Project.archived_reasons.map {|key, value| [Project.archived_reason_string(key.to_s), Project.archived_reasons.key(value)]}, project.archived_reason), class: 'form-control' %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

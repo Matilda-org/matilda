@@ -1,0 +1,9 @@
+<%
+
+user ||= User.new
+
+%>
+
+<a class="card-link" href="<%= users_show_path(id: user.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="users_show">
+  Visualizza
+</a>

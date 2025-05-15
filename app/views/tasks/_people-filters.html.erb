@@ -1,0 +1,33 @@
+<%
+
+date ||= Date.today
+project_id ||= nil
+
+%>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fs-4 mb-0"><%= date.strftime('%d/%m') %></h2>
+  </div>
+  <form class="row g-3" method="GET">
+    <input type="hidden" name="mode" value="people">
+
+    <div class="col-auto d-none d-lg-block" style="width: 150px">
+      <label for="project_id" class="visually-hidden">Project</label>
+      <%= select_tag 'project_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }, project_id), class: 'form-control' %>
+    </div>
+    <div class="col-auto d-none d-lg-block">
+      <label for="date" class="visually-hidden">Date</label>
+      <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="<%= date %>" required data-controller="tasks-inputdate">
+    </div>
+    <div class="col-auto">
+      <%= link_to tasks_path(date: date - 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary' do %>
+        <i class="bi bi-arrow-left"></i>
+      <% end %>
+      <%= link_to tasks_path(date: date + 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary' do %>
+        <i class="bi bi-arrow-right"></i>
+      <% end %>
+      <button type="submit" class="btn btn-primary d-none d-lg-inline-block">Apply</button>
+    </div>
+  </form>
+</div>

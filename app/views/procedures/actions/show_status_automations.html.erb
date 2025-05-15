@@ -1,0 +1,92 @@
+<%= render 'shared/action-container', title: 'Automazioni stato' do %>
+<% if @status.procedure.model %>
+<div class="alert alert-secondary" role="alert">
+  Le automazioni all'interno dei modelli non verranno applicate agli elementi al suo interno.
+</div>
+<% end %>
+
+<ol class="list-group">
+  <% if @status.procedure.resources_type_tasks? %>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Ordina per scadenza (ASC)</div>
+        <div class="text-muted">Ordina automaticamente i task per scadenza in ordine ascendente.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :order_deadline_asc_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:order_deadline_asc_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Completa task</div>
+        <div class="text-muted">Completa automaticamente un task quando viene spostato in questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :complete_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:complete_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Ri-attiva task</div>
+        <div class="text-muted">Ri-attiva automaticamente un task completato quando viene spostato in questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :uncomplete_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:uncomplete_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Annulla scadenza task</div>
+        <div class="text-muted">Annulla automaticamente la scadenza di un task quando viene spostato in questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :cancel_deadline_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:cancel_deadline_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Sposta task completati</div>
+        <div class="text-muted">Sposta automaticamente i task completati all'interno di questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :take_completed_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:take_completed_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+  <% end %>
+  <% if @status.procedure.resources_type_projects? %>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Archivia progetti</div>
+        <div class="text-muted">Archivia automaticamente un progetto quando spostato in questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :archive_project) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:archive_project) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% end %>

@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Rimuovi #{@procedure.resources_item_string}" do %>
+  <%= render 'shared/confirmer', path: procedures_remove_item_action_path(id: @procedure.id, item_id: @item.id, turbo_frame_key: params[:turbo_frame_key]) %>
+<% end %>

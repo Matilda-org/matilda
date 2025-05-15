@@ -1,0 +1,14 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<%= render 'shared/card',
+  title: project.complete_code,
+  subtitle: project.name,
+  type: project.color_type,
+  render_actions: 'tools/projects_tasks_tracking/card-project-actions',
+  render_actions_args: { project: project } do %>
+  <span class="fs-6 badge bg-primary">⌛️ <%= track_time(project.time_spent) %></span>
+<% end %>

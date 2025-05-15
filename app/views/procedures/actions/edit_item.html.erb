@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Modifica #{@procedure.resources_item_string}" do %>
+  <%= render 'procedures/shared/form-item', procedure: @procedure, item: @item, turbo_frame_key: params[:turbo_frame_key] %>
+<% end %>

@@ -1,0 +1,55 @@
+<%= render 'shared/page-header',
+  title: 'Report attività svolte',
+  back: true
+%>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: 'Filtri',
+      render_content: 'tools/projects_tasks_tracking/filters',
+      render_footer: 'tools/projects_tasks_tracking/filters-actions'
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', size: 'two-third' do %>
+
+    <div class="card mb-3">
+      <div class="card-body d-flex justify-content-between">
+        <h5 class="card-title mb-0 text-muted">Tempo totale</h5>
+        <h5 class="card-title mb-0"><%= track_time(@total) %></h5>
+      </div>
+    </div>
+
+    <% if @project && @procedure && @procedure_status %>
+      <%= render 'shared/page-index',
+        query: @procedure_items,
+        render_item: 'tools/projects_tasks_tracking/card-procedure-item',
+        render_item_param: :procedure_item
+      %>
+    <% elsif @project && @procedure %>
+      <%= render 'shared/page-index',
+        query: @procedure_statuses,
+        render_item: 'tools/projects_tasks_tracking/card-procedure-status',
+        render_item_param: :procedure_status
+      %>
+    <% elsif @project %>
+      <%= render 'shared/page-index',
+        query: @project_procedures,
+        render_item: 'tools/projects_tasks_tracking/card-procedure',
+        render_item_param: :procedure
+      %>
+    <% else %>
+      <%= render 'shared/page-index',
+        query: @projects,
+        render_item: 'tools/projects_tasks_tracking/card-project',
+        render_item_param: :project
+      %>
+    <% end %>
+
+  <% end %>
+
+<% end %>

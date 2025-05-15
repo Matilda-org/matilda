@@ -1,0 +1,20 @@
+<%
+
+project ||= Project.new
+procedures_item ||= Procedures::Item.new
+
+%>
+
+<%= render 'shared/form-errors', item: procedures_item %>
+
+<%= form_tag projects_add_procedures_item_action_path(project), class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="procedure_id" class="form-label">Board</label>
+    <%= select_tag 'procedure_id', options_for_select(project.procedures_valid_as_item.map { |u| [u.name, u.id] }, procedures_item.procedure_id), class: 'form-control' %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

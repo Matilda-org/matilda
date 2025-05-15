@@ -1,0 +1,31 @@
+.c-tasks-tracker {
+  background-color: var(--bs-info);
+  border-radius: 30px;
+  padding: 3px 10px;
+  color: var(--bs-white);
+}
+
+.c-tasks-tracker__container {
+  display: flex;
+  align-items: center;
+}
+
+.c-tasks-tracker__actions {
+  font-size: 20px;
+}
+
+.c-tasks-tracker__actions a {
+  color: var(--bs-white);
+}
+
+.c-tasks-tracker__actions a:hover {
+  color: var(--bs-white);
+}
+
+.c-tasks-tracker__time {
+  font-weight: bold;
+  margin-right: 7.5px;
+  padding-right: 7.5px;
+  border-right: solid 1px var(--bs-white);
+  min-width: 85px;
+}

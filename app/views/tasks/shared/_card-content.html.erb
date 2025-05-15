@@ -1,0 +1,14 @@
+<%
+
+task ||= Task.new
+hide_project ||= false
+
+%>
+
+<% if task.user %>
+  <div class="mb-1">
+    <%= render 'users/shared/preview', user_id: task.user_id, size: 'sm', type: hide_project ? task.color_type : 'light' %>
+  </div>
+<% end %>
+
+<%= render 'tasks/shared/card-content-tags', task: task, hide_project: hide_project %>

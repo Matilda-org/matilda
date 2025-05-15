@@ -1,0 +1,34 @@
+<%
+
+presentation ||= Presentation.new
+presentations_page_id ||= nil
+position_x ||= 0
+position_y ||= 0
+action ||= Presentations::Action.new
+
+path ||= action.persisted? ? presentations_edit_action_action_path(id: presentation.id, action_id: action.id) : presentations_add_action_action_path(presentation)
+
+%>
+
+<%= render 'shared/form-errors', item: action %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+  <% if presentations_page_id %>
+    <input type="hidden" name="presentations_page_id" value="<%= presentations_page_id %>">
+  <% end %>
+  <% if position_x %>
+    <input type="hidden" name="position_x" value="<%= position_x %>">
+  <% end %>
+  <% if position_y %>
+    <input type="hidden" name="position_y" value="<%= position_y %>">
+  <% end %>
+
+  <div class="col col-12 mb-3">
+    <label for="page_destination" class="form-label">Pagina di destinazione</label>
+    <%= select_tag 'page_destination', options_for_select(presentation.presentations_pages.where.not(id: presentations_page_id).order(order: :asc).map { |u| [u.title, u.id] }, action.presentations_page_id), class: 'form-control', required: true %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

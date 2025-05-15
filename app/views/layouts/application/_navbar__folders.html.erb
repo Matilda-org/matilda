@@ -1,0 +1,25 @@
+<%
+
+folders ||= Folder.cached_list
+base_path ||= '#'
+active_folder_id ||= nil
+
+# reolder folders to put the active folder on top
+if active_folder_id
+  folders = folders.partition { |folder| folder[:id] == active_folder_id.to_i }.flatten
+end
+
+%>
+
+<% if folders.length.positive? %>
+  <li><hr class="dropdown-divider"></li>
+  <li>
+    <ul class="h-list-none" style="max-height: 300px; overflow-y: auto;">
+      <% folders.each do |folder| %>
+        <li><a class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>" href="<%= base_path %>/<%= folder[:id] %>" data-turbo-frame="_top"><small><i class="bi bi-folder-fill"></i> <%= folder[:name] %></small></a></li>
+      <% end %>
+    </ul>
+  </li>
+<% end %>
+<li data-user-policies-target="item" data-policy="folders_create"><hr class="dropdown-divider"></li>
+<li data-user-policies-target="item" data-policy="folders_create"><a class="dropdown-item" href="<%= folders_actions_path(type: 'create') %>" data-turbo-frame="action"><i class="bi bi-plus-circle me-2"></i> Nuova cartella</a></li>

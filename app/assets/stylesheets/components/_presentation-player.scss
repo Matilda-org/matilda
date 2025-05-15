@@ -1,0 +1,120 @@
+.c-presentation-player {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  background-color: $white;
+}
+
+.c-presentation-player.is-editable {
+  cursor: cell;
+}
+
+.c-presentation-player__scrollable {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.c-presentation-player__container {
+  width: 100%;
+  position: relative;
+  opacity: 0;
+}
+.c-presentation-player.is-active .c-presentation-player__container {
+  opacity: 1;
+}
+
+.c-presentation-player__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.c-presentation-player__item {
+  position: absolute;
+  background-color: $primary;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all 0.35s ease-in-out;
+  animation: pulse 1.5s infinite ease-out;
+}
+
+.c-presentation-player__item:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $primary;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  animation: pulse 1000ms infinite ease-out;
+}
+@keyframes pulse {
+  0% {
+    box-shadow: inset 0px 0px 0px 5px rgba(255, 255, 255,.4), 0px 0px 0px 0px rgba(255,255,255,1);
+  }
+  100% {
+    box-shadow: inset 0px 0px 0px 3px rgba(117, 117, 255,.2), 0px 0px 0px 10px rgba(255,255,255,0);
+  }
+}
+
+.c-presentation-player__item--action {
+  background-color: rgba(13, 202, 240, 0.6);
+}
+.c-presentation-player__item--action:hover {
+  background-color: rgba(13, 202, 240, 0.9);
+}
+
+.c-presentation-player__item--note {
+  background-color: rgba(255, 193, 7, 0.6);
+}
+.c-presentation-player__item--note:hover {
+  background-color: rgba(255, 193, 7, 0.9);
+}
+
+.c-presentation-player__item-link {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+
+.c-presentation-player__item-action {
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: calc(100% - 10px);
+  opacity: 0;
+  z-index: -1;
+  padding-top: 10px;
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+.c-presentation-player__item:hover .c-presentation-player__item-action {
+  opacity: 1;
+  z-index: 1;
+  transform: translateY(10px);
+  pointer-events: auto;
+}
+
+.c-presentation-player__item-action a {
+  color: $white !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}

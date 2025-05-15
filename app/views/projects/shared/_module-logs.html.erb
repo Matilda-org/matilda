@@ -1,0 +1,44 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<% if project.projects_logs.length.positive? %>
+<ol class="list-group">
+  <% project.projects_logs.order(date: :desc, created_at: :desc).each do |log| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <div class="fw-bold mb-1"><%= log.title %> <%= raw log.shareable? ? '<small class="text-primary"><i class="bi bi-eye-fill"></i></small>' : '' %></div>
+        <div class="text-muted" style="font-size: 14px;"><%= log.date.strftime('%d/%m/%Y') %></div>
+      </div>
+      <div class="ms-3 d-flex">
+        <div class="dropdown me-1">
+          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <% if log.shareable? %>
+              <li>
+                <div class="ps-3 pe-3">
+                  <%= render 'projects/shared/log-share', log: log, small: 'true' %>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'unshare-log', log_id: log.id) %>" data-turbo-frame="action">Annulla condivisione</a></li>
+            <% else %>
+              <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'share-log', log_id: log.id) %>" data-turbo-frame="action">Condividi</a></li>
+            <% end %>
+            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-log', log_id: log.id) %>" data-turbo-frame="action">Modifica</a></li>
+            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-log', log_id: log.id) %>" data-turbo-frame="action">Elimina</a></li>
+          </ul>
+        </div>
+
+        <a href="<%= projects_actions_id_path(id: project.id, type: 'show-log', log_id: log.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>

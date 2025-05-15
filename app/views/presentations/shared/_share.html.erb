@@ -1,0 +1,13 @@
+<%
+
+presentation ||= Presentation.new
+small ||= false
+
+%>
+
+<p style="<%= small ? 'font-size: 14px' : '' %>">La presentazione è pubblica attraverso il seguente link:</p>
+
+<div class="input-group mb-3" style="<%= small ? 'max-width: 300px' : '' %>" data-controller="clipboard" data-clipboard-success-content="Copiato!">
+  <input class="form-control" placeholder="Password" value="<%= presentations_player_url(id: presentation.id, share_code: presentation.share_code) %>" data-clipboard-target="source" readonly />
+  <button type="button" class="btn btn-outline-primary" data-action="clipboard#copy" data-clipboard-target="button">Copia</button>
+</div>

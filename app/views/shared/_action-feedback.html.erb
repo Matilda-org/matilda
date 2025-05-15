@@ -1,0 +1,13 @@
+<%
+
+title ||= 'Titolo'
+turbo_frame ||= '_top'
+feedback_args ||= {}
+
+feedback_args = feedback_args.merge(turbo_frame: turbo_frame)
+
+%>
+
+<%= render 'shared/action-container', title: title, turbo_frame: turbo_frame, feedback: true do %>
+  <%= render 'shared/feedback', feedback_args %>
+<% end %>

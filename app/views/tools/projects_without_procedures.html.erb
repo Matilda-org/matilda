@@ -1,0 +1,32 @@
+<%= render 'shared/page-header',
+  title: 'Controllo progetti su board',
+  back: true
+%>
+
+<% if @procedures.length.positive? %>
+
+<%= render 'shared/page-grid' do %>
+
+  <% @procedures.each do |procedure| %>
+
+    <%= render 'shared/page-grid-item' do %>
+
+      <%= render 'shared/page-card',
+        title: procedure.name,
+        render_content: 'tools/projects_without_procedures/procedure-projects',
+        render_content_args: { procedure: procedure },
+        render_footer: 'tools/projects_without_procedures/procedure-footer',
+        render_footer_args: { procedure: procedure }
+      %>
+
+    <% end %>
+
+  <% end %>
+
+<% end %>
+
+<% else %>
+
+<%= render 'shared/placeholder', message: 'In questo momento non ci sono board da visualizzare' %>
+
+<% end %>

@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Nuovo task', size: 'lg' do %>
+  <%= render 'tasks/shared/form', task: @task, turbo_frame_key: params[:turbo_frame_key] %>
+<% end %>

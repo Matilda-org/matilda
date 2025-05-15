@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= nav_title(@_navbar) %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,interactive-widget=resizes-content">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Name of web application (only should be used if the website is used as an app) -->
+    <meta name="application-name" content="Matilda">
+
+    <!-- Short description of the document (limit to 150 characters) -->
+    <meta name="description" content="Project manager for better companies">
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://<%= APPLICATION_HOST %>">
+    <meta name="twitter:title" content="Matilda">
+    <meta name="twitter:description" content="Project manager for better companies">
+
+    <!-- Open Graph data -->
+    <meta property="og:title" content="Matilda" />
+    <meta property="og:site_name" content="Matilda - Project manager for better companies">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Project manager for better companies" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="application-name" content="matilda">
+    <meta name="theme-color" content="#181d45">
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="matilda">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" sizes="36x36" href="/android-icon-36x36.png">
+    <link rel="icon" sizes="48x48" href="/android-icon-48x48.png">
+    <link rel="icon" sizes="72x72" href="/android-icon-72x72.png">
+    <link rel="icon" sizes="96x96" href="/android-icon-96x96.png">
+    <link rel="icon" sizes="144x144" href="/android-icon-144x144.png">
+    <link rel="icon" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" sizes="512x512" href="/android-icon-512x512.png">
+
+    <!-- Meta -->
+    <meta name="env" content="<%= Rails.env %>">
+    <meta name="view-transition" content="same-origin" />
+    <meta name="turbo-refresh-method" content="morph">
+    <meta name="turbo-refresh-scroll" content="preserve">
+    <%# <meta name="turbo-cache-control" content="no-cache"> %>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+    <!-- TEMPORARY FIX: Popper js not working using bootstrap-gem -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+
+    <style>
+      body { background: <%= background_calculator %>; }
+    </style>
+
+    <!-- Local assets -->
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body
+    data-controller="user-policies"
+    data-user-policies-list="<%= @session_user&.cached_policies&.join(',') %>"
+  >
+    <% if @_authentication %>
+      <%= render 'layouts/application/background', primary: true %>
+    <% end %>
+
+    <% unless @_navbar_disabled %>
+      <header>
+        <%= render 'layouts/application/navbar' %>
+      </header>
+    <% end %>
+
+    <div class="d-flex">
+      <% if @session_user %>
+        <aside>
+          <%= render 'layouts/application/sidebar' %>
+        </aside>
+      <% end %>
+      <main class="container-fluid flex-1" style="min-height: calc(100vh - 58px);">
+        <%= render 'layouts/application/flash' unless @_flash_disabled %>
+
+        <%= yield %>
+      </main>
+    </div>
+
+    <footer
+      <% if @_authentication %>
+        style="display: none;"
+      <% end %>
+    >
+      <div class="container pt-3 pb-3 text-muted text-center">
+        Versione <%= APPLICATION_VERSION %>
+        | <a target="_blank" href="https://<%= Setting.get('infos_company_website') || root_url %>"><%= Setting.get('infos_company_name') || 'Matilda' %></a>
+        <% if Setting.get('infos_company_vat') %>
+          | p.iva: <%= Setting.get('infos_company_vat') %>
+        <% end %>
+        <% if Setting.get('infos_company_email') %>
+          | email: <%= Setting.get('infos_company_email') %>
+        <% end %>
+        <% if Setting.get('infos_company_pec') %>
+          | pec: <%= Setting.get('infos_company_pec') %>
+        <% end %>
+      </div>
+    </footer>
+
+    <%= render 'layouts/application/action' %>
+    <% if Setting.get('vectorsearch_openai_key') %>
+      <%= render 'layouts/application/vectorsearch' %>
+    <% end %>
+  </body>
+</html>

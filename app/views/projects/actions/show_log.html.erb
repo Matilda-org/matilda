@@ -1,0 +1,20 @@
+<%= render 'shared/action-container', title: 'Visualizza nota', turbo_frame: 'module-logs', size: 'xl' do %>
+  <div>
+    <h2 class="fs-2"><%= @log.title %></h2>
+    <div class="d-flex flex-row justify-content-between align-items-center">
+      <p class="text-muted mb-0"><%= render 'users/shared/preview', user_id: @log.user_id %> - <%= @log.date.strftime('%d/%m/%Y') %></p>
+
+      <div data-controller="clipboard" data-clipboard-success-content="👍">
+        <textarea class="d-none" data-clipboard-target="source">
+          <%= @log.content.to_plain_text %>
+        </textarea>
+        <button class="btn btn-light btn-sm" data-action="clipboard#copy" data-clipboard-target="button">📋</button>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <%= render 'projects/shared/log-content', log: @log %>
+  
+<% end %>

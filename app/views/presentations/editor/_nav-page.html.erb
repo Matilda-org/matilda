@@ -1,0 +1,28 @@
+<%
+
+page ||= Presentations::Page.new
+active ||= false
+turbo_frame_key = "presentation-editor-nav-page-#{page.id}"
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key, data: { page: page.id } do %>
+  <li class="list-group-item" data-presentation-editor-target="navPage">
+    <a
+      href="<%= presentations_show_path(id: @presentation.id, page_id: page.id) %>"
+      data-turbo-frame="_top"
+    >
+      <figure class="figure w-100 mb-0">
+        <img src="<%= url_for(page.image_thumb) %>" class="figure-img img-thumbnail rounded" style="width: 100%; height: 200px; object-fit: contain;">
+        <figcaption class="figure-caption text-center <%= active ? 'fw-bold' : '' %>"><%= page.title %></figcaption>
+      </figure>
+    </a>
+
+    <a
+      class="d-none presentation-editor_controller-nav-page-updater"
+      href="<%= presentations_move_page_action_path(id: @presentation.id, page_id: page.id) %>"
+      data-turbo-method="post"
+      data-turbo-frame="<%= turbo_frame_key %>"
+    ></a>
+  </li>
+<% end %>

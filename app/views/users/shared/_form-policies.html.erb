@@ -1,0 +1,29 @@
+<%
+
+user ||= User.new
+
+%>
+
+<%= render 'shared/form-errors', item: user %>
+
+<%= form_tag users_edit_policies_action_path(user), class: 'row', data: { controller: 'user-policies-form form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="preset" class="form-label">Preset</label>
+    <%= select_tag :preset, options_for_select([
+      [],
+      ['Amministratore', 'admin'],
+      ['Produzione interno', 'production_internal'],
+      ['Produzione esterno', 'production_external']
+    ]), class: 'form-control', data: { user_policies_form_target: 'preset' } %>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="policies" class="form-label">Permessi</label>
+    <%= select_tag :policies, options_for_select(Users::Policy.policies.keys.map { |k| [k.humanize, k] }, user.cached_policies), class: 'form-control', multiple: true, style: 'height: 300px;', data: { user_policies_form_target: 'policies' } %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

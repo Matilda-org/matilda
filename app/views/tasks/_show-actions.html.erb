@@ -1,0 +1,9 @@
+<div class="btn-group" role="group">
+  <a type="button" href="<%= tasks_actions_path(type: 'edit', id: @task.id) %>" data-turbo-frame="action" class="btn btn-primary" data-user-policies-target="item" data-policy="tasks_edit"><i class="bi bi-pencil"></i></a>
+  <% if @task.completed %>
+    <a type="button" href="<%= tasks_actions_path(type: 'uncomplete', id: @task.id) %>" data-turbo-frame="action" class="btn btn-warning" data-user-policies-target="item" data-policy="tasks_uncomplete"><i class="bi bi-x-circle"></i></a>
+  <% elsif @task.accepted %>
+    <a type="button" href="<%= tasks_actions_path(type: 'complete', id: @task.id) %>" data-turbo-frame="action" class="btn btn-success" data-user-policies-target="item" data-policy="tasks_complete"><i class="bi bi-check-circle"></i></a>
+  <% end %>
+  <a type="button" href="<%= tasks_actions_path(type: 'destroy', id: @task.id) %>" data-turbo-frame="action" class="btn btn-danger" data-user-policies-target="item" data-policy="tasks_destroy"><i class="bi bi-trash"></i></a>
+</div>

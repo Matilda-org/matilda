@@ -1,0 +1,19 @@
+<%
+
+track = @session_user.active_tasks_track
+
+%>
+
+<%= turbo_frame_tag 'tasks-tracker' do %>
+  <% if track %>
+  <div class="c-tasks-tracker" data-controller="tasks-tracker" data-tasks-tracker-start-value="<%= track.start_at.to_i %>" data-tasks-tracker-pingpath-value="<%= tasks_ping_track_action_path(id: track.task_id, track_id: track.id) %>" >
+    <div class="c-tasks-tracker__container">
+      <div class="c-tasks-tracker__time" data-tasks-tracker-target="time"></div>
+      <div class="c-tasks-tracker__actions">
+        <a href="<%= tasks_actions_path(type: 'show', id: track.task.id) %>" data-tasks-tracker-target="ctaShow" data-turbo-frame="action"><i class="bi bi-info-circle-fill"></i></a>
+        <a href="<%= tasks_end_track_action_path(id: track.task.id, track_id: track.id) %>" data-turbo-method="post" data-turbo-frame="tasks-tracker"><i class="bi bi-stop-circle-fill"></i></a>
+      </div>
+    </div>
+  </div>
+  <% end %>
+<% end %>

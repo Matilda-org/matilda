@@ -1,0 +1,3 @@
+<%= render 'shared/page-header', title: 'Utenti', render_actions: 'users/index-actions' %>
+
+<%= render 'shared/page-index', query: @users, render_item: 'users/shared/card', render_item_param: :user, search: true %>

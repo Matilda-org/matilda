@@ -1,0 +1,29 @@
+<%
+
+project ||= Project.new
+member ||= Projects::Member.new
+
+path ||= member.persisted? ? projects_edit_member_action_path(id: project.id, member_id: member.id) : projects_add_member_action_path(project)
+
+%>
+
+<%= render 'shared/form-errors', item: member %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <% if !member.persisted? %>
+    <div class="col col-12 mb-3">
+      <label for="user_id" class="form-label">Utente</label>
+      <%= select_tag 'user_id', options_for_select(User.where.not(id: @project.projects_members.pluck(:user_id)).order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, member.user_id), class: 'form-control', required: true %>
+    </div>
+  <% end %>
+  
+  <div class="col col-12 mb-3">
+    <label for="role" class="form-label">Ruolo</label>
+    <input type="text" class="form-control" id="role" name="role" value="<%= member.role %>" required>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

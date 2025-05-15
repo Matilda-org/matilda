@@ -1,0 +1,14 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<% if project.procedures_valid.length.positive? %>
+<a
+  href="<%= projects_actions_path(type: 'add-procedure', id: project.id) %>"
+  data-turbo-frame="action"
+  class="btn btn-primary w-100"
+  data-user-policies-target="item" data-policy="procedures_create"
+>Aggiungi board</a>
+<% end %>

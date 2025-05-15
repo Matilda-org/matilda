@@ -1,0 +1,25 @@
+<%
+
+task ||= Task.new
+frame_id ||= nil
+
+%>
+
+<%= turbo_frame_tag dom_id(task, "checks#{frame_id ? "_#{frame_id}" : ''}") do %>
+  <div class="c-checks c-checks--<%= task.color_type %> list-group list-group-flush" style="background-color: transparent;">
+    <% task.tasks_checks.order(order: :asc).each do |check| %>
+      <% if !task.completed && @session_user&.policy?('tasks_check') %>
+        <a href="<%= tasks_toggle_check_action_path(task, check, frame_id: frame_id) %>" class="list-group-item list-group-item-action bg-transparent" data-turbo-frame="_self" data-turbo-method="post">
+      <% else %>
+        <a class="list-group-item">
+      <% end %>
+        <% if check.checked %>
+          <i class="bi bi-check-square-fill"></i>
+        <% else %>
+          <i class="bi bi-check-square"></i>
+        <% end %>
+        <span class="ms-2 <%= check.checked && 'text-decoration-line-through' %>"><%= check.text %></span>
+      </a>
+    <% end %>
+  </div>
+<% end %>

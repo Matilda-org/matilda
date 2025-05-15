@@ -1,0 +1,22 @@
+<%
+
+size ||= 'third'
+size_xl = {
+  'third' => 4,
+  'half' => 6,
+  'two-third' => 8
+}[size]
+
+policy ||= nil
+
+%>
+
+<div
+  class="col col-12 col-sm-12 col-md-12 col-lg-6 col-xl-<%= size_xl %> mb-4 d-flex flex-column"
+  <% if policy %>
+    data-user-policies-target="item"
+    data-policy="<%= policy %>"
+  <% end %>
+>
+  <%= yield %>
+</div>

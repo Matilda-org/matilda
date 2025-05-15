@@ -1,0 +1,45 @@
+<div class="d-flex justify-content-center align-items-center">
+
+  <div class="dropdown me-1">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <li data-user-policies-target="item" data-policy="presentations_edit">
+        <a href="<%= presentations_actions_path(type: 'edit', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">
+          Modifica
+        </a>
+      </li>
+
+      <% if @presentation.shareable? %>
+        <li>
+          <div class="ps-3 pe-3">
+            <%= render 'presentations/shared/share', presentation: @presentation, small: 'true' %>
+          </div>
+        </li>
+        <li data-user-policies-target="item" data-policy="presentations_share">
+          <a href="<%= presentations_actions_path(type: 'unshare', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">Annulla condivisione</a>
+        </li>
+      <% else %>
+        <li data-user-policies-target="item" data-policy="presentations_share">
+          <a href="<%= presentations_actions_path(type: 'share', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">Condividi</a>
+        </li>
+      <% end %>
+      <li data-user-policies-target="item" data-policy="presentations_edit">
+        <a href="<%= presentations_actions_path(type: 'import', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">Importa pagine</a>
+      </li>
+
+      <li data-user-policies-target="item" data-policy="presentations_destroy">
+        <a href="<%= presentations_actions_path(type: 'destroy', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item text-danger">
+          Elimina
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="btn-group" role="group">
+    <a type="button" href="<%= presentations_player_path(@presentation.id) %>" target="_blank" data-turbo="false" class="btn btn-primary">
+      <i class="bi bi-eye"></i>
+    </a>
+  </div>
+</div>

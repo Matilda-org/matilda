@@ -1,0 +1,13 @@
+<%
+
+procedure ||= Procedure.new
+
+%>
+
+<a
+  href="<%= procedures_show_path(procedure) %>"
+  class="btn btn-primary w-100"
+  data-user-policies-target="item" data-policy="procedures_show"
+  data-turbo-frame="_top"
+>Vai alla board</a>
+

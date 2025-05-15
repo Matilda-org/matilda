@@ -1,0 +1,95 @@
+
+<table style="width: 100%; display: table;">
+  <thead>
+    <tr class="table-header-space"></tr>
+    <tr>
+      <th>
+        <% if @project && @procedure && @procedure_status %>
+          Attività
+        <% elsif @project && @procedure %>
+          Stato
+        <% elsif @project %>
+          Board
+        <% else %>
+          Progetto
+        <% end %>
+      </th>
+      <th>Tempo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @project && @procedure && @procedure_status %>
+      <% @procedure_items.each do |item| %>
+        <tr>
+          <td>
+            <%= item.resource.title %>
+            <% unless item.resource.description.blank? %>
+            <br><small><%= simple_format item.resource.description %></small>
+            <% end %>
+          </td>
+          <td style="min-width: 125px;"><%= track_time item.time_spent %></td>
+        </tr>
+      <% end %>
+    <% elsif @project && @procedure %>
+      <% @procedure_statuses.each do |status| %>
+        <tr>
+          <td><%= status.title %></td>
+          <td style="min-width: 125px;"><%= track_time status.time_spent %></td>
+        </tr>
+      <% end %>
+    <% elsif @project %>
+      <% @project_procedures.each do |procedure| %>
+        <tr>
+          <td><%= procedure.name %></td>
+          <td style="min-width: 125px;"><%= track_time procedure.time_spent %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= project.name %></td>
+          <td style="min-width: 125px;"><%= track_time project.time_spent %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <th>TOTALE</th>
+      <th style="min-width: 125px;"><%= track_time @total %></th>
+    </tr>
+    <% if @user %>
+      <tr>
+        <td colspan="2">
+          Utente<br>
+          <b><%= @user.complete_name %></b>
+        </td>
+      </tr>
+    <% end %>
+    <% if @project %>
+      <tr>
+        <td colspan="2">
+          Progetto<br>
+          <b><%= @project.name %></b>
+        </td>
+      </tr>
+    <% end %>
+    <% if @procedure %>
+      <tr>
+        <td colspan="2">
+          Board<br>
+          <b><%= @procedure.name %></b>
+        </td>
+      </tr>
+    <% end %>
+    <% if @procedure_status %>
+      <tr>
+        <td colspan="2">
+          Stato<br>
+          <b><%= @procedure_status.title %></b>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr class="table-footer-space"></tr>
+  </tfoot>
+</table>

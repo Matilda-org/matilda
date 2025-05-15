@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Condividi nota', turbo_frame: 'module-logs' do %>
+  <%= render 'shared/confirmer', path: projects_share_log_action_path(id: @project.id, log_id: @log.id) %>
+<% end %>

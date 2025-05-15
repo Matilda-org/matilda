@@ -1,0 +1,11 @@
+<%
+
+item ||= ApplicationRecord.new
+
+%>
+
+<% if item.errors.any? %>
+  <div class="alert alert-danger mb-3">
+    <%= item.errors.full_messages.to_sentence %>
+  </div>
+<% end %>

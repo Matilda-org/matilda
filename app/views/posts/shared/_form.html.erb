@@ -1,0 +1,67 @@
+<%
+
+post ||= Post.new
+
+path ||= post.persisted? ? posts_edit_action_path(post) : posts_create_action_path
+
+
+%>
+
+<%= render 'shared/form-errors', item: post %>
+
+<%= form_tag path, class: 'row', multipart: true, data: { controller: 'posts-form form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="content" class="form-label">Contenuto</label>
+    <textarea
+      type="text"
+      class="form-control"
+      id="content"
+      name="content"
+      required
+      rows="6"
+      data-posts-form-target="contentInput"
+    ><%= post.content %></textarea>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <div class="row">
+      <div class="col col-auto mb-3">
+        <img src="<%= post.image.attached? ? url_for(post.image_thumb) : '/statics/placeholder.jpg' %>" style="width: 100px; height: 100px; object-fit: cover;" class="img-thumbnail" data-posts-form-target="imagePreview">
+      </div>
+      <div class="col mb-3">
+        <label for="image" class="form-label">Immagine</label>
+        <input type="file" class="form-control" id="image" name="image" data-posts-form-target="imageInput" accept=".jpg, .png">
+        <div class="form-text">Sono accettati i formati .jpg e .png</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="tags" class="form-label">Tags</label>
+    <input type="text" class="form-control" id="tags" name="tags" value="<%= post.tags %>" data-posts-form-target="tagsInput" placeholder="dev, social, marketing">
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="source_url" class="form-label">Link sorgente</label>
+    <input type="text" class="form-control" id="source_url" name="source_url" value="<%= post.source_url %>" placeholder="https://example.com" data-posts-form-target="sourceUrlInput">
+  </div>
+
+  <% if Setting.get('vectorsearch_openai_key') %>
+      <div class="d-flex justify-content-end mb-3">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Assistant actions">
+          <div class="btn btn-secondary">
+            <i class="bi bi-robot"></i>
+          </div>
+          <button type="button" class="btn btn-outline-primary" data-action="click->posts-form#onClickPopulateFromSourceUrl">
+            Genera da link sorgente
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
+

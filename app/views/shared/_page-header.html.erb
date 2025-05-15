@@ -1,0 +1,37 @@
+<%
+
+title ||= 'Title'
+subtitle ||= nil
+back ||= false
+render_actions ||= nil
+
+%>
+
+<%= turbo_frame_tag "page-header" do %>
+  <div class="mb-4">
+    <div class="row justify-content-between align-items-center flex-nowrap pt-3">
+      <div class="col d-flex align-items-center h-text-oneline">
+        <% if back %>
+          <a href="#" class="me-3 fs-5 text-muted" onclick="window.history.back()">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+          </a>
+        <% else %>
+          <div class="me-3 fs-5">
+            <%= nav_icon(@_navbar) %>
+          </div>
+        <% end %>
+        <h1 class="fs-3 mb-0 h-text-oneline"><%= title %></h1>
+        <% if subtitle %>
+          <h2 class="text-muted mb-0 fs-6 ms-3 h-text-oneline"><%= raw subtitle %></h2>
+        <% end %>
+      </div>
+      <% if render_actions %>
+        <div class="col col-auto d-flex justify-content-end align-items-center">
+          <%= render render_actions %>
+        </div>
+      <% end %>
+    </div>
+
+    <hr/>
+  </div>
+<% end %>

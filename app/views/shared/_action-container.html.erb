@@ -1,0 +1,35 @@
+<%
+
+title ||= 'Titolo'
+size ||= ''
+turbo_frame ||= nil
+classes ||= ''
+feedback ||= false
+
+%>
+
+<%= turbo_frame_tag 'action' do %>
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-<%= size %> <%= classes %>" id="action-controller" data-controller="action">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title fs-5"><%= title %></h3>
+        <% if feedback %>
+          <a
+            type="button"
+            href=""
+            data-turbo-frame="<%= turbo_frame %>"
+            <% if turbo_frame != '_top' %>
+              data-action="click->action#closeModal"
+            <% end %>
+            class="btn-close h-cursor-pointer"
+          ></a>
+        <% else %>
+          <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal"></a>
+        <% end %>
+      </div>
+      <div class="modal-body">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,3 @@
+<%= render 'shared/page-header', title: 'Presentazioni', render_actions: 'presentations/index-actions' %>
+
+<%= render 'shared/page-index', query: @presentations, render_item: 'presentations/shared/card', render_item_param: :presentation, search: true %>

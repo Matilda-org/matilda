@@ -1,0 +1,19 @@
+<%
+
+path ||= '#'
+
+%>
+
+<div class="text-center" data-controller="destroyer">
+  <h3 class="fs-5 mb-3">Sei sicuro di procedere con l'eliminazione?</h3>
+  <p class="mb-4">Scrivi la parola <strong>ELIMINA</strong> per confermare l'operazione.</p>
+  <%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+    <div class="col">
+      <input type="text" class="form-control" id="confirm" name="confirm" placeholder="Conferma eliminazione" value="" data-action="keyup->destroyer#update" required>
+    </div>
+
+    <div class="col-auto">
+      <button type="submit" data-destroyer-target="submit" class="btn btn-danger" disabled data-form-loading-target="submit">Conferma</button>
+    </div>
+  <% end %>
+</div>

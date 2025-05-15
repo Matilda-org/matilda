@@ -1,0 +1,29 @@
+<%
+
+post ||= Post.new
+
+%>
+
+<div class="card w-100">
+  <div class="card-img-top border-bottom" style="height: 0; padding-bottom: 75%; object-fit: cover; position: relative;">
+    <img src="<%= post.image.attached? ? url_for(post.image_large) : '/statics/placeholder.jpg' %>" data-controller="imagezoom" class="card-img-top w-100" style="height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;">
+  </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center" style="font-size: 14px;">
+      <p class="text-muted me-5"><%= post.tags %></p>
+      <p class="text-muted"><%= post.created_at.strftime('%d/%m/%Y') %></p>
+    </div>
+    <p class="card-text"><%= post.content %></p>
+  </div>
+  <div class="card-footer d-flex justify-content-end">
+    <a class="card-link d-flex align-items-center text-danger" href="<%= posts_actions_path(type: 'destroy', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_destroy">
+      Elimina
+    </a>
+    <a class="card-link d-flex align-items-center" href="<%= posts_actions_path(type: 'edit', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_edit">
+      Modifica
+    </a>
+    <% unless post.source_url.blank? %>
+      <a href="<%= post.source_url %>" target="_blank" class="btn btn-sm btn-primary ms-3">Dettagli</a>
+    <% end %>
+  </div>
+</div>

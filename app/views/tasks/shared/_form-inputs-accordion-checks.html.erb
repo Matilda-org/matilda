@@ -1,0 +1,37 @@
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#formTaskAccordionChecks" aria-expanded="true" aria-controls="formTaskAccordionChecks">
+      Checklist
+    </button>
+  </h2>
+  <div id="formTaskAccordionChecks" class="accordion-collapse collapse" data-bs-parent="#formTaskAccordion">
+    <div class="accordion-body">
+      <div class="d-none" data-tasks-form-target="checksTemplate">
+        <li class="list-group-item d-flex align-items-center px-0">
+          <input type="text" class="form-control" id="tasks_checks_texts_[template]" name="tasks_checks_texts[]" value="" disabled>
+          <button type="button" class="btn btn-outline-danger btn-sm ms-2" data-action="click->tasks-form#onClickRemoveCheck">
+            <i class="bi bi-x"></i>
+          </button>
+        </li>
+      </div>
+
+      <input type="hidden" id="tasks_checks_texts_empty" name="tasks_checks_texts[]" value="">
+      <ul class="list-group list-group-flush mb-3" data-tasks-form-target="checksList">
+        <% task.tasks_checks_texts.each do |text| %>
+          <li class="list-group-item d-flex align-items-center px-0">
+            <input type="text" class="form-control" id="tasks_checks_texts_<%= SecureRandom.hex(3) %>" name="tasks_checks_texts[]" value="<%= text %>">
+            <button type="button" class="btn btn-outline-danger btn-sm ms-2" data-action="click->tasks-form#onClickRemoveCheck">
+              <i class="bi bi-x"></i>
+            </button>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-primary btn-sm" data-tasks-form-target="checksAddButton" data-action="click->tasks-form#onClickAddCheck">
+          <i class="bi bi-plus"></i> Aggiungi voce
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

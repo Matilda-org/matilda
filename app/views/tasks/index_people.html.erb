@@ -1,0 +1,5 @@
+<%= render 'shared/page-header', title: 'Task', render_actions: 'tasks/index-actions' %>
+
+<%= render 'tasks/people-filters', date: @date, project_id: @project_id %>
+
+<%= render 'tasks/people', date: @date, tasks_per_user: @tasks_per_user %>

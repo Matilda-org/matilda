@@ -1,0 +1,56 @@
+<%
+
+tasks ||= []
+tasks_projects ||= []
+type ||= 'assigned'
+
+turbo_frame_key = "module-tasks-#{type}"
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key do %>
+
+  <% if tasks.length.positive? %>
+    <div class="pt-1 pb-2 border-bottom d-flex align-items-center justify-content-between" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95); width: calc(100% + 2px); margin-left: -1px;">
+      <ul class="nav nav-pills d-flex flex-row flex-nowrap" style="overflow-x: auto; overflow-y: hidden; flex: 1;">
+        <li class="nav-item">
+          <a class="nav-link h-text-oneline <%= params[:tasks_project_id].blank? ? 'active' : '' %>" href="" data-turbo-frame="module-tasks">TUTTI</a>
+        </li>
+        <% tasks_projects.each_with_index do |project, index| %>
+          <% next if index > 4 %>
+          <li class="nav-item">
+            <a
+              class="nav-link h-text-oneline <%= project.id == params[:tasks_project_id].to_i ? 'active' : '' %>"
+              style="font-family: monospace;"
+              href="?tasks_project_id=<%= project.id %>"
+              data-turbo-frame="module-tasks"
+              data-controller="tooltip"
+              data-tooltip="<%= project.name %>"
+            ><%= project.name_2chars %></a>
+          </li>
+        <% end %>
+        <% if tasks_projects.length > 5 %>
+          <li class="nav-item">
+            <a
+              class="nav-link h-text-oneline border-0 bg-transparent"
+              data-controller="tooltip"
+              data-tooltip="<%= tasks_projects[5..].map(&:name).join(', ') %>"
+            >+ <%= tasks_projects.length - 5 %></a>
+          </li>
+        <% end %>
+      </ul>
+
+      <span class="badge rounded-pill bg-primary ms-2"><%= tasks.length %></span>
+    </div>
+
+    <div class="mt-3">
+      <% tasks.each do |task| %>
+        <div class="mb-3">
+          <%= render 'tasks/shared/card', task: task, turbo_frame_key: turbo_frame_key %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <%= render 'shared/placeholder' %>
+  <% end %>
+<% end %>

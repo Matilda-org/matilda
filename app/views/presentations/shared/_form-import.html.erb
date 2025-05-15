@@ -1,0 +1,30 @@
+<%
+
+presentation ||= Presentation.new
+turbo_frame_key ||= nil
+
+%>
+
+<%= render 'shared/form-errors', item: presentation %>
+
+<%= form_tag presentations_import_action_path(presentation), class: 'row', multipart: true, data: { controller: 'form-loading' } do %>
+  <% if turbo_frame_key %>
+    <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
+  <% end %>
+
+  <div class="col col-12 mb-3">
+    <div class="alert alert-secondary" role="alert">
+      Eventuali pagine già presenti nella presentazione con il nome immagine uguale a quello delle pagine importate verranno sovrascritte.
+    </div>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="images" class="form-label">Immagini</label>
+    <input type="file" class="form-control" id="images" name="images[]" required multiple>
+    <div class="form-text">Sono accettati i formati .jpg e .png</div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

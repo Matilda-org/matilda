@@ -1,0 +1,63 @@
+<%
+
+task ||= Task.new
+turbo_frame_key ||= '_top'
+
+%>
+
+<div class="d-flex justify-content-between align-items-center">
+  <% if task.persisted? %>
+
+  <a class="card-link" href="<%= tasks_actions_path(type: 'show', id: task.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="tasks_show">Visualizza</a>
+
+  <% else %>
+    <span></span>
+  <% end %>
+
+  <div>
+    <% if task.persisted? && !task.completed %>
+      <% if !task.repeat_original_task_id %>
+        <a
+          type="button"
+          class="btn btn-<%= task.color_type %> border-2 btn-sm"
+          href="<%= tasks_actions_path(type: 'edit', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+          data-turbo-frame="action"
+          data-controller="tooltip"
+          data-tooltip="Modifica"
+          data-user-policies-target="item" data-policy="tasks_edit"
+        >
+          <i class="bi bi-pencil-fill"></i>
+        </a>
+
+        <a
+          type="button"
+          href="<%= tasks_actions_path(type: 'postpone', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+          data-turbo-frame="action"
+          class="btn btn-<%= task.color_type %> btn-sm border-2"
+          data-controller="tooltip"
+          data-tooltip="Rimanda"
+          data-user-policies-target="item" data-policy="tasks_edit"
+        >
+          <i class="bi bi-calendar-range"></i>
+        </a>
+
+      <% end %>
+
+      <% if task.accepted %>
+        <a
+          type="button"
+          class="btn btn-<%= task.color_type %> border-2 btn-sm"
+          href="<%= tasks_start_track_action_path(id: task.id) %>"
+          data-turbo-method="post"
+          data-turbo-frame="tasks-tracker"
+          data-controller="tooltip"
+          data-tooltip="Avvia tracking"
+          data-user-policies-target="item" data-policy="tasks_track"
+        >
+          <i class="bi bi-play-circle-fill"></i>
+        </a>
+      <% end %>
+    <% end %>
+  </div>
+
+</div>

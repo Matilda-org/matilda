@@ -1,0 +1,34 @@
+<%
+
+project ||= Project.new
+log ||= Projects::Log.new
+
+path ||= log.persisted? ? projects_edit_log_action_path(id: project.id, log_id: log.id) : projects_add_log_action_path(project)
+
+%>
+
+<%= render 'shared/form-errors', item: log %>
+
+<%= form_tag path, class: 'row', data: { controller: "#{log.persisted? ? 'form-autosave' : ''} form-loading" } do %>
+
+  <div class="col col-12 col-md-12 col-lg-8 col-xl-9 mb-3">
+    <label for="title" class="form-label">Titolo</label>
+    <input type="text" class="form-control" id="title" name="title" value="<%= log.title %>" required>
+  </div>
+
+  <div class="col col-12 col-md-12 col-lg-4 col-xl-3 mb-3">
+    <label for="date" class="form-label">Data di riferimento</label>
+    <input type="date" class="form-control" id="date" name="date" value="<%= log.date || Date.today %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <%= rich_text_area_tag :content, log.content, class: 'trix-content trix-content--lg' %>
+  </div>
+
+  <div class="d-flex justify-content-end align-items-center">
+    <% if log.persisted? %>
+      <span data-form-autosave-target="updateStatus" class="btn btn-link btn-sm text-muted text-decoration-none d-none"></span>
+    <% end %>
+    <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

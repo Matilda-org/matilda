@@ -1,0 +1,81 @@
+<%
+
+has_prefer = false
+has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @session_user && @procedure
+
+%>
+
+
+<div class="d-flex justify-content-center align-items-center">
+  <div class="dropdown me-1">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <% if has_prefer %>
+        <li>
+          <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @procedure.id, resource_type: @procedure.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
+            Rimuovi dai preferiti
+          </a>
+        </li>
+      <% else %>
+        <li>
+          <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @procedure.id, resource_type: @procedure.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
+            Aggiungi ai preferiti
+          </a>
+        </li>
+      <% end %>
+
+      <li data-user-policies-target="item" data-policy="procedures_edit">
+        <a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit', id: @procedure.id) %>" data-turbo-frame="action">
+          Modifica
+        </a>
+      </li>
+      <% if @procedure.clonable? %>
+        <li data-user-policies-target="item" data-policy="procedures_clone">
+          <a class="dropdown-item" href="<%= procedures_actions_path(type: 'clone', id: @procedure.id) %>" data-turbo-frame="action">
+            Clona
+          </a>
+        </li>
+      <% end %>
+      <% if @procedure.archivable? %>
+        <% if @procedure.archived %>
+          <li data-user-policies-target="item" data-policy="procedures_unarchive">
+            <a class="dropdown-item" href="<%= procedures_actions_path(type: 'unarchive', id: @procedure.id) %>" data-turbo-frame="action">
+              Ri-attiva
+            </a>
+          </li>
+        <% else %>
+          <li data-user-policies-target="item" data-policy="procedures_archive">
+            <a class="dropdown-item" href="<%= procedures_actions_path(type: 'archive', id: @procedure.id) %>" data-turbo-frame="action">
+              Archivia
+            </a>
+          </li>
+        <% end %>
+      <% end %>
+      <li data-user-policies-target="item" data-policy="procedures_destroy">
+        <a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'destroy', id: @procedure.id) %>" data-turbo-frame="action">
+          Elimina
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="btn-group" role="group">
+    <% if !@procedure.model && @procedure.resources_type_projects? %>
+      <%= link_to procedures_toggle_show_archived_projects_action_path(@procedure), data: { turbo_method: :post, turbo_frame: dom_id(@procedure, 'kanban') }, class: 'btn btn-primary' do %>
+        <i class="bi bi-eye"></i>
+      <% end %>
+    <% end %>
+
+    <% if !@procedure.model %>
+      <a type="button" href="<%= procedures_actions_path(type: 'search', id: @procedure.id) %>" data-turbo-frame="action" class="btn btn-primary">
+        <i class="bi bi-search"></i>
+      </a>
+    <% end %>
+
+    <a type="button" href="<%= procedures_actions_path(type: 'add-status', id: @procedure.id) %>" data-turbo-frame="action" class="btn btn-primary" data-user-policies-target="item" data-policy="procedures_edit">
+      <i class="bi bi-plus-circle"></i>
+    </a>
+  </div>
+</div>

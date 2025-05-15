@@ -1,0 +1,7 @@
+<div class="fw-lighter text-muted">
+<% if task.completed %>
+  Il task è stato completato il <b><%= task.completed_at.strftime('%d/%m/%Y') %></b>
+<% else %>
+   Il task non è ancora stato completato.
+<% end %>
+</div>

@@ -1,0 +1,9 @@
+<% if project.procedures.length.positive? %>
+  <% project.procedures.order(name: :asc).each do |procedure| %>
+    <div class="mb-3">
+      <%= render 'procedures/shared/card', procedure: procedure %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render 'shared/placeholder' %>
+<% end %>

@@ -1,0 +1,77 @@
+<%
+
+project ||= Project.new
+attachment ||= Projects::Attachment.new
+
+path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: project.id, attachment_id: attachment.id) : projects_add_attachment_action_path(project)
+
+%>
+
+<%= render 'shared/form-errors', item: attachment %>
+
+<%= form_tag path, class: 'row', multipart: true, id: 'projectAttachmentForm', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-6 mb-3">
+    <label for="typology" class="form-label">Tipologia</label>
+    <%= select_tag :typology, options_for_select(Projects::Attachment.typologies.map {|key, value| [Projects::Attachment.typology_string(key.to_s), Projects::Attachment.typologies.key(value)]}, attachment.typology), class: 'form-control', required: true, onchange: 'projectAttachmentFormTypologyChange()' %>
+  </div>
+
+  <div class="col col-6 mb-3">
+    <label for="version" class="form-label">Versione</label>
+    <input type="number" min="1" class="form-control" id="version" name="version" value="<%= attachment.version || 1 %>" required>
+  </div>
+
+  <% if attachment.persisted? %>
+    <div class="col col-12 mb-3">
+      <div class="input-group">
+        <% if attachment.file.attached? %>
+          <a class="btn btn-primary" href="<%= url_for(attachment.file) %>" download><i class="bi bi-cloud-arrow-down"></i></a>
+        <% else %>
+          <button class="btn btn-primary" type="button" disabled><i class="bi bi-cloud-arrow-down"></i></button>
+        <% end %>
+        <input type="text" class="form-control" placeholder="File" value="<%= attachment.file&.filename || 'Non disponibile' %>" readonly>
+      </div>
+    </div>
+  <% else %>
+    <div class="col col-12 mb-3">
+      <label for="file" class="form-label">File</label>
+      <input type="file" class="form-control" id="file" name="file" required>
+      <div class="form-text">Per caricare più file prepara un unico .zip</div>
+    </div>
+  <% end %>
+
+  <hr />
+
+  <div class="col col-12 mb-3">
+    <label for="title" class="form-label">Titolo</label>
+    <input type="text" class="form-control" id="title" name="title" value="<%= attachment.title %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="description" class="form-label">Breve descrizione</label>
+    <textarea class="form-control" rows="5" id="description" name="description"><%= attachment.description %></textarea>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="date" class="form-label">Data di riferimento</label>
+    <input type="date" class="form-control" id="date" name="date" value="<%= attachment.date || Date.today %>" required>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
+
+<script>
+function projectAttachmentFormTypologyChange() {
+  const form = document.querySelector('#projectAttachmentForm')
+  const typologyInput = form.querySelector('#typology')
+  const titleInput = form.querySelector('#title')
+
+  if (typologyInput.value == '') {
+    titleInput.value = ''
+  } else {
+    titleInput.value = typologyInput.options[typologyInput.selectedIndex].text
+  }
+}
+</script>

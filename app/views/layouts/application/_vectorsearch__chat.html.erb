@@ -1,0 +1,29 @@
+<%
+
+vectorsearch ||= nil
+user_id = vectorsearch&.user_id || @session_user_id
+
+%>
+
+<%= turbo_frame_tag "vectorsearch_#{user_id}_chat" do %>
+  <div class="vectorsearch__chat" data-vectorsearch-target="chat">
+    <% if vectorsearch.messages.length.positive? %>
+      <% vectorsearch.messages.each do |message| %>
+        <div class="vectorsearch__chat-message vectorsearch__chat-message--<%= message[:role] %>">
+          <%= raw message[:content].gsub("\n", "<br />") %>
+        </div>
+      <% end %>
+
+      <% if vectorsearch.messages.last[:role] == 'user' %>
+        <div class="vectorsearch__chat-loading">
+          <div class="animation"><div></div><div></div><div></div><div></div></div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="vectorsearch__chat-empty">
+        <i class="bi bi-robot"></i>
+       <span>Scrivi un messaggio e premi invio per iniziare la conversazione con l'assistente virtuale.</span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

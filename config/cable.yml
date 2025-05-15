@@ -1,0 +1,8 @@
+test:
+  adapter: test
+
+development:
+  adapter: async
+
+production:
+  adapter: async

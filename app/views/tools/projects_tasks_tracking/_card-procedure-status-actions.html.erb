@@ -1,0 +1,7 @@
+<%
+
+procedure_status ||= Procedures::Status.new
+
+%>
+
+<%= link_to 'Dettagli', request.params.merge(project_id: procedure_status.procedure.project_id, procedure_id: procedure_status.procedure_id, procedure_status_id: procedure_status.id), class: 'card-link', data: { turbo_frame: '_top' } %>

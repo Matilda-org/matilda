@@ -1,0 +1,168 @@
+<%
+
+projects ||= []
+search ||= ''
+search_results ||= {}
+search_has_results = false
+
+%>
+
+<%= turbo_frame_tag 'module-search' do %>
+
+  <div class="pt-1 pb-2 border-bottom" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95);">
+    <%= form_tag '', method: :get, class: 'd-flex', data: { turbo_frame: 'module-search-results', controller: 'filters' } do %>
+      <div class="input-group">
+        <input type="text" name="search" list="moduleSearchSuggestions" class="form-control" placeholder="Ricerca" value="<%= search %>" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced" autofocus>
+        <button class="btn btn-light border" type="button" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
+        <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
+      </div>
+      <datalist id="moduleSearchSuggestions">
+        <% @session_user.cached_users_logs_search_values.each do |log_value| %>
+          <option value="<%= log_value %>"><%= log_value %></option>
+        <% end %>
+      </datalist>
+    <% end %>
+  </div>
+
+  <div class="mt-3">
+    <%= turbo_frame_tag 'module-search-results' do %>
+      <% if search_results[:projects]&.length&.positive? %>
+        <% search_has_results = true %>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Progetti</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= search_results[:projects].length %></span>
+        </div>
+        <% search_results[:projects].each do |project| %>
+          <div class="mb-3">
+            <%= render 'projects/shared/card', project: project %>
+          </div>
+        <% end %>
+        <hr>
+      <% end %>
+
+      <% if search_results[:credentials]&.length&.positive? %>
+        <% search_has_results = true %>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Credenziali</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= search_results[:credentials].length %></span>
+        </div>
+        <% search_results[:credentials].each do |credential| %>
+          <div class="mb-3">
+            <%= render 'credentials/shared/card', credential: credential %>
+          </div>
+        <% end %>
+        <hr>
+      <% end %>
+
+      <% if search_results[:tasks]&.length&.positive? %>
+        <% search_has_results = true %>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Task</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= search_results[:tasks].length %></span>
+        </div>
+        <% search_results[:tasks].each do |task| %>
+          <div class="mb-3">
+            <%= render 'tasks/shared/card', task: task %>
+          </div>
+        <% end %>
+        <hr>
+      <% end %>
+
+      <% if search_results[:procedures]&.length&.positive? %>
+        <% search_has_results = true %>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Board</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= search_results[:procedures].length %></span>
+        </div>
+        <% search_results[:procedures].each do |procedure| %>
+          <div class="mb-3">
+            <%= render 'procedures/shared/card', procedure: procedure %>
+          </div>
+        <% end %>
+        <hr>
+      <% end %>
+
+      <% if search_results[:projects_archived]&.length&.positive? %>
+        <% search_has_results = true %>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Progetti archiviati</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= search_results[:projects_archived].length %></span>
+        </div>
+        <% search_results[:projects_archived].each do |project| %>
+          <div class="mb-3">
+            <%= render 'projects/shared/card', project: project %>
+          </div>
+        <% end %>
+        <hr>
+      <% end %>
+
+      <% if search.blank? && !search_has_results %>
+
+        <% if (@session_user.policy?('projects_index') || @session_user.policy?('tasks_index') || @session_user.policy?('procedures_index') || @session_user.policy?('credentials_index')) %>
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+            <h6 class="me-2 mb-0 mt-0 text-muted">Shortcuts</h6>
+            <div class="d-flex justify-content-start align-items-center">
+              <a
+                href="<%= tasks_path %>"
+                class="btn btn-primary me-1"
+                data-turbo-frame="_top"
+                data-controller="tooltip"
+                data-tooltip="Task"
+                data-user-policies-target="item"
+                data-policy="tasks_index"
+              >
+                <%= nav_icon('tasks') %>
+              </a>
+              <a
+                href="<%= projects_path %>"
+                class="btn btn-primary me-1"
+                data-turbo-frame="_top"
+                data-controller="tooltip"
+                data-tooltip="Progetti"
+                data-user-policies-target="item"
+                data-policy="projects_index"
+              >
+                <%= nav_icon('projects') %>
+              </a>
+              <a
+                href="<%= procedures_path %>"
+                class="btn btn-primary me-1"
+                data-turbo-frame="_top"
+                data-controller="tooltip"
+                data-tooltip="Board"
+                data-user-policies-target="item"
+                data-policy="procedures_index"
+              >
+                <%= nav_icon('procedures') %>
+              </a>
+              <a
+                href="<%= credentials_path %>"
+                class="btn btn-primary me-1"
+                data-turbo-frame="_top"
+                data-controller="tooltip"
+                data-tooltip="Credenziali"
+                data-user-policies-target="item"
+                data-policy="credentials_index"
+              >
+                <%= nav_icon('credentials') %>
+              </a>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <h4>Progetti attivi</h4>
+          <span class="badge text-bg-primary rounded-pill"><%= projects.length %></span>
+        </div>
+        <% projects.each do |project| %>
+          <div class="mb-3">
+            <%= render 'projects/shared/card-interactive', project: project %>
+          </div>
+        <% end %>
+      <% elsif !search_has_results %>
+        <%= render 'shared/placeholder', message: 'Nessun risultato disponibile' %>
+      <% end %>
+    <% end %>
+  </div>
+
+<% end %>

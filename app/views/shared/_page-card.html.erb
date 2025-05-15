@@ -1,0 +1,37 @@
+<% 
+
+title ||= 'Title'
+counter ||= nil
+render_content ||= nil
+render_content_args ||= {}
+render_footer ||= nil
+render_footer_args ||= {}
+full ||= false
+auto ||= false
+always_open ||= false
+classes ||= ''
+
+%>
+
+<div class="c-page-card card w-100 h-100 shadow <%= classes %>" data-controller="page-card">
+  <div data-page-card-target="header" class="c-page-card__header card-header d-flex justify-content-between align-items-center rounded-bottom border-bottom-0">
+    <h2 class="fs-4 mb-0 h-text-oneline"><%= raw title %></h2>
+    <% if counter.present? %>
+      <span class="badge rounded-pill text-white <%= counter.positive? ? 'bg-primary' : 'bg-secondary' %>">
+        <%= counter %>
+      </span>
+    <% end %>
+  </div>
+  <div class="c-page-card__content <%= always_open ? '' : 'd-none' %> d-md-flex" data-page-card-target="content" <%= always_open ? 'always-open' : 'closed' %>>
+    <% if render_content %>
+      <div class="card-body c-page-card__body <%= full ? 'c-page-card__body--full' : '' %> <%= auto ? 'c-page-card__body--auto' : '' %>">
+        <%= render render_content, render_content_args %>
+      </div>
+    <% end %>
+    <% if render_footer %>
+      <div class="card-footer c-page-card__footer rounded-top border-top-0 d-flex flex-column justify-content-center">
+        <%= render render_footer, render_footer_args %>
+      </div>
+    <% end %>
+  </div>
+</div>

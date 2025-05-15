@@ -1,0 +1,64 @@
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#formTaskAccordionRepeat" aria-expanded="true" aria-controls="formTaskAccordionRepeat">
+      Ripetizione
+    </button>
+  </h2>
+  <div id="formTaskAccordionRepeat" class="accordion-collapse collapse" data-bs-parent="#formTaskAccordion">
+    <div class="accordion-body">
+      <div class="row">
+        <div class="col col-12">
+          <input type="hidden" name="repeat" value="0">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="repeat" name="repeat" value="1" <%= task.repeat ? 'checked' : '' %> data-tasks-form-target="repeatInput" data-action="change->tasks-form#onChangeRepeat">
+            <label class="form-check-label" for="repeat">Attiva ripetizione task</label>
+          </div>
+        </div>
+
+        <div class="col col-12 row mt-3 d-none" data-tasks-form-target="repeatFields">
+
+          <div class="col col-12 col-md-12 col-lg-4 mb-3">
+            <label for="repeat_type" class="form-label">Tipo</label>
+              <%= select_tag 'repeat_type', options_for_select([
+              ['Settimanale', 'weekly'],
+              ['Mensile', 'monthly']
+            ], task.repeat_type), class: 'form-control', data: { tasks_form_target: 'repeatTypeInput', action: 'change->tasks-form#onChangeRepeatType' } %>
+          </div>
+
+          <div class="col col-12 col-md-6 col-lg-4 mb-3">
+            <label for="repeat_from" class="form-label">Dal</label>
+            <input type="date" class="form-control" id="repeat_from" name="repeat_from" value="<%= task.repeat_from&.strftime('%Y-%m-%d') %>">
+          </div>
+
+          <div class="col col-12 col-md-6 col-lg-4 mb-3">
+            <label for="repeat_to" class="form-label">Al</label>
+            <input type="date" class="form-control" id="repeat_to" name="repeat_to" value="<%= task.repeat_to&.strftime('%Y-%m-%d') %>">
+          </div>
+
+          <div class="col col-12 mb-3" data-tasks-form-target="repeatFieldsWeek">
+            <%= hidden_field_tag 'repeat_weekdays[]', '' %>
+            <label for="repeat_weekdays" class="form-label">Giornate della settimana</label>
+            <%= select_tag 'repeat_weekdays', options_for_select([
+              ['Lunedì', 1],
+              ['Martedì', 2],
+              ['Mercoledì', 3],
+              ['Giovedì', 4],
+              ['Venerdì', 5],
+              ['Sabato', 6],
+              ['Domenica', 0]
+            ], task.repeat_weekdays), class: 'form-control', multiple: true %>
+          </div>
+
+          <div class="col col-12 mb-3 d-none" data-tasks-form-target="repeatFieldsMonth">
+            <label for="repeat_monthday" class="form-label">Giorno del mese</label>
+            <%= select_tag 'repeat_monthday', options_for_select([
+              ['Primo del mese', 'first'],
+              ['Ultimo del mese', 'last'],
+              ['Metà mese', 'middle']
+            ], task.repeat_monthday), class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<%
+
+project ||= Project.new
+procedure ||= Procedure.new
+
+%>
+
+<%= render 'shared/form-errors', item: procedure %>
+
+<%= form_tag projects_add_procedure_action_path(project), class: 'row', id: 'projectProceduresForm', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="procedure_id" class="form-label">Modello di partenza</label>
+    <%= select_tag 'procedure_id', options_for_select([''] + project.procedures_valid.map { |u| [u.name, u.id] }, ''), class: 'form-control', onchange: 'projectProcedureFormProcedureCloneChange()', required: true %>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="name" class="form-label">Nome della board</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" required>
+  </div>
+
+  <hr>
+
+  <div class="col col-12 mb-3">
+    <label for="deadline" class="form-label">Imposta la scadenza dei task a</label>
+    <input type="date" class="form-control" id="deadline" name="deadline" value="">
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="user_id" class="form-label">Assegna i task a</label>
+    <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, ''), class: 'form-control' %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
+
+<script>
+function projectProcedureFormProcedureCloneChange() {
+  const form = document.querySelector('#projectProceduresForm')
+  const procedureCloneInput = form.querySelector('#procedure_id')
+  const nameInput = form.querySelector('#name')
+
+  if (procedureCloneInput.value == '') {
+    nameInput.value = ''
+  } else {
+    nameInput.value = procedureCloneInput.options[procedureCloneInput.selectedIndex].text
+  }
+}
+</script>
+

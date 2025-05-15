@@ -1,0 +1,123 @@
+/** Custom style for theme **/
+
+trix-editor.trix-content {
+  border-color: var(--bs-gray-300);
+  border-top-width: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  background-color: $input-bg;
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+}
+
+trix-editor.trix-content {
+  min-height: 200px;
+}
+
+trix-editor.trix-content--lg {
+  min-height: 500px;
+}
+
+trix-toolbar .trix-button-group {
+  border: solid 1px var(--bs-gray-300);
+  border-top-color: var(--bs-gray-300);
+  border-bottom-color: var(--bs-gray-300);
+
+}
+
+trix-toolbar .trix-button {
+  border-bottom: solid 2px transparent;
+  background-color: var(--bs-gray-100);
+}
+
+trix-toolbar .trix-button.trix-active {
+  background-color: var(--bs-gray-300);
+  border-bottom-color: transparent;
+}
+
+trix-toolbar {
+  position: sticky;
+  top: -16px;
+  z-index: 1;
+  background-color: var(--bs-white);
+  padding-top: 10px;
+  border-bottom: solid 1px var(--bs-gray-300);
+}
+
+.trix-content {
+  .attachment-gallery {
+    justify-content: space-between;
+
+    > action-text-attachment,
+    > .attachment {
+      flex: 1 0 32%;
+      padding: 0 0.5em;
+      max-width: 32%;
+    }
+
+    &.attachment-gallery--2,
+    &.attachment-gallery--4 {
+      > action-text-attachment,
+      > .attachment {
+        flex-basis: 49%;
+        max-width: 49%;
+      }
+    }
+  }
+
+  .attachment {
+    background-color: $light;
+    border-radius: $border-radius;
+    padding: 0 0 5px 0 !important;
+    margin: 10px 0;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+  }
+
+  action-text-attachment {
+    .attachment {
+      max-width: 100% !important;
+    }
+  }
+
+  .attachment__caption {
+    margin-top: 0.5em;
+    font-size: 0.8em;
+    color: var(--bs-gray-600);
+  }
+
+  .attachment__download {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--bs-white);
+    color: var(--bs-black);
+    text-decoration: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .attachment__caption-editor {
+    padding: 0.25em;
+    border: solid 1px var(--bs-gray-300);
+    border-radius: 0.25em;
+    width: 95%;
+  }
+}
+
+[data-trix-attribute="code"] {
+  display: none;
+}
+[data-trix-attribute="quote"] {
+  display: none;
+}

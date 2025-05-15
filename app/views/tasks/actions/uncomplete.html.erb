@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Attiva task" do %>
+  <%= render 'shared/confirmer', path: tasks_uncomplete_action_path(id: @task.id) %>
+<% end %>

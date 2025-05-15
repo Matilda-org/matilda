@@ -1,0 +1,22 @@
+<%
+
+description = project.description_with_budget
+
+%>
+
+<h3 class="fs-5"><%= project.name %></h3>
+<h4 class="fs-6 text-muted"><%= project.complete_code %></h4>
+<hr />
+<% if description.blank? %>
+<p class="text-muted">
+Nessuna descrizione
+</p>
+<% else %>
+<div data-controller="protector" class="mb-3">
+  <div data-protector-target="content" style="opacity: 0;">
+    <%= simple_format description %>
+  </div>
+</div>
+<% end %>
+
+<%= render 'projects/shared/card-content', project: project %>

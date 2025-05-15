@@ -1,0 +1,48 @@
+<%= render 'shared/page-header',
+  title: @folder.name,
+  render_actions: 'folders/show-actions',
+  back: true
+%>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Dettagli",
+      render_content: 'folders/shared/module-infos',
+      always_open: true,
+      render_content_args: {
+        folder: @folder
+      }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Progetti",
+      render_content: 'folders/shared/module-projects',
+      counter: @projects.length,
+      render_content_args: {
+        projects: @projects
+      }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Credenziali",
+      render_content: 'folders/shared/module-credentials',
+      counter: @credentials.length,
+      render_content_args: {
+        credentials: @credentials
+      }
+    %>
+
+  <% end %>
+
+<% end %>

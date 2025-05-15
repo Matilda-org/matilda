@@ -1,0 +1,38 @@
+<%
+
+date ||= Date.today
+tasks ||= []
+turbo_frame_key = "tasks-calendar-status-#{date.strftime("%Y-%m-%d")}"
+
+total_time_sum = tasks.sum(&:time_estimate)
+
+%>
+
+<%= turbo_frame_tag turbo_frame_key do %>
+  <div class="card d-flex flex-direction-column justify-content-between me-3" style="width: 360px; flex: 0 0 auto;">
+    <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
+      <div class="h-text-oneline">
+        <%= raw date.strftime("<b>%a</b> <small class='text-muted'>%d/%m/%Y</small>") %>
+      </div>
+      <div class="ms-3">
+        <span
+          class="badge rounded-pill text-white bg-<%= tasks_time_estimate_color(tasks) %>"
+        >
+          <%= track_time total_time_sum %>
+        </span>
+        <span
+          class="badge rounded-pill text-white <%= tasks.length.positive? ? 'bg-info' : 'bg-dark' %>"
+        >
+          <%= tasks.select(&:completed).length %> / <%= tasks.length %>
+        </span>
+      </div>
+    </div>
+    <ul class="list-group list-group-flush h-fullscroll">
+      <% if tasks.length.positive? %>
+        <% tasks.sort_by { |t| t.completed ? 1 : 0 }.each do |task| %>
+          <%= render 'tasks/calendar-item', task: task %>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

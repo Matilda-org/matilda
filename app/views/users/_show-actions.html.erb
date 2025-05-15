@@ -1,0 +1,30 @@
+<% if @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_destroy') %>
+
+<div class="d-flex justify-content-center align-items-center">
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <li data-user-policies-target="item" data-policy="users_edit">
+        <a class="dropdown-item" href="<%= users_actions_path(type: 'edit', id: @user.id) %>" data-turbo-frame="action">
+          Modifica
+        </a>
+      </li>
+      
+      <li data-user-policies-target="item" data-policy="users_edit_policies">
+        <a class="dropdown-item" href="<%= users_actions_path(type: 'edit-policies', id: @user.id) %>" data-turbo-frame="action">
+          Permessi
+        </a>
+      </li>
+      
+      <li data-user-policies-target="item" data-policy="users_destroy">
+        <a class="dropdown-item text-danger" href="<%= users_actions_path(type: 'destroy', id: @user.id) %>" data-turbo-frame="action">
+          Elimina
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<% end %>

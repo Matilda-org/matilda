@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: "Rimuovi nota" do %>
+  <%= render 'shared/confirmer', path: presentations_remove_note_action_path(id: @presentation.id, note_id: @note.id, turbo_frame_key: params[:turbo_frame_key]) %>
+<% end %>
