@@ -154,12 +154,12 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 - `BUCKET_REGION`: Regione del bucket S3 (se non specificato, l'applicazione utilizzerà il filesystem locale)
 - `BUCKET_NAME`: Nome del bucket S3 (se non specificato, l'applicazione utilizzerà il filesystem locale)
 
-##### Configurazione di Matilda
+#### Configurazione di Matilda
 
 - `MATILDA_MAIL_FROM`: Indirizzo email del mittente (default  `Matilda <noreply@mail.com>`)
 - `MATILDA_HOST`: Indirizzo host dell'applicazione (default `matilda.local`)
 
-#### Alternartiva -> credentials.yml.enc
+### Configurazione alternativa -> credentials.yml.enc
 
 In alternativa, è possibile utilizzare il file `config/credentials.yml.enc` per memorizzare le variabili d'ambiente. Per farlo, eseguire il comando:
 
