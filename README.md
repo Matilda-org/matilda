@@ -14,7 +14,13 @@ Matilda è strutturato in moduli. Ogni modulo fornisce funzionalità specifiche,
 
 ### Task
 
-Consente di visualizzare in modo centralizzato tutte le task gestite. La visualizzazione può essere attivata in due modalità:
+Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro.
+Le task possono essere assegnate a un utente e possono essere seguite da altri utenti.
+Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una pianificazione definita.
+
+Per ogni task può essere effettuato il time tracking, in modo da registrare il tempo effettivo impiegato per completare il lavoro.
+
+La sezione "Task" consente di visualizzare in modo centralizzato tutte le task gestite. La visualizzazione può essere attivata in due modalità:
 
 - **Calendario**: consente di visualizzare le task in un calendario settimanale per identificare le scadenze e il carico di lavoro giorno per giorno
 - **Utenti**: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team
@@ -24,15 +30,11 @@ Consente di visualizzare in modo centralizzato tutte le task gestite. La visuali
     <img src="./screenshots/tasks-users.jpg" alt="Utenti dei task" style="width: 48%;">
 </div>
 
-Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro.
-Le task possono essere assegnate a un utente e possono essere seguite da altri utenti.
-Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una pianificazione definita.
-
-Per ogni task può essere effettuato il time tracking, in modo da registrare il tempo effettivo impiegato per completare il lavoro.
-
 ### Progetti
 
-Consente di creare, modificare e cancellare progetti. Ogni progetto è composto dalle seguenti aree:
+I progetti sono l'elemento centrale dell'applicazione. Ogni progetto è un aggregatore di informazioni e dati legati a un'attività specifica. I progetti possono essere utilizzati per gestire attività di lavoro, eventi, campagne di marketing e altro ancora.
+
+La sezione "Progetti" consente di creare, modificare e cancellare progetti. Ogni progetto è composto dalle seguenti aree:
 
 - **Board di progetto**: consente di creare specifiche board per il progetto (simile a Trello)
 - **Note**: consente di creare note testuali legate al progetto
@@ -48,7 +50,11 @@ Consente di creare, modificare e cancellare progetti. Ogni progetto è composto 
 
 ### Board
 
-Consente di visualizzare e gestire tutte le board registrate nell'applicazione (simile a Trello). Le board possono essere di due tipologie:
+Le board sono uno strumento fondamentale per la gestione dei progetti.
+Le board consentono di visualizzare le task e i progetti in modo chiaro e intuitivo. Ogni board è composta da una serie di colonne, ognuna delle quali rappresenta uno stato specifico di un processo aziendale.
+Le colonne possono essere personalizzate in base alle esigenze dell'azienda e possono essere utilizzate per rappresentare stati come "Da fare", "In corso" e "Completato".
+
+La sezione "Board" consente di visualizzare e gestire tutte le board registrate nell'applicazione. Le board possono essere di due tipologie:
 
 - **Board aziendali**: board i cui elementi sono i progetti registrati nell'applicazione
 - **Board di progetto**: board i cui elementi sono le task registrate all'interno del progetto
@@ -62,19 +68,19 @@ All'interno della sezione "Board" è possibile gestire anche i modelli di board,
 
 ### Credenziali
 
-Consente di gestire le credenziali aziendali, che possono essere utilizzate per accedere a servizi esterni. Le credenziali vengono crittografate e memorizzate in modo sicuro all'interno dell'applicazione.
+La sezione "Credenziali" consente di gestire le credenziali aziendali, che possono essere utilizzate per accedere a servizi esterni. Le credenziali vengono crittografate e memorizzate in modo sicuro all'interno dell'applicazione.
 
 ### Presentazioni
 
-Consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda.
+La sezione "Presentazioni" consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda.
 
 ### Utenti
 
-Consente di gestire gli utenti dell'applicazione e i relativi permessi.
+La sezione "Utenti" consente di gestire gli utenti dell'applicazione e i relativi permessi.
 
 ### Bacheca
 
-La bacheca consente di pubblicare articoli e notizie aziendali.
+La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visualizzabili da tutti gli utenti registrati nell'applicazione. Gli articoli possono essere utilizzati per comunicare informazioni importanti sui progetti e sull'azienda.
 
 ## Installazione
 
