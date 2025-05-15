@@ -8,7 +8,7 @@ Matilda è un progetto open source e può essere utilizzata liberamente. È poss
 
 <img src="./preview.gif" alt="Matilda preview" width="100%">
 
-## Funzionalità
+## 📋 Funzionalità
 
 Matilda è strutturato in moduli. Ogni modulo fornisce funzionalità specifiche, si integra con altri moduli e può essere limitato agli utenti tramite specifici permessi.
 
@@ -82,11 +82,15 @@ La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visuali
 
 La sezione "Utenti" consente di gestire gli utenti dell'applicazione e i relativi permessi.
 
-### 🤖 Assistente virtuale
+### Assistente virtuale 🤖
 
 L'assistente virtuale consente di sfruttare funzionalità di intelligenza artificiale all'interno dell'applicazione. L'assistente virtuale può essere utilizzato sotto forma di chatbot per interagire con i dati dell'applicazione o sotto forma di micro-servizi che semplificano le attività quotidiane.
 
-## Installazione
+## 👉 Richiedi una demo
+
+Per richiedere una demo dell'applicazione, è possibile contattare il team di sviluppo all'indirizzo email [matilda@gregoriogalante.com](mailto:matilda@gregoriogalante.com).
+
+## 🧑‍💻 Installazione
 
 L'applicazione può essere installata in locale o su un server cloud su un environment standard per Ruby on Rails.
 L'applicazione non richiede specifiche dipendenze, ma è consigliato l'uso di PostgreSQL come database.
@@ -155,7 +159,7 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 - `MATILDA_MAIL_FROM`: Indirizzo email del mittente (default  `Matilda <noreply@mail.com>`)
 - `MATILDA_HOST`: Indirizzo host dell'applicazione (default `matilda.local`)
 
-#### Alternartiva - credentials.yml.enc
+#### Alternartiva -> credentials.yml.enc
 
 In alternativa, è possibile utilizzare il file `config/credentials.yml.enc` per memorizzare le variabili d'ambiente. Per farlo, eseguire il comando:
 
@@ -188,11 +192,11 @@ bucket:
   bucket: example_bucket
 ```
 
-## Integrazioni
+## 💬 Integrazioni
 
 ### Slack
 
-Matilda può essere integrata con Slack per inviare notifiche e aggiornamenti sui progetti direttamente nel canale Slack del team. Per configurare l'integrazione con Slack, è necessario creare un'app Slack e configurare i seguenti parametri:
+Matilda può essere integrata con Slack per creare automaticamente i canali dei progetti e inviare notifiche e aggiornamenti. Per configurare l'integrazione con Slack, è necessario creare un'app Slack e inserire i seguenti parametri di configurazione:
 
 ```json
 {
