@@ -6,6 +6,8 @@ L'applicazione è dotata di un'interfaccia utente intuitiva e reattiva, che cons
 
 Matilda è un progetto open source e può essere utilizzata liberamente. È possibile contribuire al progetto segnalando bug, suggerendo nuove funzionalità o contribuendo con codice.
 
+<img src="./preview.gif" alt="Matilda preview" width="100%">
+
 ## Installazione
 
 L'applicazione può essere installata in locale o su un server cloud su un environment standard per Ruby on Rails.
