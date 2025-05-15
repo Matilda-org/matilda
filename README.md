@@ -14,8 +14,8 @@ Matilda è strutturato in moduli. Ogni modulo fornisce funzionalità specifiche,
 
 ### Task
 
-Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro.
-Le task possono essere assegnate a un utente e possono essere seguite da altri utenti.
+Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro; possono inoltre includere una checklist di sotto-attività da portare a termine.
+Le task possono essere assegnate a un utente e possono essere seguite da altri utenti per monitorare il progresso del lavoro.
 Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una pianificazione definita.
 
 Per ogni task può essere effettuato il time tracking, in modo da registrare il tempo effettivo impiegato per completare il lavoro.
@@ -68,19 +68,23 @@ All'interno della sezione "Board" è possibile gestire anche i modelli di board,
 
 ### Credenziali
 
-La sezione "Credenziali" consente di gestire le credenziali aziendali, che possono essere utilizzate per accedere a servizi esterni. Le credenziali vengono crittografate e memorizzate in modo sicuro all'interno dell'applicazione.
+La sezione "Credenziali" consente di gestire le credenziali aziendali (username, password) ai vari servizi esterni. Le credenziali vengono crittografate e memorizzate in modo sicuro all'interno dell'applicazione.
 
 ### Presentazioni
 
-La sezione "Presentazioni" consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda.
+La sezione "Presentazioni" consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda o mostrare wireframe e mockup.
+
+### Bacheca
+
+La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visualizzabili da tutti gli utenti registrati nell'applicazione. Gli articoli possono essere utilizzati per comunicare informazioni importanti sui progetti e sull'azienda.
 
 ### Utenti
 
 La sezione "Utenti" consente di gestire gli utenti dell'applicazione e i relativi permessi.
 
-### Bacheca
+### Assistente virtuale
 
-La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visualizzabili da tutti gli utenti registrati nell'applicazione. Gli articoli possono essere utilizzati per comunicare informazioni importanti sui progetti e sull'azienda.
+L'assistente virtuale consente di sfruttare funzionalità di intelligenza artificiale all'interno dell'applicazione. L'assistente virtuale può essere utilizzato sotto forma di chatbot per interagire con i dati dell'applicazione o sotto forma di micro-servizi che semplificano le attività quotidiane.
 
 ## Installazione
 
