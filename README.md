@@ -160,4 +160,3 @@ Matilda può essere integrata con Slack per inviare notifiche e aggiornamenti su
     }
 }
 ```
-
