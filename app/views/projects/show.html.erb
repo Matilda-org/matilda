@@ -136,25 +136,6 @@
 
   <% end %>
 
-  <%= render 'shared/page-grid-item', policy: 'projects_manage_events' do %>
-
-    <%= turbo_frame_tag 'module-events', class: 'w-100' do %>
-      <%= render 'shared/page-card',
-        title: "Eventi",
-        counter: @project.projects_events.count,
-        render_content: 'projects/shared/module-events',
-        render_content_args: {
-          project: @project
-        },
-        render_footer: 'projects/shared/module-events-actions',
-        render_footer_args: {
-          project: @project
-        }
-      %>
-    <% end %>
-
-  <% end %>
-
   <%= render 'shared/page-grid-item', policy: 'projects_manage_presentations' do %>
 
     <%= turbo_frame_tag 'module-presentations', class: 'w-100' do %>
@@ -166,6 +147,25 @@
           project: @project
         },
         render_footer: 'projects/shared/module-presentations-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_events' do %>
+
+    <%= turbo_frame_tag 'module-events', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Eventi",
+        counter: @project.projects_events.count,
+        render_content: 'projects/shared/module-events',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-events-actions',
         render_footer_args: {
           project: @project
         }
