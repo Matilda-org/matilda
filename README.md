@@ -20,9 +20,15 @@ Consente di visualizzare in modo centralizzato tutte le task gestite. La visuali
 - **Utenti**: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team
 
 <div style="display: flex; justify-content: space-between;">
-    <img src="./screenshots/tasks-calendar.jpg" alt="Tasks calendar" style="width: 48%;">
-    <img src="./screenshots/tasks-users.jpg" alt="Tasks users" style="width: 48%;">
+    <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" style="width: 48%;">
+    <img src="./screenshots/tasks-users.jpg" alt="Utenti dei task" style="width: 48%;">
 </div>
+
+Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro.
+Le task possono essere assegnate a un utente e possono essere seguite da altri utenti.
+Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una pianificazione definita.
+
+Per ogni task può essere effettuato il time tracking, in modo da registrare il tempo effettivo impiegato per completare il lavoro.
 
 ### Progetti
 
@@ -35,6 +41,11 @@ Consente di creare, modificare e cancellare progetti. Ogni progetto è composto 
 - **Allegati**: consente di caricare e gestire file allegati al progetto
 - **Presentazioni**: consente di creare presentazioni visuali legate al progetto
 
+<div style="display: flex; justify-content: space-between;">
+    <img src="./screenshots/projects-show-1.jpg" alt="Project view 1" style="width: 48%;">
+    <img src="./screenshots/projects-show-2.jpg" alt="Project view 2" style="width: 48%;">
+</div>
+
 ### Board
 
 Consente di visualizzare e gestire tutte le board registrate nell'applicazione (simile a Trello). Le board possono essere di due tipologie:
@@ -43,6 +54,11 @@ Consente di visualizzare e gestire tutte le board registrate nell'applicazione (
 - **Board di progetto**: board i cui elementi sono le task registrate all'interno del progetto
 
 All'interno della sezione "Board" è possibile gestire anche i modelli di board, che consentono di creare specifici modelli riutilizzabili nei diversi progetti.
+
+<div style="display: flex; justify-content: space-between;">
+    <img src="./screenshots/board-company.jpg" alt="Board aziendale" style="width: 48%;">
+    <img src="./screenshots/board-project.jpg" alt="Board di progetto" style="width: 48%;">
+</div>
 
 ### Credenziali
 
