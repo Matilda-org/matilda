@@ -25,6 +25,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -50,7 +54,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-pattern py-20">
+    <section class="hero-pattern py-20" data-aos="fade-in">
         <div class="container mx-auto px-4 flex flex-col lg:flex-row items-center">
             <div class="lg:w-1/2 mb-10 lg:mb-0 lg:pr-10">
                 <h2 class="text-4xl lg:text-5xl font-bold text-primary mb-6">Project manager for better companies</h2>
@@ -69,12 +73,12 @@
     <!-- Features Overview -->
     <section id="features" class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12">Un'applicazione modulare per la gestione dei progetti</h2>
-            <p class="text-lg text-center max-w-3xl mx-auto mb-16">Matilda è <strong>strutturato in moduli</strong>. Ogni modulo fornisce funzionalità specifiche, si integra con gli altri moduli e può essere limitato agli utenti tramite specifici permessi.</p>
+            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12" data-aos="fade-up">Un'applicazione modulare per la gestione dei progetti</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">Matilda è <strong>strutturato in moduli</strong>. Ogni modulo fornisce funzionalità specifiche, si integra con gli altri moduli e può essere limitato agli utenti tramite specifici permessi.</p>
             
             <!-- Task Section -->
             <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
                     <div class="md:w-1/2">
                         <h3 class="text-2xl font-bold text-secondary mb-4">Task</h3>
                         <p class="mb-4">Le task rappresentano le attività quotidiane svolte dai membri del team. Ogni task è un'unità di lavoro che può essere assegnata a un utente e monitorata nel tempo.</p>
@@ -94,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
                     <div>
                         <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" class="rounded-lg shadow-lg w-full">
                         <p class="text-center mt-2 text-sm text-gray-600">Visualizzazione calendario</p>
@@ -108,7 +112,7 @@
 
             <!-- Projects Section -->
             <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
                     <div class="w-full">
                         <h3 class="text-2xl font-bold text-secondary mb-4">Progetti</h3>
                         <p class="mb-4">I progetti sono l'elemento centrale dell'applicazione. Ogni progetto è un <strong>aggregatore di informazioni</strong> legati ad una commessa. Ogni progetto può utilizzare le seguenti funzionalità:</p>
@@ -123,7 +127,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
                     <div>
                         <img src="./screenshots/projects-show-1.jpg" alt="Vista progetto 1" class="rounded-lg shadow-lg w-full">
                         <p class="text-center mt-2 text-sm text-gray-600">Vista principale del progetto</p>
@@ -137,7 +141,7 @@
 
             <!-- Boards Section -->
             <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
                     <div class="md:w-1/2">
                         <h3 class="text-2xl font-bold text-secondary mb-4">Board</h3>
                         <p class="mb-4">Le board sono uno strumento fondamentale per la gestione dei progetti. Le board consentono di visualizzare le task e i progetti in modo chiaro e intuitivo sotto forma di <strong>Kanban</strong>. Ogni board è composta da una serie di colonne, ognuna delle quali rappresenta uno stato specifico di un processo aziendale.</p>
@@ -156,7 +160,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
                     <div>
                         <img src="./screenshots/board-company.jpg" alt="Board aziendale" class="rounded-lg shadow-lg w-full">
                         <p class="text-center mt-2 text-sm text-gray-600">Board aziendale</p>
@@ -173,11 +177,11 @@
     <!-- Additional Features -->
     <section class="py-16 bg-light">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12">Funzionalità Aggiuntive</h2>
+            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12" data-aos="fade-up">Funzionalità Aggiuntive</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Credenziali -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
                     <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -188,7 +192,7 @@
                 </div>
 
                 <!-- Presentazioni -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
                     <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -199,7 +203,7 @@
                 </div>
 
                 <!-- Bacheca -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
                     <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -210,7 +214,7 @@
                 </div>
 
                 <!-- Utenti -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
                     <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -221,7 +225,7 @@
                 </div>
 
                 <!-- Assistente Virtuale -->
-                <div class="bg-white p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1">
+                <div class="bg-white p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1" data-aos="fade-up">
                     <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -235,7 +239,7 @@
     </section>
 
     <!-- Demo Request Section -->
-    <section id="demo" class="py-16 bg-white">
+    <section id="demo" class="py-16 bg-white" data-aos="fade-up">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-8">Richiedi una Demo</h2>
             <p class="text-lg max-w-3xl mx-auto mb-8">Il progetto è <strong>Open Source</strong> e può essere <strong>scaricato e utilizzato liberamente</strong>. Per richiedere una demo completa dell'applicazione è possibile contattare il team di sviluppo.</p>
@@ -244,7 +248,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white py-12">
+    <footer class="bg-primary text-white py-12" data-aos="fade-up">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="flex items-center mb-6 md:mb-0">
@@ -258,5 +262,13 @@
             </div>
         </div>
     </footer>
+
+    <!-- Initialize AOS -->
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
 </body>
 </html>
