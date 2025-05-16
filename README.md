@@ -1,12 +1,16 @@
 # ☂ Matilda - Project manager for better companies
 
+<div style="display: flex; justify-content: center;">
+    <img src="./docs/icon.png" alt="Matilda icon" width="200">
+</div>
+
 Matilda è un'**applicazione web per la gestione dei progetti**, sviluppata in Ruby on Rails. È progettata per essere utilizzata da team di lavoro e offre funzionalità come la gestione dei task, la pianificazione delle attività e la collaborazione tra membri del team.
 
 L'applicazione è dotata di un'interfaccia utente intuitiva e reattiva, che consente agli utenti di navigare facilmente tra le diverse funzionalità. Matilda è progettata per essere scalabile e può essere utilizzata da piccole startup a grandi aziende.
 
 Matilda è un progetto open source e può essere utilizzata liberamente. È possibile contribuire al progetto segnalando bug, suggerendo nuove funzionalità o contribuendo con codice.
 
-<img src="./preview.gif" alt="Matilda preview" width="100%">
+<img src="./docs/preview.gif" alt="Matilda preview" width="100%">
 
 ## 📋 Funzionalità
 
@@ -26,8 +30,8 @@ La sezione "Task" consente di visualizzare in modo centralizzato tutte le task g
 - **Utenti**: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team
 
 <div style="display: flex; justify-content: space-between;">
-    <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" style="width: 48%;">
-    <img src="./screenshots/tasks-users.jpg" alt="Utenti dei task" style="width: 48%;">
+    <img src="./docs/screenshots/tasks-calendar.jpg" alt="Calendario dei task" style="width: 48%;">
+    <img src="./docs/screenshots/tasks-users.jpg" alt="Utenti dei task" style="width: 48%;">
 </div>
 
 ### Progetti
@@ -44,8 +48,8 @@ La sezione "Progetti" consente di creare, modificare e cancellare progetti. Ogni
 - **Presentazioni**: consente di creare presentazioni visuali legate al progetto
 
 <div style="display: flex; justify-content: space-between;">
-    <img src="./screenshots/projects-show-1.jpg" alt="Project view 1" style="width: 48%;">
-    <img src="./screenshots/projects-show-2.jpg" alt="Project view 2" style="width: 48%;">
+    <img src="./docs/screenshots/projects-show-1.jpg" alt="Project view 1" style="width: 48%;">
+    <img src="./docs/screenshots/projects-show-2.jpg" alt="Project view 2" style="width: 48%;">
 </div>
 
 ### Board
@@ -62,8 +66,8 @@ La sezione "Board" consente di visualizzare e gestire tutte le board registrate 
 All'interno della sezione "Board" è possibile gestire anche i modelli di board, che consentono di creare specifici modelli riutilizzabili nei diversi progetti.
 
 <div style="display: flex; justify-content: space-between;">
-    <img src="./screenshots/board-company.jpg" alt="Board aziendale" style="width: 48%;">
-    <img src="./screenshots/board-project.jpg" alt="Board di progetto" style="width: 48%;">
+    <img src="./docs/screenshots/board-company.jpg" alt="Board aziendale" style="width: 48%;">
+    <img src="./docs/screenshots/board-project.jpg" alt="Board di progetto" style="width: 48%;">
 </div>
 
 ### Credenziali
@@ -88,7 +92,7 @@ L'assistente virtuale consente di sfruttare funzionalità di intelligenza artifi
 
 ## 👉 Richiedi una demo
 
-Per richiedere una demo dell'applicazione, è possibile contattare il team di sviluppo all'indirizzo email [matilda@gregoriogalante.com](mailto:matilda@gregoriogalante.com).
+Il progetto è Open Source e può essere scaricato e utilizzato liberamente senza alcun costo. Per richiedere una demo completa dell'applicazione è possibile contattare il team di sviluppo all'indirizzo email [matilda@gregoriogalante.com](mailto:matilda@gregoriogalante.com).
 
 ## 🧑‍💻 Installazione
 

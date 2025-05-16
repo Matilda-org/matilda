@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matilda - Project manager for better companies</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#181d45',
+                        secondary: '#19405d',
+                        light: '#dde5f2',
+                        dark: '#181d22',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .hero-pattern {
+            background-color: #dde5f2;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23181d45' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-white text-dark">
+    <!-- Header -->
+    <header class="bg-primary text-white py-6">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="./icon.png" alt="Matilda Logo" class="h-12 mr-4">
+                <h1 class="text-3xl font-bold">Matilda</h1>
+            </div>
+            <div>
+                <a href="https://github.com/Matilda-org/matilda" class="border-2 border-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary transition duration-300">GitHub</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern py-20">
+        <div class="container mx-auto px-4 flex flex-col lg:flex-row items-center">
+            <div class="lg:w-1/2 mb-10 lg:mb-0 lg:pr-10">
+                <h2 class="text-4xl lg:text-5xl font-bold text-primary mb-6">Project manager for better companies</h2>
+                <p class="text-lg lg:text-xl mb-8">Matilda è un'<strong>applicazione web per la gestione dei progetti</strong>, progettata per team di lavoro con funzionalità avanzate per la gestione dei task, pianificazione delle attività e collaborazione tra membri del team.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#features" class="bg-primary text-white px-6 py-3 rounded-lg text-center hover:bg-opacity-90 transition duration-300">Scopri le funzionalità</a>
+                    <a href="#demo" class="border-2 border-primary text-primary px-6 py-3 rounded-lg text-center hover:bg-primary hover:text-white transition duration-300">Richiedi una demo</a>
+                </div>
+            </div>
+            <div class="lg:w-1/2">
+                <img src="./preview.gif" alt="Matilda Preview" class="rounded-lg shadow-xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Overview -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12">Un'applicazione modulare per la gestione dei progetti</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-16">Matilda è strutturato in moduli. Ogni modulo fornisce funzionalità specifiche, si integra con altri moduli e può essere limitato agli utenti tramite specifici permessi.</p>
+            
+            <!-- Task Section -->
+            <div class="mb-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold text-secondary mb-4">Task</h3>
+                        <p class="mb-4">Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro; possono inoltre includere una checklist di sotto-attività da portare a termine.</p>
+                        <p class="mb-4">Le task possono essere assegnate a un utente e possono essere seguite da altri utenti per monitorare il progresso del lavoro.</p>
+                        <p class="mb-4">Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una pianificazione definita.</p>
+                        <p>Per ogni task può essere effettuato il time tracking, in modo da registrare il tempo effettivo impiegato per completare il lavoro.</p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-light p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-primary mb-4">Visualizzazione Task</h4>
+                            <p class="mb-4">La sezione "Task" consente di visualizzare in modo centralizzato tutte le task gestite. La visualizzazione può essere attivata in due modalità:</p>
+                            <ul class="list-disc list-inside mb-4 ml-4">
+                                <li class="mb-2"><strong>Calendario</strong>: consente di visualizzare le task in un calendario settimanale per identificare le scadenze e il carico di lavoro giorno per giorno</li>
+                                <li><strong>Utenti</strong>: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Visualizzazione calendario delle task</p>
+                    </div>
+                    <div>
+                        <img src="./screenshots/tasks-users.jpg" alt="Utenti dei task" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Visualizzazione utenti delle task</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="mb-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold text-secondary mb-4">Progetti</h3>
+                        <p class="mb-4">I progetti sono l'elemento centrale dell'applicazione. Ogni progetto è un aggregatore di informazioni e dati legati a un'attività specifica. I progetti possono essere utilizzati per gestire attività di lavoro, eventi, campagne di marketing e altro ancora.</p>
+                        <p>La sezione "Progetti" consente di creare, modificare e cancellare progetti. Ogni progetto è composto dalle seguenti aree:</p>
+                        <ul class="list-disc list-inside mt-4 ml-4">
+                            <li class="mb-2"><strong>Board di progetto</strong>: consente di creare specifiche board per il progetto (simile a Trello)</li>
+                            <li class="mb-2"><strong>Note</strong>: consente di creare note testuali legate al progetto</li>
+                            <li class="mb-2"><strong>Partecipanti</strong>: consente di invitare e gestire i partecipanti al progetto</li>
+                            <li class="mb-2"><strong>Board aziendali</strong>: consente di inserire il progetto stesso all'interno di una o più board aziendali</li>
+                            <li class="mb-2"><strong>Allegati</strong>: consente di caricare e gestire file allegati al progetto</li>
+                            <li><strong>Presentazioni</strong>: consente di creare presentazioni visuali legate al progetto</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-light p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-primary mb-4">Gestione completa dei progetti</h4>
+                            <p class="mb-4">Matilda offre una gestione completa dei progetti, consentendo di organizzare le attività, monitorare lo stato di avanzamento e collaborare efficacemente con il team.</p>
+                            <p>La vista progetto fornisce tutte le informazioni necessarie in un'unica schermata, semplificando la gestione e il monitoraggio delle attività.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <img src="./screenshots/projects-show-1.jpg" alt="Vista progetto 1" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Vista principale del progetto</p>
+                    </div>
+                    <div>
+                        <img src="./screenshots/projects-show-2.jpg" alt="Vista progetto 2" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Vista principale del progetto</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boards Section -->
+            <div class="mb-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold text-secondary mb-4">Board</h3>
+                        <p class="mb-4">Le board sono uno strumento fondamentale per la gestione dei progetti. Le board consentono di visualizzare le task e i progetti in modo chiaro e intuitivo. Ogni board è composta da una serie di colonne, ognuna delle quali rappresenta uno stato specifico di un processo aziendale.</p>
+                        <p class="mb-4">Le colonne possono essere personalizzate in base alle esigenze dell'azienda e possono essere utilizzate per rappresentare stati come "Da fare", "In corso" e "Completato".</p>
+                        <p>La sezione "Board" consente di visualizzare e gestire tutte le board registrate nell'applicazione. Le board possono essere di due tipologie:</p>
+                        <ul class="list-disc list-inside mt-4 ml-4">
+                            <li class="mb-2"><strong>Board aziendali</strong>: board i cui elementi sono i progetti registrati nell'applicazione</li>
+                            <li><strong>Board di progetto</strong>: board i cui elementi sono le task registrate all'interno del progetto</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-light p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-primary mb-4">Modelli di Board</h4>
+                            <p class="mb-4">All'interno della sezione "Board" è possibile gestire anche i modelli di board, che consentono di creare specifici modelli riutilizzabili nei diversi progetti.</p>
+                            <p>I modelli di board permettono di standardizzare i processi aziendali e di risparmiare tempo nella creazione di nuove board.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <img src="./screenshots/board-company.jpg" alt="Board aziendale" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Board aziendale</p>
+                    </div>
+                    <div>
+                        <img src="./screenshots/board-project.jpg" alt="Board di progetto" class="rounded-lg shadow-lg w-full">
+                        <p class="text-center mt-2 text-sm text-gray-600">Board di progetto</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Features -->
+    <section class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12">Funzionalità Aggiuntive</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Credenziali -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Credenziali</h3>
+                    <p>La sezione "Credenziali" consente di gestire le credenziali aziendali (username, password) ai vari servizi esterni. Le credenziali vengono crittografate e memorizzate in modo sicuro all'interno dell'applicazione.</p>
+                </div>
+
+                <!-- Presentazioni -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Presentazioni</h3>
+                    <p>La sezione "Presentazioni" consente di creare presentazioni visive legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per comunicare in modo efficace le informazioni sui progetti dell'azienda o mostrare wireframe e mockup.</p>
+                </div>
+
+                <!-- Bacheca -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Bacheca</h3>
+                    <p>La sezione "Bacheca" consente di pubblicare articoli e notizie aziendali visualizzabili da tutti gli utenti registrati nell'applicazione. Gli articoli possono essere utilizzati per comunicare informazioni importanti sui progetti e sull'azienda.</p>
+                </div>
+
+                <!-- Utenti -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Utenti</h3>
+                    <p>La sezione "Utenti" consente di gestire gli utenti dell'applicazione e i relativi permessi. Puoi controllare l'accesso alle funzionalità dell'applicazione per ogni utente in base al suo ruolo e alle sue responsabilità.</p>
+                </div>
+
+                <!-- Assistente Virtuale -->
+                <div class="bg-white p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1">
+                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-secondary mb-3">Assistente Virtuale 🤖</h3>
+                    <p>L'assistente virtuale consente di sfruttare funzionalità di intelligenza artificiale all'interno dell'applicazione. L'assistente virtuale può essere utilizzato sotto forma di chatbot per interagire con i dati dell'applicazione o sotto forma di micro-servizi che semplificano le attività quotidiane.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Request Section -->
+    <section id="demo" class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-8">Richiedi una Demo</h2>
+            <p class="text-lg max-w-3xl mx-auto mb-8">Il progetto è Open Source e può essere scaricato e utilizzato liberamente senza alcun costo. Per richiedere una demo completa dell'applicazione è possibile contattare il team di sviluppo.</p>
+            <a href="mailto:matilda@gregoriogalante.com" class="inline-block bg-secondary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition duration-300">Contattaci per una demo</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <img src="./icon.png" alt="Matilda Logo" class="h-10 mr-4">
+                    <h2 class="text-2xl font-bold">Matilda</h2>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="mb-2">Project manager for better companies</p>
+                    <a href="https://github.com/Matilda-org/matilda" class="text-light hover:text-white transition duration-300">GitHub Repository</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2025 Matilda. Tutti i diritti riservati. Matilda è un progetto open source.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
