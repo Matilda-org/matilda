@@ -1,9 +1,5 @@
 # ☂ Matilda - Project manager for better companies
 
-<div style="display: flex; justify-content: center;">
-    <img src="./docs/icon.png" alt="Matilda icon" width="200">
-</div>
-
 Matilda è un'**applicazione web per la gestione dei progetti**, sviluppata in Ruby on Rails. È progettata per essere utilizzata da team di lavoro e offre funzionalità come la gestione dei task, la pianificazione delle attività e la collaborazione tra membri del team.
 
 L'applicazione è dotata di un'interfaccia utente intuitiva e reattiva, che consente agli utenti di navigare facilmente tra le diverse funzionalità. Matilda è progettata per essere scalabile e può essere utilizzata da piccole startup a grandi aziende.
