@@ -7,11 +7,6 @@ class PostsController < ApplicationController
     @_navbar = 'posts'
   end
 
-  RSS_FEEDS = [
-    { name: 'Dev.to', url: 'https://dev.to/feed' },
-    { name: 'Tech Crunch', url: 'https://techcrunch.com/feed/' },
-  ].freeze
-
   caches_action :index, cache_path: -> { current_cache_action_path }, layout: false
   def index
     return unless validate_policy!('posts_index')
@@ -23,27 +18,6 @@ class PostsController < ApplicationController
     @posts_preferred = query.user_preferred(@session_user_id)
 
     @posts = paginate_query(query.where.not(id: @posts_preferred.pluck(:id)))
-
-    # load feeds
-    @feeds = []
-    begin
-      RSS_FEEDS.each do |feed|
-        response = RestClient.get(feed[:url], timeout: 1)
-        feed_data = RSS::Parser.parse(response.body, false)
-        feed_data.items.each do |item|
-          @feeds << {
-            title: item.title,
-            link: item.link,
-            pub_date: Time.parse(item.pubDate.to_s),
-            source: feed[:name],
-          }
-        end
-      end
-    rescue StandardError => e
-      Rails.logger.error("Error fetching RSS feeds: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-    end
-    @feeds = @feeds.sort_by { |feed| feed[:pub_date] }.reverse.first(6)
 
     # load tags
     @tags = []
