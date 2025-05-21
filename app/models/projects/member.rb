@@ -5,6 +5,11 @@ class Projects::Member < ApplicationRecord
   ############################################################
 
   validates :role, presence: true, length: { maximum: 50 }
+  validates :user_id, presence: true
+  validates :project_id, presence: true
+
+  # be sure does not exist a member with the same user and project
+  validates :user_id, uniqueness: { scope: :project_id }
 
   # RELATIONS
   ############################################################
