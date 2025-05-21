@@ -72,32 +72,4 @@
 
   <% end %>
 
-  <% if @_is_dashboard %>
-
-    <%
-    
-    last_used_credentials_ids = @session_user.cached_users_logs_credential_values
-    
-    %>
-
-    <% if last_used_credentials_ids.length.positive? %>
-
-      <div class="col col-12 col-lg-6 col-xl-12 mb-4">
-        <%= render 'shared/page-card',
-          title: "Credenziali",
-          full: false,
-          auto: true,
-          always_open: false,
-          render_content: 'users/shared/module-credentials',
-          render_content_args: {
-            credentials: Credential.where(id: last_used_credentials_ids).order('updated_at DESC')
-          },
-          render_footer: nil
-        %>
-      </div>
-
-    <% end %>
-
-  <% end %>
-
 <% end %>
