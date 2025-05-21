@@ -140,12 +140,14 @@ GEM
     execjs (2.9.1)
     faker (3.2.3)
       i18n (>= 1.8.11, < 2)
-    faraday (2.9.0)
-      faraday-net_http (>= 2.0, < 3.2)
-    faraday-multipart (1.0.4)
-      multipart-post (~> 2)
-    faraday-net_http (3.1.0)
-      net-http
+    faraday (2.13.1)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-multipart (1.1.0)
+      multipart-post (~> 2.0)
+    faraday-net_http (3.4.0)
+      net-http (>= 0.5.0)
     ffi (1.16.3)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -193,6 +195,7 @@ GEM
       zeitwerk (~> 2.5)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
+    logger (1.7.0)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -211,9 +214,9 @@ GEM
     mini_portile2 (2.8.9)
     minitest (5.22.3)
     msgpack (1.7.2)
-    multipart-post (2.4.0)
+    multipart-post (2.4.1)
     mutex_m (0.2.0)
-    net-http (0.4.1)
+    net-http (0.6.0)
       uri
     net-imap (0.4.10)
       date
@@ -334,7 +337,7 @@ GEM
       rubocop-rails
     ruby-graphviz (1.2.5)
       rexml
-    ruby-openai (6.3.1)
+    ruby-openai (8.1.0)
       event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
@@ -381,7 +384,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
-    uri (0.13.0)
+    uri (1.0.3)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
