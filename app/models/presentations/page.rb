@@ -11,8 +11,8 @@ class Presentations::Page < ApplicationRecord
 
   belongs_to :presentation
 
-  has_many :presentations_actions, dependent: :destroy, class_name: 'Presentations::Action', foreign_key: :presentations_page_id
-  has_many :presentations_notes, dependent: :destroy, class_name: 'Presentations::Note', foreign_key: :presentations_page_id
+  has_many :presentations_actions, dependent: :destroy, class_name: "Presentations::Action", foreign_key: :presentations_page_id
+  has_many :presentations_notes, dependent: :destroy, class_name: "Presentations::Note", foreign_key: :presentations_page_id
 
   has_one_attached :image
 
@@ -32,11 +32,11 @@ class Presentations::Page < ApplicationRecord
   ############################################################
 
   def image_thumb
-    image.variant(resize: '300x300')
+    image.variant(resize: "300x300")
   end
 
   def image_preview
-    image.variant(resize_to_limit: [presentation.width_px, nil])
+    image.variant(resize_to_limit: [ presentation.width_px, nil ])
   end
 
   # OPERATIONS

@@ -6,7 +6,7 @@ class Projects::Attachment < ApplicationRecord
     quotation_delivered: 1,
     quotation_accepted: 2,
     presentation: 3,
-    client_content: 4,
+    client_content: 4
   }
 
   # RELATIONS
@@ -41,12 +41,12 @@ class Projects::Attachment < ApplicationRecord
   ############################################################
 
   def self.typology_string(typology)
-    return 'Altro' if typology == 'general'
-    return 'Preventivo inviato' if typology == 'quotation_delivered'
-    return 'Preventivo firmato' if typology == 'quotation_accepted'
-    return 'Presentazione progetto' if typology == 'presentation'
-    return 'Materiale cliente' if typology == 'client_content'
+    return "Altro" if typology == "general"
+    return "Preventivo inviato" if typology == "quotation_delivered"
+    return "Preventivo firmato" if typology == "quotation_accepted"
+    return "Presentazione progetto" if typology == "presentation"
+    return "Materiale cliente" if typology == "client_content"
 
-    'Non definito'
+    "Non definito"
   end
 end

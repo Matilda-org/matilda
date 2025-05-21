@@ -40,7 +40,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = !!(ENV['BUCKET_ACCESS_KEY'] || Rails.application.credentials.dig(:bucket, :access_key_id)) ? :amazon_s3 : :local
+  config.active_storage.service = !!(ENV["BUCKET_ACCESS_KEY"] || Rails.application.credentials.dig(:bucket, :access_key_id)) ? :amazon_s3 : :local
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -73,11 +73,11 @@ Rails.application.configure do
   # Configure smtp settings
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    user_name: ENV['SMTP_USER_NAME'] || Rails.application.credentials.dig(:smtp, :user_name),
-    password: ENV['SMTP_PASSWORD'] || Rails.application.credentials.dig(:smtp, :password),
-    address: ENV['SMTP_ADDRESS'] || Rails.application.credentials.dig(:smtp, :address),
-    domain: ENV['SMTP_DOMAIN'] || Rails.application.credentials.dig(:smtp, :domain),
-    port: ENV['SMTP_PORT'] || Rails.application.credentials.dig(:smtp, :port),
+    user_name: ENV["SMTP_USER_NAME"] || Rails.application.credentials.dig(:smtp, :user_name),
+    password: ENV["SMTP_PASSWORD"] || Rails.application.credentials.dig(:smtp, :password),
+    address: ENV["SMTP_ADDRESS"] || Rails.application.credentials.dig(:smtp, :address),
+    domain: ENV["SMTP_DOMAIN"] || Rails.application.credentials.dig(:smtp, :domain),
+    port: ENV["SMTP_PORT"] || Rails.application.credentials.dig(:smtp, :port),
     authentication: :plain,
     enable_starttls_auto: true
   }
@@ -111,4 +111,4 @@ Rails.application.configure do
   config.active_record.encryption.key_derivation_salt = ENV["ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"] || Rails.application.credentials.dig(:active_record_encryption, :key_derivation_salt)
 end
 
-Rails.application.routes.default_url_options = { host: ENV['MATILDA_HOST'] || Rails.application.credentials.dig(:matilda, :host) || 'matilda.local', protocol: 'https' }
+Rails.application.routes.default_url_options = { host: ENV["MATILDA_HOST"] || Rails.application.credentials.dig(:matilda, :host) || "matilda.local", protocol: "https" }

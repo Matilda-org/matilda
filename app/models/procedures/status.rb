@@ -13,8 +13,8 @@ class Procedures::Status < ApplicationRecord
   ############################################################
 
   belongs_to :procedure, counter_cache: true
-  has_many :procedures_items, dependent: :destroy, class_name: 'Procedures::Item', foreign_key: :procedures_status_id
-  has_many :procedures_status_automations, dependent: :destroy, class_name: 'Procedures::StatusAutomation', foreign_key: :procedures_status_id
+  has_many :procedures_items, dependent: :destroy, class_name: "Procedures::Item", foreign_key: :procedures_status_id
+  has_many :procedures_status_automations, dependent: :destroy, class_name: "Procedures::StatusAutomation", foreign_key: :procedures_status_id
 
   # HOOKS
   ############################################################
@@ -42,12 +42,12 @@ class Procedures::Status < ApplicationRecord
     return false unless direction.in?(%w[left right left-full right-full])
 
     if direction.in?(%w[left-full right-full])
-      return false if direction == 'left-full' && self.id == procedure.procedures_statuses.order(:order).first.id
-      return false if direction == 'right-full' && self.id == procedure.procedures_statuses.order(:order).last.id
+      return false if direction == "left-full" && self.id == procedure.procedures_statuses.order(:order).first.id
+      return false if direction == "right-full" && self.id == procedure.procedures_statuses.order(:order).last.id
 
       true
     else
-      new_order = direction == 'left' ? order - 1 : order + 1
+      new_order = direction == "left" ? order - 1 : order + 1
       max_order = procedure.procedures_statuses.pluck(:order).max
       min_order = 1
 
@@ -64,13 +64,13 @@ class Procedures::Status < ApplicationRecord
 
   def procedures_items_ordered_and_filtered
     # show tasks ordered by deadline and completed if automation is active
-    if procedures_status_automations.find_by(typology: 'order_deadline_asc_task') && !procedure.model
-      return procedures_items.joins("JOIN tasks ON tasks.id = procedures_items.resource_id AND procedures_items.resource_type = 'Task'").order('tasks.completed ASC, tasks.deadline ASC')
+    if procedures_status_automations.find_by(typology: "order_deadline_asc_task") && !procedure.model
+      return procedures_items.joins("JOIN tasks ON tasks.id = procedures_items.resource_id AND procedures_items.resource_type = 'Task'").order("tasks.completed ASC, tasks.deadline ASC")
     end
 
     # hide archived projects if show_archived_projects is false
     if procedure.resources_type_projects? && !procedure.show_archived_projects && !procedure.model
-      return procedures_items.joins("JOIN projects ON projects.id = procedures_items.resource_id AND procedures_items.resource_type = 'Project'").where('projects.archived = false').order(order: :asc)
+      return procedures_items.joins("JOIN projects ON projects.id = procedures_items.resource_id AND procedures_items.resource_type = 'Project'").where("projects.archived = false").order(order: :asc)
     end
 
     procedures_items.order(order: :asc)
@@ -81,21 +81,21 @@ class Procedures::Status < ApplicationRecord
 
   def move(direction)
     unless can_move?(direction)
-      errors.add(:direction, 'Spostamento non disponibile')
+      errors.add(:direction, "Spostamento non disponibile")
       return false
     end
 
     ActiveRecord::Base.transaction do
       if direction.in?(%w[left-full right-full])
-        new_order = direction == 'left-full' ? 1 : procedure.procedures_statuses.pluck(:order).max
+        new_order = direction == "left-full" ? 1 : procedure.procedures_statuses.pluck(:order).max
 
         update!(order: new_order)
         procedure.procedures_statuses.where.not(id: id).order(:order).each_with_index do |status, index|
-          status.update_columns(order: index + (direction == 'left-full' ? 2 : 1))
+          status.update_columns(order: index + (direction == "left-full" ? 2 : 1))
         end
       else
         current_order = order
-        new_order = direction == 'left' ? order - 1 : order + 1
+        new_order = direction == "left" ? order - 1 : order + 1
 
         procedure.procedures_statuses.find_by(order: new_order).update_columns(order: current_order)
         update!(order: new_order)
@@ -111,7 +111,7 @@ class Procedures::Status < ApplicationRecord
 
   def add_automation(automation)
     if automation?(automation)
-      errors.add(:direction, 'Automazione già attiva')
+      errors.add(:direction, "Automazione già attiva")
       return false
     end
 
@@ -128,7 +128,7 @@ class Procedures::Status < ApplicationRecord
 
   def remove_automation(automation)
     unless automation?(automation)
-      errors.add(:direction, 'Automazione non presente')
+      errors.add(:direction, "Automazione non presente")
       return false
     end
 

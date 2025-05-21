@@ -8,7 +8,7 @@ class Tasks::Check < ApplicationRecord
 
   # HOOKS
   ############################################################
-  
+
   before_create do
     default_order = (task.tasks_checks.pluck(:order).max || 0) + 1
     self.order = default_order

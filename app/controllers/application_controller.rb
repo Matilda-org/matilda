@@ -15,16 +15,16 @@ class ApplicationController < ActionController::Base
   end
 
   def serviceworker
-    render action: 'serviceworker', layout: false
+    render action: "serviceworker", layout: false
   end
 
   def ping
-    render plain: 'Pong'
+    render plain: "Pong"
   end
 
   def cacheclear
     Rails.cache.clear
-    render plain: 'Cache cleared'
+    render plain: "Cache cleared"
   end
 
   def jobsrun
@@ -36,11 +36,11 @@ class ApplicationController < ActionController::Base
       Rails.cache.write(jobs_semaphore_key, true, expires_in: 30.minutes)
     end
 
-    render plain: 'Jobs runned'
+    render plain: "Jobs runned"
   rescue StandardError => e
     Rails.logger.error e
     Rails.logger.error e.backtrace.join("\n")
-    render plain: 'Jobs failed', status: 500
+    render plain: "Jobs failed", status: 500
   end
 
   protected
@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
   end
 
   def query_projects_for_policy
-    @query_projects_for_policy ||= @session_user.policy?('only_data_projects_as_member') ? Project.where(id: @session_user.projects_as_member_ids) : Project.all
+    @query_projects_for_policy ||= @session_user.policy?("only_data_projects_as_member") ? Project.where(id: @session_user.projects_as_member_ids) : Project.all
   end
 
   def paginate_query(query)

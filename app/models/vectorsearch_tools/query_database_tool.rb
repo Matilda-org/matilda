@@ -53,11 +53,11 @@ class VectorsearchTools::QueryDatabaseTool
 
   # Projects Attachments
   ##
-  
+
   define_function :prjs_atchs, description: "Query project attachments" do
     property :project_id, type: "integer", description: "Project ID", required: true
   end
-  
+
   def prjs_atchs(data)
     project = Project.find_by_id(data[:project_id])
     return "Progetto non trovato" unless project
@@ -67,7 +67,7 @@ class VectorsearchTools::QueryDatabaseTool
 
   # Tasks
   ##
-  
+
   define_function :tasks, description: "Query tasks" do
     property :project_id, type: "integer", description: "Project ID", required: false
     property :user_id, type: "integer", description: "Filter tasks by user assignment", required: false
@@ -130,7 +130,7 @@ class VectorsearchTools::QueryDatabaseTool
 
   # Credentials
   ##
-  
+
   define_function :credentials, description: "Query credentials" do
     property :search, type: "string", description: "Search credentials by name or description", required: false
   end
@@ -213,7 +213,7 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def procedures_infos(procedures)
-    procedures_infos = ''
+    procedures_infos = ""
 
     procedures.map do |procedure|
       procedures_infos += "- La board #{procedure.name} ha ID #{procedure.id} è contiene i seguenti stati: #{procedure.procedures_statuses.map { |s| "#{s.title} (ID: #{s.id})" }.join(', ')}.\n"
@@ -223,7 +223,7 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def procedures_as_item_infos(procedures_items)
-    procedures_as_item_infos = ''
+    procedures_as_item_infos = ""
 
     procedures_items.includes(:procedure, :procedures_status).map do |procedure_item|
       procedures_as_item_infos += "- Nella board #{procedure_item.procedure.name} si trova nello stato #{procedure_item.procedures_status.title}.\n"

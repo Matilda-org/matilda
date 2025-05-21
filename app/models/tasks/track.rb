@@ -50,12 +50,12 @@ class Tasks::Track < ApplicationRecord
 
   def close(with_time_limit = false)
     unless end_at.nil?
-      errors.add(:base, 'Track già chiuso')
+      errors.add(:base, "Track già chiuso")
       return
     end
 
     if with_time_limit && ping_at >= 10.minutes.ago
-      errors.add(:base, 'Track non ancora concluso')
+      errors.add(:base, "Track non ancora concluso")
       return
     end
 
@@ -67,7 +67,7 @@ class Tasks::Track < ApplicationRecord
       end
 
       # set time_to_close to be at minimum 5 minutes after start_at
-      time_to_close = [time_to_close, start_at + 5.minutes].max
+      time_to_close = [ time_to_close, start_at + 5.minutes ].max
 
       # run updates
       update!(end_at: time_to_close)
@@ -81,5 +81,4 @@ class Tasks::Track < ApplicationRecord
     errors.add(:base, e.message)
     false
   end
-
 end

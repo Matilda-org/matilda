@@ -7,8 +7,8 @@ class ApplicationMailer < ActionMailer::Base
 
     mail(
       to: email,
-      subject: '🔑 Matilda | Recupero password',
-      template_path: 'mailer'
+      subject: "🔑 Matilda | Recupero password",
+      template_path: "mailer"
     )
   end
 
@@ -17,8 +17,8 @@ class ApplicationMailer < ActionMailer::Base
 
     mail(
       to: email,
-      subject: '🔑 Matilda | Accesso al tuo account',
-      template_path: 'mailer'
+      subject: "🔑 Matilda | Accesso al tuo account",
+      template_path: "mailer"
     )
   end
 
@@ -28,8 +28,8 @@ class ApplicationMailer < ActionMailer::Base
 
     mail(
       to: email,
-      subject: '📋 Matilda | Ti è stato assegnato un task',
-      template_path: 'mailer'
+      subject: "📋 Matilda | Ti è stato assegnato un task",
+      template_path: "mailer"
     )
   end
 end

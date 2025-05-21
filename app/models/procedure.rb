@@ -13,11 +13,11 @@ class Procedure < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  has_many :procedures_statuses, dependent: :destroy, class_name: 'Procedures::Status'
+  has_many :procedures_statuses, dependent: :destroy, class_name: "Procedures::Status"
 
-  has_many :procedures_items, dependent: :destroy, class_name: 'Procedures::Item'
-  has_many :projects_items, through: :procedures_items, source: :resource, source_type: 'Project', class_name: 'Project'
-  has_many :tasks_items, through: :procedures_items, source: :resource, source_type: 'Task', class_name: 'Task'
+  has_many :procedures_items, dependent: :destroy, class_name: "Procedures::Item"
+  has_many :projects_items, through: :procedures_items, source: :resource, source_type: "Project", class_name: "Project"
+  has_many :tasks_items, through: :procedures_items, source: :resource, source_type: "Task", class_name: "Task"
 
   belongs_to :project, optional: true
 
@@ -35,15 +35,15 @@ class Procedure < ApplicationRecord
   scope :not_as_model, -> { where(model: false) }
   scope :as_model, -> { where(model: true) }
 
-  scope :resources_type_projects, -> { where(resources_type: 'projects') }
-  scope :resources_type_tasks, -> { where(resources_type: 'tasks') }
+  scope :resources_type_projects, -> { where(resources_type: "projects") }
+  scope :resources_type_tasks, -> { where(resources_type: "tasks") }
 
-  scope :search, ->(search) { left_joins(:project).where('LOWER(procedures.name) LIKE :search OR LOWER(projects.code) LIKE :search OR LOWER(projects.name) LIKE :search', search: "%#{search.downcase}%") }
+  scope :search, ->(search) { left_joins(:project).where("LOWER(procedures.name) LIKE :search OR LOWER(projects.code) LIKE :search OR LOWER(projects.name) LIKE :search", search: "%#{search.downcase}%") }
 
   # ritorna le board che possono essere usate per creare board interni di progetto
-  scope :valid_for_projects, -> { not_archived.as_model.where(resources_type: 'tasks') }
+  scope :valid_for_projects, -> { not_archived.as_model.where(resources_type: "tasks") }
   # ritorna le board che possono essere usate per creare board esterni di progetto
-  scope :valid_for_projects_items, -> { not_archived.not_as_model.resources_type_projects.where('statuses_count > 0') }
+  scope :valid_for_projects_items, -> { not_archived.not_as_model.resources_type_projects.where("statuses_count > 0") }
 
   # HOOKS
   ############################################################
@@ -56,7 +56,7 @@ class Procedure < ApplicationRecord
   after_save do
     if archived
       Users::Prefer.where(
-        resource_type: 'Procedure',
+        resource_type: "Procedure",
         resource_id: id
       ).destroy_all
     end
@@ -66,11 +66,11 @@ class Procedure < ApplicationRecord
   ############################################################
 
   def resources_type_projects?
-    resources_type == 'projects'
+    resources_type == "projects"
   end
 
   def resources_type_tasks?
-    resources_type == 'tasks'
+    resources_type == "tasks"
   end
 
   def archivable?
@@ -97,10 +97,10 @@ class Procedure < ApplicationRecord
   end
 
   def color_type
-    type = ''
-    type = 'secondary' if model
-    type = 'dark' if archived
-    type = 'light' if resources_type_projects?
+    type = ""
+    type = "secondary" if model
+    type = "dark" if archived
+    type = "light" if resources_type_projects?
 
     type
   end
@@ -121,7 +121,7 @@ class Procedure < ApplicationRecord
   def cached_project_name(reset = false)
     Rails.cache.delete("Procedure/cached_project_name/#{id}") if reset
 
-    return '' unless project_id
+    return "" unless project_id
 
     @cached_project_name ||= Rails.cache.fetch("Procedure/cached_project_name/#{id}", expires_in: 7.days) do
       project.name
@@ -217,23 +217,23 @@ class Procedure < ApplicationRecord
   ############################################################
 
   def self.resources_type_string(resources_type)
-    return 'Progetti' if resources_type == 'projects'
-    return 'Task' if resources_type == 'tasks'
+    return "Progetti" if resources_type == "projects"
+    return "Task" if resources_type == "tasks"
 
-    'Non definito'
+    "Non definito"
   end
 
   def self.resources_items_string(resources_type)
-    return 'progetti' if resources_type == 'projects'
-    return 'task' if resources_type == 'tasks'
+    return "progetti" if resources_type == "projects"
+    return "task" if resources_type == "tasks"
 
-    'elementi'
+    "elementi"
   end
 
   def self.resources_item_string(resources_type)
-    return 'progetto' if resources_type == 'projects'
-    return 'task' if resources_type == 'tasks'
+    return "progetto" if resources_type == "projects"
+    return "task" if resources_type == "tasks"
 
-    'elemento'
+    "elemento"
   end
 end

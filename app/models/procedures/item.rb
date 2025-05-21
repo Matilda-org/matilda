@@ -14,17 +14,17 @@ class Procedures::Item < ApplicationRecord
   ############################################################
 
   belongs_to :procedure, counter_cache: true
-  belongs_to :procedures_status, class_name: 'Procedures::Status', foreign_key: :procedures_status_id, counter_cache: true
+  belongs_to :procedures_status, class_name: "Procedures::Status", foreign_key: :procedures_status_id, counter_cache: true
 
   belongs_to :resource, polymorphic: true, optional: true
 
   # SCOPES
   ############################################################
 
-  scope :resource_project, -> { where(resource_type: 'Project') }
-  scope :resource_task, -> { where(resource_type: 'Task') }
-  scope :search_per_project, ->(search) { joins("INNER JOIN projects ON resource_id = projects.id AND resource_type = 'Project'").where('LOWER(projects.name) LIKE :search OR LOWER(projects.code) LIKE :search', search: "%#{search.downcase}%") }
-  scope :search_per_task, ->(search) { joins("INNER JOIN tasks ON resource_id = tasks.id AND resource_type = 'Task'").where('LOWER(tasks.title) LIKE :search', search: "%#{search.downcase}%") }
+  scope :resource_project, -> { where(resource_type: "Project") }
+  scope :resource_task, -> { where(resource_type: "Task") }
+  scope :search_per_project, ->(search) { joins("INNER JOIN projects ON resource_id = projects.id AND resource_type = 'Project'").where("LOWER(projects.name) LIKE :search OR LOWER(projects.code) LIKE :search", search: "%#{search.downcase}%") }
+  scope :search_per_task, ->(search) { joins("INNER JOIN tasks ON resource_id = tasks.id AND resource_type = 'Task'").where("LOWER(tasks.title) LIKE :search", search: "%#{search.downcase}%") }
 
   # HOOKS
   ############################################################
@@ -34,12 +34,12 @@ class Procedures::Item < ApplicationRecord
     self.procedures_status_id = procedure.procedures_statuses.order(order: :asc).first.id if procedures_status_id.nil?
 
     if procedure.resources_type_projects? && resource_id.present?
-      self.resource_type = 'Project'
-      self.title = 'Project'
+      self.resource_type = "Project"
+      self.title = "Project"
     end
     if procedure.resources_type_tasks? && resource_id.present?
-      self.resource_type = 'Task'
-      self.title = 'Task'
+      self.resource_type = "Task"
+      self.title = "Task"
     end
   end
 
@@ -190,6 +190,6 @@ class Procedures::Item < ApplicationRecord
   private
 
   def update_kanban_status_component(status)
-    broadcast_replace_to dom_id(status.procedure), target: dom_id(status, 'kanban-status'), partial: 'procedures/kanban-status', locals: { status: status }
+    broadcast_replace_to dom_id(status.procedure), target: dom_id(status, "kanban-status"), partial: "procedures/kanban-status", locals: { status: status }
   end
 end

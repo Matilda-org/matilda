@@ -9,9 +9,9 @@ class Folder < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  has_many :folders_items, dependent: :destroy, class_name: 'Folders::Item'
-  has_many :projects, through: :folders_items, source: :resource, source_type: 'Project'
-  has_many :credentials, through: :folders_items, source: :resource, source_type: 'Credential'
+  has_many :folders_items, dependent: :destroy, class_name: "Folders::Item"
+  has_many :projects, through: :folders_items, source: :resource, source_type: "Project"
+  has_many :credentials, through: :folders_items, source: :resource, source_type: "Credential"
 
   # HOOKS
   ############################################################
@@ -30,19 +30,19 @@ class Folder < ApplicationRecord
   ############################################################
 
   def total_projects
-    @total_projects ||= folders_items.where(resource_type: 'Project').count
+    @total_projects ||= folders_items.where(resource_type: "Project").count
   end
 
   def total_credentials
-    @total_credentials ||= folders_items.where(resource_type: 'Credential').count
+    @total_credentials ||= folders_items.where(resource_type: "Credential").count
   end
 
   def last_project
-    @last_project ||= folders_items.where(resource_type: 'Project').order(created_at: :desc).first.try(:resource)
+    @last_project ||= folders_items.where(resource_type: "Project").order(created_at: :desc).first.try(:resource)
   end
 
   def last_credential
-    @last_credential ||= folders_items.where(resource_type: 'Credential').order(created_at: :desc).first.try(:resource)
+    @last_credential ||= folders_items.where(resource_type: "Credential").order(created_at: :desc).first.try(:resource)
   end
 
   # CLASS

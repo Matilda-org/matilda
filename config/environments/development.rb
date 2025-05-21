@@ -43,11 +43,11 @@ Rails.application.configure do
   # Configure smtp settings
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    user_name: ENV['SMTP_USER_NAME'] || Rails.application.credentials.dig(:smtp, :user_name),
-    password: ENV['SMTP_PASSWORD'] || Rails.application.credentials.dig(:smtp, :password),
-    address: ENV['SMTP_ADDRESS'] || Rails.application.credentials.dig(:smtp, :address),
-    domain: ENV['SMTP_DOMAIN'] || Rails.application.credentials.dig(:smtp, :domain),
-    port: ENV['SMTP_PORT'] || Rails.application.credentials.dig(:smtp, :port),
+    user_name: ENV["SMTP_USER_NAME"] || Rails.application.credentials.dig(:smtp, :user_name),
+    password: ENV["SMTP_PASSWORD"] || Rails.application.credentials.dig(:smtp, :password),
+    address: ENV["SMTP_ADDRESS"] || Rails.application.credentials.dig(:smtp, :address),
+    domain: ENV["SMTP_DOMAIN"] || Rails.application.credentials.dig(:smtp, :domain),
+    port: ENV["SMTP_PORT"] || Rails.application.credentials.dig(:smtp, :port),
     authentication: :plain,
     enable_starttls_auto: true
   }
@@ -85,4 +85,4 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 end
 
-Rails.application.routes.default_url_options = { host: 'localhost:3000', protocol: 'http' }
+Rails.application.routes.default_url_options = { host: "localhost:3000", protocol: "http" }

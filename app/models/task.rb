@@ -20,13 +20,13 @@ class Task < ApplicationRecord
   # SCOPES
   ############################################################
 
-  scope :today, -> { where('deadline = ?', Date.today) }
-  scope :expired, -> { where('deadline < ?', Date.today) }
-  scope :not_expired, -> { where('deadline >= ?', Date.today) }
+  scope :today, -> { where("deadline = ?", Date.today) }
+  scope :expired, -> { where("deadline < ?", Date.today) }
+  scope :not_expired, -> { where("deadline >= ?", Date.today) }
   scope :not_completed, -> { where(completed: false) }
   scope :completed, -> { where(completed: true) }
 
-  scope :search, ->(search) { where('LOWER(title) LIKE :search', search: "%#{search.downcase}%") }
+  scope :search, ->(search) { where("LOWER(title) LIKE :search", search: "%#{search.downcase}%") }
 
   # RELATIONS
   ############################################################
@@ -36,24 +36,24 @@ class Task < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :project, optional: true
 
-  has_many :procedures_items, as: :resource, dependent: :destroy, class_name: 'Procedures::Item'
+  has_many :procedures_items, as: :resource, dependent: :destroy, class_name: "Procedures::Item"
   has_many :procedures_as_item, through: :procedures_items, source: :procedure
 
-  has_many :tasks_tracks, dependent: :destroy, class_name: 'Tasks::Track'
-  has_many :tasks_followers, dependent: :destroy, class_name: 'Tasks::Follower'
-  has_many :tasks_checks, dependent: :destroy, class_name: 'Tasks::Check'
+  has_many :tasks_tracks, dependent: :destroy, class_name: "Tasks::Track"
+  has_many :tasks_followers, dependent: :destroy, class_name: "Tasks::Follower"
+  has_many :tasks_checks, dependent: :destroy, class_name: "Tasks::Check"
 
   # HOOKS
   ############################################################
 
   before_save do
     if self.repeat && self.repeat_from.blank?
-      errors.add(:repeat_from, 'è obbligatorio se si vuole ripetere il task')
+      errors.add(:repeat_from, "è obbligatorio se si vuole ripetere il task")
       throw(:abort)
     end
 
     if self.repeat && self.repeat_to.blank?
-      errors.add(:repeat_to, 'è obbligatorio se si vuole ripetere il task')
+      errors.add(:repeat_to, "è obbligatorio se si vuole ripetere il task")
       throw(:abort)
     end
 
@@ -163,7 +163,7 @@ class Task < ApplicationRecord
   # turbo stream updates
   after_save_commit do
     if user_id
-      broadcast_replace_to dom_id(user), target: dom_id(user, 'stats'), partial: 'users/stats', locals: { user: user }
+      broadcast_replace_to dom_id(user), target: dom_id(user, "stats"), partial: "users/stats", locals: { user: user }
     end
   end
 
@@ -215,18 +215,18 @@ class Task < ApplicationRecord
   end
 
   def deadline_in_words
-    return 'Nessuna scadenza' unless deadline
+    return "Nessuna scadenza" unless deadline
 
     if deadline.to_date == Date.today
-      'Scade oggi'
+      "Scade oggi"
     else
-      prefix = deadline.past? ? 'Scaduta da' : 'Scade tra'
+      prefix = deadline.past? ? "Scaduta da" : "Scade tra"
       "#{prefix} #{distance_of_time_in_words_to_now(deadline.at_end_of_day)}"
     end
   end
 
   def completed_at_in_words
-    return 'Completato' unless completed_at
+    return "Completato" unless completed_at
 
     "Completato il #{completed_at.strftime('%d/%m/%Y')}"
   end
@@ -238,12 +238,12 @@ class Task < ApplicationRecord
   end
 
   def color_type
-    type = 'secondary'
-    type = 'info' if deadline
-    type = 'danger' if expired?
-    type = 'warning' if today?
-    type = 'success' if completed
-    type = 'secondary' if !accepted
+    type = "secondary"
+    type = "info" if deadline
+    type = "danger" if expired?
+    type = "warning" if today?
+    type = "success" if completed
+    type = "secondary" if !accepted
 
     type
   end
@@ -251,7 +251,7 @@ class Task < ApplicationRecord
   def cached_project_name(reset = false)
     Rails.cache.delete("Task/#{id}/cached_project_name") if reset
 
-    return '' unless project_id
+    return "" unless project_id
 
     @cached_project_name ||= Rails.cache.fetch("Task/#{id}/cached_project_name", expires_in: 7.days) do
       project&.name

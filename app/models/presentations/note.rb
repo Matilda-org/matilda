@@ -10,5 +10,5 @@ class Presentations::Note < ApplicationRecord
   ############################################################
 
   belongs_to :presentation
-  belongs_to :presentations_page, class_name: 'Presentations::Page', foreign_key: :presentations_page_id
+  belongs_to :presentations_page, class_name: "Presentations::Page", foreign_key: :presentations_page_id
 end

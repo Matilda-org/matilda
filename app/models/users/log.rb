@@ -4,7 +4,7 @@ class Users::Log < ApplicationRecord
   enum typology: {
     unknown: 0,
     search: 1,
-    credential: 2,
+    credential: 2
   }
 
   # RELATIONS

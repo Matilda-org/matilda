@@ -4,17 +4,17 @@ class User < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  has_many :users_prefers, dependent: :destroy, class_name: 'Users::Prefer'
-  has_many :users_policies, dependent: :destroy, class_name: 'Users::Policy'
-  has_many :users_logs, dependent: :destroy, class_name: 'Users::Log'
+  has_many :users_prefers, dependent: :destroy, class_name: "Users::Prefer"
+  has_many :users_policies, dependent: :destroy, class_name: "Users::Policy"
+  has_many :users_logs, dependent: :destroy, class_name: "Users::Log"
 
-  has_many :projects_members, dependent: :destroy, class_name: 'Projects::Member'
+  has_many :projects_members, dependent: :destroy, class_name: "Projects::Member"
   has_many :projects_as_member, through: :projects_members, source: :project
-  has_many :projects_logs, dependent: :destroy, class_name: 'Projects::Log'
+  has_many :projects_logs, dependent: :destroy, class_name: "Projects::Log"
 
   has_many :tasks, dependent: :destroy
-  has_many :tasks_tracks, dependent: :nullify, class_name: 'Tasks::Track'
-  has_many :tasks_followers, dependent: :nullify, class_name: 'Tasks::Follower'
+  has_many :tasks_tracks, dependent: :nullify, class_name: "Tasks::Track"
+  has_many :tasks_followers, dependent: :nullify, class_name: "Tasks::Follower"
 
   has_many :posts, dependent: :nullify
 
@@ -61,7 +61,7 @@ class User < ApplicationRecord
   ############################################################
 
   def complete_name
-    [surname, name].join(' ')
+    [ surname, name ].join(" ")
   end
 
   def active_tasks_track
@@ -69,7 +69,7 @@ class User < ApplicationRecord
   end
 
   def image_profile_thumb
-    image_profile.variant(resize: '100x100')
+    image_profile.variant(resize: "100x100")
   end
 
   def policies
@@ -153,7 +153,7 @@ class User < ApplicationRecord
     Rails.cache.fetch("User/cached_preview_data/#{user_id}", expires_in: 7.days) do
       user = User.find_by(id: user_id)
 
-      image_profile_url = '/statics/placeholder-profile.jpg'
+      image_profile_url = "/statics/placeholder-profile.jpg"
       if user.image_profile.attached?
         image_profile_url = Rails.application.routes.url_helpers.url_for(user.image_profile_thumb)
       end
@@ -171,6 +171,6 @@ class User < ApplicationRecord
     return true unless image_profile.attached?
     return true if image_profile.content_type.in?(%('image/jpeg image/png'))
 
-    errors.add(:image_profile, 'needs to be a jpeg or png')
+    errors.add(:image_profile, "needs to be a jpeg or png")
   end
 end

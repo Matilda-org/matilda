@@ -7,6 +7,6 @@ module Cachable
   end
 
   def clear_views_cache
-    Rails.cache.delete_matched('views/*')
+    Rails.cache.delete_matched("views/*")
   end
 end

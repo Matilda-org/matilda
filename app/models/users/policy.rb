@@ -82,7 +82,7 @@ class Users::Policy < ApplicationRecord
     tools: 23,
 
     # LIMIT BASED ON PROJECTS
-    only_data_projects_as_member: 24,
+    only_data_projects_as_member: 24
   }
 
   # RELATIONS

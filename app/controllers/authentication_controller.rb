@@ -18,7 +18,7 @@ class AuthenticationController < ApplicationController
     @user = User.find_by(user_login_params.except(:password))
 
     unless @user&.authenticate(user_login_params[:password])
-      flash[:danger] = 'Email o password non corretti'
+      flash[:danger] = "Email o password non corretti"
       return redirect_to authentication_login_path(user_login_params.except(:password))
     end
 
@@ -33,7 +33,7 @@ class AuthenticationController < ApplicationController
     @user = User.find_by(params.permit(:email))
 
     unless @user
-      flash[:danger] = 'Email non trovata'
+      flash[:danger] = "Email non trovata"
       return redirect_to authentication_recover_password_path
     end
 
@@ -53,16 +53,16 @@ class AuthenticationController < ApplicationController
     code = Rails.cache.read("AuthenticationController/recover_password/#{@user.id}")
 
     unless code && params[:code] && code.upcase == params[:code].upcase
-      flash[:danger] = 'Codice non corretto'
+      flash[:danger] = "Codice non corretto"
       return redirect_to authentication_update_password_path(@user)
     end
 
     unless @user.update(params.permit(:password, :password_confirmation))
-      flash[:danger] = @user.errors.full_messages.join(', ')
+      flash[:danger] = @user.errors.full_messages.join(", ")
       return redirect_to authentication_update_password_path(@user)
     end
 
-    flash[:success] = 'Password aggiornata'
+    flash[:success] = "Password aggiornata"
     redirect_to authentication_login_path
   end
 

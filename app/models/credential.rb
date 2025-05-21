@@ -8,5 +8,5 @@ class Credential < ApplicationRecord
   # SCOPES
   ############################################################
 
-  scope :search, ->(search) { where('LOWER(name) LIKE :search', search: "%#{search.downcase}%") }
+  scope :search, ->(search) { where("LOWER(name) LIKE :search", search: "%#{search.downcase}%") }
 end

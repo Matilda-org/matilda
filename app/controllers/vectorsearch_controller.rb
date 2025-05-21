@@ -6,26 +6,26 @@ class VectorsearchController < ApplicationController
 
   def chat
     @vectorsearch = Vectorsearch.new(@session_user_id)
-    render partial: 'layouts/application/vectorsearch__chat', locals: { vectorsearch: @vectorsearch }
+    render partial: "layouts/application/vectorsearch__chat", locals: { vectorsearch: @vectorsearch }
   end
 
   def send_message
     @vectorsearch = Vectorsearch.new(@session_user_id)
     @vectorsearch.send_message(params[:message])
 
-    render partial: 'layouts/application/vectorsearch__form'
+    render partial: "layouts/application/vectorsearch__form"
   end
 
   def clear_messages
     @vectorsearch = Vectorsearch.new(@session_user_id)
     @vectorsearch.clear_messages
 
-    render partial: 'layouts/application/vectorsearch__chat', locals: { vectorsearch: @vectorsearch }
+    render partial: "layouts/application/vectorsearch__chat", locals: { vectorsearch: @vectorsearch }
   end
 
   def text_to_checklist
     llm = Langchain::LLM::OpenAI.new(
-      api_key: Setting.get('vectorsearch_openai_key'),
+      api_key: Setting.get("vectorsearch_openai_key"),
       default_options: { temperature: 0.25, chat_model: "gpt-4.1-mini" }
     )
 
@@ -43,7 +43,7 @@ class VectorsearchController < ApplicationController
 
   def url_to_data
     llm = Langchain::LLM::OpenAI.new(
-      api_key: Setting.get('vectorsearch_openai_key'),
+      api_key: Setting.get("vectorsearch_openai_key"),
       default_options: { temperature: 0.25, chat_model: "gpt-4.1-mini" }
     )
 
@@ -55,7 +55,7 @@ class VectorsearchController < ApplicationController
       ]
     )
     assistant.add_message(role: "user", content: params[:url])
-    
+
     assistant.run(auto_tool_execution: true)
     data = assistant.messages.last.content
     data = JSON.parse(data) rescue nil

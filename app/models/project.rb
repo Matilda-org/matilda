@@ -16,12 +16,12 @@ class Project < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  has_many :projects_members, dependent: :destroy, class_name: 'Projects::Member'
-  has_many :projects_logs, dependent: :destroy, class_name: 'Projects::Log'
-  has_many :projects_attachments, dependent: :destroy, class_name: 'Projects::Attachment'
-  has_many :projects_events, dependent: :destroy, class_name: 'Projects::Event'
+  has_many :projects_members, dependent: :destroy, class_name: "Projects::Member"
+  has_many :projects_logs, dependent: :destroy, class_name: "Projects::Log"
+  has_many :projects_attachments, dependent: :destroy, class_name: "Projects::Attachment"
+  has_many :projects_events, dependent: :destroy, class_name: "Projects::Event"
 
-  has_many :procedures_items, as: :resource, dependent: :destroy, class_name: 'Procedures::Item'
+  has_many :procedures_items, as: :resource, dependent: :destroy, class_name: "Procedures::Item"
   has_many :procedures_as_item, through: :procedures_items, source: :procedure
 
   has_many :procedures, dependent: :destroy
@@ -43,7 +43,7 @@ class Project < ApplicationRecord
   scope :not_archived, -> { where(archived: false) }
   scope :archived, -> { where(archived: true) }
 
-  scope :search, ->(search) { where('LOWER(code) LIKE :search OR LOWER(name) LIKE :search', search: "%#{search.downcase}%") }
+  scope :search, ->(search) { where("LOWER(code) LIKE :search OR LOWER(name) LIKE :search", search: "%#{search.downcase}%") }
 
   # HOOKS
   ############################################################
@@ -61,7 +61,7 @@ class Project < ApplicationRecord
   after_save do
     if archived
       Users::Prefer.where(
-        resource_type: 'Project',
+        resource_type: "Project",
         resource_id: id
       ).destroy_all
     end
@@ -120,14 +120,14 @@ class Project < ApplicationRecord
   ############################################################
 
   def name_2chars
-    name_2chars = name.gsub(/[^a-zA-Z]/, '')[0..1].upcase
-    name_2chars = name_2chars[0] + 'X' if name_2chars.length < 2
+    name_2chars = name.gsub(/[^a-zA-Z]/, "")[0..1].upcase
+    name_2chars = name_2chars[0] + "X" if name_2chars.length < 2
 
     name_2chars
   end
 
   def complete_code
-    [year, code].join(' - ')
+    [ year, code ].join(" - ")
   end
 
   def description_with_budget
@@ -139,7 +139,7 @@ class Project < ApplicationRecord
   end
 
   def complete_code_name
-    [year, code, name].join(' - ')
+    [ year, code, name ].join(" - ")
   end
 
   def procedures_valid
@@ -162,8 +162,8 @@ class Project < ApplicationRecord
   end
 
   def color_type
-    type = ''
-    type = 'dark' if archived
+    type = ""
+    type = "dark" if archived
 
     type
   end
@@ -215,7 +215,7 @@ class Project < ApplicationRecord
     response = service.create_channel(name)
     return unless response
 
-    update_column(:slack_channel_id, response['id'])
+    update_column(:slack_channel_id, response["id"])
   end
 
   def update_name_on_slack
@@ -253,13 +253,13 @@ class Project < ApplicationRecord
   ############################################################
 
   def self.archived_reason_string(archived_reason)
-    return 'Altro' if archived_reason == 'other'
-    return 'Completato' if archived_reason == 'completed'
-    return 'Non iniziato' if archived_reason == 'not_started'
-    return 'Bloccato da cliente' if archived_reason == 'blocked_by_other'
-    return 'Bloccato da azienda' if archived_reason == 'blocked_by_me'
+    return "Altro" if archived_reason == "other"
+    return "Completato" if archived_reason == "completed"
+    return "Non iniziato" if archived_reason == "not_started"
+    return "Bloccato da cliente" if archived_reason == "blocked_by_other"
+    return "Bloccato da azienda" if archived_reason == "blocked_by_me"
 
-    'Non definito'
+    "Non definito"
   end
 
   def self.default_code

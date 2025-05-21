@@ -5,7 +5,7 @@ class ToolsController < ApplicationController
   before_action :validate_session_user!
   before_action :validate_policy_tools
   before_action do
-    @_navbar = 'tools'
+    @_navbar = "tools"
   end
 
   caches_action :index, cache_path: -> { current_cache_action_path }, layout: false
@@ -69,20 +69,20 @@ class ToolsController < ApplicationController
     else
       query = Project.joins(tasks: :tasks_tracks).where(tasks_tracks: { end_at: (@date_start..@date_end) })
       query = query.where(tasks_tracks: { user_id: @user_id }) unless @user_id.blank?
-      @projects = query.select('projects.*, SUM(tasks_tracks.time_spent) AS time_spent').group('projects.id')
+      @projects = query.select("projects.*, SUM(tasks_tracks.time_spent) AS time_spent").group("projects.id")
       @total = @projects.map(&:time_spent).sum
     end
 
     unless params[:print].blank?
-      @_nav_title = 'Esportazione attività'
+      @_nav_title = "Esportazione attività"
       @_print_title = "Esportazione attività #{@date_start.strftime('%d/%m/%Y')} - #{@date_end.strftime('%d/%m/%Y')}"
-      return render :projects_tasks_tracking_print, layout: 'application_print'
+      render :projects_tasks_tracking_print, layout: "application_print"
     end
   end
 
   private
 
   def validate_policy_tools
-    validate_policy!('tools')
+    validate_policy!("tools")
   end
 end

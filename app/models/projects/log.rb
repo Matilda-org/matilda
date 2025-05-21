@@ -37,7 +37,7 @@ class Projects::Log < ApplicationRecord
   end
 
   def update_on_turbo_stream_content
-    broadcast_replace_to dom_id(self), target: dom_id(self, 'content'), partial: 'projects/shared/log-content', locals: { log: self }
+    broadcast_replace_to dom_id(self), target: dom_id(self, "content"), partial: "projects/shared/log-content", locals: { log: self }
   end
 
   # HELPERS

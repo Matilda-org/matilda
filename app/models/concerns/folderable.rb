@@ -2,7 +2,7 @@ module Folderable
   extend ActiveSupport::Concern
 
   included do
-    has_one :folders_item, as: :resource, dependent: :destroy, class_name: 'Folders::Item'
+    has_one :folders_item, as: :resource, dependent: :destroy, class_name: "Folders::Item"
     has_one :folder, through: :folders_item
 
     scope :for_folder, ->(folder_id) { joins(:folders_item).where(folders_items: { folder_id: folder_id }) }
@@ -24,5 +24,4 @@ module Folderable
       end
     end
   end
-
 end

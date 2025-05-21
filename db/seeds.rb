@@ -82,7 +82,7 @@ end
       title: "Task #{index + 1}",
       description: Faker::Lorem.paragraph,
       deadline: Faker::Date.between(from: Date.today, to: 60.days.from_now),
-      time_estimate: 60 * [15, 30, 60, 120].sample
+      time_estimate: 60 * [ 15, 30, 60, 120 ].sample
     }
   )
 end
@@ -122,7 +122,7 @@ end
   )
 
   # assign project to a folder
-  if [true, true, false].sample
+  if [ true, true, false ].sample
     Folders::Item.create!(
       resource_type: 'Project',
       resource_id: project.id,
@@ -131,7 +131,7 @@ end
   end
 
   # assing project to user prefers
-  if [true, false, false].sample
+  if [ true, false, false ].sample
     user.users_prefers.create!(
       resource_type: 'Project',
       resource_id: project.id

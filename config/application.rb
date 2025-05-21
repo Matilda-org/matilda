@@ -12,7 +12,7 @@ module Matilda
     config.load_defaults 7.0
 
     # Set supported languages.
-    config.i18n.available_locales = [:it, :en]
+    config.i18n.available_locales = [ :it, :en ]
     config.i18n.default_locale = :it
     I18n.backend.class.send(:include, I18n::Backend::Cascade)
 
@@ -21,6 +21,6 @@ module Matilda
     config.active_storage.track_variants = true
 
     # Load libs
-    config.autoload_paths << Rails.root.join('lib')
+    config.autoload_paths << Rails.root.join("lib")
   end
 end

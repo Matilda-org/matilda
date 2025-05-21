@@ -8,35 +8,35 @@ class Procedures::StatusAutomation < ApplicationRecord
     uncomplete_task: 3,
     order_deadline_asc_task: 4,
     take_completed_task: 5,
-    cancel_deadline_task: 6,
+    cancel_deadline_task: 6
   }
 
   # RELATIONS
   ############################################################
 
-  belongs_to :procedures_status, class_name: 'Procedures::Status'
+  belongs_to :procedures_status, class_name: "Procedures::Status"
 
   # HELPERS
   ############################################################
 
   def typology_complete_task?
-    typology == 'complete_task'
+    typology == "complete_task"
   end
 
   def typology_uncomplete_task?
-    typology == 'uncomplete_task'
+    typology == "uncomplete_task"
   end
 
   def typology_cancel_deadline_task?
-    typology == 'cancel_deadline_task'
+    typology == "cancel_deadline_task"
   end
 
   def typology_archive_project?
-    typology == 'archive_project'
+    typology == "archive_project"
   end
 
   def typology_order_deadline_asc_task?
-    typology == 'order_deadline_asc_task'
+    typology == "order_deadline_asc_task"
   end
 
   # OPERATIONS

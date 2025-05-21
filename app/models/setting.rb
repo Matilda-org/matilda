@@ -19,10 +19,10 @@ class Setting < ApplicationRecord
   ############################################################
 
   def value
-    return data['value'] if data['type'] == 'json'
-    return data['value']&.to_s if data['type'] == 'string'
-    return data['value']&.to_i&.positive? if data['type'] == 'boolean'
-    return Rails.application.routes.url_helpers.url_for(file) if data['type'] == 'file' && file.attached?
+    return data["value"] if data["type"] == "json"
+    return data["value"]&.to_s if data["type"] == "string"
+    return data["value"]&.to_i&.positive? if data["type"] == "boolean"
+    return Rails.application.routes.url_helpers.url_for(file) if data["type"] == "file" && file.attached?
 
     nil
   end
@@ -38,10 +38,10 @@ class Setting < ApplicationRecord
     end
   end
 
-  def self.set(key, val, type = 'string')
+  def self.set(key, val, type = "string")
     Rails.cache.delete("Setting/#{key}")
 
-    if type == 'file'
+    if type == "file"
       setting = Setting.find_or_create_by(key: key)
       setting.update(data: { type: type, value: nil })
       setting.file.attach(val)
@@ -51,7 +51,7 @@ class Setting < ApplicationRecord
   end
 
   def self.reset(key_start)
-    Setting.where('key LIKE ?', "#{key_start}%").delete_all
+    Setting.where("key LIKE ?", "#{key_start}%").delete_all
     Rails.cache.clear
   end
 end

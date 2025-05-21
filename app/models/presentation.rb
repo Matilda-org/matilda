@@ -4,9 +4,9 @@ class Presentation < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  has_many :presentations_pages, dependent: :destroy, class_name: 'Presentations::Page'
-  has_many :presentations_actions, dependent: :destroy, class_name: 'Presentations::Action'
-  has_many :presentations_notes, dependent: :destroy, class_name: 'Presentations::Note'
+  has_many :presentations_pages, dependent: :destroy, class_name: "Presentations::Page"
+  has_many :presentations_actions, dependent: :destroy, class_name: "Presentations::Action"
+  has_many :presentations_notes, dependent: :destroy, class_name: "Presentations::Note"
 
   belongs_to :project, optional: true
 

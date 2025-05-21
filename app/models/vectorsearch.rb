@@ -26,12 +26,12 @@ class Vectorsearch
 
   def send_message(content)
     # save user message in memory
-    save_message_in_memory('user', content)
+    save_message_in_memory("user", content)
     send_ui_update
 
     # send custom message if user has not provided an OpenAI API key
-    unless Setting.get('vectorsearch_openai_key')
-      save_message_in_memory('assistant', no_api_key_message)
+    unless Setting.get("vectorsearch_openai_key")
+      save_message_in_memory("assistant", no_api_key_message)
       send_ui_update
       return false
     end
@@ -40,22 +40,22 @@ class Vectorsearch
     response_content = nil
     begin
       llm = Langchain::LLM::OpenAI.new(
-        api_key: Setting.get('vectorsearch_openai_key'),
+        api_key: Setting.get("vectorsearch_openai_key"),
         default_options: { temperature: 0.7, chat_model: "gpt-4.1-mini" }
       )
 
       assistant = Langchain::Assistant.new(
         llm: llm,
-        instructions: prompt_template.gsub('{{track_time_string}}', self.user.complete_name).gsub('{{user_id}}', self.user.id.to_s).gsub('{{date}}', Date.today.strftime('%d/%m/%Y')),
+        instructions: prompt_template.gsub("{{track_time_string}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
         tools: [
           VectorsearchTools::BrowserWebTool.new,
-          VectorsearchTools::QueryDatabaseTool.new,
+          VectorsearchTools::QueryDatabaseTool.new
         ]
       )
 
       messages.each { |message| assistant.add_message(role: message[:role], content: message[:content]) }
 
-      assistant.run(auto_tool_execution: true) 
+      assistant.run(auto_tool_execution: true)
       response_content = assistant.messages.last.content
     rescue StandardError => e
       Rails.logger.error("Error in Vectorsearch#send_message: #{e.message}")
@@ -64,7 +64,7 @@ class Vectorsearch
     end
 
     # save assistant message in memory
-    save_message_in_memory('assistant', response_content)
+    save_message_in_memory("assistant", response_content)
     send_ui_update
 
     true
@@ -90,7 +90,7 @@ class Vectorsearch
   end
 
   def send_ui_update
-    Turbo::StreamsChannel.broadcast_replace_to "vectorsearch_#{@user_id}", target: "vectorsearch_#{@user_id}_chat", partial: 'layouts/application/vectorsearch__chat', locals: { vectorsearch: self }
+    Turbo::StreamsChannel.broadcast_replace_to "vectorsearch_#{@user_id}", target: "vectorsearch_#{@user_id}_chat", partial: "layouts/application/vectorsearch__chat", locals: { vectorsearch: self }
   end
 
   def no_api_key_message
