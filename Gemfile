@@ -74,6 +74,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Use sqlite3 as the database for Active Record
+  gem "sqlite3"
 end
 
 group :development do
@@ -82,9 +85,6 @@ group :development do
 
   # Gnerate documentation for data structure.
   gem "rails-erd"
-
-  # Use sqlite3 as the database for Active Record
-  gem "sqlite3"
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem 'rack-mini-profiler'

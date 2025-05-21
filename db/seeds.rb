@@ -1,3 +1,5 @@
+return unless Rails.env.development?
+
 user = User.create!(
   name: 'Admin',
   surname: 'Admin',
@@ -7,9 +9,6 @@ user = User.create!(
 )
 
 user.update_policies(Users::Policy.policies.keys)
-
-
-return unless Rails.env.development?
 
 # Settings
 ##
