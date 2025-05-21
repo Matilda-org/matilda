@@ -245,8 +245,8 @@ class ProjectsController < ApplicationController
   def add_member_action
     return unless validate_policy!('projects_manage_members')
     return unless project_finder
-
-    @member = @project.projects_members.new(params.permit(:user_id, :role))
+    
+    @member = @project.projects_members.new(user_id: params[:user_id], role: params[:role])
     return render 'projects/actions/add_member' unless @member.save
 
     render partial: 'shared/action-feedback', locals: {
@@ -265,7 +265,7 @@ class ProjectsController < ApplicationController
     return unless project_finder
     return unless projects_member_finder
 
-    return render 'projects/actions/edit_member' unless @member.update(params.permit(:role))
+    return render 'projects/actions/edit_member' unless @member.update(role: params[:role])
 
     render partial: 'shared/action-feedback', locals: {
       title: 'Modifica partecipante',
