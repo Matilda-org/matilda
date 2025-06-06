@@ -16,7 +16,9 @@ end
   <li>
     <ul class="h-list-none" style="max-height: 300px; overflow-y: auto;">
       <% folders.each do |folder| %>
-        <li><a class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>" href="<%= base_path %>/<%= folder[:id] %>" data-turbo-frame="_top"><small><i class="bi bi-folder-fill"></i> <%= folder[:name] %></small></a></li>
+        <li
+          class="<%= active_folder_id&.to_i == folder[:id] ? 'pb-2 mb-2 border-bottom' : '' %>"
+        ><a class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>" href="<%= base_path %>/<%= folder[:id] %>" data-turbo-frame="_top"><small><i class="bi bi-folder-fill"></i> <%= folder[:name] %></small></a></li>
       <% end %>
     </ul>
   </li>
