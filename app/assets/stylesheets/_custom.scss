@@ -225,6 +225,11 @@ body {
     background-color: var(--bs-primary);
     color: var(--bs-white);
   }
+
+  &:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.95);
+    color: var(--bs-white);
+  }
 }
 
 .sidebar .nav-link {
