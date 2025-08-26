@@ -112,7 +112,7 @@ GEM
     bootstrap5-kaminari-views (0.0.1)
       kaminari (>= 0.13)
       rails (>= 3.1)
-    brakeman (7.0.2)
+    brakeman (7.1.0)
       racc
     builder (3.2.4)
     capybara (3.40.0)
