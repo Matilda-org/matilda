@@ -1,6 +1,17 @@
 <%= turbo_frame_tag 'form_functionalities' do %>
 
   <%= form_tag settings_edit_functionalities_action_path, multipart: true, class: 'd-flex flex-column', data: { turbo_frame: '_self', controller: 'form-loading' } do %>
+    <div class="col col-12 mb-3" data-controller="api-key-generator">
+      <label for="functionalities_api_key" class="form-label">API Key</label>
+      <div class="alert alert-info py-1 px-1" role="alert" style="font-size: 12px;">
+        L'API Key permette di utilizzare Matilda tramite API esterne.
+      </div>
+      <div class="input-group">
+        <input type="text" class="form-control" id="functionalities_api_key" name="functionalities_api_key" value="<%= Setting.get('functionalities_api_key') %>" data-api-key-generator-target="input">
+        <button type="button" class="btn btn-outline-secondary" data-action="click->api-key-generator#generate">Genera</button>
+      </div>
+    </div>
+
     <div class="col col-12 mb-3">
       <label for="functionalities_task_acceptance" class="form-label">Accettazione task</label>
       <div class="alert alert-info py-1 px-1" role="alert" style="font-size: 12px;">

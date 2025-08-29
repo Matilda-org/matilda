@@ -24,7 +24,8 @@ class SettingsController < ApplicationController
   end
 
   def edit_functionalities_action
-    p = params.permit(:functionalities_task_acceptance)
+    p = params.permit(:functionalities_api_key, :functionalities_task_acceptance)
+    Setting.set("functionalities_api_key", p[:functionalities_api_key]) if p[:functionalities_api_key].present?
     Setting.set("functionalities_task_acceptance", p[:functionalities_task_acceptance], "boolean") if p[:functionalities_task_acceptance].present?
 
     redirect_to settings_path
