@@ -161,4 +161,11 @@ Rails.application.routes.draw do
   post "vectorsearch/clear-messages", to: "vectorsearch#clear_messages", as: "vectorsearch_clear_messages"
   post "vectorsearch/text-to-checklist", to: "vectorsearch#text_to_checklist", as: "vectorsearch_text_to_checklist"
   post "vectorsearch/url-to-data", to: "vectorsearch#url_to_data", as: "vectorsearch_url_to_data"
+
+  # APIs
+  ##
+
+  scope "apis", as: "apis" do
+    get "procedures/:id", to: "apis#procedure", as: "procedure"
+  end
 end
