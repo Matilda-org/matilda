@@ -9,7 +9,7 @@ class ApisController < ActionController::Base
   before_action :force_json_format
 
   # Verifica che la API key sia corretta
-  # before_action :validate_api_key
+  before_action :validate_api_key
 
   # Procedures
   ##
@@ -19,10 +19,31 @@ class ApisController < ActionController::Base
     render json: @procedure.as_json(include: [ :procedures_statuses, :procedures_items, :projects_items, :tasks_items, :project ])
   end
 
+  # Tasks
+  ##
+
+  def task
+    @task = Task.find(params[:id])
+    render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks ])
+  end
+
+  def task_update
+    @task = Task.find(params[:id])
+    if @task.update(task_params)
+      render json: {}
+    else
+      render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   # Private
   ##
 
   private
+
+  def task_params
+    params.require(:task).permit(:title)
+  end
 
   def force_json_format
     request.format = :json
