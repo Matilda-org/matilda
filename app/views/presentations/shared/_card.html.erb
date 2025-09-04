@@ -4,7 +4,14 @@ presentation ||= Presentation.new
 
 %>
 
-<%= render 'shared/card', title: presentation.name, project: presentation.project, subtitle: "#{presentation.width_px}x#{presentation.height_px}", description: presentation.description, render_actions: 'presentations/shared/card-actions', render_actions_args: { presentation: presentation } do %>
+<%= render 'shared/card',
+  title: presentation.name,
+  header_title: presentation.project&.name,
+  header_link: presentation.project_id ? projects_show_path(presentation.project_id) : nil,
+  subtitle: "#{presentation.width_px}x#{presentation.height_px}",
+  description: presentation.description,
+  render_actions: 'presentations/shared/card-actions',
+  render_actions_args: { presentation: presentation } do %>
 
 <%= render 'presentations/shared/card-content', presentation: presentation %>
 
