@@ -29,3 +29,13 @@
   border-right: solid 1px var(--bs-white);
   min-width: 85px;
 }
+
+.c-tasks-tracker__title {
+  display: none;
+
+  @media (min-width: 576px) {
+    display: block;
+    margin-right: 10px;
+    font-size: 12px;
+  }
+}
