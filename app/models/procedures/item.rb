@@ -162,7 +162,7 @@ class Procedures::Item < ApplicationRecord
   end
 
   def save_event_change_status_on_project
-    resource.projects_events.create!(message: "Il progetto è passato in stato #{procedures_status.title}.", data: {
+    resource.projects_events.create!(message: "Il progetto è passato in stato #{procedures_status.title} nella board #{procedure.name}.", data: {
       procedure_id: procedure.id
     })
   end

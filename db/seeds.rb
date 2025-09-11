@@ -116,7 +116,7 @@ end
   # create project
   project = Project.create!(
     name: name,
-    year: Date.today.year,
+    year: Date.today.year.to_i - rand(0..5),
     description: Faker::Lorem.paragraph
   )
 
@@ -138,7 +138,7 @@ end
   end
 
   # add members to project
-  User.all.sample(rand(1..3)).each do |user|
+  User.all.each do |user|
     project.projects_members.create!(
       user_id: user.id,
       role: %w[Developer Deisgner Marketing PM].sample
