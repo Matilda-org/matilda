@@ -56,9 +56,14 @@ tags ||= []
               <label for="sort" class="col-form-label">Ordina per</label>
             </div>
             <div class="col">
-              <select id="sort" class="form-control" name="sort" data-action="change->filters#submit">
-                <option>Ordina per</option>
-              </select>
+              <div class="input-group">
+                <span class="input-group-text">Ordina</span>
+                <select id="sort" class="form-control" name="sort" data-action="change->filters#submit">
+                  <% sorts.each do |sort| %>
+                    <option value="<%= sort[:value] %>" <%= params[:sort] == sort[:value] || (params[:sort].blank? && sort[:default]) ? 'selected' : '' %>><%= sort[:label] %></option>
+                  <% end %>
+                </select>
+              </div>
             </div>
           </div>
         </div>

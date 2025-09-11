@@ -30,7 +30,15 @@ class ProjectsController < ApplicationController
     query = query.not_archived if params[:filters] == "not-archived" || params[:filters].blank?
     query = query.archived if params[:filters] == "archived"
     query = query.search(params[:search]) unless params[:search].blank?
-    query = query.order(name: :asc)
+    if params[:sort] == "name_desc"
+      query = query.order(name: :desc)
+    elsif params[:sort] == "year_asc"
+      query = query.order(year: :asc, name: :asc)
+    elsif params[:sort] == "year_desc"
+      query = query.order(year: :desc, name: :asc)
+    else
+      query = query.order(name: :asc)
+    end
     @projects_preferred = query.user_preferred(@session_user_id)
 
     @projects = paginate_query(query.where.not(id: @projects_preferred.pluck(:id)))
