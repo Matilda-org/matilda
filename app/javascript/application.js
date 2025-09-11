@@ -76,38 +76,39 @@ window.addEventListener('resize', function(event) {
 })
 
 /**
- * Preserve horizontal scroll position on turbo frame update
+ * HACK: Preserve horizontal scroll position on turbo frame update for kanban boards
  */
 
-// let horizontalScrollPositions = {};
+let horizontalScrollPositionsKanbanBoards = {};
 
-// document.addEventListener('turbo:before-fetch-request', (event) => {
-//   const href = event.target.getAttribute('href')
-//   if (!href) return
+document.addEventListener('turbo:before-fetch-request', (event) => {
+  const href = event.target.getAttribute('href')
+  if (!href) return
 
-//   const hrefParams = new URL(href, window.location.origin).searchParams
-//   const turboFrameKey = hrefParams.get('turbo_frame_key')
-//   if (!turboFrameKey) return
+  const hrefParams = new URL(href, window.location.origin).searchParams
+  const turboFrameKey = hrefParams.get('turbo_frame_key')
+  console.log('turbo:before-fetch-request', { turboFrameKey })
+  if (!turboFrameKey) return
 
-//   const frame = document.getElementById(turboFrameKey)
-//   if (!frame) return
+  const frame = document.getElementById(turboFrameKey)
+  if (!frame) return
 
-//   const scrollableElement = frame.querySelector('.c-kanban__scrollable')
-//   if (!scrollableElement) return
+  const scrollableElement = frame.querySelector('.c-kanban__scrollable')
+  if (!scrollableElement) return
   
-//   horizontalScrollPositions[turboFrameKey] = scrollableElement.scrollLeft;
-// });
+  horizontalScrollPositionsKanbanBoards[turboFrameKey] = scrollableElement.scrollLeft;
+});
 
-// document.addEventListener('turbo:frame-load', (event) => {
-//   const frame = event.target;
-//   if (!frame) return;
+document.addEventListener('turbo:frame-load', (event) => {
+  const frame = event.target;
+  if (!frame) return;
 
-//   const scrollableElement = frame.querySelector('.c-kanban__scrollable')
-//   if (!scrollableElement) return;
+  const scrollableElement = frame.querySelector('.c-kanban__scrollable')
+  if (!scrollableElement) return;
 
-//   const savedPosition = horizontalScrollPositions[frame.id];
-//   if (!savedPosition) return;
+  const savedPosition = horizontalScrollPositionsKanbanBoards[frame.id];
+  if (!savedPosition) return;
 
-//   scrollableElement.scrollLeft = savedPosition;
-//   delete horizontalScrollPositions[frame.id];
-// });
+  scrollableElement.scrollLeft = savedPosition;
+  delete horizontalScrollPositionsKanbanBoards[frame.id];
+});

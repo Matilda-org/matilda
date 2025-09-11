@@ -3,7 +3,7 @@
 project ||= Project.new
 interactive ||= false
 
-interactive = false if project.archived # archived projects are always not interactive
+# interactive = false if project.archived # archived projects are always not interactive
 
 %>
 
@@ -13,8 +13,8 @@ interactive = false if project.archived # archived projects are always not inter
   description: project.description_with_budget,
   description_protected: true,
   type: project.color_type,
-  resource_id: interactive ? project.id : nil,
-  resource_type: interactive ? 'Project' : nil,
+  resource_id: interactive && !project.archived ? project.id : nil,
+  resource_type: interactive && !project.archived ? 'Project' : nil,
   folders_item: interactive ? (project.cached_folder_item_data || {}) : nil,
   render_actions: 'projects/shared/card-actions',
   render_actions_args: { project: project } do
