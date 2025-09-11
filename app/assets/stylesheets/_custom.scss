@@ -90,6 +90,14 @@ body {
   display: flex;
   align-items: center;
   color: var(--bs-white);
+
+  span {
+    display: none;
+
+    @media (min-width: 400px) {
+      display: inline-block;
+    }
+  }
 }
 
 .navbar .navbar-brand svg {
@@ -342,8 +350,7 @@ a.badge:hover {
 
 .modal-dialog-centered {
   @media screen and (max-width: 768px) {
-    align-items: flex-start;
-    margin-top: 75px;
+    align-items: flex-end;
   }
 }
 
