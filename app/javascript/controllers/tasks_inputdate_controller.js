@@ -88,7 +88,6 @@ export default class extends Controller {
     });
     
     // Poi aggiunge i nuovi marker
-    console.log(tasksData);
     tasksData.forEach(task => {
       const marker = this.flatpickr.calendarContainer.querySelector(`.c-flatpickr-marker[data-date="${task.date}"]`);
       if (marker) {
