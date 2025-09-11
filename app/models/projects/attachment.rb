@@ -1,7 +1,7 @@
 class Projects::Attachment < ApplicationRecord
   include Cachable
 
-  enum typology: {
+  enum :typology, {
     general: 0,
     quotation_delivered: 1,
     quotation_accepted: 2,

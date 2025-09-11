@@ -1,7 +1,7 @@
 class Procedures::StatusAutomation < ApplicationRecord
   include Cachable
 
-  enum typology: {
+  enum :typology, {
     unknown: 0,
     complete_task: 1,
     archive_project: 2,

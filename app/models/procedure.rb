@@ -5,7 +5,7 @@ class Procedure < ApplicationRecord
   # HACK: to work on ToolsController.projects_tasks_tracking
   attr_accessor :time_spent
 
-  enum resources_type: {
+  enum :resources_type, {
     projects: 1,
     tasks: 2
   }

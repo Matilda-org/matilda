@@ -1,7 +1,7 @@
 class Users::Policy < ApplicationRecord
   include Cachable
 
-  enum policy: {
+  enum :policy, {
     # User # OK
     users_index: 1,
     users_show: 2,

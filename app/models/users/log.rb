@@ -1,7 +1,7 @@
 class Users::Log < ApplicationRecord
   include Cachable
 
-  enum typology: {
+  enum :typology, {
     unknown: 0,
     search: 1,
     credential: 2

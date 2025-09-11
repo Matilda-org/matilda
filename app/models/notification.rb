@@ -1,5 +1,5 @@
 class Notification < ApplicationRecord
-  enum typology: {
+  enum :typology, {
     general: 0,
     task_assigned: 1
   }

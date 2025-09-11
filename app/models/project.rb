@@ -5,7 +5,7 @@ class Project < ApplicationRecord
   include Folderable
   include AlghoritmicOrderable
 
-  enum archived_reason: {
+  enum :archived_reason, {
     other: 0,
     completed: 1,
     not_started: 2,

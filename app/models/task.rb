@@ -9,8 +9,8 @@ class Task < ApplicationRecord
   attr_accessor :tasks_checks_texts
   attr_accessor :position_procedure_id
 
-  enum repeat_type: { weekly: 0, monthly: 1 }, _prefix: true
-  enum repeat_monthday: { first: 0, last: 1, middle: 2 }, _prefix: true
+  enum :repeat_type, { weekly: 0, monthly: 1 }, prefix: true
+  enum :repeat_monthday, { first: 0, last: 1, middle: 2 }, prefix: true
 
   # VALIDATIONS
   ############################################################
