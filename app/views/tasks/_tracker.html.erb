@@ -7,13 +7,16 @@ track = @session_user.active_tasks_track
 <%= turbo_frame_tag 'tasks-tracker' do %>
   <% if track %>
   <div
-    class="c-tasks-tracker bg-<%= track.task.color_type %>"
+    class="c-tasks-tracker"
     data-controller="tasks-tracker"
     data-tasks-tracker-start-value="<%= track.start_at.to_i %>"
     data-tasks-tracker-pingpath-value="<%= tasks_ping_track_action_path(id: track.task_id, track_id: track.id) %>"
   >
     <div class="c-tasks-tracker__container">
-      <div class="c-tasks-tracker__title"><%= track.task.title.truncate(20) %></div>
+      <div class="c-tasks-tracker__title">
+        <span class="point bg-<%= track.task.color_type %>"></span>
+        <span><%= track.task.title.truncate(30) %></span>
+      </div>
       <div class="c-tasks-tracker__time" data-tasks-tracker-target="time"></div>
       <div class="c-tasks-tracker__actions">
         <a href="<%= tasks_actions_path(type: 'show', id: track.task.id) %>" data-tasks-tracker-target="ctaShow" data-turbo-frame="action"><i class="bi bi-info-circle-fill"></i></a>

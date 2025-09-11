@@ -1,8 +1,10 @@
 .c-tasks-tracker {
-  background-color: var(--bs-info);
+  background-color: rgba(var(--bs-white-rgb), 0.25);
   border-radius: 30px;
   padding: 3px 10px;
   color: var(--bs-white);
+  position: relative;
+  overflow: hidden;
 }
 
 .c-tasks-tracker__container {
@@ -33,9 +35,19 @@
 .c-tasks-tracker__title {
   display: none;
 
-  @media (min-width: 576px) {
-    display: block;
+  @media (min-width: 1280px) {
+    display: flex;
     margin-right: 10px;
     font-size: 14px;
+    align-items: center;
+  }
+
+  .point {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    border: solid 2px var(--bs-white);
   }
 }
