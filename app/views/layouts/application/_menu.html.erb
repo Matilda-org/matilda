@@ -17,7 +17,7 @@ operative ||= false
   <ul class="dropdown-menu mt-2 mt-md-0" style="border-bottom: none;">
     <li><a class="dropdown-item <%= @_navbar == 'projects' && !params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= projects_path %>" data-turbo-frame="_top">Tutti i progetti</a></li>
     <li><a class="dropdown-item <%= @_navbar == 'projects' && !!params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= projects_path(without_folder: 1) %>" data-turbo-frame="_top">Non assegnati</a></li>
-    <%= render 'layouts/application/navbar__folders', base_path: projects_path, active_folder_id: @_navbar == 'projects' ? params[:folder_id] : nil %>
+    <%= render 'layouts/application/navbar__folders', base_path: projects_path, active_folder_id: @_navbar == 'projects' ? params[:folder_id] : nil, show_for: 'projects' %>
   </ul>
 </li>
 
@@ -39,7 +39,7 @@ operative ||= false
     <ul class="dropdown-menu mt-2 mt-md-0">
       <li><a class="dropdown-item" href="<%= credentials_path %>" data-turbo-frame="_top">Tutte le credenziali</a></li>
       <li><a class="dropdown-item" href="<%= credentials_path(without_folder: 1) %>" data-turbo-frame="_top">Non assegnate</a></li>
-      <%= render 'layouts/application/navbar__folders', base_path: credentials_path %>
+      <%= render 'layouts/application/navbar__folders', base_path: credentials_path, show_for: 'credentials' %>
     </ul>
   </li>
 

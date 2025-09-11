@@ -55,7 +55,9 @@ class Folder < ApplicationRecord
       Folder.all.order(name: :asc).map do |folder|
         {
           name: folder.name,
-          id: folder.id
+          id: folder.id,
+          items_projects_count: folder.items_projects_count,
+          items_credentials_count: folder.items_credentials_count
         }
       end
     end

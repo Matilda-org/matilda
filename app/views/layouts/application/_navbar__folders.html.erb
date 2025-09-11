@@ -3,8 +3,14 @@
 folders ||= Folder.cached_list
 base_path ||= '#'
 active_folder_id ||= nil
+show_for ||= nil
 
-# reolder folders to put the active folder on top
+# reorder folders to put folders with items_#{show_for}_count <= 0 at the end
+if show_for
+  folders = folders.partition { |folder| folder["items_#{show_for}_count".to_sym] > 0 }.flatten
+end
+
+# reorder folders to put the active folder on top
 if active_folder_id
   folders = folders.partition { |folder| folder[:id] == active_folder_id.to_i }.flatten
 end
@@ -18,7 +24,18 @@ end
       <% folders.each do |folder| %>
         <li
           class="<%= active_folder_id&.to_i == folder[:id] ? 'pb-2 mb-2 border-bottom' : '' %>"
-        ><a class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>" href="<%= base_path %>/<%= folder[:id] %>" data-turbo-frame="_top"><small><i class="bi bi-folder-fill"></i> <%= folder[:name] %></small></a></li>
+        >
+          <a
+            class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>"
+            href="<%= base_path %>/<%= folder[:id] %>"
+            data-turbo-frame="_top"
+          >
+            <small>
+              <i class="bi <%= show_for && folder["items_#{show_for}_count".to_sym] <= 0 ? 'bi-folder' : 'bi-folder-fill' %> me-1"></i>
+              <%= folder[:name] %>
+            </small>
+          </a>
+        </li>
       <% end %>
     </ul>
   </li>
