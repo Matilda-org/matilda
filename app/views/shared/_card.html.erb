@@ -65,7 +65,7 @@ background = 'primary' if has_prefer
               data-controller="tooltip"
               data-tooltip="<%= folders_item[:folder_id] ? folders_item[:folder_name] : 'Aggiungi a cartella' %>"
               data-user-policies-target="item" data-policy="folders_manage_resources"
-            ><i class="bi <%= folders_item[:folder_id] ? 'bi-folder-fill' : 'bi-folder' %>"></i></a>
+            ><i class="bi <%= folders_item[:folder_id] ? 'bi-folder-fill' : 'bi-folder-plus' %>"></i></a>
           <% end %>
           <% if @session_user && resource_id && resource_type %>
             <a
