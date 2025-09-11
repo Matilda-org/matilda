@@ -118,6 +118,16 @@ class Procedures::Item < ApplicationRecord
     title
   end
 
+  def resource_color_type
+    if resource && resource_type == "Task"
+      return resource.color_type
+    elsif resource && resource_type == "Project"
+      return resource.color_type
+    end
+
+    ""
+  end
+
   # OPERATIONS
   ############################################################
 
