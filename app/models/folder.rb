@@ -20,10 +20,10 @@ class Folder < ApplicationRecord
 
   # cache updates
   after_save do
-    Folder.cached_list(true)
+    GlobalCache.new.folders_reset
   end
   after_destroy do
-    Folder.cached_list(true)
+    GlobalCache.new.folders_reset
   end
 
   # HELPERS
@@ -43,24 +43,6 @@ class Folder < ApplicationRecord
 
   def last_credential
     @last_credential ||= folders_items.where(resource_type: "Credential").order(created_at: :desc).first.try(:resource)
-  end
-
-  # CLASS
-  ############################################################
-
-  def self.cached_list(reset = false)
-    Rails.cache.delete("Folder/cached_list") if reset
-
-    @cached_list ||= Rails.cache.fetch("Folder/cached_list", expires_in: 7.days) do
-      Folder.all.order(name: :asc).map do |folder|
-        {
-          name: folder.name,
-          id: folder.id,
-          items_projects_count: folder.items_projects_count,
-          items_credentials_count: folder.items_credentials_count
-        }
-      end
-    end
   end
 
   private

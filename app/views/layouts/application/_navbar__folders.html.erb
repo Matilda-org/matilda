@@ -1,6 +1,6 @@
 <%
 
-folders ||= Folder.cached_list
+folders ||= @global_cache.folders
 base_path ||= '#'
 active_folder_id ||= nil
 show_for ||= nil

@@ -7,6 +7,7 @@
 class ApplicationController < ActionController::Base
   include ActionView::RecordIdentifier
 
+  before_action :load_global_cache, except: :serviceworker
   before_action :set_session_user_id, except: :serviceworker
   skip_before_action :verify_authenticity_token, only: :serviceworker
 
@@ -83,6 +84,10 @@ class ApplicationController < ActionController::Base
     Rails.logger.info("Too many requests from #{request.remote_ip} for #{controller_name}##{action_name}")
     flash[:danger] = "L'operazione richiesta è stata eseguita per un numero eccessivo di volte. Attendi #{period / 60} minuti e riprova."
     redirect_to root_path
+  end
+
+  def load_global_cache
+    @global_cache ||= GlobalCache.new
   end
 
   def set_session_user_id
