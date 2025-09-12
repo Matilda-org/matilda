@@ -26,7 +26,7 @@ end
           class="<%= active_folder_id&.to_i == folder[:id] ? 'pb-2 mb-2 border-bottom' : '' %>"
         >
           <a
-            class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %>"
+            class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %> h-text-oneline"
             href="<%= base_path %>/<%= folder[:id] %>"
             data-turbo-frame="_top"
           >

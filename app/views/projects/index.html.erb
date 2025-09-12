@@ -1,4 +1,4 @@
-<%= render 'shared/page-header', title: 'Progetti', subtitle: @folder && "<i class=\"bi bi-folder-fill\"></i> <a class=\"text-muted h-text-primary-hover\" href='#{folders_show_path(@folder)}' data-turbo='false'>#{@folder&.name}</a>", render_actions: 'projects/index-actions' %>
+<%= render 'shared/page-header', title: 'Progetti', subtitle: @folder && "<a class=\"text-primary\" href='#{folders_show_path(@folder)}' data-turbo='false'>#{@folder&.name}</a>", render_actions: 'projects/index-actions' %>
 
 <%= render 'shared/page-preferred',
     query: @projects_preferred,

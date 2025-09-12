@@ -12,7 +12,7 @@ render_actions ||= nil
     <div class="row justify-content-between align-items-center flex-nowrap pt-3">
       <div class="col d-flex align-items-center h-text-oneline">
         <% if back %>
-          <a href="#" class="me-3 fs-5 text-muted" onclick="window.history.back()">
+          <a href="#" class="me-3 fs-5 text-primary" onclick="window.history.back()">
             <i class="bi bi-arrow-left-circle-fill"></i>
           </a>
         <% else %>
@@ -22,7 +22,7 @@ render_actions ||= nil
         <% end %>
         <h1 class="fs-3 mb-0 h-text-oneline"><%= title %></h1>
         <% if subtitle %>
-          <h2 class="text-muted mb-0 fs-6 ms-3 h-text-oneline"><%= raw subtitle %></h2>
+          <h2 class="text-muted mb-0 fs-6 ms-3 h-text-oneline" style="position: relative; top: 3px"><%= raw subtitle %></h2>
         <% end %>
       </div>
       <% if render_actions %>
