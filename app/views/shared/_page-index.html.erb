@@ -40,7 +40,17 @@ tags ||= []
             </div>
             <div class="col">
               <div class="input-group">
-                <input type="text" id="search" name="search" class="form-control" placeholder="Ricerca" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced">
+                <input
+                  type="text"
+                  id="search"
+                  name="search"
+                  class="form-control"
+                  placeholder="Ricerca"
+                  aria-label="Ricerca"
+                  data-filters-target="inputToClear"
+                  data-action="keyup->filters#submitDebounced"
+                  value="<%= params[:search] || '' %>"
+                >
                 <button class="btn btn-secondary" type="button" data-filters-target="buttonClear" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
                 <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
               </div>
@@ -86,7 +96,7 @@ tags ||= []
                     autocomplete="off"
                     data-action="change->filters#submit"
                     value="<%= filter[:value] %>"
-                    <%= params[:filers] == filter[:value] || (params[:filters].blank? && filter[:default]) ? 'checked' : '' %>
+                    <%= (params[:filters] == filter[:value] || (params[:filters].blank? && filter[:default])) ? 'checked' : '' %>
                   >
                   <label class="btn btn-outline-primary" for="<%= filter[:value] %>"><%= filter[:label] %></label>
                 <% end %>

@@ -49,5 +49,15 @@
     display: inline-block;
     margin-right: 5px;
     border: solid 2px var(--bs-white);
+    animation: tasksTrackerTitlePointAnim 2s ease-in-out infinite;
+  }
+}
+
+@keyframes tasksTrackerTitlePointAnim {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

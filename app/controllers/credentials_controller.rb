@@ -12,6 +12,7 @@ class CredentialsController < ApplicationController
     return unless validate_policy!("credentials_index")
 
     query = Credential.all
+    @credentials_preferred = params[:folder_id].present? || params[:without_folder].present? ? [] : query.user_preferred(@session_user_id)
 
     # manage folder
     if params[:folder_id].present?
@@ -29,7 +30,6 @@ class CredentialsController < ApplicationController
 
     query = query.where("LOWER(name) LIKE :search", search: "%#{params[:search].downcase}%") unless params[:search].blank?
     query = query.order(name: :asc)
-    @credentials_preferred = query.user_preferred(@session_user_id)
     @credentials = paginate_query(query.where.not(id: @credentials_preferred.pluck(:id)))
   end
 
