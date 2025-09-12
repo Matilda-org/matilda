@@ -12,7 +12,7 @@ class ProjectsController < ApplicationController
     return unless validate_policy!("projects_index")
 
     query = query_projects_for_policy
-    @projects_preferred = params[:folder_id].present? || params[:without_folder].present? ? [] : query.user_preferred(@session_user_id)
+    @projects_preferred = params[:folder_id].present? || params[:without_folder].present? ? [] : query.user_preferred(@session_user_id).order(name: :asc)
 
     # manage folder
     if params[:folder_id].present?

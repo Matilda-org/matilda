@@ -12,7 +12,7 @@ class ProceduresController < ApplicationController
     return unless validate_policy!("procedures_index")
 
     query = Procedure.all.includes(:project).left_joins(:project)
-    @procedures_preferred = query.user_preferred(@session_user_id)
+    @procedures_preferred = query.user_preferred(@session_user_id).order("procedures.resources_type ASC, procedures.name ASC")
 
     query = query.not_as_model.not_archived if params[:filters] == "not-archived" || params[:filters].blank?
     query = query.not_as_model.archived if params[:filters] == "archived"

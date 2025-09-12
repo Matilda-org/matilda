@@ -12,7 +12,7 @@ class CredentialsController < ApplicationController
     return unless validate_policy!("credentials_index")
 
     query = Credential.all
-    @credentials_preferred = params[:folder_id].present? || params[:without_folder].present? ? [] : query.user_preferred(@session_user_id)
+    @credentials_preferred = params[:folder_id].present? || params[:without_folder].present? ? [] : query.user_preferred(@session_user_id).order(name: :asc)
 
     # manage folder
     if params[:folder_id].present?
