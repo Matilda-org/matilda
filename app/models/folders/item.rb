@@ -22,6 +22,7 @@ class Folders::Item < ApplicationRecord
       items_projects_count: folder.folders_items.where(resource_type: "Project").count,
       items_credentials_count: folder.folders_items.where(resource_type: "Credential").count
     )
+    GlobalCache.new.folders_reset
   end
 
   def refresh_resource_cache

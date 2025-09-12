@@ -32,6 +32,20 @@ export default class extends Controller {
       this.submitTarget.disabled = false
       this.submitTarget.innerHTML = this._originalSubmitText
     }
+
+    // Riporto sull'url della pagina attuale i parametri del form
+    const url = new URL(window.location)
+    const formData = new FormData(this.element)
+
+    for (const [key, value] of formData.entries()) {
+      if (value && value.length > 0) {
+        url.searchParams.set(key, value)
+      } else {
+        url.searchParams.delete(key)
+      }
+    }
+
+    window.history.replaceState({}, '', url)
   }
 
   submit() {
