@@ -17,6 +17,13 @@ export default class extends Controller {
       e.preventDefault()
     } else {
       this.modal.hide()
+      setTimeout(() => {
+        const action = this.modalDOM.querySelector('#action')
+        if (!action) return
+
+        action.src = null
+        action.innerHTML = ''
+      }, 250)
     }
   }
 

@@ -29,8 +29,6 @@ if (navigator.serviceWorker && window.env === 'production') {
  */
 
 document.addEventListener('turbo:before-cache', (e) => {
-  console.log('turbo:before-cache')
-
   e.preventDefault()
 
   // hide modals and make body scrollable
@@ -44,6 +42,11 @@ document.addEventListener('turbo:before-cache', (e) => {
   document.body.classList.remove('modal-open')
   document.body.style.paddingRight = ''
   document.body.style.overflow = ''
+
+  // hide tooltips
+  document.querySelectorAll('.tooltip').forEach((el) => {
+    el.remove()
+  })
 
   // close mobile menu
   document.querySelector('.navbar-toggler').classList.add('collapsed')
@@ -87,7 +90,6 @@ document.addEventListener('turbo:before-fetch-request', (event) => {
 
   const hrefParams = new URL(href, window.location.origin).searchParams
   const turboFrameKey = hrefParams.get('turbo_frame_key')
-  console.log('turbo:before-fetch-request', { turboFrameKey })
   if (!turboFrameKey) return
 
   const frame = document.getElementById(turboFrameKey)
