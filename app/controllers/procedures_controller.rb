@@ -26,8 +26,8 @@ class ProceduresController < ApplicationController
   caches_action :show, cache_path: -> { current_cache_action_path }, layout: false
   def show
     return unless validate_policy!("procedures_show")
-
-    nil unless procedure_finder
+    return nil unless procedure_finder
+    render :show
   end
 
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
