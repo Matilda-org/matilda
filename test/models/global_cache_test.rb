@@ -3,6 +3,7 @@ require "test_helper"
 class GlobalCacheTest < ActiveSupport::TestCase
   setup do
     Rails.cache.clear
+    Folder.delete_all
     @folder1 = Folder.create!(name: "A", items_projects_count: 1, items_credentials_count: 2)
     @folder2 = Folder.create!(name: "B", items_projects_count: 3, items_credentials_count: 4)
     @global_cache = GlobalCache.new

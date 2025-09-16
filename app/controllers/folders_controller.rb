@@ -37,7 +37,7 @@ class FoldersController < ApplicationController
       title: "Nuova cartella",
       turbo_frame: params[:turbo_frame_key] || "_top",
       feedback_args: {
-        title: "Cartella create",
+        title: "Cartella creata",
         subtitle: "La cartella #{@folder.name} è stata creata con successo.",
         type: "success"
       }
