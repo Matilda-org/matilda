@@ -16,7 +16,7 @@ class ActiveSupport::TestCase
   # Open SimpleCov coverage report after tests are run
   Minitest.after_run do
     begin
-      `open coverage/index.html`
+      # `open coverage/index.html`
     rescue
       puts "Unable to open coverage report. Please navigate to coverage/index.html in your browser."
     end

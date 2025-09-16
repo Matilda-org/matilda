@@ -53,6 +53,11 @@ class ProjectsController < ApplicationController
 
   def show_attachment
     @attachment = Projects::Attachment.find(params[:id])
+    unless @attachment&.file&.attached?
+      send_data "", status: :not_found
+      return
+    end
+
     send_data @attachment.file.download, filename: @attachment.file.filename.to_s, type: @attachment.file.content_type.to_s
   end
 
@@ -113,7 +118,7 @@ class ProjectsController < ApplicationController
       return unless projects_log_finder
       return render "projects/actions/edit_log"
     end
-    if @type == "remove-log" && projects_log_finder
+    if @type == "remove-log"
       return unless projects_log_finder
       return render "projects/actions/remove_log"
     end

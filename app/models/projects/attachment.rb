@@ -9,6 +9,12 @@ class Projects::Attachment < ApplicationRecord
     client_content: 4
   }
 
+  # VALIDATIONS
+  ############################################################
+
+  validates :title, presence: true
+  validates :date, presence: true
+
   # RELATIONS
   ############################################################
 
