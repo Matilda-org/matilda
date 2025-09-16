@@ -22,7 +22,7 @@ class PostsController < ApplicationController
     # load tags
     @tags = []
     Post.all.order("created_at DESC").limit(50).each do |post|
-      post.tags.split(" ").each do |tag|
+      post.tags&.split(" ")&.each do |tag|
         @tags << tag
       end
     end
