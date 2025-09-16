@@ -35,5 +35,8 @@
 /config/master.key
 /config/credentials.yml.enc
 
+# Ignore test coverage directory.
+/coverage/
+
 # Ignore mac ds_store files
 .DS_Store

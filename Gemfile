@@ -98,6 +98,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+
+  # Check tests coverage [https://github.com/simplecov-ruby/simplecov]
+  gem "simplecov"
 end
 
 group :production do
