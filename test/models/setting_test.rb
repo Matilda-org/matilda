@@ -13,6 +13,18 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal false, Setting.get("chiave_bool")
   end
 
+  test "set e get restituiscono valore json" do
+    Setting.set("chiave_json", { "a" => 1, "b" => 2 }, "json")
+    assert_equal({ "a" => 1, "b" => 2 }, Setting.get("chiave_json"))
+  end
+
+  test "set e get restituiscono valore file" do
+    file_path = Rails.root.join("test/fixtures/files/test.txt")
+    Setting.set("chiave_file", Rack::Test::UploadedFile.new(file_path, "text/plain"), "file")
+    url = Setting.get("chiave_file")
+    assert_not_nil url
+  end
+
   test "reset elimina le impostazioni" do
     Setting.set("reset_test1", "a")
     Setting.set("reset_test2", "b")

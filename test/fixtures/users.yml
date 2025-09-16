@@ -3,4 +3,4 @@ one:
   name: Mario
   surname: Rossi
   email: mario.rossi@example.com
-  password_digest: <%= User.new(password: 'password123').password_digest %>
+  password_digest: <%= BCrypt::Password.create('password123') %>

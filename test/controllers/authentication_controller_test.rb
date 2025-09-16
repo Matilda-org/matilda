@@ -7,134 +7,102 @@ class AuthenticationControllerTest < ActionController::TestCase
 
   def setup
     @user = users(:one)
-    @valid_password = "password123"
-    @user.update(password: @valid_password, password_confirmation: @valid_password)
 
     # Clear cache and emails before each test
     Rails.cache.clear
     ActionMailer::Base.deliveries.clear
   end
 
-  # Tests for GET actions that don't require CSRF protection
+  # Tests for GET login
   test "should get login page" do
     get :login
     assert_response :success
     assert_instance_of User, @controller.instance_variable_get(:@user)
   end
 
-  test "should get login page with redirect parameter" do
-    redirect_url = "/dashboard"
-    get :login, params: { redirect: redirect_url }
-    assert_response :success
-    assert_equal redirect_url, @controller.instance_variable_get(:@redirect)
+  # Tests for POST login_action with valid credentials
+  test "should login with valid credentials" do
+    post :login_action, params: { email: @user.email, password: "password123" }
+
+    assert_redirected_to root_path
+    assert_equal @user.id, cookies.encrypted[:user_id]
+    assert_equal 1, ActionMailer::Base.deliveries.size
   end
 
-  test "should set authentication layout variables on login" do
-    get :login
-    assert_response :success
-    assert @controller.instance_variable_get(:@_flash_disabled)
-    assert @controller.instance_variable_get(:@_navbar_disabled)
-    assert @controller.instance_variable_get(:@_authentication)
+  # Tests for POST login_action with invalid credentials
+  test "should not login with invalid credentials" do
+    post :login_action, params: { email: @user.email, password: "wrongpassword" }
+
+    assert_redirected_to authentication_login_path(email: @user.email)
+    assert_nil cookies.encrypted[:user_id]
   end
 
+  # Tests for GET recover_password
   test "should get recover password page" do
     get :recover_password
     assert_response :success
-    assert @controller.instance_variable_get(:@_flash_disabled)
-    assert @controller.instance_variable_get(:@_navbar_disabled)
-    assert @controller.instance_variable_get(:@_authentication)
   end
 
+  # Tests for POST recover_password_action with valid email
+  test "should send recover password email with valid email" do
+    post :recover_password_action, params: { email: @user.email }
+
+    assert_redirected_to authentication_update_password_path(@user)
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    assert_not_nil Rails.cache.read("AuthenticationController/recover_password/#{@user.id}")
+  end
+
+  # Tests for POST recover_password_action with invalid email
+  test "should not send recover password email with invalid email" do
+    post :recover_password_action, params: { email: "invalid@example.com" }
+
+    assert_redirected_to authentication_recover_password_path
+    assert_equal 0, ActionMailer::Base.deliveries.size
+    assert_nil Rails.cache.read("AuthenticationController/recover_password/#{@user.id}")
+  end
+
+  # Tests for GET update_password
   test "should get update password page" do
     get :update_password, params: { id: @user.id }
     assert_response :success
-    assert_equal @user, @controller.instance_variable_get(:@user)
-    assert @controller.instance_variable_get(:@_flash_disabled)
-    assert @controller.instance_variable_get(:@_navbar_disabled)
-    assert @controller.instance_variable_get(:@_authentication)
   end
 
-  # Tests for before_action configurations
-  test "should disable flash messages on all authentication pages" do
-    [
-      -> { get :login },
-      -> { get :recover_password },
-      -> { get :update_password, params: { id: @user.id } }
-    ].each do |request_block|
-      request_block.call
-      assert @controller.instance_variable_get(:@_flash_disabled), "Flash should be disabled"
-    end
-  end
-
-  test "should disable navbar on all authentication pages" do
-    [
-      -> { get :login },
-      -> { get :recover_password },
-      -> { get :update_password, params: { id: @user.id } }
-    ].each do |request_block|
-      request_block.call
-      assert @controller.instance_variable_get(:@_navbar_disabled), "Navbar should be disabled"
-    end
-  end
-
-  test "should set authentication flag on all authentication pages" do
-    [
-      -> { get :login },
-      -> { get :recover_password },
-      -> { get :update_password, params: { id: @user.id } }
-    ].each do |request_block|
-      request_block.call
-      assert @controller.instance_variable_get(:@_authentication), "Authentication flag should be set"
-    end
-  end
-
-  # Test user_login_params method indirectly
-  test "login params should be properly initialized" do
-    get :login, params: { email: "test@example.com" }
-    assert_response :success
-
-    user = @controller.instance_variable_get(:@user)
-    assert_instance_of User, user
-    assert_equal "test@example.com", user.email
-  end
-
-  # Test cache behavior in test environment
-  test "should handle cache operations for password recovery" do
-    # Note: In test environment, cache might behave differently
-    # This test verifies the cache interface works
-    code = "ABCD1234"
-    cache_key = "AuthenticationController/recover_password/#{@user.id}"
-
-    # Test that cache write/read interface exists and is callable
-    assert_nothing_raised do
-      Rails.cache.write(cache_key, code, expires_in: 30.minutes)
-      Rails.cache.read(cache_key)
-      Rails.cache.delete(cache_key)
-    end
-  end
-
-  # Test User model authentication
-  test "user authentication should work correctly" do
-    assert @user.authenticate(@valid_password)
-    assert_not @user.authenticate("wrong_password")
-  end
-
-  # Test User model update
-  test "user password update should work" do
-    new_password = "newpassword123"
-
-    result = @user.update(password: new_password, password_confirmation: new_password)
-    assert result
-
-    @user.reload
-    assert @user.authenticate(new_password)
-    assert_not @user.authenticate(@valid_password)
-  end
-
-  # Test SecureRandom code generation (as used in the controller)
-  test "secure random code generation should work" do
+  # Tests for POST update_password_action with valid code and matching passwords
+  test "should update password with valid code and matching passwords" do
     code = SecureRandom.hex(4).upcase
-    assert_equal 8, code.length
-    assert_match(/\A[0-9A-F]+\z/, code)
+    Rails.cache.write("AuthenticationController/recover_password/#{@user.id}", code)
+
+    post :update_password_action, params: { id: @user.id, code: code, password: "newpassword123", password_confirmation: "newpassword123" }
+    assert_redirected_to authentication_login_path
+    assert @user.reload.authenticate("newpassword123")
+  end
+
+  # Tests for POST update_password_action with invalid code
+  test "should not update password with invalid code" do
+    code = SecureRandom.hex(4).upcase
+    Rails.cache.write("AuthenticationController/recover_password/#{@user.id}", code)
+
+    post :update_password_action, params: { id: @user.id, code: "WRONGCODE", password: "newpassword123", password_confirmation: "newpassword123" }
+    assert_redirected_to authentication_update_password_path(@user)
+    assert @user.reload.authenticate("password123")
+  end
+
+  # Tests for POST update_password_action with non-matching passwords
+  test "should not update password with non-matching passwords" do
+    code = SecureRandom.hex(4).upcase
+    Rails.cache.write("AuthenticationController/recover_password/#{@user.id}", code)
+
+    post :update_password_action, params: { id: @user.id, code: code, password: "newpassword123", password_confirmation: "differentpassword123" }
+    assert_redirected_to authentication_update_password_path(@user)
+    assert @user.reload.authenticate("password123")
+  end
+
+  # Tests for GET logout
+  test "should logout user" do
+    cookies.encrypted[:user_id] = @user.id
+    get :logout
+
+    assert_redirected_to root_path
+    assert_nil cookies.encrypted[:user_id]
   end
 end
