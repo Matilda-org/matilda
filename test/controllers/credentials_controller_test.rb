@@ -29,14 +29,14 @@ class CredentialsControllerTest < ActionController::TestCase
   end
 
   # Tests for GET actions with type create
-  test "should get actions create with valid policy" do
+  test "should get actions create" do
     get :actions, params: { type: "create" }
     assert_response :success
     assert_match(/Nuova credenziale/, @response.body)
   end
 
   # Tests for GET actions with type edit and valid id
-  test "should get actions edit with valid id and valid policy" do
+  test "should get actions edit with valid id" do
     credential = credentials(:one)
     get :actions, params: { type: "edit", id: credential.id }
     assert_response :success
@@ -44,28 +44,28 @@ class CredentialsControllerTest < ActionController::TestCase
   end
 
   # Tests for GET actions with type edit and invalid id
-  test "should get actions edit with invalid id and valid policy" do
+  test "should get actions edit with invalid id" do
     assert_raises ActiveRecord::RecordNotFound do
       get :actions, params: { type: "edit", id: 9999 }
     end
   end
 
   # Tests for GET actions with type destroy and valid id
-  test "should get actions destroy with valid id and valid policy" do
+  test "should get actions destroy with valid id" do
     get :actions, params: { type: "destroy", id: credentials(:one).id }
     assert_response :success
     assert_match(/Elimina credenziale/, @response.body)
   end
 
   # Tests for GET actions with type destroy and invalid id
-  test "should get actions destroy with invalid id and valid policy" do
+  test "should get actions destroy with invalid id" do
     assert_raises ActiveRecord::RecordNotFound do
       get :actions, params: { type: "destroy", id: 9999 }
     end
   end
 
   # Tests for GET actions with type show and valid id
-  test "should get actions show with valid id and valid policy" do
+  test "should get actions show with valid id" do
     credential = credentials(:one)
     get :actions, params: { type: "show", id: credential.id }
     assert_response :success
@@ -73,7 +73,7 @@ class CredentialsControllerTest < ActionController::TestCase
   end
 
   # Tests for GET actions with type show and invalid id
-  test "should get actions show with invalid id and valid policy" do
+  test "should get actions show with invalid id" do
     assert_raises ActiveRecord::RecordNotFound do
       get :actions, params: { type: "show", id: 9999 }
     end
