@@ -5,6 +5,11 @@ class Credential < ApplicationRecord
 
   encrypts :secure_username, :secure_password, :secure_content
 
+  # VALIDATIONS
+  ############################################################
+
+  validates :name, presence: true
+
   # SCOPES
   ############################################################
 
