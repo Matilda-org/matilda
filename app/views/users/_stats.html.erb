@@ -8,7 +8,7 @@ user ||= User.new
 
   <div class="row mb-4 d-lg-none">
     <div class="col col-4">
-      <a href="<%= tasks_path %>" data-turbo-frame="_top" class="card bg-<%= user.tasks.not_completed.today.count.positive? ? 'warning' : 'success' %> text-white text-decoration-none shadow-lg">
+      <a href="<%= tasks_path(mode: :people) %>" data-turbo-frame="_top" class="card bg-<%= user.tasks.not_completed.today.count.positive? ? 'warning' : 'success' %> text-white text-decoration-none shadow-lg">
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div>
