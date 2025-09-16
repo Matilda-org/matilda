@@ -13,8 +13,8 @@ class ProjectsControllerTest < ActionController::TestCase
     ActionMailer::Base.deliveries.clear
   end
 
-  # Test GET index with valid policy
-  test "should get index" do
+  # Test for GET index with valid policy
+  test "should get index with valid policy" do
     @user.users_policies.create!(policy: "projects_index")
     get :index
     assert_response :success

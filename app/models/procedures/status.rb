@@ -12,7 +12,7 @@ class Procedures::Status < ApplicationRecord
   # RELATIONS
   ############################################################
 
-  belongs_to :procedure, counter_cache: true
+  belongs_to :procedure, counter_cache: true, class_name: "Procedure"
   has_many :procedures_items, dependent: :destroy, class_name: "Procedures::Item", foreign_key: :procedures_status_id
   has_many :procedures_status_automations, dependent: :destroy, class_name: "Procedures::StatusAutomation", foreign_key: :procedures_status_id
 

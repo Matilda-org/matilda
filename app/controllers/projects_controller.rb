@@ -85,18 +85,48 @@ class ProjectsController < ApplicationController
     return render "projects/actions/destroy" if @type == "destroy"
     return render "projects/actions/add_procedure" if @type == "add-procedure"
     return render "projects/actions/add_procedures_item" if @type == "add-procedures-item"
+
     return render "projects/actions/add_member" if @type == "add-member"
-    return render "projects/actions/edit_member" if @type == "edit-member" && projects_member_finder
-    return render "projects/actions/remove_member" if @type == "remove-member" && projects_member_finder
+    if @type == "edit-member"
+      return unless projects_member_finder
+      return render "projects/actions/edit_member"
+    end
+    if @type == "remove-member"
+      return unless projects_member_finder
+      return render "projects/actions/remove_member"
+    end
+
     return render "projects/actions/add_log" if @type == "add-log"
-    return render "projects/actions/show_log" if @type == "show-log" && projects_log_finder
-    return render "projects/actions/share_log" if @type == "share-log" && projects_log_finder
-    return render "projects/actions/unshare_log" if @type == "unshare-log" && projects_log_finder
-    return render "projects/actions/edit_log" if @type == "edit-log" && projects_log_finder
-    return render "projects/actions/remove_log" if @type == "remove-log" && projects_log_finder
+    if @type == "show-log"
+      return unless projects_log_finder
+      return render "projects/actions/show_log"
+    end
+    if @type == "share-log"
+      return unless projects_log_finder
+      return render "projects/actions/share_log"
+    end
+    if @type == "unshare-log"
+      return unless projects_log_finder
+      return render "projects/actions/unshare_log"
+    end
+    if @type == "edit-log"
+      return unless projects_log_finder
+      return render "projects/actions/edit_log"
+    end
+    if @type == "remove-log" && projects_log_finder
+      return unless projects_log_finder
+      return render "projects/actions/remove_log"
+    end
+
     return render "projects/actions/add_attachment" if @type == "add-attachment"
-    return render "projects/actions/edit_attachment" if @type == "edit-attachment" && projects_attachment_finder
-    return render "projects/actions/remove_attachment" if @type == "remove-attachment" && projects_attachment_finder
+    if @type == "edit-attachment"
+      return unless projects_attachment_finder
+      return render "projects/actions/edit_attachment"
+    end
+    if @type == "remove-attachment"
+      return unless projects_attachment_finder
+      return render "projects/actions/remove_attachment"
+    end
 
     render partial: "shared/action-error"
   end

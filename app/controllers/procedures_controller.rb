@@ -41,15 +41,32 @@ class ProceduresController < ApplicationController
     return render "procedures/actions/unarchive" if @type == "unarchive"
     return render "procedures/actions/clone" if @type == "clone"
     return render "procedures/actions/destroy" if @type == "destroy"
+    return render "procedures/actions/search" if @type == "search"
+
     return render "procedures/actions/add_status" if @type == "add-status"
-    return render "procedures/actions/edit_status" if @type == "edit-status" && procedures_status_finder
-    return render "procedures/actions/remove_status" if @type == "remove-status" && procedures_status_finder
-    return render "procedures/actions/show_status_automations" if @type == "show-status-automations" && procedures_status_finder
+    if @type == "edit-status"
+      return unless procedures_status_finder
+      return render "procedures/actions/edit_status"
+    end
+    if @type == "remove-status"
+      return unless procedures_status_finder
+      return render "procedures/actions/remove_status"
+    end
+    if @type == "show-status-automations"
+      return unless procedures_status_finder
+      return render "procedures/actions/show_status_automations"
+    end
+
     return render "procedures/actions/add_item" if @type == "add-item"
     return render "procedures/actions/add_item_existing" if @type == "add-item-existing"
-    return render "procedures/actions/edit_item" if @type == "edit-item" && procedures_item_finder
-    return render "procedures/actions/remove_item" if @type == "remove-item" && procedures_item_finder
-    return render "procedures/actions/search" if @type == "search"
+    if @type == "edit-item"
+      return unless procedures_item_finder
+      return render "procedures/actions/edit_item"
+    end
+    if @type == "remove-item"
+      return unless procedures_item_finder
+      return render "procedures/actions/remove_item"
+    end
 
     render partial: "shared/action-error"
   end

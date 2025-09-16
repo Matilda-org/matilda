@@ -1,0 +1,6 @@
+one:
+  procedure_id: 1
+  procedures_status_id: 1
+  title: Item one
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
