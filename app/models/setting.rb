@@ -12,7 +12,7 @@ class Setting < ApplicationRecord
   ############################################################
 
   before_validation do
-    self.key = key.downcase.parameterize
+    self.key = key.downcase.parameterize if key.present?
   end
 
   # HELPERS
