@@ -442,4 +442,52 @@ class ProjectsControllerTest < ActionController::TestCase
     post :destroy_action, params: { id: project.id }
     assert_redirected_to root_path
   end
+
+  # Tests for POST add_procedure_action with valid id and valid policy
+  test "should post add_procedure_action with valid id and valid policy" do
+    @user.users_policies.create!(policy: "projects_manage_procedures")
+    project = projects(:one)
+    post :add_procedure_action, params: { id: project.id, procedure_id: procedures(:model_one).id }
+    assert_response :success
+    assert_match(/Board aggiunto al progetto/, @response.body)
+  end
+
+  # Tests for POST add_procedure_action without valid policy
+  test "should not post add_procedure_action without valid policy" do
+    project = projects(:one)
+    post :add_procedure_action, params: { id: project.id, procedure_id: procedures(:model_one).id }
+    assert_redirected_to root_path
+  end
+
+  # Tests for POST add_procedures_item_action with valid id and valid policy
+  test "should post add_procedures_item_action with valid id and valid policy" do
+    @user.users_policies.create!(policy: "projects_manage_procedures_items")
+    project = projects(:one)
+    post :add_procedures_item_action, params: { id: project.id, procedure_id: procedures(:model_one).id }
+    assert_response :success
+    assert_match(/Progetto aggiunto alla board/, @response.body)
+  end
+
+  # Tests for POST add_procedures_item_action without valid policy
+  test "should not post add_procedures_item_action without valid policy" do
+    project = projects(:one)
+    post :add_procedures_item_action, params: { id: project.id, procedure_id: procedures(:model_one).id }
+    assert_redirected_to root_path
+  end
+
+  # Tests for POST add_member_action with valid id and valid policy
+  test "should post add_member_action with valid id and valid policy" do
+    @user.users_policies.create!(policy: "projects_manage_members")
+    project = projects(:one)
+    post :add_member_action, params: { id: project.id, user_id: users(:one).id, role: "sample" }
+    assert_response :success
+    assert_match(/Partecipante aggiunto/, @response.body)
+  end
+
+  # Tests for POST add_member_action without valid policy
+  test "should not post add_member_action without valid policy" do
+    project = projects(:one)
+    post :add_member_action, params: { id: project.id, user_id: users(:one).id, role: "sample" }
+    assert_redirected_to root_path
+  end
 end

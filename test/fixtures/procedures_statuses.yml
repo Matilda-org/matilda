@@ -4,3 +4,10 @@ one:
   title: Status one
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
+
+model_one:
+  id: 2
+  procedure_id: 2
+  title: Status one
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>

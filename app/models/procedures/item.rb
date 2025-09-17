@@ -50,10 +50,9 @@ class Procedures::Item < ApplicationRecord
 
   after_create do
     # add relation to project from procedure
-    if procedure.resources_type_tasks? && resource_id.present?
+    if procedure.resources_type_tasks? && resource_id.present? && resource
       resource.update_columns(project_id: procedure.project_id)
-      # HACK
-      TasksRepeatManagerJob.perform_now(resource_id) if resource.repeat
+      TasksRepeatManagerJob.perform_now(resource_id) if resource.repeat # HACK
     end
 
     # save event creation on project

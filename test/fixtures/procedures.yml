@@ -1,3 +1,10 @@
 one:
   id: 1
   name: "Sample"
+  resources_type: "tasks"
+
+model_one:
+  id: 2
+  name: "Sample model"
+  model: true
+  resources_type: "tasks"
