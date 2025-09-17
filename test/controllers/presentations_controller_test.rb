@@ -9,17 +9,9 @@ class PresentationsControllerTest < ActionController::TestCase
     setup_controller_test
   end
 
-  # Test GET index with valid policy
-  test "should get index with valid policy" do
-    @user.users_policies.create!(policy: "presentations_index")
-    get :index
-    assert_response :success
-    assert_not_nil @controller.instance_variable_get(:@presentations)
-  end
-
-  # Test GET index without valid policy
-  test "should not get index without valid policy" do
-    get :index
-    assert_redirected_to root_path
+  test "index" do
+    matilda_controller_endpoint(:get, :index,
+      policy: "presentations_index"
+    )
   end
 end
