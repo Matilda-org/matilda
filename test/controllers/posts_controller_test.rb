@@ -6,11 +6,7 @@ class PostsControllerTest < ActionController::TestCase
   tests PostsController
 
   def setup
-    @user = users(:one)
-    cookies.encrypted[:user_id] = @user.id
-
-    Rails.cache.clear
-    ActionMailer::Base.deliveries.clear
+    setup_controller_test
   end
 
   # Test GET index with valid policy

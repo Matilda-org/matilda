@@ -6,11 +6,7 @@ class ProceduresControllerTest < ActionController::TestCase
   tests ProceduresController
 
   def setup
-    @user = users(:one)
-    cookies.encrypted[:user_id] = @user.id
-
-    Rails.cache.clear
-    ActionMailer::Base.deliveries.clear
+    setup_controller_test
   end
 
   # Tests for GET index with valid policy

@@ -6,11 +6,8 @@ class AuthenticationControllerTest < ActionController::TestCase
   tests AuthenticationController
 
   def setup
-    @user = users(:one)
-
-    # Clear cache and emails before each test
-    Rails.cache.clear
-    ActionMailer::Base.deliveries.clear
+    setup_controller_test
+    cookies.encrypted[:user_id] = nil # Force not logged in on setup
   end
 
   # Tests for GET login

@@ -6,11 +6,7 @@ class CredentialsControllerTest < ActionController::TestCase
   tests CredentialsController
 
   def setup
-    @user = users(:one)
-    cookies.encrypted[:user_id] = @user.id
-
-    Rails.cache.clear
-    ActionMailer::Base.deliveries.clear
+    setup_controller_test
   end
 
   # Tests for GET index with valid policy
@@ -25,22 +21,20 @@ class CredentialsControllerTest < ActionController::TestCase
   # Tests for GET index without valid policy
   test "should not get index without valid policy" do
     get :index
-    assert_redirected_to root_path
+    assert_controller_invalid_policy
   end
 
   # Tests for GET actions with type create
   test "should get actions create" do
     get :actions, params: { type: "create" }
-    assert_response :success
-    assert_match(/Nuova credenziale/, @response.body)
+    assert_controller_actions("Nuova credenziale")
   end
 
   # Tests for GET actions with type edit and valid id
   test "should get actions edit with valid id" do
     credential = credentials(:one)
     get :actions, params: { type: "edit", id: credential.id }
-    assert_response :success
-    assert_match(/Modifica credenziale/, @response.body)
+    assert_controller_actions("Modifica credenziale")
   end
 
   # Tests for GET actions with type edit and invalid id
@@ -53,8 +47,7 @@ class CredentialsControllerTest < ActionController::TestCase
   # Tests for GET actions with type destroy and valid id
   test "should get actions destroy with valid id" do
     get :actions, params: { type: "destroy", id: credentials(:one).id }
-    assert_response :success
-    assert_match(/Elimina credenziale/, @response.body)
+    assert_controller_actions("Elimina credenziale")
   end
 
   # Tests for GET actions with type destroy and invalid id
@@ -68,8 +61,7 @@ class CredentialsControllerTest < ActionController::TestCase
   test "should get actions show with valid id" do
     credential = credentials(:one)
     get :actions, params: { type: "show", id: credential.id }
-    assert_response :success
-    assert_match(/Visualizza credenziale/, @response.body)
+    assert_controller_actions("Visualizza credenziale")
   end
 
   # Tests for GET actions with type show and invalid id
@@ -82,8 +74,7 @@ class CredentialsControllerTest < ActionController::TestCase
   # Tests for GET actions with invalid type
   test "should not get actions with invalid type" do
     get :actions, params: { type: "invalid_type" }
-    assert_response :success
-    assert_match(/Errore/, @response.body)
+    assert_controller_actions_invalid
   end
 
   # Tests for POST set_phrase_action with valid policy and valid params

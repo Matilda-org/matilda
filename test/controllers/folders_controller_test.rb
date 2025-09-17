@@ -6,11 +6,7 @@ class FoldersControllerTest < ActionController::TestCase
   tests FoldersController
 
   def setup
-    @user = users(:one)
-    cookies.encrypted[:user_id] = @user.id
-
-    Rails.cache.clear
-    ActionMailer::Base.deliveries.clear
+    setup_controller_test
   end
 
   # Tests for GET show

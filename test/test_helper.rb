@@ -23,4 +23,28 @@ class ActiveSupport::TestCase
   end
 
   # Add more helper methods to be used by all tests here...
+
+  def setup_controller_test
+    @user = users(:one)
+    cookies.encrypted[:user_id] = @user.id
+
+    Rails.cache.clear
+    ActionMailer::Base.deliveries.clear
+  end
+
+  def assert_controller_invalid_policy
+    assert_redirected_to root_path
+  end
+
+  def assert_controller_actions(title = nil)
+    assert_response :success
+    assert @response.body.include?("id=\"action-controller\"")
+    assert @response.body.include?("<h3 class=\"modal-title fs-5\">#{title}</h3>") if title
+  end
+
+  def assert_controller_actions_invalid
+    assert_response :success
+    assert @response.body.include?("id=\"action-controller\"")
+    assert @response.body.include?("<h3 class=\"modal-title fs-5\">Errore</h3>")
+  end
 end
