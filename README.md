@@ -171,7 +171,7 @@ Per contribuire allo sviluppo di Matilda, è possibile seguire i seguenti passag
 4. Push del branch (`git push origin feat/my-new-feature`)
 5. Creare una pull request
 
-### 📝 Testing
+### Testing
 
 L'applicazione utilizza Minitest come framework di testing e SimpleCov per la copertura del codice. Per eseguire i test, è possibile utilizzare il comando:
 
