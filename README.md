@@ -48,9 +48,9 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 #### Impostazioni di sicurezza
 
 - `SECRET_KEY_BASE`: Chiave segreta per la generazione dei token di autenticazione
-- `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`: Chiave primaria per la crittografia dei dati sensibili
-- `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY`: Chiave deterministica per la crittografia dei dati sensibili
-- `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`: Sale per la derivazione della chiave di crittografia
+- `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`: Chiave primaria per la crittografia dei dati sensibili (default: unsafe)
+- `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY`: Chiave deterministica per la crittografia dei dati sensibili (default: unsafe)
+- `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`: Sale per la derivazione della chiave di crittografia (default: unsafe)
 
 #### Configurazione del database
 
@@ -161,3 +161,22 @@ Matilda può essere integrata con Slack per creare automaticamente i canali dei 
     }
 }
 ```
+
+## 💻 Sviluppo
+
+Per contribuire allo sviluppo di Matilda, è possibile seguire i seguenti passaggi:
+1. Fork del repository
+2. Creare un branch per la nuova funzionalità (`git checkout -b feat/my-new-feature`)
+3. Commit delle modifiche (`git commit -am 'Add some feature'`)
+4. Push del branch (`git push origin feat/my-new-feature`)
+5. Creare una pull request
+
+### 📝 Testing
+
+L'applicazione utilizza Minitest come framework di testing e SimpleCov per la copertura del codice. Per eseguire i test, è possibile utilizzare il comando:
+
+```bash
+rails test
+```
+
+Il comando genererà un report di copertura del codice nella cartella `coverage`.
