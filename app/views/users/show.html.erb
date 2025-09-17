@@ -45,7 +45,6 @@
     <%= render 'shared/page-card',
       title: "Task assegnati",
       full: true,
-      always_open: @_is_dashboard,
       render_content: 'users/shared/module-tasks',
       render_content_args: {
         tasks: @tasks,
@@ -61,7 +60,6 @@
     <%= render 'shared/page-card',
       title: "Task seguiti",
       full: true,
-      always_open: @_is_dashboard,
       render_content: 'users/shared/module-tasks',
       render_content_args: {
         tasks: @tasks_followed,

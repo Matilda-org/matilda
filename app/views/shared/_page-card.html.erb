@@ -15,9 +15,9 @@ classes ||= ''
 
 <div class="c-page-card card w-100 h-100 shadow <%= classes %>" data-controller="page-card">
   <div data-page-card-target="header" class="c-page-card__header card-header d-flex justify-content-between align-items-center rounded-bottom border-bottom-0">
-    <h2 class="fs-4 mb-0 h-text-oneline"><%= raw title %></h2>
+    <h2 class="fs-4 mb-0 h-text-oneline text-white"><%= raw title %></h2>
     <% if counter.present? %>
-      <span class="badge rounded-pill text-white <%= counter.positive? ? 'bg-primary' : 'bg-secondary' %>">
+      <span class="badge rounded-pill text-primary <%= counter.positive? ? 'bg-white' : 'bg-light' %>">
         <%= counter %>
       </span>
     <% end %>
