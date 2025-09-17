@@ -406,7 +406,7 @@ class ProjectsController < ApplicationController
     return render "projects/actions/share_log" unless @log.update(share_code: nil)
 
     render partial: "shared/action-feedback", locals: {
-      title: "Annulla condivisione log",
+      title: "Annulla condivisione nota",
       turbo_frame: "module-logs",
       feedback_args: {
         title: "Nota non più pubblicata",
@@ -466,7 +466,7 @@ class ProjectsController < ApplicationController
       title: "Modifica allegato",
       turbo_frame: "module-attachments",
       feedback_args: {
-        title: "Allegato memorizzato",
+        title: "Allegato modificato",
         subtitle: "L'allegato è stato modificato correttamente",
         type: "success"
       }

@@ -16,7 +16,7 @@ class ActiveSupport::TestCase
   # Open SimpleCov coverage report after tests are run
   Minitest.after_run do
     begin
-      # `open coverage/index.html`
+      `open coverage/index.html`
     rescue
       puts "Unable to open coverage report. Please navigate to coverage/index.html in your browser."
     end
@@ -38,9 +38,9 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
-  def matilda_controller_action(type, title = nil, id = nil)
+  def matilda_controller_action(type, title = nil, id = nil, other_params = {})
     # test valid request
-    get :actions, params: { type: type, id: id }
+    get :actions, params: { type: type, id: id }.merge(other_params)
     assert_response :success
     assert @response.body.include?("id=\"action-controller\"")
     assert @response.body.include?("<h3 class=\"modal-title fs-5\">#{title}</h3>") if title
@@ -48,7 +48,7 @@ class ActionController::TestCase
     # test invalid id
     if id
       assert_raises ActiveRecord::RecordNotFound do
-        get :actions, params: { type: type, id: 9999 }
+        get :actions, params: { type: type, id: 9999 }.merge(other_params)
       end
     end
   end

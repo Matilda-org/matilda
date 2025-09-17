@@ -1,13 +1,20 @@
 one:
   id: 1
   procedure_id: 1
-  title: Status one
+  title: "Status one"
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
 
-model_one:
+two:
   id: 2
   procedure_id: 2
-  title: Status one
+  title: "Status two"
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+
+three:
+  id: 3
+  procedure_id: 3
+  title: "Status three"
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>

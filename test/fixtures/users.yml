@@ -5,3 +5,10 @@ one:
   surname: Rossi
   email: mario.rossi@example.com
   password_digest: <%= BCrypt::Password.create('password123') %>
+
+two:
+  id: 2
+  name: Luisa
+  surname: Bianchi
+  email: luisa.bianchi@example.com
+  password_digest: <%= BCrypt::Password.create('securepass') %>

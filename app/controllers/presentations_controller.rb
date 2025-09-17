@@ -48,15 +48,46 @@ class PresentationsController < ApplicationController
     return render "presentations/actions/import" if @type == "import"
     return render "presentations/actions/edit" if @type == "edit"
     return render "presentations/actions/destroy" if @type == "destroy"
-    return render "presentations/actions/add_page" if @type == "add-page" && presentation_finder
-    return render "presentations/actions/share" if @type == "share" && presentation_finder
-    return render "presentations/actions/unshare" if @type == "unshare" && presentation_finder
-    return render "presentations/actions/edit_page" if @type == "edit-page" && presentation_finder && presentations_page_finder
-    return render "presentations/actions/remove_page" if @type == "remove-page" && presentation_finder && presentations_page_finder
-    return render "presentations/actions/add_action" if @type == "add-action" && presentation_finder
-    return render "presentations/actions/remove_action" if @type == "remove-action" && presentation_finder && presentations_action_finder
-    return render "presentations/actions/add_note" if @type == "add-note" && presentation_finder
-    return render "presentations/actions/remove_note" if @type == "remove-note" && presentation_finder && presentations_note_finder
+    if @type == "add-page"
+      return unless presentation_finder
+      return render "presentations/actions/add_page"
+    end
+    if @type == "share"
+      return unless presentation_finder
+      return render "presentations/actions/share"
+    end
+    if @type == "unshare"
+      return unless presentation_finder
+      return render "presentations/actions/unshare"
+    end
+    if @type == "edit-page"
+      return unless presentation_finder
+      return unless presentations_page_finder
+      return render "presentations/actions/edit_page"
+    end
+    if @type == "remove-page"
+      return unless presentation_finder
+      return unless presentations_page_finder
+      return render "presentations/actions/remove_page"
+    end
+    if @type == "add-action"
+      return unless presentation_finder
+      return render "presentations/actions/add_action"
+    end
+    if @type == "remove-action"
+      return unless presentation_finder
+      return unless presentations_action_finder
+      return render "presentations/actions/remove_action"
+    end
+    if @type == "add-note"
+      return unless presentation_finder
+      return render "presentations/actions/add_note"
+    end
+    if @type == "remove-note"
+      return unless presentation_finder
+      return unless presentations_note_finder
+      return render "presentations/actions/remove_note"
+    end
 
     render partial: "shared/action-error"
   end

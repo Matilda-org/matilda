@@ -9,9 +9,7 @@ class VectorsearchControllerTest < ActionController::TestCase
     setup_controller_test
   end
 
-  # Test GET index with valid policy
-  test "should get chat" do
-    get :chat
-    assert_response :success
+  test "chat" do
+    matilda_controller_endpoint(:get, :chat)
   end
 end

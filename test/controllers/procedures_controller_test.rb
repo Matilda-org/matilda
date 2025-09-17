@@ -9,628 +9,232 @@ class ProceduresControllerTest < ActionController::TestCase
     setup_controller_test
   end
 
-  # Tests for GET index with valid policy
-  test "should get index with valid policy" do
-    @user.users_policies.create!(policy: "procedures_index")
-    get :index
-    assert_response :success
-    assert_not_nil @controller.instance_variable_get(:@procedures)
-    assert_not_nil @controller.instance_variable_get(:@procedures_preferred)
-  end
-
-  # Tests for GET index without valid policy
-  test "should get index without valid policy" do
-    get :index
-    assert_redirected_to root_path
-  end
-
-  # Tests for GET show with valid policy
-  test "should get show with valid policy" do
-    @user.users_policies.create!(policy: "procedures_show")
-    procedure = procedures(:one)
-    get :show, params: { id: procedure.id }
-    assert_response :success
-    assert_not_nil @controller.instance_variable_get(:@procedure)
-  end
-
-  # Tests for GET show without valid policy
-  test "should not get show without valid policy" do
-    procedure = procedures(:one)
-    get :show, params: { id: procedure.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for GET actions with type create
-  test "should get actions create" do
-    get :actions, params: { type: "create" }
-    assert_response :success
-    assert_match(/Nuova board/, @response.body)
-  end
-
-  # Tests for GET actions with type edit and valid id
-  test "should get actions edit with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "edit", id: procedure.id }
-    assert_response :success
-    assert_match(/Modifica board/, @response.body)
-  end
-
-  # Tests for GET actions with type edit and invalid id
-  test "should get actions edit with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "edit", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type archive and valid id
-  test "should get actions archive with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "archive", id: procedure.id }
-    assert_response :success
-    assert_match(/Archivia board/, @response.body)
-  end
-
-  # Tests for GET actions with type archive and invalid id
-  test "should get actions archive with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "archive", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type unarchive and valid id
-  test "should get actions unarchive with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "unarchive", id: procedure.id }
-    assert_response :success
-    assert_match(/Ri-attiva board/, @response.body)
-  end
-
-  # Tests for GET actions with type unarchive and invalid id
-  test "should get actions unarchive with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "unarchive", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type clone and valid id
-  test "should get actions clone with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "clone", id: procedure.id }
-    assert_response :success
-    assert_match(/Clona board/, @response.body)
-  end
-
-  # Tests for GET actions with type clone and invalid id
-  test "should get actions clone with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "clone", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type search and valid id
-  test "should get actions search with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "search", id: procedure.id }
-    assert_response :success
-    assert_match(/Ricerca su board/, @response.body)
-  end
-
-  # Tests for GET actions with type search and invalid id
-  test "should get actions search with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "search", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type destroy and valid id
-  test "should get actions destroy with valid id" do
-    get :actions, params: { type: "destroy", id: procedures(:one).id }
-    assert_response :success
-    assert_match(/Elimina board/, @response.body)
-  end
-
-  # Tests for GET actions with type destroy and invalid id
-  test "should get actions destroy with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "destroy", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type add-status and valid id
-  test "should get actions add-status with valid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "add-status", id: procedure.id }
-    assert_response :success
-    assert_match(/Aggiungi stato/, @response.body)
-  end
-
-  # Tests for GET actions with type add-status and invalid id
-  test "should get actions add-status with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "add-status", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type edit-status and valid id
-  test "should get actions edit-status with valid id" do
+  test "actions" do
     procedure = procedures(:one)
     status = procedure.procedures_statuses.first
-    get :actions, params: { type: "edit-status", id: procedure.id, status_id: status.id }
-    assert_response :success
-    assert_match(/Modifica stato/, @response.body)
+    item = procedure.procedures_items.first
+    matilda_controller_action("create", "Nuova board")
+    matilda_controller_action("edit", "Modifica board", procedure.id)
+    matilda_controller_action("archive", "Archivia board", procedure.id)
+    matilda_controller_action("unarchive", "Ri-attiva board", procedure.id)
+    matilda_controller_action("clone", "Clona board", procedure.id)
+    matilda_controller_action("search", "Ricerca su board", procedure.id)
+    matilda_controller_action("destroy", "Elimina board", procedure.id)
+    matilda_controller_action("add-status", "Aggiungi stato", procedure.id)
+    matilda_controller_action("edit-status", "Modifica stato", procedure.id, { status_id: status.id })
+    matilda_controller_action("remove-status", "Rimuovi stato", procedure.id, { status_id: status.id })
+    matilda_controller_action("add-item", "Aggiungi #{procedure.resources_item_string}", procedure.id)
+    matilda_controller_action("add-item-existing", "Aggiungi #{procedure.resources_item_string}", procedure.id)
+    matilda_controller_action("edit-item", "Modifica #{procedure.resources_item_string}", procedure.id, { item_id: item.id })
+    matilda_controller_action("remove-item", "Rimuovi #{procedure.resources_item_string}", procedure.id, { item_id: item.id })
+
+    matilda_controller_action_invalid
   end
 
-  # Tests for GET actions with type edit-status and invalid id
-  test "should get actions edit-status with invalid id" do
+  test "index" do
+    matilda_controller_endpoint(:get, :index,
+      policy: "procedures_index"
+    )
+  end
+
+  test "show" do
     procedure = procedures(:one)
-    get :actions, params: { type: "edit-status", id: procedure.id, status_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
+    matilda_controller_endpoint(:get, :show,
+      params: { id: procedure.id },
+      policy: "procedures_show"
+    )
   end
 
-  # Tests for GET actions with type remove-status and valid id
-  test "should get actions remove-status with valid id" do
+  test "toggle_show_archived_projects_action" do
+    procedure = procedures(:one)
+    matilda_controller_endpoint(:post, :toggle_show_archived_projects_action,
+      params: { id: procedure.id },
+      policy: "procedures_edit",
+      redirect: procedures_show_path(procedure)
+    )
+  end
+
+  test "create_action" do
+    matilda_controller_endpoint(:post, :create_action,
+      params: { name: "New Procedure", description: "Description of new procedure", resources_type: "tasks" },
+      policy: "procedures_create",
+      title: "Nuova board",
+      feedback: "Board creata"
+    )
+
+    procedure = Procedure.find_by(name: "New Procedure")
+    assert_not_nil procedure
+    assert_equal "Description of new procedure", procedure.description
+    assert_equal "tasks", procedure.resources_type
+  end
+
+  test "edit_action" do
+    procedure = procedures(:one)
+    matilda_controller_endpoint(:post, :edit_action,
+      params: { id: procedure.id, name: "Updated Name", description: "Updated Description", resources_type: "projects" },
+      policy: "procedures_edit",
+      title: "Modifica board",
+      feedback: "Board aggiornata"
+    )
+
+    procedure.reload
+    assert_equal "Updated Name", procedure.name
+    assert_equal "Updated Description", procedure.description
+    assert_equal "projects", procedure.resources_type
+  end
+
+  test "archive_action" do
+    procedure = procedures(:one)
+    assert_not procedure.archived
+
+    matilda_controller_endpoint(:post, :archive_action,
+      params: { id: procedure.id },
+      policy: "procedures_archive",
+      title: "Archivia board",
+      feedback: "Board archiviata"
+    )
+
+    procedure.reload
+    assert procedure.archived?
+  end
+
+  test "unarchive_action" do
+    procedure = procedures(:one)
+    procedure.update(archived: true)
+    assert procedure.archived
+
+    matilda_controller_endpoint(:post, :unarchive_action,
+      params: { id: procedure.id },
+      policy: "procedures_unarchive",
+      title: "Ri-attiva board",
+      feedback: "Board ri-attivata"
+    )
+
+    procedure.reload
+    assert_not procedure.archived
+  end
+
+  test "clone_action" do
+    procedure = procedures(:one)
+    matilda_controller_endpoint(:post, :clone_action,
+      params: { id: procedure.id },
+      policy: "procedures_clone",
+      title: "Clona board",
+      feedback: "Board clonata"
+    )
+
+    cloned_procedure = Procedure.find_by(name: "#{procedure.name} (clone)")
+    assert_not_nil cloned_procedure
+  end
+
+  test "destroy_action" do
+    procedure = procedures(:one)
+    matilda_controller_endpoint(:post, :destroy_action,
+      params: { id: procedure.id },
+      policy: "procedures_destroy",
+      title: "Elimina board",
+      feedback: "Board eliminata",
+      redirect: procedures_path
+    )
+
+    assert_not Procedure.exists?(procedure.id)
+  end
+
+  test "add_status_action" do
+    procedure = procedures(:one)
+    matilda_controller_endpoint(:post, :add_status_action,
+      params: { id: procedure.id, title: "New Status" },
+      policy: "procedures_edit",
+      title: "Aggiungi stato",
+      feedback: "Stato aggiunto"
+    )
+
+    new_status = procedure.procedures_statuses.find_by(title: "New Status")
+    assert_not_nil new_status
+  end
+
+  test "edit_status_action" do
     procedure = procedures(:one)
     status = procedure.procedures_statuses.first
-    get :actions, params: { type: "remove-status", id: procedure.id, status_id: status.id }
-    assert_response :success
-    assert_match(/Rimuovi stato/, @response.body)
+    matilda_controller_endpoint(:post, :edit_status_action,
+      params: { id: procedure.id, status_id: status.id, title: "Updated Status" },
+      policy: "procedures_edit",
+      title: "Modifica stato",
+      feedback: "Stato modificato"
+    )
+
+    status.reload
+    assert_equal "Updated Status", status.title
   end
 
-  # Tests for GET actions with type remove-status and invalid id
-  test "should get actions remove-status with invalid id" do
+  test "remove_status_action" do
     procedure = procedures(:one)
-    get :actions, params: { type: "remove-status", id: procedure.id, status_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
+    status = procedure.procedures_statuses.first
+    matilda_controller_endpoint(:post, :remove_status_action,
+      params: { id: procedure.id, status_id: status.id },
+      policy: "procedures_edit",
+      title: "Rimuovi stato",
+      feedback: "Stato rimosso"
+    )
+
+    assert_not procedure.procedures_statuses.exists?(status.id)
   end
 
-  # Tests for GET actions with type add-item and valid id
-  test "should get actions add-item with valid id" do
+  test "move_status_action" do
     procedure = procedures(:one)
-    get :actions, params: { type: "add-item", id: procedure.id }
-    assert_response :success
-    assert_match(/Aggiungi #{procedure.resources_item_string}/, @response.body)
+    status = procedure.procedures_statuses.first
+    matilda_controller_endpoint(:post, :move_status_action,
+      params: { id: procedure.id, status_id: status.id, direction: "up" },
+      policy: "procedures_edit",
+    )
   end
 
-  # Tests for GET actions with type add-item and invalid id
-  test "should get actions add-item with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "add-item", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type add-item-existing and valid id
-  test "should get actions add-item-existing with valid id" do
+  test "add_item_action" do
     procedure = procedures(:one)
-    get :actions, params: { type: "add-item-existing", id: procedure.id }
-    assert_response :success
-    assert_match(/Aggiungi #{procedure.resources_item_string}/, @response.body)
+    matilda_controller_endpoint(:post, :add_item_action,
+      params: { id: procedure.id, title: "New Item", status_id: procedure.procedures_statuses.first.id },
+      policy: "procedures_edit",
+      title: "Aggiungi #{procedure.resources_item_string}",
+      feedback: "#{procedure.resources_item_string.capitalize} aggiunto"
+    )
+
+    new_item = procedure.procedures_items.find_by(title: "New Item")
+    assert_not_nil new_item
   end
 
-  # Tests for GET actions with type add-item-existing and invalid id
-  test "should get actions add-item-existing with invalid id" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get :actions, params: { type: "add-item-existing", id: 9999 }
-    end
-  end
-
-  # Tests for GET actions with type edit-item and valid id
-  test "should get actions edit-item with valid id" do
+  test "edit_item_action" do
     procedure = procedures(:one)
     item = procedure.procedures_items.first
-    get :actions, params: { type: "edit-item", id: procedure.id, item_id: item.id }
-    assert_response :success
-    assert_match(/Modifica #{procedure.resources_item_string}/, @response.body)
+    matilda_controller_endpoint(:post, :edit_item_action,
+      params: { id: procedure.id, item_id: item.id, title: "Updated Item" },
+      policy: "procedures_edit",
+      title: "Modifica #{procedure.resources_item_string}",
+      feedback: "#{procedure.resources_item_string.capitalize} modificato"
+    )
+
+    item.reload
+    assert_equal "Updated Item", item.title
   end
 
-  # Tests for GET actions with type edit-item and invalid id
-  test "should get actions edit-item with invalid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "edit-item", id: procedure.id, item_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for GET actions with type remove-item and valid id
-  test "should get actions remove-item with valid id" do
+  test "remove_item_action" do
     procedure = procedures(:one)
     item = procedure.procedures_items.first
-    get :actions, params: { type: "remove-item", id: procedure.id, item_id: item.id }
-    assert_response :success
-    assert_match(/Rimuovi #{procedure.resources_item_string}/, @response.body)
+    matilda_controller_endpoint(:post, :remove_item_action,
+      params: { id: procedure.id, item_id: item.id },
+      policy: "procedures_edit",
+      title: "Rimuovi #{procedure.resources_item_string}",
+      feedback: "#{procedure.resources_item_string.capitalize} rimosso"
+    )
+
+    assert_not procedure.procedures_items.exists?(item.id)
   end
 
-  # Tests for GET actions with type remove-item and invalid id
-  test "should get actions remove-item with invalid id" do
-    procedure = procedures(:one)
-    get :actions, params: { type: "remove-item", id: procedure.id, item_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Test for GET actions con tipo non valido
-  test "should get actions with invalid type" do
-    get :actions, params: { type: "invalid_type" }
-    assert_response :success
-    assert_match(/Si è verificato un errore/, @response.body)
-  end
-
-  # Tests for POST toggle_show_archived_projects_action with valid id and valid policy
-  test "should post toggle_show_archived_projects_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :toggle_show_archived_projects_action, params: { id: procedure.id }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST create_action with valid policy
-  test "should post create_action with valid policy" do
-    @user.users_policies.create!(policy: "procedures_create")
-    post :create_action, params: { name: "New Procedure", description: "Description of new procedure", resources_type: "tasks" }
-    assert_response :success
-    assert_match(/Board creata/, @response.body)
-  end
-
-  # Tests for POST create_action without valid policy
-  test "should not post create_action without valid policy" do
-    post :create_action, params: { name: "New Procedure", description: "Description of new procedure", resources_type: "tasks" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST create_action with missing parameters
-  test "should not post create_action with missing parameters" do
-    @user.users_policies.create!(policy: "procedures_create")
-    post :create_action, params: { name: "", description: "Description of new procedure", resources_type: "tasks" }
-    assert_response :success
-    assert_match(/Nuova board/, @response.body)
-  end
-
-  # Tests for POST edit_action with valid id and valid policy
-  test "should post edit_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :edit_action, params: { id: procedure.id, name: "Updated Name", description: "Updated Description", resources_type: "projects" }
-    assert_response :success
-    assert_match(/Board aggiornata/, @response.body)
-  end
-
-  # Tests for POST edit_action without valid policy
-  test "should not post edit_action without valid policy" do
-    procedure = procedures(:one)
-    post :edit_action, params: { id: procedure.id, name: "Updated Name", description: "Updated Description", resources_type: "projects" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST edit_action with invalid id
-  test "should not post edit_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :edit_action, params: { id: 9999, name: "Updated Name", description: "Updated Description", resources_type: "projects" }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST edit_action with missing parameters
-  test "should not post edit_action with missing parameters" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :edit_action, params: { id: procedure.id, name: "", description: "Updated Description", resources_type: "projects" }
-    assert_response :success
-    assert_match(/Modifica board/, @response.body)
-  end
-
-  # Tests for POST archive_action with valid id and valid policy
-  test "should post archive_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_archive")
-    procedure = procedures(:one)
-    post :archive_action, params: { id: procedure.id }
-    assert_response :success
-    assert_match(/Board archiviata/, @response.body)
-  end
-
-  # Tests for POST archive_action without valid policy
-  test "should not post archive_action without valid policy" do
-    procedure = procedures(:one)
-    post :archive_action, params: { id: procedure.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST archive_action with invalid id
-  test "should not post archive_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_archive")
-    post :archive_action, params: { id: 9999 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST unarchive_action with valid id and valid policy
-  test "should post unarchive_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_unarchive")
-    procedure = procedures(:one)
-    post :unarchive_action, params: { id: procedure.id }
-    assert_response :success
-    assert_match(/Board ri-attivata/, @response.body)
-  end
-
-  # Tests for POST unarchive_action without valid policy
-  test "should not post unarchive_action without valid policy" do
-    procedure = procedures(:one)
-    post :unarchive_action, params: { id: procedure.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST unarchive_action with invalid id
-  test "should not post unarchive_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_unarchive")
-    post :unarchive_action, params: { id: 9999 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST clone_action with valid id and valid policy
-  test "should post clone_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_clone")
-    procedure = procedures(:one)
-    post :clone_action, params: { id: procedure.id, name: "Cloned Procedure" }
-    assert_response :success
-    assert_match(/Board clonata/, @response.body)
-  end
-
-  # Tests for POST clone_action without valid policy
-  test "should not post clone_action without valid policy" do
-    procedure = procedures(:one)
-    post :clone_action, params: { id: procedure.id, name: "Cloned Procedure" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST clone_action with invalid id
-  test "should not post clone_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_clone")
-    post :clone_action, params: { id: 9999, name: "Cloned Procedure" }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST destroy_action with valid id and valid policy
-  test "should post destroy_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_destroy")
-    procedure = procedures(:one)
-    post :destroy_action, params: { id: procedure.id }
-    assert_response :success
-    assert_match(/Board eliminata/, @response.body)
-  end
-
-  # Tests for POST destroy_action without valid policy
-  test "should not post destroy_action without valid policy" do
-    procedure = procedures(:one)
-    post :destroy_action, params: { id: procedure.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST destroy_action with invalid id
-  test "should not post destroy_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_destroy")
-    post :destroy_action, params: { id: 9999 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST add_status_action with valid id and valid policy
-  test "should post add_status_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :add_status_action, params: { id: procedure.id, title: "New Status" }
-    assert_response :success
-    assert_match(/Stato aggiunto/, @response.body)
-  end
-
-  # Tests for POST add_status_action without valid policy
-  test "should not post add_status_action without valid policy" do
-    procedure = procedures(:one)
-    post :add_status_action, params: { id: procedure.id, title: "New Status" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST add_status_action with invalid id
-  test "should not post add_status_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :add_status_action, params: { id: 9999, title: "New Status" }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST edit_status_action with valid id and valid policy
-  test "should post edit_status_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :edit_status_action, params: { id: procedure.id, status_id: status.id, title: "Updated Status" }
-    assert_response :success
-    assert_match(/Stato modificato/, @response.body)
-  end
-
-  # Tests for POST edit_status_action without valid policy
-  test "should not post edit_status_action without valid policy" do
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :edit_status_action, params: { id: procedure.id, status_id: status.id, title: "Updated Status" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST edit_status_action with invalid id
-  test "should not post edit_status_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :edit_status_action, params: { id: 9999, status_id: 1, title: "Updated Status" }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST edit_status_action with invalid status_id
-  test "should not post edit_status_action with invalid status_id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :edit_status_action, params: { id: procedure.id, status_id: 9999, title: "Updated Status" }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST remove_status_action with valid id and valid policy
-  test "should post remove_status_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :remove_status_action, params: { id: procedure.id, status_id: status.id }
-    assert_response :success
-    assert_match(/Stato rimosso/, @response.body)
-  end
-
-  # Tests for POST remove_status_action without valid policy
-  test "should not post remove_status_action without valid policy" do
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :remove_status_action, params: { id: procedure.id, status_id: status.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST remove_status_action with invalid id
-  test "should not post remove_status_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :remove_status_action, params: { id: 9999, status_id: 1 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST remove_status_action with invalid status_id
-  test "should not post remove_status_action with invalid status_id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :remove_status_action, params: { id: procedure.id, status_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST move_status_action with valid id and valid policy
-  test "should post move_status_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :move_status_action, params: { id: procedure.id, status_id: status.id, direction: "up" }
-    assert_response :success
-  end
-
-  # Tests for POST move_status_action without valid policy
-  test "should not post move_status_action without valid policy" do
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-    post :move_status_action, params: { id: procedure.id, status_id: status.id, direction: "up" }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST move_status_action with invalid id
-  test "should not post move_status_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :move_status_action, params: { id: 9999, status_id: 1, direction: "up" }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST move_status_action with invalid status_id
-  test "should not post move_status_action with invalid status_id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :move_status_action, params: { id: procedure.id, status_id: 9999, direction: "up" }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST add_item_action with valid id and valid policy
-  test "should post add_item_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :add_item_action, params: { id: procedure.id, title: "New Item", description: "Description of new item", status_id: procedure.procedures_statuses.first.id }
-    assert_response :success
-    assert_match(/#{procedure.resources_item_string.capitalize} aggiunto/, @response.body)
-  end
-
-  # Tests for POST add_item_action without valid policy
-  test "should not post add_item_action without valid policy" do
-    procedure = procedures(:one)
-    post :add_item_action, params: { id: procedure.id, title: "New Item", description: "Description of new item", status_id: procedure.procedures_statuses.first.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST add_item_action with invalid id
-  test "should not post add_item_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :add_item_action, params: { id: 9999, title: "New Item", description: "Description of new item", status_id: 1 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST add_item_action with missing parameters
-  test "should not post add_item_action with missing parameters" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :add_item_action, params: { id: procedure.id, title: "", description: "Description of new item", status_id: procedure.procedures_statuses.first.id }
-    assert_response :success
-    assert_match(/Aggiungi #{procedure.resources_item_string}/, @response.body)
-  end
-
-  # Tests for POST edit_item_action with valid id and valid policy
-  test "should post edit_item_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
+  test "move_item_action" do
     procedure = procedures(:one)
     item = procedure.procedures_items.first
-    post :edit_item_action, params: { id: procedure.id, item_id: item.id, title: "Updated Item", description: "Updated Description", status_id: procedure.procedures_statuses.last.id }
-    assert_response :success
-    assert_match(/#{procedure.resources_item_string.capitalize} modificato/, @response.body)
-  end
-
-  # Tests for POST edit_item_action without valid policy
-  test "should not post edit_item_action without valid policy" do
-    procedure = procedures(:one)
-    item = procedure.procedures_items.first
-    post :edit_item_action, params: { id: procedure.id, item_id: item.id, title: "Updated Item", description: "Updated Description", status_id: procedure.procedures_statuses.last.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST edit_item_action with invalid id
-  test "should not post edit_item_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :edit_item_action, params: { id: 9999, item_id: 1, title: "Updated Item", description: "Updated Description", status_id: 1 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST edit_item_action with invalid item_id
-  test "should not post edit_item_action with invalid item_id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :edit_item_action, params: { id: procedure.id, item_id: 9999, title: "Updated Item", description: "Updated Description", status_id: procedure.procedures_statuses.last.id }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST remove_item_action with valid id and valid policy
-  test "should post remove_item_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    item = procedure.procedures_items.first
-    post :remove_item_action, params: { id: procedure.id, item_id: item.id }
-    assert_response :success
-    assert_match(/#{procedure.resources_item_string.capitalize} rimosso/, @response.body)
-  end
-
-  # Tests for POST remove_item_action without valid policy
-  test "should not post remove_item_action without valid policy" do
-    procedure = procedures(:one)
-    item = procedure.procedures_items.first
-    post :remove_item_action, params: { id: procedure.id, item_id: item.id }
-    assert_redirected_to root_path
-  end
-
-  # Tests for POST remove_item_action with invalid id
-  test "should not post remove_item_action with invalid id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    post :remove_item_action, params: { id: 9999, item_id: 1 }
-    assert_redirected_to procedures_path
-  end
-
-  # Tests for POST remove_item_action with invalid item_id
-  test "should not post remove_item_action with invalid item_id" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    post :remove_item_action, params: { id: procedure.id, item_id: 9999 }
-    assert_redirected_to procedures_show_path(procedure)
-  end
-
-  # Tests for POST move_item_action with valid id and valid policy
-  test "should post move_item_action with valid id and valid policy" do
-    @user.users_policies.create!(policy: "procedures_edit")
-    procedure = procedures(:one)
-    item = procedure.procedures_items.first
-    post :move_item_action, params: { id: procedure.id, item_id: item.id, direction: "up" }
-    assert_response :success
+    matilda_controller_endpoint(:post, :move_item_action,
+      params: { id: procedure.id, item_id: item.id, direction: "up" },
+      policy: "procedures_edit",
+    )
   end
 end

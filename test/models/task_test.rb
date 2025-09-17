@@ -20,17 +20,17 @@ class TaskTest < ActiveSupport::TestCase
 
   test "scope today" do
     today_tasks = Task.today
-    assert_includes today_tasks.map(&:title), "Task uno"
+    assert_includes today_tasks.map(&:title), "Task one"
   end
 
   test "scope expired" do
     expired_tasks = Task.expired
-    assert_includes expired_tasks.map(&:title), "Task due"
+    assert_includes expired_tasks.map(&:title), "Task two"
   end
 
   test "scope not_expired" do
     not_expired_tasks = Task.not_expired
-    assert_includes not_expired_tasks.map(&:title), "Task uno"
+    assert_includes not_expired_tasks.map(&:title), "Task one"
   end
 
   test "expired? method" do

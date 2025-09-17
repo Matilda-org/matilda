@@ -9,10 +9,21 @@ class ToolsControllerTest < ActionController::TestCase
     setup_controller_test
   end
 
-  # Test GET index
-  test "should get index" do
-    @user.users_policies.create!(policy: "tools")
-    get :index
-    assert_response :success
+  test "index" do
+    matilda_controller_endpoint(:get, :index,
+      policy: "tools"
+    )
+  end
+
+  test "projects_without_procedures" do
+    matilda_controller_endpoint(:get, :projects_without_procedures,
+      policy: "tools"
+    )
+  end
+
+  test "projects_tasks_tracking" do
+    matilda_controller_endpoint(:get, :projects_tasks_tracking,
+      policy: "tools"
+    )
   end
 end

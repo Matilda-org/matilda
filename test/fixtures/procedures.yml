@@ -1,10 +1,15 @@
 one:
   id: 1
-  name: "Sample"
+  name: "Procedure one"
   resources_type: "tasks"
 
-model_one:
+two:
   id: 2
-  name: "Sample model"
-  model: true
+  name: "Procedure two"
   resources_type: "tasks"
+  model: true
+
+three:
+  id: 3
+  name: "Procedure three"
+  resources_type: "projects"

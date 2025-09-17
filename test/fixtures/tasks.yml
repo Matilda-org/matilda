@@ -1,5 +1,5 @@
 one:
-  title: "Task uno"
+  title: "Task one"
   completed: false
   deadline: <%= Date.today %>
   time_estimate: 3600
@@ -7,7 +7,7 @@ one:
   accepted: true
 
 two:
-  title: "Task due"
+  title: "Task two"
   completed: true
   completed_at: <%= Date.today - 1 %>
   deadline: <%= Date.today - 2 %>
