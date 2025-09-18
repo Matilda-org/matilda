@@ -15,6 +15,9 @@ users = User.where(id: tasks_per_user.keys).order(:surname, :name)
         <% users.each do |user| %>
           <%= render 'tasks/people-status', user: user, tasks: tasks_per_user[user.id] %>
         <% end %>
+        <% if tasks_per_user[nil] %>
+          <%= render 'tasks/people-status', tasks: tasks_per_user[nil] %>
+        <% end %>
       </div>
     </div>
   <% else %>

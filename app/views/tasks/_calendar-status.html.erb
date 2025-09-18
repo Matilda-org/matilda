@@ -12,7 +12,7 @@ total_time_sum = tasks.sum(&:time_estimate)
   <div class="card d-flex flex-direction-column justify-content-between me-3" style="width: 360px; flex: 0 0 auto;">
     <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
       <div class="h-text-oneline">
-        <%= raw date.strftime("<b>%a</b> <small class='text-muted'>%d/%m/%Y</small>") %>
+        <%= raw date.strftime("<b>%a</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>%d/%m/%Y</small>") %>
       </div>
       <div class="ms-3">
         <span
