@@ -6,10 +6,9 @@
 
 .c-kanban__status {
   width: 360px;
-  flex: 0 0 auto;
 
   @media screen and (max-width: 390px) {
-    width: 320px;
+    width: calc(100vw - 30px);
   }
 }
 
