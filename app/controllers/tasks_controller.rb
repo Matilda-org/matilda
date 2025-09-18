@@ -51,7 +51,7 @@ class TasksController < ApplicationController
       @date = params[:date] ? Date.parse(params[:date]) : Date.today
       @project_id = params[:project_id]
 
-      tasks = Task.where(deadline: @date).or(Task.where(deadline: nil))
+      tasks = Task.where(deadline: @date).or(Task.where(deadline: nil, completed: [ nil, false ]))
       tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
       tasks = tasks.order(deadline: :asc, title: :asc)
       @tasks_per_user = tasks.group_by(&:user_id)
