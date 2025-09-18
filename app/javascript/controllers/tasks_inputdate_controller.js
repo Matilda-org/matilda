@@ -81,6 +81,8 @@ export default class extends Controller {
    * Aggiorna i marker delle date in base ai dati ricevuti
    */
   updateMarkers(tasksData) {
+    if (!this.flatpickr || !this.flatpickr.calendarContainer) return;
+
     // Prima rimuove tutti i marker esistenti
     this.flatpickr.calendarContainer.querySelectorAll('.c-flatpickr-marker').forEach(marker => {
       marker.classList.remove('visible');

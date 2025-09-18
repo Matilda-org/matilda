@@ -4,6 +4,15 @@
   max-width: calc(100vw - 310px);
 }
 
+.c-kanban__status {
+  width: 360px;
+  flex: 0 0 auto;
+
+  @media screen and (max-width: 390px) {
+    width: 320px;
+  }
+}
+
 .c-kanban__status-header {
   background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
 }
