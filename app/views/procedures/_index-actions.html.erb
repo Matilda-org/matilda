@@ -1,5 +1,14 @@
 <div class="btn-group" role="group">
-  <a type="button" class="btn btn-primary" href="<%= procedures_actions_path(type: 'create') %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="procedures_create">
+  <a
+    type="button"
+    class="btn btn-primary"
+    href="<%= procedures_actions_path(type: 'create') %>"
+    data-turbo-frame="action"
+    data-user-policies-target="item"
+    data-policy="procedures_create"
+    data-controller="tooltip"
+    data-tooltip="Crea nuova board"
+  >
     <i class="bi bi-plus-circle"></i>
   </a>
 </div>

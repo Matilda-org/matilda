@@ -1,15 +1,38 @@
 <div class="btn-group" role="group">
   <% if @mode == 'people' %>
-    <a type="button" class="btn btn-primary" href="<%= tasks_path(mode: 'calendar') %>" data-turbo-frame="_top">
+    <a
+      type="button"
+      class="btn btn-primary"
+      href="<%= tasks_path(mode: 'calendar') %>"
+      data-turbo-frame="_top"
+      data-controller="tooltip"
+      data-tooltip="Vista calendario"
+    >
       <i class="bi bi-calendar"></i>
     </a>
   <% else %>
-    <a type="button" class="btn btn-primary" href="<%= tasks_path(mode: 'people') %>" data-turbo-frame="_top">
+    <a
+      type="button"
+      class="btn btn-primary"
+      href="<%= tasks_path(mode: 'people') %>"
+      data-turbo-frame="_top"
+      data-controller="tooltip"
+      data-tooltip="Vista persone"
+    >
       <i class="bi bi-person"></i>
     </a>
   <% end %>
 
-  <a type="button" class="btn btn-primary" href="<%= tasks_actions_path(type: 'create', turbo_frame_key: "tasks-#{@mode}") %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="tasks_create">
+  <a
+    type="button"
+    class="btn btn-primary"
+    href="<%= tasks_actions_path(type: 'create', turbo_frame_key: "tasks-#{@mode}") %>"
+    data-turbo-frame="action"
+    data-user-policies-target="item"
+    data-policy="tasks_create"
+    data-controller="tooltip"
+    data-tooltip="Crea nuovo task"
+  >
     <i class="bi bi-plus-circle"></i>
   </a>
 </div>

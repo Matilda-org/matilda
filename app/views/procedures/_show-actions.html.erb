@@ -63,18 +63,34 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
 
   <div class="btn-group" role="group">
     <% if !@procedure.model && @procedure.resources_type_projects? %>
-      <%= link_to procedures_toggle_show_archived_projects_action_path(@procedure), data: { turbo_method: :post, turbo_frame: dom_id(@procedure, 'kanban') }, class: 'btn btn-primary' do %>
+      <%= link_to procedures_toggle_show_archived_projects_action_path(@procedure), data: { turbo_method: :post, turbo_frame: dom_id(@procedure, 'kanban'), controller: 'tooltip', tooltip: 'Mostra/nascondi progetti archiviati' }, class: 'btn btn-primary' do %>
         <i class="bi bi-eye"></i>
       <% end %>
     <% end %>
 
     <% if !@procedure.model %>
-      <a type="button" href="<%= procedures_actions_path(type: 'search', id: @procedure.id) %>" data-turbo-frame="action" class="btn btn-primary">
+      <a
+        type="button"
+        href="<%= procedures_actions_path(type: 'search', id: @procedure.id) %>"
+        data-turbo-frame="action"
+        class="btn btn-primary"
+        data-controller="tooltip"
+        data-tooltip="Ricerca"
+      >
         <i class="bi bi-search"></i>
       </a>
     <% end %>
 
-    <a type="button" href="<%= procedures_actions_path(type: 'add-status', id: @procedure.id) %>" data-turbo-frame="action" class="btn btn-primary" data-user-policies-target="item" data-policy="procedures_edit">
+    <a
+      type="button"
+      href="<%= procedures_actions_path(type: 'add-status', id: @procedure.id) %>"
+      data-turbo-frame="action"
+      class="btn btn-primary"
+      data-user-policies-target="item"
+      data-policy="procedures_edit"
+      data-controller="tooltip"
+      data-tooltip="Aggiungi stato"
+    >
       <i class="bi bi-plus-circle"></i>
     </a>
   </div>
