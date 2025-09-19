@@ -1,15 +1,15 @@
-.c-form {
+.c-modal-form {
   position: relative;
   padding-bottom: 53px;
 }
 
-.c-form__fields {
+.c-modal-form__fields {
   height: 100%;
   max-height: calc(100vh - 225px);
   overflow-y: auto;
 }
 
-.c-form__submit {
+.c-modal-form__submit {
   position: absolute;
   background-color: var(--bs-white);
   bottom: 0;

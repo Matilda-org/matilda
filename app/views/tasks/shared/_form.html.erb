@@ -10,8 +10,8 @@ path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_pa
 
 <%= render 'shared/form-errors', item: task %>
 
-<%= form_tag path, class: 'c-form', data: { controller: 'tasks-form form-loading' } do %>
-  <div class="c-form__fields row">
+<%= form_tag path, class: 'c-modal-form', data: { controller: 'tasks-form form-loading' } do %>
+  <div class="c-modal-form__fields row">
     <% if procedures_status_id %>
       <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
     <% end %>
@@ -61,7 +61,7 @@ path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_pa
     </div>
   </div>
 
-  <div class="c-form__submit">
+  <div class="c-modal-form__submit">
     <% if !task.accepted && @session_user.policy?('tasks_acceptance') %>
       <button type="submit" class="btn btn-success btn-form-submit" data-form-loading-target="submit">Conferma e approva</button>
     <% else %>
