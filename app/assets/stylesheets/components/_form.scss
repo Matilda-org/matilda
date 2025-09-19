@@ -1,0 +1,22 @@
+.c-form {
+  position: relative;
+  padding-bottom: 53px;
+}
+
+.c-form__fields {
+  height: 100%;
+  max-height: calc(100vh - 225px);
+  overflow-y: auto;
+}
+
+.c-form__submit {
+  position: absolute;
+  background-color: var(--bs-white);
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-top: 15px;
+  border-top: solid 1px var(--bs-light);
+  display: flex;
+  justify-content: flex-end;
+}

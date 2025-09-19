@@ -10,56 +10,58 @@ path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_pa
 
 <%= render 'shared/form-errors', item: task %>
 
-<%= form_tag path, class: 'row', data: { controller: 'tasks-form form-loading' } do %>
-  <% if procedures_status_id %>
-    <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
-  <% end %>
-  <% if turbo_frame_key %>
-    <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
-  <% end %>
+<%= form_tag path, class: 'c-form', data: { controller: 'tasks-form form-loading' } do %>
+  <div class="c-form__fields row">
+    <% if procedures_status_id %>
+      <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
+    <% end %>
+    <% if turbo_frame_key %>
+      <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
+    <% end %>
 
-  <%= render 'tasks/shared/form-inputs-base', task: task, show_default: !task.persisted? %>
+    <%= render 'tasks/shared/form-inputs-base', task: task, show_default: !task.persisted? %>
 
-  <div class="col col-12 mb-3">
-    <%= rich_text_area_tag :content, task.content %>
+    <div class="col col-12 mb-3">
+      <%= rich_text_area_tag :content, task.content %>
 
-    <% if Setting.get('vectorsearch_openai_key') %>
-      <div class="d-flex justify-content-end mt-2">
-        <div class="btn-group btn-group-sm" role="group" aria-label="Assistant actions">
-          <div class="btn btn-secondary">
-            <i class="bi bi-robot"></i>
+      <% if Setting.get('vectorsearch_openai_key') %>
+        <div class="d-flex justify-content-end mt-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Assistant actions">
+            <div class="btn btn-secondary">
+              <i class="bi bi-robot"></i>
+            </div>
+            <button type="button" class="btn btn-outline-primary" data-action="click->tasks-form#onClickConvertContentToChecklist">
+              Converti in checklist
+            </button>
           </div>
-          <button type="button" class="btn btn-outline-primary" data-action="click->tasks-form#onClickConvertContentToChecklist">
-            Converti in checklist
-          </button>
         </div>
+      <% end %>
+    </div>
+
+    <% if !task.persisted? && @projects_for_position %>
+      <div class="col col-12 mb-3">
+        <label for="position_procedure_id" class="form-label">Inserisci su board</label>
+        <select class="form-control" id="position_procedure_id" name="position_procedure_id">
+          <option value="">Nessuna</option>
+          <% @projects_for_position.each do |project| %>
+            <% project.procedures.not_archived.not_as_model.where.not(statuses_count: 0).order(name: :asc).each do |procedure| %>
+              <option value="<%= procedure.id %>" <%= task.procedure_as_item&.id == procedure.id ? 'selected' : '' %>><%= project.name %> | <%= procedure.name %></option>
+            <% end %>
+          <% end %>
+        </select>
       </div>
     <% end %>
-  </div>
 
-  <% if !task.persisted? && @projects_for_position %>
-    <div class="col col-12 mb-3">
-      <label for="position_procedure_id" class="form-label">Inserisci su board</label>
-      <select class="form-control" id="position_procedure_id" name="position_procedure_id">
-        <option value="">Nessuna</option>
-        <% @projects_for_position.each do |project| %>
-          <% project.procedures.not_archived.not_as_model.where.not(statuses_count: 0).order(name: :asc).each do |procedure| %>
-            <option value="<%= procedure.id %>" <%= task.procedure_as_item&.id == procedure.id ? 'selected' : '' %>><%= project.name %> | <%= procedure.name %></option>
-          <% end %>
-        <% end %>
-      </select>
+    <div class="accordion mb-3" id="formTaskAccordion">
+      <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
+      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task %>
+      <% if task.repeat_original_task_id.nil? %>
+        <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
+      <% end %>
     </div>
-  <% end %>
-
-  <div class="accordion mb-3" id="formTaskAccordion">
-    <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
-    <%= render 'tasks/shared/form-inputs-accordion-assign', task: task %>
-    <% if task.repeat_original_task_id.nil? %>
-      <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
-    <% end %>
   </div>
 
-  <div class="d-flex justify-content-end">
+  <div class="c-form__submit">
     <% if !task.accepted && @session_user.policy?('tasks_acceptance') %>
       <button type="submit" class="btn btn-success btn-form-submit" data-form-loading-target="submit">Conferma e approva</button>
     <% else %>
