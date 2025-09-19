@@ -1,13 +1,18 @@
 <div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 100px)">
-<div class="card shadow w-100" style="max-width: 400px;">
-  <div class="card-body">
-    <h1 class="card-title text-center fs-4">Login</h1>
-    <h6 class="card-subtitle text-muted text-center">Inserisci le tue credenziali per accedere</h6>
-    <hr />
-    <%= render 'layouts/application/flash' %>
-    <%= render 'authentication/shared/form-login', user: @user, redirect: @redirect %>
-    <hr />
-    <small><a class="text-muted" href="<%= authentication_recover_password_path %>">Hai dimenticato la password?</a></small>
+  <div class="position-relative d-flex flex-column align-items-center">
+    <div class="mb-5" style="width: 90px; height: 90px;">
+      <%= render 'layouts/application/logo', style: 'width: 100%; height: 100%;' %>
+    </div>
+    <div class="card shadow w-100" style="max-width: 400px;">
+      <div class="card-body">
+        <h1 class="card-title text-center fs-4">Login</h1>
+        <h6 class="card-subtitle text-muted text-center">Inserisci le tue credenziali per accedere</h6>
+        <hr />
+        <%= render 'layouts/application/flash' %>
+        <%= render 'authentication/shared/form-login', user: @user, redirect: @redirect %>
+        <hr />
+        <small><a class="text-muted" href="<%= authentication_recover_password_path %>">Hai dimenticato la password?</a></small>
+      </div>
+    </div>
   </div>
-</div>
 </div>
