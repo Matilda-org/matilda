@@ -11,35 +11,37 @@ path ||= presentation.persisted? ? presentations_edit_action_path(presentation) 
 
 <%= render 'shared/form-errors', item: presentation %>
 
-<%= form_tag path, class: 'row', multipart: true, data: { controller: 'form-loading' } do %>
-  <% if project_id %>
-    <input type="hidden" name="project_id" value="<%= project_id %>">
-  <% end %>
-  <% if turbo_frame_key %>
-    <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
-  <% end %>
+<%= form_tag path, class: 'c-modal-form', multipart: true, data: { controller: 'form-loading' } do %>
+  <div class="c-modal-form__fields row">
+    <% if project_id %>
+      <input type="hidden" name="project_id" value="<%= project_id %>">
+    <% end %>
+    <% if turbo_frame_key %>
+      <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
+    <% end %>
 
-  <div class="col col-12 mb-3">
-    <label for="name" class="form-label">Nome</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= presentation.name %>" required>
+    <div class="col col-12 mb-3">
+      <label for="name" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="name" name="name" value="<%= presentation.name %>" required>
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="description" class="form-label">Breve descrizione</label>
+      <textarea class="form-control" rows="5" id="description" name="description"><%= presentation.description %></textarea>
+    </div>
+
+    <div class="col col-6 mb-3">
+      <label for="width_px" class="form-label">Larghezza px</label>
+      <input type="text" class="form-control" id="width_px" name="width_px" value="<%= presentation.width_px || 1920 %>" required>
+    </div>
+
+    <div class="col col-6 mb-3">
+      <label for="height_px" class="form-label">Altezza px</label>
+      <input type="text" class="form-control" id="height_px" name="height_px" value="<%= presentation.height_px || 1080 %>" required>
+    </div>
   </div>
 
-  <div class="col col-12 mb-3">
-    <label for="description" class="form-label">Breve descrizione</label>
-    <textarea class="form-control" rows="5" id="description" name="description"><%= presentation.description %></textarea>
-  </div>
-
-  <div class="col col-6 mb-3">
-    <label for="width_px" class="form-label">Larghezza px</label>
-    <input type="text" class="form-control" id="width_px" name="width_px" value="<%= presentation.width_px || 1920 %>" required>
-  </div>
-
-  <div class="col col-6 mb-3">
-    <label for="height_px" class="form-label">Altezza px</label>
-    <input type="text" class="form-control" id="height_px" name="height_px" value="<%= presentation.height_px || 1080 %>" required>
-  </div>
-
-  <div class="d-flex justify-content-end">
+  <div class="c-modal-form__submit">
     <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
   </div>
 <% end %>

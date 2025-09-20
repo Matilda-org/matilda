@@ -7,6 +7,10 @@
   height: 100%;
   max-height: calc(100vh - 225px);
   overflow-y: auto;
+
+  @media screen and (max-width: 575px) {
+    max-height: calc(100vh - 175px);
+  }
 }
 
 .c-modal-form__submit {

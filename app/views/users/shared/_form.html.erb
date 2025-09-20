@@ -9,35 +9,36 @@ path ||= user.persisted? ? users_edit_action_path(user) : users_create_action_pa
 
 <%= render 'shared/form-errors', item: user %>
 
-<%= form_tag path, class: 'row', multipart: true, data: { controller: 'form-loading' } do %>
+<%= form_tag path, class: 'c-modal-form', multipart: true, data: { controller: 'form-loading' } do %>
+  <div class="c-modal-form__fields row">
+    <div class="col col-12 mb-3">
+      <label for="name" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+    </div>
+    <div class="col col-12 mb-3">
+      <label for="surname" class="form-label">Cognome</label>
+      <input type="text" class="form-control" id="surname" name="surname" value="<%= user.surname %>" required>
+    </div>
+    <div class="col col-12 mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+    </div>
 
-  <div class="col col-12 mb-3">
-    <label for="name" class="form-label">Nome</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
-  </div>
-  <div class="col col-12 mb-3">
-    <label for="surname" class="form-label">Cognome</label>
-    <input type="text" class="form-control" id="surname" name="surname" value="<%= user.surname %>" required>
-  </div>
-  <div class="col col-12 mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
-  </div>
-
-  <div class="col col-12 mb-3">
-    <div class="row">
-      <div class="col col-auto mb-3">
-        <img src="<%= user.image_profile.attached? ? url_for(user.image_profile_thumb) : '/statics/placeholder-profile.jpg' %>" style="width: 100px; height: 100px; object-fit: cover;" class="img-thumbnail">
-      </div>
-      <div class="col mb-3">
-        <label for="image_profile" class="form-label">Immagine di profilo</label>
-        <input type="file" class="form-control" id="image_profile" name="image_profile">
-        <div class="form-text">Sono accettati i formati .jpg e .png</div>
+    <div class="col col-12 mb-3">
+      <div class="row">
+        <div class="col col-auto mb-3">
+          <img src="<%= user.image_profile.attached? ? url_for(user.image_profile_thumb) : '/statics/placeholder-profile.jpg' %>" style="width: 100px; height: 100px; object-fit: cover;" class="img-thumbnail">
+        </div>
+        <div class="col mb-3">
+          <label for="image_profile" class="form-label">Immagine di profilo</label>
+          <input type="file" class="form-control" id="image_profile" name="image_profile">
+          <div class="form-text">Sono accettati i formati .jpg e .png</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="d-flex justify-content-end">
+  <div class="c-modal-form__submit">
     <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
   </div>
 <% end %>
