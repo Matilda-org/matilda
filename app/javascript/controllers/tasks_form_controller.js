@@ -11,9 +11,7 @@ export default class extends Controller {
     'checksTemplate',
     'checksAddButton',
     'deadlineInput',
-    'deadlineTodayButton',
-    'deadlineTomorrowButton',
-    'deadlineNextWeekButton'
+    'deadlineInfo'
   ]
 
   connect() {
@@ -37,59 +35,27 @@ export default class extends Controller {
     }
 
     this.manageChecks()
-    this.onChangeDeadlineInput()
+    this.updateDeadlineInfo()
   }
 
-  onChangeDeadlineInput(e = null) {
-    const inputDate = new Date(this.deadlineInputTarget.value)
-    const today = new Date()
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const nextWeek = new Date()
-    nextWeek.setDate(nextWeek.getDate() + 7)
-
-    // Reset all buttons
-    this.deadlineTodayButtonTarget.classList.remove('btn-secondary')
-    this.deadlineTomorrowButtonTarget.classList.remove('btn-secondary')
-    this.deadlineNextWeekButtonTarget.classList.remove('btn-secondary')
-    this.deadlineTodayButtonTarget.classList.add('btn-outline-secondary')
-    this.deadlineTomorrowButtonTarget.classList.add('btn-outline-secondary')
-    this.deadlineNextWeekButtonTarget.classList.add('btn-outline-secondary')
-
-    // Highlight the appropriate button
-    if (inputDate.toDateString() === today.toDateString()) {
-      this.deadlineTodayButtonTarget.classList.add('btn-secondary')
-      this.deadlineTodayButtonTarget.classList.remove('btn-outline-secondary')
-    } else if (inputDate.toDateString() === tomorrow.toDateString()) {
-      this.deadlineTomorrowButtonTarget.classList.add('btn-secondary')
-      this.deadlineTomorrowButtonTarget.classList.remove('btn-outline-secondary')
-    } else if (inputDate.toDateString() === nextWeek.toDateString()) {
-      this.deadlineNextWeekButtonTarget.classList.add('btn-secondary')
-      this.deadlineNextWeekButtonTarget.classList.remove('btn-outline-secondary')
-    }
-  }
-
-  onClickDeadlineToday(e) {
-    e.preventDefault()
-    
-    const today = new Date()
-    this._setDeadlineInputValue(today)
-  }
-
-  onClickDeadlineTomorrow(e) {
+  onClickDeadlineMinusOne(e) {
     e.preventDefault()
 
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    this._setDeadlineInputValue(tomorrow)
+    const currentDate = this.deadlineInputTarget.value ? new Date(this.deadlineInputTarget.value) : new Date()
+    currentDate.setDate(currentDate.getDate() - 1)
+    this._setDeadlineInputValue(currentDate)
   }
 
-  onClickDeadlineNextWeek(e) {
+  onClickDeadlinePlusOne(e) {
     e.preventDefault()
 
-    const nextWeek = new Date()
-    nextWeek.setDate(nextWeek.getDate() + 7)
-    this._setDeadlineInputValue(nextWeek)
+    const currentDate = this.deadlineInputTarget.value ? new Date(this.deadlineInputTarget.value) : new Date()
+    currentDate.setDate(currentDate.getDate() + 1)
+    this._setDeadlineInputValue(currentDate)
+  }
+
+  onChangeDeadlineInput(e) {
+    this.updateDeadlineInfo()
   }
 
   _setDeadlineInputValue(date) {
@@ -101,9 +67,49 @@ export default class extends Controller {
     if (mm < 10) mm = '0' + mm
 
     this.deadlineInputTarget.value = `${yyyy}-${mm}-${dd}`
-    this.onChangeDeadlineInput()
+    this.updateDeadlineInfo()
   }
 
+  updateDeadlineInfo() {
+    if (!this.deadlineInputTarget.value) {
+      this.deadlineInfoTarget.innerText = 'Nessuna scadenza'
+      return
+    }
+
+    const date = new Date(this.deadlineInputTarget.value)
+    if (isNaN(date)) {
+      this.deadlineInfoTarget.innerText = 'Data non valida'
+      return
+    }
+
+    // Imposta label scadenza tra: oggi, domani, dopo domani, ieri, l'altro ieri, tra X giorni, X giorni fa, il 25 Dicembre 2023
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const diffTime = date - today
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
+
+    let label = ''
+    if (diffDays === 0) {
+      label = 'Oggi'
+    } else if (diffDays === 1) {
+      label = 'Domani'
+    } else if (diffDays === 2) {
+      label = 'Dopodomani'
+    } else if (diffDays === -1) {
+      label = 'Ieri'
+    } else if (diffDays === -2) {
+      label = "L'altro ieri"
+    } else if (diffDays > 2 && diffDays <= 30) {
+      label = `Tra ${diffDays} giorni`
+    } else if (diffDays < -2 && diffDays >= -30) {
+      label = `${Math.abs(diffDays)} giorni fa`
+    } else {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' }
+      label = `Il ${date.toLocaleDateString('it-IT', options)}`
+    }
+
+    this.deadlineInfoTarget.innerText = label
+  }
 
   onChangeRepeat(e) {
     if (e.target.checked) {

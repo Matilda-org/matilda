@@ -3,14 +3,15 @@
   back: true
 %>
 
-<%= render 'shared/page-grid' do %>
+<%= render 'shared/page-grid', auto: true do %>
 
   <%= render 'shared/page-grid-item' do %>
 
     <%= render 'shared/page-card',
       title: 'Filtri',
       render_content: 'tools/projects_tasks_tracking/filters',
-      render_footer: 'tools/projects_tasks_tracking/filters-actions'
+      render_footer: 'tools/projects_tasks_tracking/filters-actions',
+      auto: true
     %>
 
   <% end %>

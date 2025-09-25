@@ -10,10 +10,20 @@ show_default ||= false
   <input type="text" class="form-control" id="title" name="title" value="<%= task.title %>" required>
 </div>
 
-<div class="col col-12 col-lg-8 mb-3">
-  <label for="deadline" class="form-label">Scadenza</label>
+<div class="col col-12 col-lg-7 mb-3">
+  <label for="deadline" class="form-label">
+    Scadenza
+    <small class="text-muted d-none d-lg-inline">(<span data-tasks-form-target="deadlineInfo"></span>)</small>
+  </label>
 
   <div class="input-group">
+    <button
+      class="btn btn-primary"
+      type="button"
+      data-action="click->tasks-form#onClickDeadlineMinusOne"
+    >
+      <i class="bi bi-dash-lg"></i>
+    </button>
     <input
       type="date"
       class="form-control"
@@ -24,27 +34,16 @@ show_default ||= false
       data-action="change->tasks-form#onChangeDeadlineInput"
     >
     <button
-      class="btn btn-outline-secondary"
+      class="btn btn-primary"
       type="button"
-      data-action="click->tasks-form#onClickDeadlineToday"
-      data-tasks-form-target="deadlineTodayButton"
-    >Oggi</button>
-    <button
-      class="btn btn-outline-secondary"
-      type="button"
-      data-action="click->tasks-form#onClickDeadlineTomorrow"
-      data-tasks-form-target="deadlineTomorrowButton"
-    >+1</button>
-    <button
-      class="btn btn-outline-secondary"
-      type="button"
-      data-action="click->tasks-form#onClickDeadlineNextWeek"
-      data-tasks-form-target="deadlineNextWeekButton"
-    >+7</button>
+      data-action="click->tasks-form#onClickDeadlinePlusOne"
+    >
+      <i class="bi bi-plus-lg"></i>
+    </button>
   </div>
 </div>
 
-<div class="col col-12 col-lg-4 mb-3">
+<div class="col col-12 col-lg-5 mb-3">
   <label for="time_estimate" class="form-label">Tempo stimato</label>
   <%= select_tag 'time_estimate', options_for_select([
     [900, '15 minuti'].reverse,

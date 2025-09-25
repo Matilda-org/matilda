@@ -18,7 +18,7 @@ render_item_param ||= 'item'
     </div>
     <% if type %>
       <div class="col d-flex justify-content-end">
-        <span class="badge rounded-pill bg-primary"><%= @session_user.users_prefers.where(resource_type: type).size %> preferiti</span>
+        <span class="badge rounded-pill bg-warning shadow"><%= @session_user.users_prefers.where(resource_type: type).size %> preferiti</span>
       </div>
     <% end %>
   </div>
