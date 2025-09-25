@@ -39,6 +39,14 @@ turbo_frame_key = dom_id(status, 'kanban-status')
                   data-user-policies-target="item" data-policy="procedures_edit"
                 >Sposta all'inizio</a>
               </li>
+            <% else %>
+              <li>
+                <button
+                  class="dropdown-item"
+                  disabled
+                  data-user-policies-target="item" data-policy="procedures_edit"
+                >Sposta all'inizio</button>
+              </li>
             <% end %>
             <% if status.can_move?('right-full') %>
               <li>
@@ -49,6 +57,14 @@ turbo_frame_key = dom_id(status, 'kanban-status')
                   data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
                   data-user-policies-target="item" data-policy="procedures_edit"
                 >Sposta in fondo</a>
+              </li>
+            <% else %>
+              <li>
+                <button
+                  class="dropdown-item"
+                  disabled
+                  data-user-policies-target="item" data-policy="procedures_edit"
+                >Sposta in fondo</button>
               </li>
             <% end %>
             <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
