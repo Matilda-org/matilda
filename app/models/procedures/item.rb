@@ -5,6 +5,9 @@ class Procedures::Item < ApplicationRecord
   # HACK: to work on ToolsController.projects_tasks_tracking
   attr_accessor :time_spent
 
+  # HACK: to avoid destroy task when item is destroied
+  attr_accessor :skip_resource_destroy
+
   # VALIDATIONS
   ############################################################
 
@@ -77,7 +80,7 @@ class Procedures::Item < ApplicationRecord
   end
 
   after_destroy do
-    if procedure.resources_type_tasks? && resource_id.present?
+    if procedure.resources_type_tasks? && resource_id.present? && !skip_resource_destroy
       resource&.destroy
     end
 

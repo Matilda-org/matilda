@@ -38,9 +38,9 @@ path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_pa
       <% end %>
     </div>
 
-    <% if !task.persisted? && @projects_for_position %>
+    <% if @projects_for_position %>
       <div class="col col-12 mb-3">
-        <label for="position_procedure_id" class="form-label">Inserisci su board</label>
+        <label for="position_procedure_id" class="form-label"><%= task.persisted? ? 'Sposta su board' : 'Inserisci su board' %></label>
         <select class="form-control" id="position_procedure_id" name="position_procedure_id">
           <option value="">Nessuna</option>
           <% @projects_for_position.each do |project| %>

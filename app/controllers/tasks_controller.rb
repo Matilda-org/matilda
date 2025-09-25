@@ -83,7 +83,6 @@ class TasksController < ApplicationController
     @task = params[:id].present? ? Task.find(params[:id]) : Task.new
 
     @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
-
     return render "tasks/actions/create" if @type == "create"
     return render "tasks/actions/edit" if @type == "edit"
     return render "tasks/actions/show" if @type == "show"
@@ -100,6 +99,7 @@ class TasksController < ApplicationController
 
     @task = Task.new(task_params)
     @task.accepted = false if Setting.get("functionalities_task_acceptance") && !@session_user.policy?("tasks_acceptance")
+    @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
     return render "tasks/actions/create" unless @task.save
 
     create_procedure_item(@task.id)
@@ -120,6 +120,7 @@ class TasksController < ApplicationController
     return unless validate_policy!("tasks_edit")
     return unless task_finder
 
+    @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
     return render "tasks/actions/edit" unless @task.update(task_params)
     @task.update(accepted: true) if @session_user.policy?("tasks_acceptance") && !@task.accepted
 

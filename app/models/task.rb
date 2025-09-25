@@ -62,9 +62,12 @@ class Task < ApplicationRecord
     self.time_spent ||= 0
   end
 
-  after_create do
+  after_save do
     if !position_procedure_id.blank? && position_procedure_id != procedure_as_item&.id
-      procedures_items.where.not(procedure_id: position_procedure_id).destroy_all
+      procedures_items.where.not(procedure_id: position_procedure_id).each do |procedure_item|
+        procedure_item.skip_resource_destroy = true
+        procedure_item.destroy
+      end
       procedures_items.find_or_create_by(procedure_id: position_procedure_id)
     end
   end
