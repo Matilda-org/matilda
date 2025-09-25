@@ -10,6 +10,10 @@ export default class extends Controller {
     'checksList',
     'checksTemplate',
     'checksAddButton',
+    'deadlineInput',
+    'deadlineTodayButton',
+    'deadlineTomorrowButton',
+    'deadlineNextWeekButton'
   ]
 
   connect() {
@@ -33,7 +37,73 @@ export default class extends Controller {
     }
 
     this.manageChecks()
+    this.onChangeDeadlineInput()
   }
+
+  onChangeDeadlineInput(e = null) {
+    const inputDate = new Date(this.deadlineInputTarget.value)
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const nextWeek = new Date()
+    nextWeek.setDate(nextWeek.getDate() + 7)
+
+    // Reset all buttons
+    this.deadlineTodayButtonTarget.classList.remove('btn-secondary')
+    this.deadlineTomorrowButtonTarget.classList.remove('btn-secondary')
+    this.deadlineNextWeekButtonTarget.classList.remove('btn-secondary')
+    this.deadlineTodayButtonTarget.classList.add('btn-outline-secondary')
+    this.deadlineTomorrowButtonTarget.classList.add('btn-outline-secondary')
+    this.deadlineNextWeekButtonTarget.classList.add('btn-outline-secondary')
+
+    // Highlight the appropriate button
+    if (inputDate.toDateString() === today.toDateString()) {
+      this.deadlineTodayButtonTarget.classList.add('btn-secondary')
+      this.deadlineTodayButtonTarget.classList.remove('btn-outline-secondary')
+    } else if (inputDate.toDateString() === tomorrow.toDateString()) {
+      this.deadlineTomorrowButtonTarget.classList.add('btn-secondary')
+      this.deadlineTomorrowButtonTarget.classList.remove('btn-outline-secondary')
+    } else if (inputDate.toDateString() === nextWeek.toDateString()) {
+      this.deadlineNextWeekButtonTarget.classList.add('btn-secondary')
+      this.deadlineNextWeekButtonTarget.classList.remove('btn-outline-secondary')
+    }
+  }
+
+  onClickDeadlineToday(e) {
+    e.preventDefault()
+    
+    const today = new Date()
+    this._setDeadlineInputValue(today)
+  }
+
+  onClickDeadlineTomorrow(e) {
+    e.preventDefault()
+
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    this._setDeadlineInputValue(tomorrow)
+  }
+
+  onClickDeadlineNextWeek(e) {
+    e.preventDefault()
+
+    const nextWeek = new Date()
+    nextWeek.setDate(nextWeek.getDate() + 7)
+    this._setDeadlineInputValue(nextWeek)
+  }
+
+  _setDeadlineInputValue(date) {
+    const yyyy = date.getFullYear()
+    let mm = date.getMonth() + 1 // Months start at 0!
+    let dd = date.getDate()
+
+    if (dd < 10) dd = '0' + dd
+    if (mm < 10) mm = '0' + mm
+
+    this.deadlineInputTarget.value = `${yyyy}-${mm}-${dd}`
+    this.onChangeDeadlineInput()
+  }
+
 
   onChangeRepeat(e) {
     if (e.target.checked) {
