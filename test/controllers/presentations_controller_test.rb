@@ -24,4 +24,12 @@ class PresentationsControllerTest < ActionController::TestCase
       policy: "presentations_index"
     )
   end
+
+  test "show" do
+    presentation = presentations(:one)
+    matilda_controller_endpoint(:get, :show,
+      params: { id: presentation.id },
+      policy: "presentations_show"
+    )
+  end
 end

@@ -32,7 +32,7 @@ class ApisController < ActionController::Base
     if @task.update(task_params)
       render json: {}
     else
-      render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @task.errors.full_messages }, status: :unprocessable_content
     end
   end
 
@@ -51,7 +51,7 @@ class ApisController < ActionController::Base
 
   def validate_api_key
     settings_api_key = Setting.get("functionalities_api_key")
-    request_api_key = request.headers["X-API-Key"]
+    request_api_key = request.headers["X-API-Key"] || params[:api_key]
 
     if settings_api_key.blank?
       render json: { error: "API key non configurata" }, status: :unauthorized
