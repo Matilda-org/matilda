@@ -20,6 +20,9 @@ class User < ApplicationRecord
 
   has_many :notifications, dependent: :destroy
 
+  has_many :procedures_statuses_assignments, dependent: :nullify, class_name: "Procedures::Status", foreign_key: :assignment_user_id
+  has_many :procedures_statuses_follows, dependent: :nullify, class_name: "Procedures::Status", foreign_key: :follow_user_id
+
   has_one_attached :image_profile
 
   # VALIDATIONS

@@ -1,0 +1,28 @@
+<%
+
+procedure ||= Procedure.new
+status ||= Procedures::Status.new
+users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }
+
+path ||= procedures_edit_status_assignments_action_path(id: procedure.id, status_id: status.id)
+
+%>
+
+<%= render 'shared/form-errors', item: status %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="assignment_user_id" class="form-label">Assegna di default i nuovi task a</label>
+    <%= select_tag 'assignment_user_id', options_for_select([['DEFAULT', '']] + users_for_select, status.persisted? ? status.assignment_user_id : (status.assignment_user_id || '')), class: 'form-control' %>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="follow_user_id" class="form-label">Segui di default i nuovi task a</label>
+    <%= select_tag 'follow_user_id', options_for_select([['DEFAULT', '']] + users_for_select, status.persisted? ? status.follow_user_id : (status.follow_user_id || '')), class: 'form-control' %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

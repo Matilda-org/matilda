@@ -16,6 +16,9 @@ class Procedures::Status < ApplicationRecord
   has_many :procedures_items, dependent: :destroy, class_name: "Procedures::Item", foreign_key: :procedures_status_id
   has_many :procedures_status_automations, dependent: :destroy, class_name: "Procedures::StatusAutomation", foreign_key: :procedures_status_id
 
+  belongs_to :assignment_user, class_name: "User", foreign_key: :assignment_user_id, optional: true
+  belongs_to :follow_user, class_name: "User", foreign_key: :follow_user_id, optional: true
+
   # HOOKS
   ############################################################
 

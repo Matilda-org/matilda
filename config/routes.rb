@@ -66,6 +66,7 @@ Rails.application.routes.draw do
   post "procedures/destroy-action/:id", to: "procedures#destroy_action", as: "procedures_destroy_action"
   post "procedures/add-status-action/:id", to: "procedures#add_status_action", as: "procedures_add_status_action"
   post "procedures/edit-status-action/:id/:status_id", to: "procedures#edit_status_action", as: "procedures_edit_status_action"
+  post "procedures/edit-status-assignments-action/:id/:status_id", to: "procedures#edit_status_assignments_action", as: "procedures_edit_status_assignments_action"
   post "procedures/remove-status-action/:id/:status_id", to: "procedures#remove_status_action", as: "procedures_remove_status_action"
   post "procedures/move-status-action/:id/:status_id", to: "procedures#move_status_action", as: "procedures_move_status_action"
   post "procedures/toggle-status-automation-action/:id/:status_id", to: "procedures#toggle_status_automation_action", as: "procedures_toggle_status_automation_action"

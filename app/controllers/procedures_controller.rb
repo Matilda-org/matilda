@@ -56,6 +56,10 @@ class ProceduresController < ApplicationController
       return unless procedures_status_finder
       return render "procedures/actions/show_status_automations"
     end
+    if @type == "show-status-assignments"
+      return unless procedures_status_finder
+      return render "procedures/actions/show_status_assignments"
+    end
 
     return render "procedures/actions/add_item" if @type == "add-item"
     return render "procedures/actions/add_item_existing" if @type == "add-item-existing"
@@ -227,6 +231,24 @@ class ProceduresController < ApplicationController
       feedback_args: {
         title: "Stato modificato",
         subtitle: "Le modifiche allo stato sono state salvate.",
+        type: "success"
+      }
+    }
+  end
+
+  def edit_status_assignments_action
+    return unless validate_policy!("procedures_edit")
+    return unless procedure_finder
+    return unless procedures_status_finder
+
+    return render "procedures/actions/show_status_assignments" unless @status.update(params.permit(:assignment_user_id, :follow_user_id))
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Assegnazioni stato",
+      turbo_frame: dom_id(@status, "kanban-status"),
+      feedback_args: {
+        title: "Assegnazioni di default aggiornate",
+        subtitle: "Le modifiche sono state salvate.",
         type: "success"
       }
     }

@@ -5,6 +5,7 @@ procedures_status_id ||= nil
 turbo_frame_key ||= nil
 
 path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_path
+procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_by(id: procedures_status_id)
 
 %>
 
@@ -54,7 +55,7 @@ path ||= task.persisted? ? tasks_edit_action_path(task) : tasks_create_action_pa
 
     <div class="accordion mb-3" id="formTaskAccordion">
       <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
-      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task %>
+      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task, assignment_user_id: procedures_status&.assignment_user_id, follow_user_id: procedures_status&.follow_user_id %>
       <% if task.repeat_original_task_id.nil? %>
         <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
       <% end %>

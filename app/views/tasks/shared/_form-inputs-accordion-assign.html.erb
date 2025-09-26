@@ -1,5 +1,7 @@
 <%
 
+assignment_user_id ||= nil
+follow_user_id ||= nil
 users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }
 
 %>
@@ -15,13 +17,13 @@ users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.comple
       <div class="row">
         <div class="col col-12 mb-3">
           <label for="user_id" class="form-label">Assegnato a</label>
-          <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + users_for_select, task.persisted? ? task.user_id : (task.user_id || @session_user_id)), class: 'form-control' %>
+          <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + users_for_select, task.persisted? ? task.user_id : (task.user_id || (assignment_user_id || @session_user_id))), class: 'form-control' %>
         </div>
 
         <div class="col col-12 mb-3">
           <%= hidden_field_tag 'tasks_followers_user_ids[]', '' %>
           <label for="tasks_followers_user_ids" class="form-label">Seguito da</label>
-          <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, task.tasks_followers_user_ids), class: 'form-control', multiple: true %>
+          <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, task.persisted? ? task.tasks_followers_user_ids : (follow_user_id ? [follow_user_id] : []) ), class: 'form-control', multiple: true %>
         </div>
       </div>
     </div>

@@ -28,44 +28,19 @@ turbo_frame_key = dom_id(status, 'kanban-status')
           </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'show-status-automations', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Automazioni</a></li>
+            <% if procedure.resources_type_tasks? %>
+              <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'show-status-assignments', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Assegnazioni</a></li>
+            <% end %>
             <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Modifica</a></li>
             <% if status.can_move?('left-full') %>
-              <li>
-                <a
-                  class="dropdown-item"
-                  href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left-full') %>"
-                  data-turbo-method="post"
-                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
-                  data-user-policies-target="item" data-policy="procedures_edit"
-                >Sposta all'inizio</a>
-              </li>
+              <li><a class="dropdown-item" href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left-full') %>" data-turbo-method="post" data-turbo-frame="<%= dom_id(procedure, 'kanban') %>">Sposta all'inizio</a></li>
             <% else %>
-              <li>
-                <button
-                  class="dropdown-item"
-                  disabled
-                  data-user-policies-target="item" data-policy="procedures_edit"
-                >Sposta all'inizio</button>
-              </li>
+              <li><button class="dropdown-item" disabled >Sposta all'inizio</button></li>
             <% end %>
             <% if status.can_move?('right-full') %>
-              <li>
-                <a
-                  class="dropdown-item"
-                  href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'right-full') %>"
-                  data-turbo-method="post"
-                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
-                  data-user-policies-target="item" data-policy="procedures_edit"
-                >Sposta in fondo</a>
-              </li>
+              <li><a class="dropdown-item" href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'right-full') %>" data-turbo-method="post" data-turbo-frame="<%= dom_id(procedure, 'kanban') %>">Sposta in fondo</a></li>
             <% else %>
-              <li>
-                <button
-                  class="dropdown-item"
-                  disabled
-                  data-user-policies-target="item" data-policy="procedures_edit"
-                >Sposta in fondo</button>
-              </li>
+              <li><button class="dropdown-item" disabled>Sposta in fondo</button></li>
             <% end %>
             <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
           </ul>
