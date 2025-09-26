@@ -105,6 +105,24 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       data-tooltip="Elimina"
       data-user-policies-target="item" data-policy="tasks_destroy"
     ><i class="bi bi-trash"></i></a>
+
+    <div class="dropdown d-block ms-1 ms-md-0 mb-md-1">
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-calendar-plus"></i>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item" href="<%= google_calendar_url(@task) %>" target="_blank" rel="noopener">
+            <i class="bi bi-google me-2"></i>Google Calendar
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="<%= outlook_calendar_url(@task) %>" target="_blank" rel="noopener">
+            <i class="bi bi-microsoft me-2"></i>Outlook
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 <% end %>
