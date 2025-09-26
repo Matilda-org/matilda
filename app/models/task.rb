@@ -191,6 +191,16 @@ class Task < ApplicationRecord
   # HELPERS
   ############################################################
 
+  def title_with_filtered_long_words
+    title.split.map do |word|
+      if word.length > 25
+        "#{word[0..7]}...#{word[-7..-1]}"
+      else
+        word
+      end
+    end.join(" ")
+  end
+
   def subtitle
     completed ? completed_at_in_words : deadline_in_words
   end
