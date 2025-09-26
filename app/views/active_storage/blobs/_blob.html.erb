@@ -12,7 +12,7 @@
     <% end %>
   </figcaption>
 
-  <%= link_to rails_blob_path(blob), target: '_blank', download: true, class: 'attachment__download' do %>
-    <i class="bi bi-download"></i>
+  <%= link_to rails_blob_path(blob), class: 'attachment__download', target: '_blank', rel: 'noopener' do %>
+    <i class="bi bi-eye"></i>
   <% end %>
 </figure>

@@ -76,6 +76,7 @@ trix-toolbar {
       height: auto;
       display: block;
       object-fit: contain;
+      border-radius: $border-radius;
     }
   }
 
@@ -108,10 +109,11 @@ trix-toolbar {
   }
 
   .attachment__caption-editor {
-    padding: 0.25em;
-    border: solid 1px var(--bs-gray-300);
-    border-radius: 0.25em;
+    height: 30px !important;
+    padding: 5px;
+    border-radius: 1em;
     width: 95%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 }
 
