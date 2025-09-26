@@ -1,5 +1,5 @@
 <% if project.procedures.length.positive? %>
-  <% project.procedures.order(name: :asc).each do |procedure| %>
+  <% project.procedures.order(name: :asc).sort_by { |p| p.archived ? 1 : 0 }.each do |procedure| %>
     <div class="mb-3">
       <%= render 'procedures/shared/card', procedure: procedure %>
     </div>

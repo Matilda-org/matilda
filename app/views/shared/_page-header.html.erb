@@ -8,7 +8,7 @@ render_actions ||= nil
 %>
 
 <%= turbo_frame_tag "page-header" do %>
-  <div class="mb-4">
+  <div class="mb-4 c-page-header">
     <div class="row justify-content-between align-items-center flex-nowrap pt-3">
       <div class="col d-flex align-items-center h-text-oneline">
         <% if back %>
@@ -20,10 +20,12 @@ render_actions ||= nil
             <%= nav_icon(@_navbar) %>
           </div>
         <% end %>
-        <h1 class="fs-3 mb-0 h-text-oneline"><%= title %></h1>
-        <% if subtitle %>
-          <h2 class="text-muted mb-0 fs-6 ms-3 h-text-oneline" style="position: relative;"><%= raw subtitle %></h2>
-        <% end %>
+        <div class="c-page-header__intestation">
+          <h1 class="c-page-header__title fs-3 mb-0 h-text-oneline"><%= title %></h1>
+          <% if subtitle %>
+            <h2 class="c-page-header__subtitle text-muted h-text-oneline" style="position: relative;"><%= raw subtitle %></h2>
+          <% end %>
+        </div>
       </div>
       <% if render_actions %>
         <div class="col col-auto d-flex justify-content-end align-items-center">
