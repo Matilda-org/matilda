@@ -93,20 +93,21 @@ export default class extends Controller {
       label = 'Oggi'
     } else if (diffDays === 1) {
       label = 'Domani'
-    } else if (diffDays === 2) {
-      label = 'Dopodomani'
     } else if (diffDays === -1) {
       label = 'Ieri'
-    } else if (diffDays === -2) {
-      label = "L'altro ieri"
-    } else if (diffDays > 2 && diffDays <= 30) {
+    } else if (diffDays > 1 && diffDays <= 30) {
       label = `Tra ${diffDays} giorni`
-    } else if (diffDays < -2 && diffDays >= -30) {
+    } else if (diffDays < -1 && diffDays >= -30) {
       label = `${Math.abs(diffDays)} giorni fa`
     } else {
       const options = { year: 'numeric', month: 'long', day: 'numeric' }
       label = `Il ${date.toLocaleDateString('it-IT', options)}`
     }
+
+    // Aggiungo il nome del giorno della settimana
+    const daysOfWeek = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato']
+    const dayName = daysOfWeek[date.getDay()]
+    label += ` (${dayName})`
 
     this.deadlineInfoTarget.innerText = label
   }
