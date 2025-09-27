@@ -40,3 +40,6 @@
 
 # Ignore mac ds_store files
 .DS_Store
+
+# Docker compose to permit customization of env variables
+docker-compose.yml

@@ -8,13 +8,13 @@ Matilda è un progetto open source e può essere utilizzata liberamente. È poss
 
 ## 🧑‍💻 Installazione
 
-L'applicazione può essere installata in locale o su un server cloud su un environment standard per Ruby on Rails.
+L'applicazione può essere installata in locale o su un server cloud tramite Docker.
 L'applicazione non richiede specifiche dipendenze, ma è consigliato l'uso di PostgreSQL come database.
 
 ### Requisiti
 
-- Ruby 3.2.0
-- SQLite3 o PostgreSQL
+- Docker
+- Docker Compose
 
 ### Installazione
 
@@ -22,17 +22,21 @@ L'applicazione non richiede specifiche dipendenze, ma è consigliato l'uso di Po
 # Clona il repository
 git clone
 cd matilda
-# Installa le dipendenze
-bundle install
-# Crea il database
-rails db:create
-# Esegui le migrazioni
-rails db:migrate
-# Popola il database con i dati di esempio
-rails db:seed
-# Avvia il server
-rails server
+# Crea il docker-compose.yml (e modifica le variabili d'ambiente se necessario)
+cp docker-compose.example.yml docker-compose.yml
+# Builda l'immagine Docker
+docker compose build
+# Crea un utente admin per l'accesso al pannello
+docker compose run matilda bin/rails matilda:create_admin
+# Avvia il container
+docker compose up
 ```
+
+Accedi al pannello con le credenziali:
+- Email: `admin@mail.com`
+- Password: `Password1!`
+
+NOTE: Per motivi di sicurezza, si consiglia di modificare l'email e la password dell'utente admin dopo il primo accesso.
 
 ### Configurazione
 
@@ -170,6 +174,34 @@ Per contribuire allo sviluppo di Matilda, è possibile seguire i seguenti passag
 3. Commit delle modifiche (`git commit -am 'Add some feature'`)
 4. Push del branch (`git push origin feat/my-new-feature`)
 5. Creare una pull request
+
+### Installazione in locale
+
+#### Requisiti
+
+- Ruby 3.2.0
+
+#### Passaggi di installazione
+
+```bash
+# Clona il repository
+git clone
+cd matilda
+# Installa le dipendenze
+bundle install
+# Crea il database
+rails db:create
+# Esegui le migrazioni
+rails db:migrate
+# Esegui i seed
+rails db:seed
+# Avvia il server
+rails server
+```
+
+Accedi al pannello con le credenziali:
+- Email: `admin@mail.com`
+- Password: `Password1!`
 
 ### Testing
 

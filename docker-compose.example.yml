@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  matilda:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    volumes:
+      # Monta il database SQLite e i log per la persistenza
+      - ./db:/rails/db
+      - ./log:/rails/log
+      - ./storage:/rails/storage
+      - ./tmp:/rails/tmp
+    environment:
+      # === Impostazioni Rails ===
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_LOG_TO_STDOUT: "true" 
+      RAILS_LOG_LEVEL: info
+      
+      # === Impostazioni di sicurezza ===
+      # IMPORTANTE: Cambiare questi valori in produzione!
+      SECRET_KEY_BASE: "example_secret_key_base_change_this_in_production_9a8b7c6d5e4f3g2h1i0j9k8l7m6n5o4p3q2r1s0t9u8v7w6x5y4z3a2b1c0d9e8f7g6h5i4j3k2l1m0n9o8p7q6r5s4t3u2v1w0x9y8z7a6b5c4d3e2f1"
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "example_primary_key_change_this_in_production_1234567890abcdef"
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "example_deterministic_key_change_this_in_production_fedcba0987654321"
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "example_salt_change_this_in_production_abcdef1234567890"
+      
+      # === Configurazione database ===
+      # Commenta/rimuovi DATABASE_URL per usare SQLite (default)
+      # DATABASE_URL: postgresql://username:password@postgres:5432/matilda_production
+      
+      # === Configurazione SMTP (opzionale) ===
+      # Decommenta e configura per abilitare l'invio di email
+      # SMTP_USER_NAME: "your-smtp-username"
+      # SMTP_PASSWORD: "your-smtp-password"
+      # SMTP_ADDRESS: "smtp.gmail.com"
+      # SMTP_DOMAIN: "gmail.com"
+      # SMTP_PORT: "587"
+      
+      # === Configurazione S3 (opzionale) ===
+      # Decommenta e configura per usare storage S3 invece del filesystem locale
+      # BUCKET_ACCESS_KEY: "your-s3-access-key"
+      # BUCKET_ACCESS_KEY_SECRET: "your-s3-secret-key"
+      # BUCKET_REGION: "eu-central-1"
+      # BUCKET_NAME: "your-bucket-name"
+      
+      # === Configurazione Matilda ===
+      MATILDA_MAIL_FROM: "Matilda <noreply@matilda.local>"
+      MATILDA_HOST: "localhost:3000"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # === Servizio PostgreSQL (opzionale) ===
+  # Decommenta questa sezione se vuoi usare PostgreSQL invece di SQLite
+  # e configura DATABASE_URL nella sezione environment sopra
+  # 
+  # postgres:
+  #   restart: unless-stopped
+  #   image: postgres:15-alpine
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U matilda"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   environment:
+  #     POSTGRES_DB: matilda_production
+  #     POSTGRES_USER: matilda
+  #     POSTGRES_PASSWORD: matilda_password_change_this
+
+# Decommenta questa sezione se usi PostgreSQL
+# volumes:
+#   postgres_data:
