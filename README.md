@@ -26,8 +26,10 @@ cd matilda
 cp docker-compose.example.yml docker-compose.yml
 # Builda l'immagine Docker
 docker compose build
+# Crea il database ed esegui le migrazioni
+docker compose run matilda bin/rails db:migrate
 # Crea un utente admin per l'accesso al pannello
-docker compose run matilda bin/rails matilda:create_admin
+docker compose run matilda bin/rails create_default_admin
 # Avvia il container
 docker compose up
 ```
@@ -80,9 +82,9 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 - `MATILDA_MAIL_FROM`: Indirizzo email del mittente (default  `Matilda <noreply@mail.com>`)
 - `MATILDA_HOST`: Indirizzo host dell'applicazione (default `matilda.local`)
 
-### Configurazione alternativa -> credentials.yml.enc
+### Configurazione tramite credentials
 
-In alternativa, è possibile utilizzare il file `config/credentials.yml.enc` per memorizzare le variabili d'ambiente. Per farlo, eseguire il comando:
+In alternativa, per mantenere lo standard di Ruby on Rails, è possibile utilizzare il file `config/credentials.yml.enc` per memorizzare la configurazione. Per farlo, eseguire il comando:
 
 ```bash
 EDITOR="nano" rails credentials:edit

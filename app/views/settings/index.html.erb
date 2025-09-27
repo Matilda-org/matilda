@@ -42,4 +42,13 @@
 
   <% end %>
 
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Informazioni",
+      render_content: 'settings/shared/infos'
+    %>
+
+  <% end %>
+
 <% end %>
