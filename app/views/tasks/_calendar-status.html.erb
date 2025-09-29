@@ -29,7 +29,7 @@ total_time_sum = tasks.sum(&:time_estimate)
     </div>
     <ul class="list-group list-group-flush h-fullscroll">
       <% if tasks.length.positive? %>
-        <% tasks.sort_by { |t| t.completed ? 1 : 0 }.each do |task| %>
+        <% tasks.sort_by { |t| t.title.downcase }.sort_by { |t| t.completed ? 1 : 0 }.each do |task| %>
           <%= render 'tasks/calendar-item', task: task %>
         <% end %>
       <% end %>

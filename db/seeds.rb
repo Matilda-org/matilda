@@ -179,7 +179,7 @@ end
 
   # add internal procedure to project
   procedure = project.procedures.new
-  procedure.clone(procedure_model_tasks, 'Operativo', user_id: User.all.sample.id)
+  procedure.clone(procedure_model_tasks, 'Operativo', user_id: user.id)
 end
 
 # User logs
