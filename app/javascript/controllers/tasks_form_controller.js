@@ -58,6 +58,12 @@ export default class extends Controller {
     this.updateDeadlineInfo()
   }
 
+  onClickDeadlineClear(e) {
+    e.preventDefault()
+    this.deadlineInputTarget.value = ''
+    this.updateDeadlineInfo()
+  }
+
   _setDeadlineInputValue(date) {
     const yyyy = date.getFullYear()
     let mm = date.getMonth() + 1 // Months start at 0!

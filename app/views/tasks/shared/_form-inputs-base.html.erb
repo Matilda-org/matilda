@@ -18,6 +18,13 @@ show_default ||= false
 
   <div class="input-group">
     <button
+      class="btn btn-danger"
+      type="button"
+      data-action="click->tasks-form#onClickDeadlineClear"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <button
       class="btn btn-primary"
       type="button"
       data-action="click->tasks-form#onClickDeadlineMinusOne"
