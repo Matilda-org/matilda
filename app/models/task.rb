@@ -130,6 +130,22 @@ class Task < ApplicationRecord
     end
   end
 
+  # procedure automation :take_uncompleted_task
+  after_save do
+    if saved_change_to_completed? && !completed
+      procedures_as_item.each do |procedure|
+        procedure.procedures_statuses.each do |status|
+          next unless status.procedures_status_automations.find_by(typology: :take_uncompleted_task)
+
+          item = procedures_items.find_by(procedure_id: procedure.id)
+          next unless item
+
+          item.move(status.id, status.procedures_items.count + 1)
+        end
+      end
+    end
+  end
+
   # cache updates
   after_save_commit do
     project&.cached_time_spent(true)

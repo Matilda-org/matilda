@@ -8,7 +8,8 @@ class Procedures::StatusAutomation < ApplicationRecord
     uncomplete_task: 3,
     order_deadline_asc_task: 4,
     take_completed_task: 5,
-    cancel_deadline_task: 6
+    cancel_deadline_task: 6,
+    take_uncompleted_task: 7
   }
 
   # RELATIONS

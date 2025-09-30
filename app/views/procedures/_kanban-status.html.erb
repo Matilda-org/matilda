@@ -23,7 +23,12 @@ turbo_frame_key = dom_id(status, 'kanban-status')
       </div>
       <div class="ms-3 d-flex">
         <div class="dropdown" data-user-policies-target="item" data-policy="procedures_edit">
-          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button
+            class="btn btn-sm btn-outline"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
@@ -52,6 +57,8 @@ turbo_frame_key = dom_id(status, 'kanban-status')
             data-turbo-method="post"
             data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
             data-user-policies-target="item" data-policy="procedures_edit"
+            data-controller="tooltip"
+            data-tooltip="Sposta a sinistra"
           ><i class="bi bi-arrow-left"></i></a>
         <% end %>
         <% if status.can_move?('right') %>
@@ -61,6 +68,8 @@ turbo_frame_key = dom_id(status, 'kanban-status')
             data-turbo-method="post"
             data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
             data-user-policies-target="item" data-policy="procedures_edit"
+            data-controller="tooltip"
+            data-tooltip="Sposta a destra"
           ><i class="bi bi-arrow-right"></i></a>
         <% end %>
       </div>

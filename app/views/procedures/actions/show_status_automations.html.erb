@@ -72,6 +72,19 @@
         ><i class="bi bi-check-circle"></i></a>
       </div>
     </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div>
+        <div class="fw-bold">Sposta task non completati</div>
+        <div class="text-muted">Sposta automaticamente i task non completati all'interno di questo stato.</div>
+      </div>
+      <div class="d-flex ms-3">
+        <a
+          href="<%= procedures_toggle_status_automation_action_path(id: @procedure.id, status_id: @status.id, automation: :take_uncompleted_task) %>"
+          data-turbo-method="post"
+          class="btn btn-sm <%= @status.automation?(:take_uncompleted_task) ? 'btn-success' : 'btn-outline-primary' %>"
+        ><i class="bi bi-check-circle"></i></a>
+      </div>
+    </li>
   <% end %>
   <% if @status.procedure.resources_type_projects? %>
     <li class="list-group-item d-flex justify-content-between align-items-start">
