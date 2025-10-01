@@ -47,9 +47,10 @@ Per eseguire l'applicazione correttamente è necessario configurare le seguenti 
 #### Impostazioni Rails
 
 - `RAILS_ENV`: Ambiente di esecuzione dell'applicazione (default: `development`)
-- `RAILS_SERVE_STATIC_FILES`: Serve i file statici (default: `false`)
-- `RAILS_LOG_TO_STDOUT`: Invia i log a STDOUT (default: `false`)
+- `RAILS_SERVE_STATIC_FILES`: Serve i file statici (default: `disabled`, options: `enabled/disabled`)
+- `RAILS_LOG_TO_STDOUT`: Invia i log a STDOUT (default: `disabled`, options: `enabled/disabled`)
 - `RAILS_LOG_LEVEL`: Livello di log dell'applicazione (default: `error`)
+- `RAILS_SERVERLESS_MODE`: Modalità serverless (default: `disabled`, options: `enabled/disabled`)
 
 #### Impostazioni di sicurezza
 
