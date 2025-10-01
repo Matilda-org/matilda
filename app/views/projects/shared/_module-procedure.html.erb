@@ -20,10 +20,13 @@ turbo_frame_key = "module-procedure-#{procedure.id}"
       <% statuses.each_with_index do |status, index| %>
         <li class="nav-item">
           <a
-            class="nav-link h-text-oneline <%= status.id == params[:tasks_status_id].to_i ? 'active' : '' %>"
+            class="nav-link h-text-oneline d-flex align-items-center <%= status.id == params[:tasks_status_id].to_i ? 'active' : '' %>"
             href="?tasks_status_id=<%= status.id %>"
             data-turbo-frame="<%= turbo_frame_key %>"
-          ><%= status.title %></a>
+          >
+            <span class="d-inline-block me-1 border border-white border-2" style="width: 12px; height: 12px; background-color: <%= status.color %>; border-radius: 50%;"></span>
+            <%= status.title %>
+          </a>
         </li>
       <% end %>
     </ul>

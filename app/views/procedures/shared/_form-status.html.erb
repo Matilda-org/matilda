@@ -21,6 +21,11 @@ path ||= status.persisted? ? procedures_edit_status_action_path(id: procedure.id
     <textarea class="form-control" rows="5" id="description" name="description"><%= status.description %></textarea>
   </div>
 
+  <div class="col col-12 mb-3">
+    <label for="color" class="form-label">Colore</label>
+    <%= render 'shared/input-colors', name: 'color', value: status.color %>
+  </div>
+
   <div class="d-flex justify-content-end">
     <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
   </div>

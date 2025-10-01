@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_174736) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_170210) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -192,6 +192,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_174736) do
     t.string "description"
     t.integer "assignment_user_id"
     t.integer "follow_user_id"
+    t.string "color"
     t.index ["procedure_id"], name: "index_procedures_statuses_on_procedure_id"
   end
 

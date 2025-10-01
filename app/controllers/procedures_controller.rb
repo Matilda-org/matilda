@@ -204,7 +204,7 @@ class ProceduresController < ApplicationController
     return unless validate_policy!("procedures_edit")
     return unless procedure_finder
 
-    @status = @procedure.procedures_statuses.new(params.permit(:title, :description).merge(procedure_id: @procedure.id))
+    @status = @procedure.procedures_statuses.new(params.permit(:title, :description, :color).merge(procedure_id: @procedure.id))
     return render "procedures/actions/add_status" unless @status.save
 
     render partial: "shared/action-feedback", locals: {
@@ -223,7 +223,7 @@ class ProceduresController < ApplicationController
     return unless procedure_finder
     return unless procedures_status_finder
 
-    return render "procedures/actions/edit_status" unless @status.update(params.permit(:title, :description))
+    return render "procedures/actions/edit_status" unless @status.update(params.permit(:title, :description, :color))
 
     render partial: "shared/action-feedback", locals: {
       title: "Modifica stato",

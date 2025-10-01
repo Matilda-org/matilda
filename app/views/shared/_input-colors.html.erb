@@ -1,0 +1,56 @@
+<%
+
+name ||= 'color'
+value ||= nil
+
+# Colori predefiniti
+colors = [
+  { value: '#00a8ff', hex: '#00a8ff' },
+  { value: '#9c88ff', hex: '#9c88ff' },
+  { value: '#fbc531', hex: '#fbc531' },
+  { value: '#4cd137', hex: '#4cd137' },
+  { value: '#487eb0', hex: '#487eb0' },
+  { value: '#e84118', hex: '#e84118' },
+  { value: '#7f8fa6', hex: '#7f8fa6' },
+]
+
+%>
+
+<div class="c-input-color" data-controller="input-color">
+  <!-- Opzione per rimuovere il colore -->
+  <div class="c-input-color__option">
+    <input type="radio" 
+           class="c-input-color__input" 
+           id="<%= name %>_none" 
+           name="<%= name %>" 
+           value="" 
+           <%= 'checked' if value.blank? %>
+           data-input-color-target="input"
+           data-action="change->input-color#updateSelection">
+    <label for="<%= name %>_none" class="c-input-color__label c-input-color__label--none">
+      <span class="c-input-color__circle c-input-color__circle--none">
+        <svg class="c-input-color__icon" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </label>
+  </div>
+
+  <!-- Colori disponibili -->
+  <% colors.each do |color| %>
+    <div class="c-input-color__option">
+      <input type="radio" 
+             class="c-input-color__input" 
+             id="<%= name %>_<%= color[:value] %>" 
+             name="<%= name %>" 
+             value="<%= color[:value] %>" 
+             <%= 'checked' if value == color[:value] %>
+             data-input-color-target="input"
+             data-action="change->input-color#updateSelection">
+      <label for="<%= name %>_<%= color[:value] %>" class="c-input-color__label">
+        <span class="c-input-color__circle" style="background-color: <%= color[:hex] %>"></span>
+      </label>
+    </div>
+  <% end %>
+</div>
+
