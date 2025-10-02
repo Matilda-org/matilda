@@ -25,7 +25,7 @@ turbo_frame_key = "module-procedure-#{procedure.id}"
             data-turbo-frame="<%= turbo_frame_key %>"
           >
             <span class="d-inline-block me-1 border border-white border-2" style="width: 12px; height: 12px; background-color: <%= status.color %>; border-radius: 50%;"></span>
-            <%= status.title %>
+            <%= status.title.truncate(18) %>
           </a>
         </li>
       <% end %>

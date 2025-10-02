@@ -8,20 +8,20 @@ turbo_frame_key = dom_id(status, 'kanban-status')
 
 <%= turbo_frame_tag turbo_frame_key do %>
   <div class="c-kanban__status card d-flex flex-direction-column justify-content-between me-3">
-    <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom" style="background-color: <%= status.color %> !important;">
+    <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
       <div
-        class="h-text-oneline fw-bold"
+        class="d-flex align-items-center w-50"
         <% unless status.description.blank? %>
         data-controller="tooltip"
         data-tooltip="<%= status.description %>"
         <% end %>
       >
-        <% unless status.description.blank? %>
-          <span class="bg-primary rounded-circle me-1 d-inline-block" style="width: 10px; height: 10px;"></span>
-        <% end %>
-        <%= status.title %>
+        <span class="d-inline-block me-1 border border-white border-2" style="width: 18px; height: 18px; border-radius: 50%; background-color: <%= status.color %>;"></span>
+        <span class="fw-bold h-text-oneline" style="flex: 1;"><%= status.title.truncate(18) %></span>
       </div>
-      <div class="ms-3 d-flex">
+      <div 
+        class="ms-3 d-flex"
+      >
         <div class="dropdown" data-user-policies-target="item" data-policy="procedures_edit">
           <button
             class="btn btn-sm btn-outline"
