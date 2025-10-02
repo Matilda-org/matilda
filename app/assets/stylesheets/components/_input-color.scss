@@ -2,7 +2,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.5rem;
 
   &__option {
     position: relative;
@@ -40,8 +39,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.1rem;
+    height: 2.1rem;
     border-radius: 50%;
     border: 2px solid var(--bs-gray-300);
     transition: all 0.2s ease;
