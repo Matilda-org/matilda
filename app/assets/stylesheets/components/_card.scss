@@ -39,9 +39,9 @@
 
 .c-card__nav-icon {
   position: absolute;
-  bottom: 50%;
+  bottom: 0;
   right: 0;
-  transform: translateY(50%);
+  transform: translate(25%, 35%);
   font-size: 200px;
   opacity: 0.05;
   z-index: 0;
