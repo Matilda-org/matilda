@@ -107,5 +107,5 @@ group :production do
   # Use pg as the database for Active Record
   gem "pg"
   # Add amazon s3 integration.
-  gem "aws-sdk-s3", "1.143.0", require: false
+  gem "aws-sdk-s3" # , "1.143.0", require: false
 end
