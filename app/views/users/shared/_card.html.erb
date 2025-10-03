@@ -8,4 +8,9 @@ title += "<span class=\"align-middle\"> #{user.complete_name} </span>"
 
 %>
 
-<%= render 'shared/card', title: title, subtitle: user.email, render_actions: 'users/shared/card-actions', render_actions_args: { user: user } %>
+<%= render 'shared/card',
+  nav_icon_key: 'users',
+  title: title,
+  subtitle: user.email,
+  render_actions: 'users/shared/card-actions',
+  render_actions_args: { user: user } %>

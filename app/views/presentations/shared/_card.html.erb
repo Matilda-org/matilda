@@ -5,6 +5,7 @@ presentation ||= Presentation.new
 %>
 
 <%= render 'shared/card',
+  nav_icon_key: 'presentations',
   title: presentation.name,
   header_title: presentation.project&.name,
   header_link: presentation.project_id ? projects_show_path(presentation.project_id) : nil,

@@ -5,6 +5,7 @@ procedure_status ||= Procedures::Status.new
 %>
 
 <%= render 'shared/card',
+  nav_icon_key: 'procedures',
   title: procedure_status.title,
   subtitle: "#{procedure_status.items_count} task inclusi",
   render_actions: 'tools/projects_tasks_tracking/card-procedure-status-actions',

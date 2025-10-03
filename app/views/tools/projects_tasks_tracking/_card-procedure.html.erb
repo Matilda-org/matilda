@@ -5,6 +5,7 @@ procedure ||= Procedure.new
 %>
 
 <%= render 'shared/card',
+  nav_icon_key: 'procedures',
   title: procedure.name,
   subtitle: "#{procedure.items_count} #{procedure.resources_items_string} inclusi",
   type: procedure.color_type,

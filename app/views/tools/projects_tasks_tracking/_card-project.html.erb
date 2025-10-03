@@ -5,6 +5,7 @@ project ||= Project.new
 %>
 
 <%= render 'shared/card',
+  nav_icon_key: 'projects',
   title: project.complete_code,
   subtitle: project.name,
   type: project.color_type,

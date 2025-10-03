@@ -1,4 +1,6 @@
 .c-card {
+  position: relative;
+  overflow: hidden;
   box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.05);
   --bs-bg-opacity: 0.9;
   &.bg-white {
@@ -7,6 +9,11 @@
 
   .card-header {
     border-bottom-width: 0 !important;
+    position: relative;
+  }
+
+  .card-body {
+    position: relative;
   }
 
   &--task {
@@ -28,6 +35,17 @@
       color: var(--bs-dark) !important;
     }
   }
+}
+
+.c-card__nav-icon {
+  position: absolute;
+  bottom: 50%;
+  right: 0;
+  transform: translate(50%, 50%);
+  font-size: 200px;
+  opacity: 0.05;
+  z-index: 0;
+  color: var(--bs-primary) !important;
 }
 
 .c-card__description p {
