@@ -25,9 +25,10 @@
 
   <% @project.procedures.not_archived.not_as_model.where(project_primary: true).each do |procedure| %>
     <%= render 'shared/page-grid-item', policy: 'projects_manage_procedures' do %>
-      <%= turbo_frame_tag 'module-procedures', class: 'w-100' do %>
+      <%= turbo_frame_tag "module-procedure-#{procedure.id}", class: 'w-100' do %>
         <%= render 'shared/page-card',
           title: procedure.name,
+          nav_icon_key: 'procedures',
           render_content: 'projects/shared/module-procedure',
           render_content_args: {
             procedure: procedure
