@@ -4,7 +4,8 @@ date ||= Date.today
 tasks ||= []
 turbo_frame_key = "tasks-calendar-status-#{date.strftime("%Y-%m-%d")}"
 
-total_time_sum = tasks.sum(&:time_estimate)
+time_estimate_sum = tasks.sum(&:time_estimate)
+time_spent_sum = tasks.sum(&:time_spent)
 
 %>
 
@@ -14,14 +15,30 @@ total_time_sum = tasks.sum(&:time_estimate)
       <div class="h-text-oneline">
         <%= raw date.strftime("<b>%a</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>%d/%m/%Y</small>") %>
       </div>
-      <div class="ms-3">
+      <div class="ms-3 d-flex align-items-center gap-1">
+        <% if date <= Date.today %>
+          <span
+            class="badge rounded-pill text-white bg-primary"
+            style="font-size: 10px;"
+            data-controller="tooltip"
+            data-tooltip="Tempo consumato"
+          >
+            <i class="bi bi-hourglass-split"></i>
+            <%= track_time time_spent_sum %>
+          </span>
+        <% end %>
         <span
           class="badge rounded-pill text-white bg-<%= tasks_time_estimate_color(tasks) %>"
+          style="font-size: 10px;"
+          data-controller="tooltip"
+          data-tooltip="Tempo stimato"
         >
-          <%= track_time total_time_sum %>
+          <i class="bi bi-alarm-fill"></i>
+          <%= track_time time_estimate_sum %>
         </span>
         <span
           class="badge rounded-pill text-white <%= tasks.length.positive? ? 'bg-info' : 'bg-dark' %>"
+          style="font-size: 10px;"
         >
           <%= tasks.select(&:completed).length %> / <%= tasks.length %>
         </span>
