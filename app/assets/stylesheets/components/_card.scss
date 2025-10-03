@@ -41,11 +41,15 @@
   position: absolute;
   bottom: 50%;
   right: 0;
-  transform: translate(50%, 50%);
+  transform: translateY(50%);
   font-size: 200px;
   opacity: 0.05;
   z-index: 0;
-  color: var(--bs-primary) !important;
+  color: var(--bs-primary);
+
+  &--light {
+    color: var(--bs-white);
+  }
 }
 
 .c-card__description p {

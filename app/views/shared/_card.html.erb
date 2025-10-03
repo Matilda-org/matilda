@@ -28,7 +28,7 @@ background = 'primary' if has_prefer
 
 <div id="<%= id %>" class="c-card card w-100 h-100 bg-<%= background %> <%= classes %>">
   <% if nav_icon_key.present? %>
-    <%= nav_icon(nav_icon_key, 'c-card__nav-icon') %>
+    <%= nav_icon(nav_icon_key, "c-card__nav-icon #{has_prefer ? 'c-card__nav-icon--light' : ''}") %>
   <% end %>
 
   <% if header_title %>
