@@ -209,8 +209,8 @@ class Task < ApplicationRecord
 
   def title_with_filtered_long_words
     title.split.map do |word|
-      if word.length > 25
-        "#{word[0..7]}...#{word[-7..-1]}"
+      if word.length >= 20
+        "#{word[0..6]}...#{word[-6..-1]}"
       else
         word
       end
