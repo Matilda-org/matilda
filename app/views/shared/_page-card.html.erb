@@ -17,14 +17,21 @@ classes ||= ''
 <div class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card">
   <div data-page-card-target="header" class="c-page-card__header card-header d-flex justify-content-between align-items-center rounded-bottom border-bottom-0">
     <h2 class="fs-4 mb-0 h-text-oneline text-white"><%= raw title %></h2>
-    <% if nav_icon_key.present? && !counter.present? %>
-      <%= nav_icon(nav_icon_key, 'text-white') %>
-    <% end %>
-    <% if counter.present? %>
-      <span class="badge rounded-pill text-primary <%= counter.positive? ? 'bg-white' : 'bg-light' %>">
-        <%= counter %>
-      </span>
-    <% end %>
+
+    <div class="d-flex align-items-center gap-2">
+      <% if nav_icon_key.present? && !counter.present? %>
+        <%= nav_icon(nav_icon_key, 'text-white') %>
+      <% end %>
+      <% if counter.present? %>
+        <span class="badge rounded-pill text-primary <%= counter.positive? ? 'bg-white' : 'bg-light' %>">
+          <%= counter %>
+        </span>
+      <% end %>
+
+      <% if !always_open %>
+        <i class="bi bi-chevron-down text-white d-md-none"></i>
+      <% end %>
+    </div>
   </div>
   <div class="c-page-card__content <%= always_open ? '' : 'd-none' %> d-md-flex" data-page-card-target="content" <%= always_open ? 'always-open' : 'closed' %>>
     <% if render_content %>
