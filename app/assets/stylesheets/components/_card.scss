@@ -45,10 +45,10 @@
   font-size: 200px;
   opacity: 0.05;
   z-index: 0;
-  color: var(--bs-primary);
+  color: var(--bs-dark);
 
   &--light {
-    color: var(--bs-white);
+    color: var(--bs-light);
   }
 }
 
