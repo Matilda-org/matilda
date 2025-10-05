@@ -47,7 +47,8 @@ export default class extends Controller {
   open() {
     this.contentTarget.classList.remove('d-none')
 
-    this.contentTarget.style.height = `${this.getHeight()}px`
+    const height = this.getHeight()
+    this.contentTarget.style.height = `${height}px`
     this.contentTarget.removeAttribute('closed')
   }
 
