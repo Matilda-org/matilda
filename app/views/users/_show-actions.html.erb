@@ -8,19 +8,31 @@
     <ul class="dropdown-menu">
       <li data-user-policies-target="item" data-policy="users_edit">
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit', id: @user.id) %>" data-turbo-frame="action">
-          Modifica
+          <% if @_is_dashboard %>
+            Modifica profilo
+          <% else %>
+            Modifica utente
+          <% end %>
         </a>
       </li>
       
       <li data-user-policies-target="item" data-policy="users_edit_policies">
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit-policies', id: @user.id) %>" data-turbo-frame="action">
-          Permessi
+          <% if @_is_dashboard %>
+            Permessi profilo
+          <% else %>
+            Permessi utente
+          <% end %>
         </a>
       </li>
       
       <li data-user-policies-target="item" data-policy="users_destroy">
         <a class="dropdown-item text-danger" href="<%= users_actions_path(type: 'destroy', id: @user.id) %>" data-turbo-frame="action">
-          Elimina
+          <% if @_is_dashboard %>
+            Elimina profilo
+          <% else %>
+            Elimina utente
+          <% end %>
         </a>
       </li>
     </ul>
