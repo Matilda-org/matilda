@@ -30,6 +30,8 @@ docker compose build
 docker compose run matilda bin/rails db:migrate
 # Crea un utente admin per l'accesso al pannello
 docker compose run matilda bin/rails create_default_admin
+# Crea dati di default per iniziare a usare l'applicazione
+docker compose run matilda bin/rails create_default_data
 # Avvia il container
 docker compose up
 ```
@@ -205,6 +207,17 @@ rails server
 Accedi al pannello con le credenziali:
 - Email: `admin@mail.com`
 - Password: `Password1!`
+
+#### Simulazione installazione da zero
+
+```bash
+rails db:drop
+rails db:create
+rails db:migrate
+rails create_default_admin
+rails create_default_data
+rails server
+```
 
 ### Testing
 

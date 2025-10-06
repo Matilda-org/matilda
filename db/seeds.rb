@@ -141,7 +141,7 @@ end
   User.all.each do |user|
     project.projects_members.create!(
       user_id: user.id,
-      role: %w[Developer Deisgner Marketing PM].sample
+      role: %w[Developer Designer Marketing PM].sample
     )
   end
 

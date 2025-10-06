@@ -17,7 +17,55 @@ task create_default_admin: :environment do
 end
 
 task create_default_data: :environment do
-  # TODO...
+  procedure_model_tasks = Procedure.create!(
+    name: "Task operativi",
+    description: "Procedure standard per la gestione dei task operativi",
+    resources_type: "tasks",
+    model: true
+  )
+
+  procedure_model_tasks.procedures_statuses.create!(
+    title: "To-do",
+    order: 0,
+    color: "#1982c4"
+  )
+
+  procedure_model_tasks.procedures_statuses.create!(
+    title: "In progress",
+    order: 1,
+    color: "#ffca3a"
+  )
+
+  procedure_model_tasks.procedures_statuses.create!(
+    title: "Completati",
+    order: 2,
+    color: "#52a675"
+  )
+
+  project = Project.create!(
+    name: "Inizio utilizzo di Matilda",
+    year: Date.today.year.to_i,
+    description: "Un primo progetto per iniziare a utilizzare Matilda",
+  )
+
+  procedure = project.procedures.new
+  procedure.clone(procedure_model_tasks, "Task operativi", user_id: nil)
+
+  User.all.each do |user|
+    project.projects_members.create!(
+      user_id: user.id,
+      role: "Partecipante"
+    )
+
+    project.tasks.create!(
+      title: "Accedi a Matilda",
+      content: "Effettua il login con le tue credenziali",
+      deadline: Date.tomorrow,
+      time_estimate: 60 * 5,
+      user_id: user.id,
+      position_procedure_id: procedure.id
+    )
+  end
 end
 
 task add_all_policies_to_users: :environment do
