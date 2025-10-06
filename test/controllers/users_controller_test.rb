@@ -13,8 +13,8 @@ class UsersControllerTest < ActionController::TestCase
     user = users(:one)
 
     matilda_controller_action("create", "Nuovo utente")
-    matilda_controller_action("edit", "Modifica utente", user.id)
-    matilda_controller_action("edit-policies", "Modifica permessi utente", user.id)
+    matilda_controller_action("edit", "Modifica profilo", user.id)
+    matilda_controller_action("edit-policies", "Modifica permessi", user.id)
     matilda_controller_action("destroy", "Elimina utente", user.id)
 
     matilda_controller_action_invalid
@@ -43,8 +43,8 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:patch, :edit_action,
       params: { id: user.id, name: "Updated", surname: "User", email: "update_test@example.com" },
       policy: "users_edit",
-      title: "Modifica utente",
-      feedback: "Utente aggiornato"
+      title: "Modifica profilo",
+      feedback: "Profilo aggiornato"
     )
 
     user.reload
@@ -59,7 +59,7 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:patch, :edit_policies_action,
       params: { id: user.id, policies: [ "users_index", "users_edit" ] },
       policy: "users_edit_policies",
-      title: "Modifica permessi utente",
+      title: "Modifica permessi",
       feedback: "Permessi utente aggiornati"
     )
   end

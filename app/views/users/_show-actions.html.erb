@@ -1,4 +1,4 @@
-<% if @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_destroy') %>
+<% if @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_edit_password') || @session_user.policy?('users_destroy') %>
 
 <div class="d-flex justify-content-center align-items-center">
   <div class="dropdown">
@@ -8,31 +8,25 @@
     <ul class="dropdown-menu">
       <li data-user-policies-target="item" data-policy="users_edit">
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit', id: @user.id) %>" data-turbo-frame="action">
-          <% if @_is_dashboard %>
-            Modifica profilo
-          <% else %>
-            Modifica utente
-          <% end %>
+          Modifica profilo
         </a>
       </li>
       
       <li data-user-policies-target="item" data-policy="users_edit_policies">
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit-policies', id: @user.id) %>" data-turbo-frame="action">
-          <% if @_is_dashboard %>
-            Permessi profilo
-          <% else %>
-            Permessi utente
-          <% end %>
+          Modifica permessi
+        </a>
+      </li>
+      
+      <li data-user-policies-target="item" data-policy="users_edit_password">
+        <a class="dropdown-item" href="<%= users_actions_path(type: 'regenerate-password', id: @user.id) %>" data-turbo-frame="action">
+          Rigenera password
         </a>
       </li>
       
       <li data-user-policies-target="item" data-policy="users_destroy">
         <a class="dropdown-item text-danger" href="<%= users_actions_path(type: 'destroy', id: @user.id) %>" data-turbo-frame="action">
-          <% if @_is_dashboard %>
-            Elimina profilo
-          <% else %>
-            Elimina utente
-          <% end %>
+          Elimina utente
         </a>
       </li>
     </ul>

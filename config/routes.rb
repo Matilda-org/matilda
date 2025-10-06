@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   post "users/create-action", to: "users#create_action", as: "users_create_action"
   post "users/edit-action/:id", to: "users#edit_action", as: "users_edit_action"
   post "users/edit-policies-action/:id", to: "users#edit_policies_action", as: "users_edit_policies_action"
+  post "users/regenerate-password-action/:id", to: "users#regenerate_password_action", as: "users_regenerate_password_action"
   post "users/destroy-action/:id", to: "users#destroy_action", as: "users_destroy_action"
   post "users/toggle-prefer-action", to: "users#toggle_prefer_action", as: "users_toggle_prefer_action"
 

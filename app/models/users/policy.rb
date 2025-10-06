@@ -8,6 +8,7 @@ class Users::Policy < ApplicationRecord
     users_create: 3,
     users_edit: 4,
     users_edit_policies: 5,
+    users_edit_password: 61,
     users_destroy: 6,
 
     # Projects # OK

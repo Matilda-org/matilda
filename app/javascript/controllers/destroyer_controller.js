@@ -8,8 +8,9 @@ export default class extends Controller {
   }
 
   update(e) {
-    const value = e.target.value
-    if (value.toLowerCase() === 'elimina') {
+    const value = e.target.value.toLowerCase()
+    // Supporta sia "elimina" che "rigenera"
+    if (value === 'elimina' || value === 'rigenera') {
       this.submitTarget.disabled = false
     } else {
       this.submitTarget.disabled = true

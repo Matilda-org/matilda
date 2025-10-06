@@ -53,6 +53,7 @@ class UsersController < ApplicationController
     return render "users/actions/create" if @type == "create"
     return render "users/actions/edit" if @type == "edit"
     return render "users/actions/edit_policies" if @type == "edit-policies"
+    return render "users/actions/regenerate_password" if @type == "regenerate-password"
     return render "users/actions/destroy" if @type == "destroy"
 
     render partial: "shared/action-error"
@@ -85,11 +86,11 @@ class UsersController < ApplicationController
     return render "users/actions/edit" unless @user.update(user_params)
 
     render partial: "shared/action-feedback", locals: {
-      title: "Modifica utente",
+      title: "Modifica profilo",
       turbo_frame: "page-header",
       feedback_args: {
-        title: "Utente aggiornato",
-        subtitle: "L'utente #{@user.complete_name} è stato aggiornato con successo.",
+        title: "Profilo aggiornato",
+        subtitle: "Il profilo di #{@user.complete_name} è stato aggiornato con successo.",
         render_content: "users/shared/card",
         render_content_args: { user: @user },
         type: "success"
@@ -104,7 +105,7 @@ class UsersController < ApplicationController
     return render "users/actions/edit" unless @user.update_policies(params.permit(policies: [])[:policies])
 
     render partial: "shared/action-feedback", locals: {
-      title: "Modifica permessi utente",
+      title: "Modifica permessi",
       turbo_frame: "page-header",
       feedback_args: {
         title: "Permessi utente aggiornati",
@@ -126,6 +127,24 @@ class UsersController < ApplicationController
       feedback_args: {
         title: "Utente eliminato",
         subtitle: "L'utente #{@user.complete_name} è stato eliminato e non potrà più accedere.",
+        type: "success"
+      }
+    }
+  end
+
+  def regenerate_password_action
+    return unless validate_policy!("users_edit_password")
+    return unless user_finder
+
+    password = SecureRandom.hex(8).upcase
+    @user.update(password: password, password_confirmation: password)
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Rigenera password",
+      turbo_frame: "_top",
+      feedback_args: {
+        title: "Password rigenerata",
+        subtitle: "La password di #{@user.complete_name} è stata rigenerata con successo. La nuova password è <b>#{password}</b>.",
         type: "success"
       }
     }
