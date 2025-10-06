@@ -190,7 +190,7 @@ class PresentationsController < ApplicationController
     return render "presentations/actions/share" unless @presentation.update(share_code: nil)
 
     render partial: "shared/action-feedback", locals: {
-      title: "Annulla condivisione presentazione",
+      title: "Annulla condivisione",
       turbo_frame: "_top",
       feedback_args: {
         title: "Presentazione non più pubblicata",

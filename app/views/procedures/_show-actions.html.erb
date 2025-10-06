@@ -28,13 +28,13 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
 
       <li data-user-policies-target="item" data-policy="procedures_edit">
         <a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit', id: @procedure.id) %>" data-turbo-frame="action">
-          Modifica
+          Modifica board
         </a>
       </li>
       <% if @procedure.clonable? %>
         <li data-user-policies-target="item" data-policy="procedures_clone">
           <a class="dropdown-item" href="<%= procedures_actions_path(type: 'clone', id: @procedure.id) %>" data-turbo-frame="action">
-            Clona
+            Clona board
           </a>
         </li>
       <% end %>
@@ -42,20 +42,20 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
         <% if @procedure.archived %>
           <li data-user-policies-target="item" data-policy="procedures_unarchive">
             <a class="dropdown-item" href="<%= procedures_actions_path(type: 'unarchive', id: @procedure.id) %>" data-turbo-frame="action">
-              Ri-attiva
+              Ri-attiva board
             </a>
           </li>
         <% else %>
           <li data-user-policies-target="item" data-policy="procedures_archive">
             <a class="dropdown-item" href="<%= procedures_actions_path(type: 'archive', id: @procedure.id) %>" data-turbo-frame="action">
-              Archivia
+              Archivia board
             </a>
           </li>
         <% end %>
       <% end %>
       <li data-user-policies-target="item" data-policy="procedures_destroy">
         <a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'destroy', id: @procedure.id) %>" data-turbo-frame="action">
-          Elimina
+          Elimina board
         </a>
       </li>
     </ul>

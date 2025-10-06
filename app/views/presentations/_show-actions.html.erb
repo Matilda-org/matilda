@@ -7,7 +7,7 @@
     <ul class="dropdown-menu">
       <li data-user-policies-target="item" data-policy="presentations_edit">
         <a href="<%= presentations_actions_path(type: 'edit', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">
-          Modifica
+          Modifica presentazione
         </a>
       </li>
 
@@ -22,7 +22,7 @@
         </li>
       <% else %>
         <li data-user-policies-target="item" data-policy="presentations_share">
-          <a href="<%= presentations_actions_path(type: 'share', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">Condividi</a>
+          <a href="<%= presentations_actions_path(type: 'share', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item">Condividi presentazione</a>
         </li>
       <% end %>
       <li data-user-policies-target="item" data-policy="presentations_edit">
@@ -31,7 +31,7 @@
 
       <li data-user-policies-target="item" data-policy="presentations_destroy">
         <a href="<%= presentations_actions_path(type: 'destroy', id: @presentation.id) %>" data-turbo-frame="action" class="dropdown-item text-danger">
-          Elimina
+          Elimina presentazione
         </a>
       </li>
     </ul>

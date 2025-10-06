@@ -27,27 +27,27 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
 
       <li data-user-policies-target="item" data-policy="projects_edit">
         <a class="dropdown-item" href="<%= projects_actions_path(type: 'edit', id: @project.id) %>" data-turbo-frame="action">
-          Modifica
+          Modifica progetto
         </a>
       </li>
       
       <% if @project.archived %>
         <li data-user-policies-target="item" data-policy="projects_unarchive">
           <a class="dropdown-item" href="<%= projects_actions_path(type: 'unarchive', id: @project.id) %>" data-turbo-frame="action">
-            Ri-attiva
+            Ri-attiva progetto
           </a>
         </li>
       <% else %>
         <li data-user-policies-target="item" data-policy="projects_archive">
           <a class="dropdown-item" href="<%= projects_actions_path(type: 'archive', id: @project.id) %>" data-turbo-frame="action">
-            Archivia
+            Archivia progetto
           </a>
         </li>
       <% end %>
 
       <li data-user-policies-target="item" data-policy="projects_destroy">
         <a class="dropdown-item text-danger" href="<%= projects_actions_path(type: 'destroy', id: @project.id) %>" data-turbo-frame="action">
-          Elimina
+          Elimina progetto
         </a>
       </li>
     </ul>
