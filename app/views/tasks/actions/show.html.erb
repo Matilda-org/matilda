@@ -112,12 +112,12 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       </button>
       <ul class="dropdown-menu">
         <li>
-          <a class="dropdown-item" href="<%= google_calendar_url(@task) %>" target="_blank" rel="noopener">
+          <a class="dropdown-item" href="<%= task_google_calendar_url(@task) %>" target="_blank" rel="noopener">
             <i class="bi bi-google me-2"></i>Google Calendar
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="<%= outlook_calendar_url(@task) %>" target="_blank" rel="noopener">
+          <a class="dropdown-item" href="<%= task_outlook_calendar_url(@task) %>" target="_blank" rel="noopener">
             <i class="bi bi-microsoft me-2"></i>Outlook
           </a>
         </li>

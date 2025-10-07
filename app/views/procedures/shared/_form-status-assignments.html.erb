@@ -2,8 +2,6 @@
 
 procedure ||= Procedure.new
 status ||= Procedures::Status.new
-users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }
-
 path ||= procedures_edit_status_assignments_action_path(id: procedure.id, status_id: status.id)
 
 %>

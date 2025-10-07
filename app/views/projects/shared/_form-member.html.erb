@@ -5,6 +5,8 @@ member ||= Projects::Member.new
 
 path ||= member.persisted? ? projects_edit_member_action_path(id: project.id, member_id: member.id) : projects_add_member_action_path(project)
 
+project_members_user_ids = project.projects_members.pluck(:user_id)
+
 %>
 
 <%= render 'shared/form-errors', item: member %>
@@ -14,7 +16,7 @@ path ||= member.persisted? ? projects_edit_member_action_path(id: project.id, me
   <% if !member.persisted? %>
     <div class="col col-12 mb-3">
       <label for="user_id" class="form-label">Utente</label>
-      <%= select_tag 'user_id', options_for_select(User.where.not(id: @project.projects_members.pluck(:user_id)).order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, member.user_id), class: 'form-control', required: true %>
+      <%= select_tag 'user_id', options_for_select(users_for_select.reject { |u| project_members_user_ids.include?(u[1]) }, member.user_id), class: 'form-control', required: true %>
     </div>
   <% end %>
   

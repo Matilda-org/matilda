@@ -2,7 +2,6 @@
 
 assignment_user_id ||= nil
 follow_user_id ||= nil
-users_for_select = User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }
 
 %>
 
