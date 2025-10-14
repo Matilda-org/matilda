@@ -269,7 +269,13 @@ body {
  */
 
 a.badge {
-  text-decoration: underline;
+  text-decoration: none;
+
+  &:after {
+    content: '→';
+    display: inline-block;
+    margin-left: 5px;
+  }
 }
 
 a.badge:hover {
