@@ -269,20 +269,7 @@ body {
  */
 
 a.badge {
-  text-decoration: none;
-  position: relative;
-  padding-right: 15px;
-
-  &:after {
-    content: '→';
-    font-size: 7.5px;
-    display: inline-block;
-    margin-left: 5px;
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    transform: translateY(-50%);
-  }
+  text-decoration: underline;
 }
 
 a.badge:hover {
