@@ -7,5 +7,9 @@ log ||= Projects::Log.new
 <% # turbo_stream_from dom_id(log) %>
 
 <div id="<%= dom_id(log, 'content') %>">
-  <%= log.content %>
+  <% if log.content.blank? %>
+    <p class="text-muted text-center py-5"><em>Nessun contenuto disponibile per la nota.</em></p>
+  <% else %>
+    <%= log.content %>
+  <% end %>
 </div>
