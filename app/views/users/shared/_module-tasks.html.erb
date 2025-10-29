@@ -40,7 +40,11 @@ turbo_frame_key = "module-tasks-#{type}"
         <% end %>
       </ul>
 
-      <span class="badge rounded-pill bg-primary ms-2"><%= tasks.length %></span>
+      <span
+        class="badge rounded-pill bg-primary ms-2"
+        data-controller="tooltip"
+        data-tooltip="Ci sono <%= tasks.length %> attività assegnate da completare"
+      ><%= tasks.length %></span>
     </div>
 
     <div class="mt-3">

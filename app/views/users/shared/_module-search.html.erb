@@ -30,7 +30,11 @@ search_has_results = false
         <% search_has_results = true %>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Progetti</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= search_results[:projects].length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= search_results[:projects].length %> progetti attivi che corrispondono alla ricerca"
+          ><%= search_results[:projects].length %></span>
         </div>
         <% search_results[:projects].each do |project| %>
           <div class="mb-3">
@@ -44,7 +48,11 @@ search_has_results = false
         <% search_has_results = true %>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Credenziali</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= search_results[:credentials].length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= search_results[:credentials].length %> credenziali che corrispondono alla ricerca"
+          ><%= search_results[:credentials].length %></span>
         </div>
         <% search_results[:credentials].each do |credential| %>
           <div class="mb-3">
@@ -58,7 +66,11 @@ search_has_results = false
         <% search_has_results = true %>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Task</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= search_results[:tasks].length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= search_results[:tasks].length %> task che corrispondono alla ricerca"
+          ><%= search_results[:tasks].length %></span>
         </div>
         <% search_results[:tasks].each do |task| %>
           <div class="mb-3">
@@ -72,7 +84,11 @@ search_has_results = false
         <% search_has_results = true %>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Board</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= search_results[:procedures].length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= search_results[:procedures].length %> board trovate."
+          ><%= search_results[:procedures].length %></span>
         </div>
         <% search_results[:procedures].each do |procedure| %>
           <div class="mb-3">
@@ -86,7 +102,11 @@ search_has_results = false
         <% search_has_results = true %>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Progetti archiviati</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= search_results[:projects_archived].length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= search_results[:projects_archived].length %> progetti archiviati che corrispondono alla ricerca"
+          ><%= search_results[:projects_archived].length %></span>
         </div>
         <% search_results[:projects_archived].each do |project| %>
           <div class="mb-3">
@@ -152,7 +172,11 @@ search_has_results = false
 
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <h4>Progetti attivi</h4>
-          <span class="badge text-bg-primary rounded-pill"><%= projects.length %></span>
+          <span
+            class="badge text-bg-primary rounded-pill"
+            data-controller="tooltip"
+            data-tooltip="Ci sono <%= projects.length %> progetti attivi registrati"
+          ><%= projects.length %></span>
         </div>
         <% projects.each do |project| %>
           <div class="mb-3">

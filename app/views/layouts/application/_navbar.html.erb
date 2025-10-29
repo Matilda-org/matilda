@@ -24,15 +24,33 @@
               <%= render 'layouts/application/menu' %>
 
               <li class="nav-item" data-user-policies-target="item" data-policy="tools" data-policy-hide>
-                <a class="nav-link w-100 <%= @_navbar == 'tools' ? 'active' : '' %>" href="<%= tools_path %>" data-turbo-frame="_top"><%= nav_icon('tools') %> <span class="d-lg-none ms-2">Tools</span></a>
+                <a
+                  class="nav-link w-100 <%= @_navbar == 'tools' ? 'active' : '' %>"
+                  href="<%= tools_path %>"
+                  data-turbo-frame="_top"
+                  data-controller="tooltip"
+                  data-tooltip="Strumenti"
+                ><%= nav_icon('tools') %> <span class="d-lg-none ms-2">Strumenti</span></a>
               </li>
 
               <li class="nav-item" data-user-policies-target="item" data-policy="settings" data-policy-hide>
-                <a class="nav-link w-100 <%= @_navbar == 'settings' ? 'active' : '' %>" href="<%= settings_path %>" data-turbo-frame="_top"><%= nav_icon('settings') %> <span class="d-lg-none ms-2">Impostazioni</span></a>
+                <a
+                  class="nav-link w-100 <%= @_navbar == 'settings' ? 'active' : '' %>"
+                  href="<%= settings_path %>"
+                  data-turbo-frame="_top"
+                  data-controller="tooltip"
+                  data-tooltip="Impostazioni"
+                ><%= nav_icon('settings') %> <span class="d-lg-none ms-2">Impostazioni</span></a>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link w-100" href="<%= authentication_logout_path %>" data-turbo="false"><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2">Logout</span></a>
+                <a
+                  class="nav-link w-100"
+                  href="<%= authentication_logout_path %>"
+                  data-turbo="false"
+                  data-controller="tooltip"
+                  data-tooltip="Logout"
+                ><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2">Logout</span></a>
               </li>
             </ul>
           </div>

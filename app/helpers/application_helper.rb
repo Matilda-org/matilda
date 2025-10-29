@@ -25,7 +25,7 @@ module ApplicationHelper
     return "Credenziali - Matilda" if key == "credentials"
     return "Dashboard - Matilda" if key == "dashboard"
     return "Impostazioni - Matilda" if key == "settings"
-    return "Tools - Matilda" if key == "tools"
+    return "Strumenti - Matilda" if key == "tools"
     return "Presentazioni - Matilda" if key == "presentations"
 
     "Matilda"
