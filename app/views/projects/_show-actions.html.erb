@@ -6,6 +6,12 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
 %>
 
 <div class="d-flex justify-content-center align-items-center">
+  <% if has_prefer %>
+    <div class="me-2 text-warning" data-controller="tooltip" data-tooltip="Progetto nei preferiti">
+      <i class="bi bi-bookmark-fill"></i>
+    </div>
+  <% end %>
+
   <div class="dropdown">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-three-dots"></i>

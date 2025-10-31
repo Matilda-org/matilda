@@ -76,6 +76,11 @@ class Procedures::Status < ApplicationRecord
       return procedures_items.joins("JOIN projects ON projects.id = procedures_items.resource_id AND procedures_items.resource_type = 'Project'").where("projects.archived = false").order(order: :asc)
     end
 
+    # hide completed tasks more than X days ago
+    if procedure.resources_type_tasks? && !procedure.model
+      return procedures_items.joins("JOIN tasks ON tasks.id = procedures_items.resource_id AND procedures_items.resource_type = 'Task'").where("tasks.completed = false OR tasks.completed_at >= ?", 30.days.ago).order(order: :asc)
+    end
+
     procedures_items.order(order: :asc)
   end
 

@@ -7,6 +7,12 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
 
 
 <div class="d-flex justify-content-center align-items-center">
+  <% if has_prefer %>
+    <div class="me-2 text-warning" data-controller="tooltip" data-tooltip="Board nei preferiti">
+      <i class="bi bi-bookmark-fill"></i>
+    </div>
+  <% end %>
+
   <div class="dropdown me-1">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-three-dots"></i>
