@@ -13,6 +13,12 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
     </div>
   <% end %>
 
+  <% if @procedure.archived %>
+    <div class="me-2 text-dark" data-controller="tooltip" data-tooltip="Board archiviata">
+      <i class="bi bi-archive-fill"></i>
+    </div>
+  <% end %>
+
   <div class="dropdown me-1">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-three-dots"></i>

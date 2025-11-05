@@ -12,6 +12,12 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
     </div>
   <% end %>
 
+  <% if @project.archived %>
+    <div class="me-2 text-dark" data-controller="tooltip" data-tooltip="Progetto archiviato per <%= @project.archived_reason_string.upcase %>">
+      <i class="bi bi-archive-fill"></i>
+    </div>
+  <% end %>
+
   <div class="dropdown">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-three-dots"></i>
