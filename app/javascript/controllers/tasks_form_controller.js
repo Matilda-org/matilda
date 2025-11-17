@@ -11,7 +11,9 @@ export default class extends Controller {
     'checksTemplate',
     'checksAddButton',
     'deadlineInput',
-    'deadlineInfo'
+    'deadlineInfo',
+    'timeEstimateInput',
+    'timeEstimateBtn'
   ]
 
   connect() {
@@ -36,6 +38,7 @@ export default class extends Controller {
 
     this.manageChecks()
     this.updateDeadlineInfo()
+    this.updateTimeEstimateButtons()
   }
 
   onClickDeadlineMinusOne(e) {
@@ -116,6 +119,36 @@ export default class extends Controller {
     label += ` (${dayName})`
 
     this.deadlineInfoTarget.innerText = label
+  }
+
+  onClickTimeEstimate(e) {
+    e.preventDefault()
+
+    const button = e.currentTarget
+    const value = button.dataset.value
+
+    this.timeEstimateInputTarget.value = value
+    this.updateTimeEstimateButtons()
+  }
+
+  onChangeTimeEstimateInput(e) {
+    this.updateTimeEstimateButtons()
+  }
+
+  updateTimeEstimateButtons() {
+    const buttons = this.timeEstimateBtnTargets
+    const inputValue = parseInt(this.timeEstimateInputTarget.value) || 0
+
+    buttons.forEach((button) => {
+      const buttonValue = parseInt(button.dataset.value)
+      if (buttonValue === inputValue) {
+        button.classList.add('btn-primary')
+        button.classList.remove('btn-outline-primary')
+      } else {
+        button.classList.add('btn-outline-primary')
+        button.classList.remove('btn-primary')
+      }
+    })
   }
 
   onChangeRepeat(e) {
