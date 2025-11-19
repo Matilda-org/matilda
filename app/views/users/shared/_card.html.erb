@@ -3,7 +3,7 @@
 user ||= User.new
 
 title = ""
-title += "<img src=\"#{user.image_profile.attached? ? url_for(user.image_profile_thumb) : '/statics/placeholder-profile.jpg'}\" style=\"width: 35px; height: 35px;\" class=\"rounded-circle border border-light border-2 me-1\">"
+title += "<img src=\"#{user.image_profile.attached? ? url_for(user.image_profile_thumb) : '/statics/placeholder-profile.jpg'}\" style=\"width: 35px; height: 35px;\" class=\"rounded-circle border border-primary border-2 me-1\">"
 title += "<span class=\"align-middle\"> #{user.complete_name} </span>"
 
 %>
