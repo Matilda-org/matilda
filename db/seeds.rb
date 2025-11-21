@@ -1,5 +1,4 @@
 return unless Rails.env.development?
-return
 
 user = User.create!(
   name: 'Admin',

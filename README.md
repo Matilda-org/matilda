@@ -38,11 +38,8 @@ docker compose run matilda bin/rails create_default_data
 docker compose up
 ```
 
-Accedi al pannello con le credenziali:
-- Email: `admin@mail.com`
-- Password: `Password1!`
-
-NOTE: Per motivi di sicurezza, si consiglia di modificare l'email e la password dell'utente admin dopo il primo accesso.
+Se non hai eseguito il comando per creare un utente admin, puoi registrare il primo utente amministratore tramite la pagina di registrazione.
+Altrimenti puoi accedere al pannello con l' email `admin@mail.com` e password `Password1!`.
 
 ### Configurazione
 
