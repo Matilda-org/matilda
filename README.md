@@ -1,5 +1,7 @@
 # ☂ Matilda - Project manager for better companies
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/matilda?referralCode=aVun_Y&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
 Matilda è un'**applicazione web per la gestione dei progetti**, sviluppata in Ruby on Rails.
 
 Matilda è un progetto open source e può essere utilizzata liberamente. È possibile contribuire al progetto segnalando bug, suggerendo nuove funzionalità o contribuendo con codice.
