@@ -1,4 +1,5 @@
 return unless Rails.env.development?
+return
 
 user = User.create!(
   name: 'Admin',
@@ -8,7 +9,7 @@ user = User.create!(
   password_confirmation: 'Password1!'
 )
 
-user.update_policies(Users::Policy.policies.keys)
+user.update_policies(Users::Policy.policies.keys.reject { |key| key == "only_data_projects_as_member" })
 
 # Settings
 ##

@@ -30,9 +30,9 @@ cp docker-compose.example.yml docker-compose.yml
 docker compose build
 # Crea il database ed esegui le migrazioni
 docker compose run matilda bin/rails db:migrate
-# Crea un utente admin per l'accesso al pannello
+# Crea un utente admin per l'accesso al pannello [OPZIONALE]
 docker compose run matilda bin/rails create_default_admin
-# Crea dati di default per iniziare a usare l'applicazione
+# Crea dati di default per iniziare a usare l'applicazione [OPZIONALE]
 docker compose run matilda bin/rails create_default_data
 # Avvia il container
 docker compose up
@@ -216,8 +216,8 @@ Accedi al pannello con le credenziali:
 rails db:drop
 rails db:create
 rails db:migrate
-rails create_default_admin
-rails create_default_data
+rails create_default_admin # OPZIONALE
+rails create_default_data # OPZIONALE
 rails server
 ```
 

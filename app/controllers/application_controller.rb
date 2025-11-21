@@ -12,7 +12,8 @@ class ApplicationController < ActionController::Base
   skip_before_action :verify_authenticity_token, only: :serviceworker
 
   def index
-    @session_user_id ? redirect_to(users_show_path(@session_user_id)) : redirect_to(authentication_login_path)
+    return redirect_to(users_show_path(@session_user_id)) if @session_user_id
+    User.any? ? redirect_to(authentication_login_path) : redirect_to(authentication_first_run_path)
   end
 
   def serviceworker

@@ -1,0 +1,16 @@
+<div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 100px)">
+  <div class="position-relative d-flex flex-column align-items-center">
+    <div class="mb-5" style="width: 90px; height: 90px;">
+      <%= render 'layouts/application/logo', style: 'width: 100%; height: 100%;' %>
+    </div>
+    <div class="card shadow w-100" style="max-width: 600px;">
+      <div class="card-body">
+        <h1 class="card-title text-center fs-4">Benvenuto</h1>
+        <h6 class="card-subtitle text-muted text-center">Benvenuto nella prima configurazione del sistema. Inserisci i tuoi dati per creare l'account amministratore.</h6>
+        <hr />
+        <%= render 'layouts/application/flash' %>
+        <%= render 'authentication/shared/form-first-run', user: @user %>
+      </div>
+    </div>
+  </div>
+</div>

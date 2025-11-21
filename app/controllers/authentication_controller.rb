@@ -2,7 +2,7 @@
 
 # AuthenticationController.
 class AuthenticationController < ApplicationController
-  before_action :limit_requests!, only: %i[login_action recover_password_action update_password_action]
+  before_action :limit_requests!, only: %i[login_action recover_password_action update_password_action first_run_action]
   before_action do
     @_flash_disabled = true
     @_navbar_disabled = true
@@ -71,7 +71,41 @@ class AuthenticationController < ApplicationController
     redirect_to root_path
   end
 
+  def first_run
+    return redirect_to root_path if User.any?
+    @user = User.new(user_first_run_params)
+  end
+
+  def first_run_action
+    return redirect_to root_path if User.any?
+
+    @user = User.new(user_first_run_params)
+
+    unless @user.save
+      flash[:danger] = @user.errors.full_messages.join(", ")
+      return redirect_to authentication_first_run_path(user_first_run_params)
+    end
+
+    @user.update_policies(Users::Policy.policies.keys.reject { |key| key == "only_data_projects_as_member" })
+    cookies.encrypted[:user_id] = { value: @user.id, expires: 1.month.from_now }
+
+    begin
+      require "rake"
+      Rails.application.load_tasks
+      Rake::Task["create_default_data"].invoke
+    rescue StandardError => e
+      Rails.logger.error "Error while creating default data: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+    end
+
+    redirect_to root_path
+  end
+
   private
+
+  def user_first_run_params
+    params.permit(:name, :surname, :email, :password, :password_confirmation)
+  end
 
   def user_login_params
     params.permit(:email, :password)

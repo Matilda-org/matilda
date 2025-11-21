@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   post "authentication/recover-password-action", to: "authentication#recover_password_action", as: "authentication_recover_password_action"
   post "authentication/update-password-action/:id", to: "authentication#update_password_action", as: "authentication_update_password_action"
   get "authentication/logout", to: "authentication#logout", as: "authentication_logout"
+  get "authentication/first-run", to: "authentication#first_run", as: "authentication_first_run"
+  post "authentication/first-run-action", to: "authentication#first_run_action", as: "authentication_first_run_action"
 
   # User
   get "users", to: "users#index", as: "users"

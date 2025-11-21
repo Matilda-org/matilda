@@ -1,0 +1,37 @@
+<%
+
+user ||= User.new
+
+%>
+
+<%= form_tag authentication_first_run_action_path, class: 'row', data: { turbo_frame: 'false', controller: 'form-loading' } do %>
+
+  <div class="col col-12 col-lg-6 mb-3">
+    <label for="name" class="form-label">Nome</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+  </div>
+
+  <div class="col col-12 col-lg-6 mb-3">
+    <label for="surname" class="form-label">Cognome</label>
+    <input type="text" class="form-control" id="surname" name="surname" value="<%= user.surname %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+  </div>
+
+  <div class="col col-12 col-lg-6 mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="password" name="password" value="" required>
+  </div>
+
+  <div class="col col-12 col-lg-6 mb-3">
+    <label for="password_confirmation" class="form-label">Ripeti Password</label>
+    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" value="" required>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
