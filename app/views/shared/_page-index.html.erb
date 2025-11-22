@@ -36,7 +36,7 @@ tags ||= []
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
             <div class="col-auto d-none">
-              <label for="search" class="col-form-label">Ricerca</label>
+              <label for="search" class="col-form-label"><%= I18n.t('app.labels.search') %></label>
             </div>
             <div class="col">
               <div class="input-group">
@@ -45,8 +45,8 @@ tags ||= []
                   id="search"
                   name="search"
                   class="form-control"
-                  placeholder="Ricerca"
-                  aria-label="Ricerca"
+                  placeholder="<%= I18n.t('app.labels.search') %>"
+                  aria-label="<%= I18n.t('app.labels.search') %>"
                   data-filters-target="inputToClear"
                   data-action="keyup->filters#submitDebounced"
                   value="<%= params[:search] || '' %>"

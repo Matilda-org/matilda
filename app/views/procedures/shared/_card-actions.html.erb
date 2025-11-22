@@ -4,4 +4,4 @@ procedure ||= Procedure.new
 
 %>
 
-<a class="card-link" href="<%= procedures_show_path(id: procedure.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="procedures_show">Visualizza</a>
+<a class="card-link" href="<%= procedures_show_path(id: procedure.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="procedures_show"><%= I18n.t('app.labels.show') %></a>

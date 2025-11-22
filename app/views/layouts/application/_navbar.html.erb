@@ -29,8 +29,8 @@
                   href="<%= tools_path %>"
                   data-turbo-frame="_top"
                   data-controller="tooltip"
-                  data-tooltip="Strumenti"
-                ><%= nav_icon('tools') %> <span class="d-lg-none ms-2">Strumenti</span></a>
+                  data-tooltip="<%= I18n.t('app.modules.tools') %>"
+                ><%= nav_icon('tools') %> <span class="d-lg-none ms-2"><%= I18n.t('app.modules.tools') %></span></a>
               </li>
 
               <li class="nav-item" data-user-policies-target="item" data-policy="settings" data-policy-hide>
@@ -39,8 +39,8 @@
                   href="<%= settings_path %>"
                   data-turbo-frame="_top"
                   data-controller="tooltip"
-                  data-tooltip="Impostazioni"
-                ><%= nav_icon('settings') %> <span class="d-lg-none ms-2">Impostazioni</span></a>
+                  data-tooltip="<%= I18n.t('app.modules.settings') %>"
+                ><%= nav_icon('settings') %> <span class="d-lg-none ms-2"><%= I18n.t('app.modules.settings') %></span></a>
               </li>
 
               <li class="nav-item">
@@ -49,8 +49,8 @@
                   href="<%= authentication_logout_path %>"
                   data-turbo="false"
                   data-controller="tooltip"
-                  data-tooltip="Logout"
-                ><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2">Logout</span></a>
+                  data-tooltip="<%= I18n.t('app.labels.logout') %>"
+                ><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2"><%= I18n.t('app.labels.logout') %></span></a>
               </li>
             </ul>
           </div>

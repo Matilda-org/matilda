@@ -41,4 +41,4 @@ end
   </li>
 <% end %>
 <li data-user-policies-target="item" data-policy="folders_create"><hr class="dropdown-divider"></li>
-<li data-user-policies-target="item" data-policy="folders_create"><a class="dropdown-item" href="<%= folders_actions_path(type: 'create') %>" data-turbo-frame="action"><i class="bi bi-plus-circle me-2"></i> Nuova cartella</a></li>
+<li data-user-policies-target="item" data-policy="folders_create"><a class="dropdown-item" href="<%= folders_actions_path(type: 'create') %>" data-turbo-frame="action"><i class="bi bi-plus-circle me-2"></i> <%= I18n.t('app.labels.new_folder') %></a></li>

@@ -12,7 +12,7 @@ search_has_results = false
   <div class="pt-1 pb-2 border-bottom" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95);">
     <%= form_tag '', method: :get, class: 'd-flex', data: { turbo_frame: 'module-search-results', controller: 'filters' } do %>
       <div class="input-group">
-        <input type="text" name="search" list="moduleSearchSuggestions" class="form-control" placeholder="Ricerca" value="<%= search %>" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced" autofocus>
+        <input type="text" name="search" list="moduleSearchSuggestions" class="form-control" placeholder="<%= I18n.t('app.labels.search') %>" value="<%= search %>" aria-label="<%= I18n.t('app.labels.search') %>" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced" autofocus>
         <button class="btn btn-light border" type="button" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
         <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
       </div>
@@ -171,7 +171,7 @@ search_has_results = false
         <% end %>
 
         <div class="mb-3 d-flex justify-content-between align-items-center">
-          <h4>Progetti attivi</h4>
+          <h4><%= I18n.t('app.labels.active_projects') %></h4>
           <span
             class="badge text-bg-primary rounded-pill"
             data-controller="tooltip"

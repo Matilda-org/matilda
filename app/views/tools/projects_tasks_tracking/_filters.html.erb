@@ -12,7 +12,7 @@
 
   <div class="col col-12 mb-3">
     <label for="user_id" class="form-label">Utente</label>
-     <%= select_tag 'user_id', options_for_select([['TUTTI', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, @user_id), class: 'form-control' %>
+     <%= select_tag 'user_id', options_for_select([[I18n.t('app.labels.all').upcase, '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, @user_id), class: 'form-control' %>
   </div>
 
   <% if @project %>

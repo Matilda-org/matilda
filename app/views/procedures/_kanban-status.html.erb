@@ -84,7 +84,7 @@ turbo_frame_key = dom_id(status, 'kanban-status')
     <div class="card-footer d-flex">
       <% if procedure.resources_type_tasks? && !procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="tasks_create">
-          Aggiungi task
+          <%= I18n.t('app.labels.add_task') %>
         </a>
       <% elsif procedure.resources_type_projects? && !procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 me-1" data-user-policies-target="item" data-policy="projects_create">
@@ -97,7 +97,7 @@ turbo_frame_key = dom_id(status, 'kanban-status')
         </a>
       <% elsif procedure.resources_type_tasks? && procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="procedures_edit">
-          Aggiungi task
+          <%= I18n.t('app.labels.add_task') %>
         </a>
       <% end %>
     </div>

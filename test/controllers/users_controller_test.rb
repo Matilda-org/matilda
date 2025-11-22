@@ -12,10 +12,10 @@ class UsersControllerTest < ActionController::TestCase
   test "actions" do
     user = users(:one)
 
-    matilda_controller_action("create", "Nuovo utente")
-    matilda_controller_action("edit", "Modifica profilo", user.id)
-    matilda_controller_action("edit-policies", "Modifica permessi", user.id)
-    matilda_controller_action("destroy", "Elimina utente", user.id)
+    matilda_controller_action("create", I18n.t("app.labels.new_user"))
+    matilda_controller_action("edit", I18n.t("app.labels.edit_profile"), user.id)
+    matilda_controller_action("edit-policies", I18n.t("app.labels.edit_policies"), user.id)
+    matilda_controller_action("destroy", I18n.t("app.labels.delete_user"), user.id)
 
     matilda_controller_action_invalid
   end
@@ -30,7 +30,7 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:post, :create_action,
       params: { name: "Test", surname: "User", email: "create_test@example.com" },
       policy: "users_create",
-      title: "Nuovo utente",
+      title: I18n.t("app.labels.new_user"),
       feedback: "Utente creato"
     )
 
@@ -43,7 +43,7 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:patch, :edit_action,
       params: { id: user.id, name: "Updated", surname: "User", email: "update_test@example.com" },
       policy: "users_edit",
-      title: "Modifica profilo",
+      title: I18n.t("app.labels.edit_profile"),
       feedback: "Profilo aggiornato"
     )
 
@@ -59,7 +59,7 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:patch, :edit_policies_action,
       params: { id: user.id, policies: [ "users_index", "users_edit" ] },
       policy: "users_edit_policies",
-      title: "Modifica permessi",
+      title: I18n.t("app.labels.edit_policies"),
       feedback: "Permessi utente aggiornati"
     )
   end
@@ -70,7 +70,7 @@ class UsersControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:delete, :destroy_action,
       params: { id: user.id },
       policy: "users_destroy",
-      title: "Elimina utente",
+      title: I18n.t("app.labels.delete_user"),
       feedback: "Utente eliminato"
     )
 

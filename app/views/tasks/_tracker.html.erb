@@ -28,7 +28,7 @@ track = @session_user.active_tasks_track
           data-tasks-tracker-target="ctaShow"
           data-turbo-frame="action"
           data-controller="tooltip"
-          data-tooltip="Visualizza"
+          data-tooltip="<%= I18n.t('app.labels.show') %>"
         ><i class="bi bi-info-circle-fill"></i></a>
         <a
           href="<%= tasks_end_track_action_path(id: track.task.id, track_id: track.id) %>"

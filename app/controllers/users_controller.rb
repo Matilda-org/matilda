@@ -67,7 +67,7 @@ class UsersController < ApplicationController
     return render "users/actions/create" unless @user.save
 
     render partial: "shared/action-feedback", locals: {
-      title: "Nuovo utente",
+      title: I18n.t("app.labels.new_user"),
       turbo_frame: "page-index",
       feedback_args: {
         title: "Utente creato",
@@ -86,7 +86,7 @@ class UsersController < ApplicationController
     return render "users/actions/edit" unless @user.update(user_params)
 
     render partial: "shared/action-feedback", locals: {
-      title: "Modifica profilo",
+      title: I18n.t("app.labels.edit_profile"),
       turbo_frame: "page-header",
       feedback_args: {
         title: "Profilo aggiornato",
@@ -105,7 +105,7 @@ class UsersController < ApplicationController
     return render "users/actions/edit" unless @user.update_policies(params.permit(policies: [])[:policies])
 
     render partial: "shared/action-feedback", locals: {
-      title: "Modifica permessi",
+      title: I18n.t("app.labels.edit_policies"),
       turbo_frame: "page-header",
       feedback_args: {
         title: "Permessi utente aggiornati",
@@ -122,7 +122,7 @@ class UsersController < ApplicationController
     @user.destroy
 
     render partial: "shared/action-feedback", locals: {
-      title: "Elimina utente",
+      title: I18n.t("app.labels.delete_user"),
       turbo_frame: "_top",
       feedback_args: {
         title: "Utente eliminato",
@@ -140,7 +140,7 @@ class UsersController < ApplicationController
     @user.update(password: password, password_confirmation: password)
 
     render partial: "shared/action-feedback", locals: {
-      title: "Rigenera password",
+      title: I18n.t("app.labels.regenerate_password"),
       turbo_frame: "_top",
       feedback_args: {
         title: "Password rigenerata",

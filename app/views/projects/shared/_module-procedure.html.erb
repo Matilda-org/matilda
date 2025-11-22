@@ -15,7 +15,7 @@ turbo_frame_key = "module-procedure-#{procedure.id}"
   <div class="pt-1 pb-2 border-bottom d-flex align-items-center justify-content-between" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95); width: calc(100% + 2px); margin-left: -1px;">
     <ul class="nav nav-pills d-flex flex-row flex-nowrap" style="overflow-x: auto; overflow-y: hidden; flex: 1;">
       <li class="nav-item">
-        <a class="nav-link h-text-oneline <%= params[:tasks_status_id].blank? ? 'active' : '' %>" href="" data-turbo-frame="<%= turbo_frame_key %>">TUTTI</a>
+        <a class="nav-link h-text-oneline <%= params[:tasks_status_id].blank? ? 'active' : '' %>" href="" data-turbo-frame="<%= turbo_frame_key %>"><%= I18n.t('app.labels.all').upcase %></a>
       </li>
       <% statuses.each_with_index do |status, index| %>
         <li class="nav-item">

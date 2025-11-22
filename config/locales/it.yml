@@ -1,4 +1,37 @@
 it:
+  app:
+    modules:
+      tools: Strumenti
+      settings: Impostazioni
+      posts: Bacheca
+      users: Utenti
+      procedures: Board
+      credentials: Credenziali
+      presentations: Presentazioni
+      tasks: Task
+      projects: Progetti
+    labels:
+      logout: Logout
+      new_folder: Nuova cartella
+      all_credentials: Tutte le credenziali
+      unassigned: Non assegnate
+      search: Ricerca
+      edit_profile: Modifica profilo
+      edit_policies: Modifica permessi
+      regenerate_password: Rigenera password
+      delete_user: Elimina utente
+      new_user: Nuovo utente
+      invite_new_user: Invita nuovo utente
+      rapid_search: Ricerca rapida
+      assigned_tasks: Task assegnati
+      followed_tasks: Task seguiti
+      no_elements_to_display: Nessun elemento da visualizzare
+      all: Tutti
+      active_projects: Progetti attivi
+      all_projects: Tutti i progetti
+      go_to_projects: Vai ai progetti
+      add_task: Aggiungi task
+      show: Visualizza
   activerecord:
     errors:
       messages:

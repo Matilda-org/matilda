@@ -1,2 +1,12 @@
 en:
-  hello: "Hello world"
+  app:
+    modules:
+      tools: Tools
+      settings: Settings
+      posts: Posts
+      users: Users
+      procedures: Boards
+      credentials: Credentials
+      presentations: Presentations
+      tasks: Tasks
+      projects: Projects

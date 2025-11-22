@@ -87,7 +87,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
         data-turbo-frame="action"
         class="btn btn-primary"
         data-controller="tooltip"
-        data-tooltip="Ricerca"
+        data-tooltip="<%= I18n.t('app.labels.search') %>"
       >
         <i class="bi bi-search"></i>
       </a>

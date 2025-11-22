@@ -15,7 +15,7 @@
 
     <% if @_is_dashboard %>
       <%= render 'shared/page-card',
-        title: "Ricerca rapida",
+        title: I18n.t('app.labels.rapid_search'),
         full: true,
         render_content: 'users/shared/module-search',
         render_content_args: {
@@ -27,7 +27,7 @@
       %>
     <% else %>
       <%= render 'shared/page-card',
-        title: "Progetti attivi",
+        title: I18n.t('app.labels.active_projects') ,
         classes: 'dashboard-projects',
         full: true,
         render_content: 'users/shared/module-projects',
@@ -43,7 +43,7 @@
   <%= render 'shared/page-grid-item' do %>
 
     <%= render 'shared/page-card',
-      title: "Task assegnati",
+      title: I18n.t('app.labels.assigned_tasks'),
       full: true,
       render_content: 'users/shared/module-tasks',
       render_content_args: {
@@ -58,7 +58,7 @@
   <%= render 'shared/page-grid-item' do %>
 
     <%= render 'shared/page-card',
-      title: "Task seguiti",
+      title: I18n.t('app.labels.followed_tasks'),
       full: true,
       render_content: 'users/shared/module-tasks',
       render_content_args: {

@@ -8,7 +8,7 @@ turbo_frame_key ||= '_top'
 <div class="d-flex justify-content-between align-items-center">
   <% if task.persisted? %>
 
-  <a class="card-link" href="<%= tasks_actions_path(type: 'show', id: task.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="tasks_show">Visualizza</a>
+  <a class="card-link" href="<%= tasks_actions_path(type: 'show', id: task.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="tasks_show"><%= I18n.t('app.labels.show') %></a>
 
   <% else %>
     <span></span>
