@@ -7,6 +7,7 @@
 class ApplicationController < ActionController::Base
   include ActionView::RecordIdentifier
 
+  before_action :setup_locale, except: :serviceworker
   before_action :load_global_cache, except: :serviceworker
   before_action :set_session_user_id, except: :serviceworker
   skip_before_action :verify_authenticity_token, only: :serviceworker
@@ -87,14 +88,6 @@ class ApplicationController < ActionController::Base
     redirect_to root_path
   end
 
-  def load_global_cache
-    @global_cache ||= GlobalCache.new
-  end
-
-  def set_session_user_id
-    @session_user_id = cookies.encrypted[:user_id]
-  end
-
   def query_projects_for_policy
     @query_projects_for_policy ||= @session_user.policy?("only_data_projects_as_member") ? Project.where(id: @session_user.projects_as_member_ids) : Project.all
   end
@@ -114,5 +107,19 @@ class ApplicationController < ActionController::Base
     return unless procedure_status
 
     procedure_status.procedure.procedures_items.create(params.permit(:procedures_status_id).merge(resource_id: resource_id))
+  end
+
+  private
+
+  def setup_locale
+    I18n.locale = :en
+  end
+
+  def load_global_cache
+    @global_cache ||= GlobalCache.new
+  end
+
+  def set_session_user_id
+    @session_user_id = cookies.encrypted[:user_id]
   end
 end
