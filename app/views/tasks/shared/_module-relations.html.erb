@@ -6,7 +6,7 @@
 <% end %>
 <% if @task.procedure_as_item&.project %>
 <div class="mb-4">
-  <h3 class="fs-4 text-muted">Progetto</h3>
+  <h3 class="fs-4 text-muted"><%= I18n.t("app.labels.project") %></h3>
   <%= render 'projects/shared/card', project: @task.procedure_as_item&.project %>
 </div>
 <% end %>

@@ -21,7 +21,7 @@ path ||= presentation.persisted? ? presentations_edit_action_path(presentation) 
     <% end %>
 
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
+      <label for="name" class="form-label"><%= I18n.t('app.labels.name') %></label>
       <input type="text" class="form-control" id="name" name="name" value="<%= presentation.name %>" required>
     </div>
 

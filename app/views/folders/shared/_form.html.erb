@@ -16,7 +16,7 @@ path ||= folder.persisted? ? folders_edit_action_path(folder) : folders_create_a
     <% end %>
 
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
+      <label for="name" class="form-label"><%= I18n.t('app.labels.name') %></label>
       <input type="text" class="form-control" id="name" name="name" value="<%= folder.name %>" required>
     </div>
   </div>

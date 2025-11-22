@@ -63,11 +63,11 @@ tags ||= []
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
             <div class="col-auto d-none">
-              <label for="sort" class="col-form-label">Ordina per</label>
+              <label for="sort" class="col-form-label"><%= I18n.t('app.labels.order_by') %></label>
             </div>
             <div class="col">
               <div class="input-group">
-                <span class="input-group-text">Ordina</span>
+                <span class="input-group-text"><%= I18n.t('app.labels.order') %></span>
                 <select id="sort" class="form-control" name="sort" data-action="change->filters#submit">
                   <% sorts.each do |sort| %>
                     <option value="<%= sort[:value] %>" <%= params[:sort] == sort[:value] || (params[:sort].blank? && sort[:default]) ? 'selected' : '' %>><%= sort[:label] %></option>

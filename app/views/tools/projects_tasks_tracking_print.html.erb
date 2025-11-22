@@ -11,7 +11,7 @@
         <% elsif @project %>
           Board
         <% else %>
-          Progetto
+          <%= I18n.t("app.labels.project") %>
         <% end %>
       </th>
       <th>Tempo</th>
@@ -67,7 +67,7 @@
     <% if @project %>
       <tr>
         <td colspan="2">
-          Progetto<br>
+          <%= I18n.t("app.labels.project") %><br>
           <b><%= @project.name %></b>
         </td>
       </tr>

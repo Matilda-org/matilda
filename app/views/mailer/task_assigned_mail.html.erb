@@ -10,7 +10,7 @@ Scadenza: <b><%= @task.deadline_in_words %></b><br>
   Tempo stimato: <b><%= @task.time_estimate_as_string %></b><br>
 <% end %>
 <% if @task.project_id %>
-  Progetto: <b><%= @task.project.name %></b><br>
+  <%= I18n.t("app.labels.project") %>: <b><%= @task.project.name %></b><br>
 <% end %>
 <br>
 <% unless @task.description.blank? %>

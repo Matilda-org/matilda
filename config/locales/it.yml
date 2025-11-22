@@ -49,6 +49,11 @@ it:
       archived: Archiviati
       important: Importante
       not_important: Non importante
+      order_by: Ordina per
+      order: Ordina
+      name: Nome
+      year: Anno
+      project: Progetto
   activerecord:
     errors:
       messages:

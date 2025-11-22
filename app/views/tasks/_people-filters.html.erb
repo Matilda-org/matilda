@@ -14,7 +14,7 @@ project_id ||= nil
 
     <div class="col-auto d-none d-lg-block" style="width: 150px">
       <label for="project_id" class="visually-hidden">Project</label>
-      <%= select_tag 'project_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }, project_id), class: 'form-control' %>
+      <%= select_tag 'project_id', options_for_select([[I18n.t("app.labels.project"), '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }, project_id), class: 'form-control' %>
     </div>
     <div class="col-auto d-none d-lg-block">
       <label for="date" class="visually-hidden">Date</label>

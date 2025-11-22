@@ -7,7 +7,7 @@ user ||= User.new
 <%= form_tag authentication_first_run_action_path, class: 'row', data: { turbo_frame: 'false', controller: 'form-loading' } do %>
 
   <div class="col col-12 col-lg-6 mb-3">
-    <label for="name" class="form-label">Nome</label>
+    <label for="name" class="form-label"><%= I18n.t('app.labels.name') %></label>
     <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
   </div>
 

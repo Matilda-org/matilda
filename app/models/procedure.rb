@@ -231,7 +231,7 @@ class Procedure < ApplicationRecord
   end
 
   def self.resources_item_string(resources_type)
-    return "progetto" if resources_type == "projects"
+    return I18n.t("app.labels.project").downcase if resources_type == "projects"
     return "task" if resources_type == "tasks"
 
     "elemento"

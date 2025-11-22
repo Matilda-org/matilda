@@ -17,7 +17,7 @@
 
   <% if @project %>
     <div class="col col-12 mb-3">
-      <label for="project" class="form-label">Progetto</label>
+      <label for="project" class="form-label"><%= I18n.t("app.labels.project") %></label>
       <div class="input-group mb-3">
         <input type="text" class="form-control" id="project" name="project" value="<%= @project.complete_code_name %>" disabled>
         <%= link_to request.params.except(:project_id), class: 'btn btn-danger' do %>

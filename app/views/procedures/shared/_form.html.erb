@@ -12,7 +12,7 @@ path ||= procedure.persisted? ? procedures_edit_action_path(procedure) : procedu
 <%= form_tag path, class: 'c-modal-form', data: { controller: 'form-loading' } do %>
   <div class="c-modal-form__fields row">
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
+      <label for="name" class="form-label"><%= I18n.t('app.labels.name') %></label>
       <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" required>
     </div>
     <div class="col col-12 mb-3">

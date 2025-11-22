@@ -21,7 +21,7 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
     <% end %>
 
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
+      <label for="name" class="form-label"><%= I18n.t('app.labels.name') %></label>
       <input type="text" class="form-control" id="name" name="name" value="<%= project.name %>" required>
     </div>
 
@@ -45,7 +45,7 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
                 <input type="text" class="form-control" id="code" name="code" value="<%= project.code || Project.default_code %>" required>
               </div>
               <div class="col col-5 mb-3">
-                <label for="year" class="form-label">Anno</label>
+                <label for="year" class="form-label"><%= I18n.t('app.labels.year') %></label>
                 <input type="number" class="form-control" id="year" name="year" min="2000" max="2100" value="<%= project.year || Date.today.year %>" required>
               </div>
             </div>
