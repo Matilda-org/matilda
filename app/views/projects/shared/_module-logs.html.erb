@@ -29,8 +29,8 @@ project ||= Project.new
             <% else %>
               <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'share-log', log_id: log.id) %>" data-turbo-frame="action">Condividi</a></li>
             <% end %>
-            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-log', log_id: log.id) %>" data-turbo-frame="action">Modifica</a></li>
-            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-log', log_id: log.id) %>" data-turbo-frame="action">Elimina</a></li>
+            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-log', log_id: log.id) %>" data-turbo-frame="action"><%= I18n.t('app.labels.edit') %></a></li>
+            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-log', log_id: log.id) %>" data-turbo-frame="action"><%= I18n.t('app.labels.delete') %></a></li>
           </ul>
         </div>
 

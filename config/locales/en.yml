@@ -10,3 +10,28 @@ en:
       presentations: Presentations
       tasks: Tasks
       projects: Projects
+    labels:
+      logout: Logout
+      new_folder: New folder
+      all_credentials: All credentials
+      unassigned: Unassigned
+      search: Search
+      edit_profile: Edit profile
+      edit_policies: Edit permissions
+      regenerate_password: Regenerate password
+      delete_user: Delete user
+      new_user: New user
+      invite_new_user: Invite new user
+      rapid_search: Rapid search
+      assigned_tasks: Assigned tasks
+      followed_tasks: Followed tasks
+      no_elements_to_display: No elements to display
+      all: All
+      active_projects: Active projects
+      all_projects: All projects
+      go_to_projects: Go to projects
+      add_task: Add task
+      show: Show
+      involved_people: Involved people
+      estimated_minutes: estimated
+      consumed_minutes: consumed

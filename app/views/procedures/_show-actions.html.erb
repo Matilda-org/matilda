@@ -33,7 +33,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       <% else %>
         <li>
           <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @procedure.id, resource_type: @procedure.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
-            Aggiungi ai preferiti
+            <%= I18n.t('app.labels.add_to_favorites') %>
           </a>
         </li>
       <% end %>

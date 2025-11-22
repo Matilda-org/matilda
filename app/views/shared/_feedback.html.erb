@@ -1,6 +1,6 @@
 <%
 
-title ||= 'Titolo'
+title ||= I18n.t('app.labels.title')
 type ||= 'light'
 subtitle ||= nil
 turbo_frame ||= '_top'
@@ -31,7 +31,7 @@ render_content_args ||= {}
 <% if render_content %>
   <div class="mt-5">
     <hr>
-    <h3 class="fs-5 mb-3">Dettagli</h3>
+    <h3 class="fs-5 mb-3"><%= I18n.t('app.labels.details') %></h3>
     <%= render render_content, render_content_args %>
   </div>
 <% end %>

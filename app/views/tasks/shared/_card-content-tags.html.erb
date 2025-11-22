@@ -36,7 +36,7 @@ badge_type = 'secondary' if badge_type.blank?
     class="badge bg-<%= badge_type %>"
     data-controller="tooltip"
     data-tooltip="Questo task ha una stima di <%= distance_of_time_in_words(task.time_estimate) %> di lavoro"
-  ><i class="bi bi-alarm-fill"></i> <%= distance_of_time_in_words(task.time_estimate) %> stimati</span>
+  ><i class="bi bi-alarm-fill"></i> <%= distance_of_time_in_words(task.time_estimate) %> <%= I18n.t('app.labels.estimated_minutes') %></span>
 <% end %>
 
 <% if task.time_spent&.positive? %>
@@ -44,7 +44,7 @@ badge_type = 'secondary' if badge_type.blank?
     class="badge bg-<%= badge_type %>"
     data-controller="tooltip"
     data-tooltip="Questo task ha consumato <%= track_time(task.time_spent) %> di lavoro"
-  ><%= raw (task.time_alert ? '<i class="bi bi-exclamation-triangle-fill"></i>' : '<i class="bi bi-hourglass-split"></i>') %> <%= track_time(task.time_spent) %> consumati</span>
+  ><%= raw (task.time_alert ? '<i class="bi bi-exclamation-triangle-fill"></i>' : '<i class="bi bi-hourglass-split"></i>') %> <%= track_time(task.time_spent) %> <%= I18n.t('app.labels.consumed_minutes') %></span>
 <% end %>
 
 <% if !hide_project && task.project %>

@@ -19,8 +19,8 @@ project ||= Project.new
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action">Modifica</a></li>
-            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action">Elimina</a></li>
+            <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action"><%= I18n.t('app.labels.edit') %></a></li>
+            <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-attachment', attachment_id: attachment.id) %>" data-turbo-frame="action"><%= I18n.t('app.labels.delete') %></a></li>
           </ul>
         </div>
         <% if attachment.file.attached? %>

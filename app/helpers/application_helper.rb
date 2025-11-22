@@ -17,16 +17,16 @@ module ApplicationHelper
   def nav_title(key)
     return @_nav_title if @_nav_title
 
-    return "Bacheca - Matilda" if key == "posts"
-    return "Utenti - Matilda" if key == "users"
-    return "Progetti - Matilda" if key == "projects"
-    return "Task - Matilda" if key == "tasks"
-    return "Processi - Matilda" if key == "procedures"
-    return "Credenziali - Matilda" if key == "credentials"
+    return "#{I18n.t('app.modules.posts')} - Matilda" if key == "posts"
+    return "#{I18n.t('app.modules.users')} - Matilda" if key == "users"
+    return "#{I18n.t('app.modules.projects')} - Matilda" if key == "projects"
+    return "#{I18n.t('app.modules.tasks')} - Matilda" if key == "tasks"
+    return "#{I18n.t('app.modules.procedures')} - Matilda" if key == "procedures"
+    return "#{I18n.t('app.modules.credentials')} - Matilda" if key == "credentials"
     return "Dashboard - Matilda" if key == "dashboard"
-    return "Impostazioni - Matilda" if key == "settings"
-    return "Strumenti - Matilda" if key == "tools"
-    return "Presentazioni - Matilda" if key == "presentations"
+    return "#{I18n.t('app.modules.settings')} - Matilda" if key == "settings"
+    return "#{I18n.t('app.modules.tools')} - Matilda" if key == "tools"
+    return "#{I18n.t('app.modules.presentations')} - Matilda" if key == "presentations"
 
     "Matilda"
   end

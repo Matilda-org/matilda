@@ -17,13 +17,13 @@ post ||= Post.new
   </div>
   <div class="card-footer d-flex justify-content-end">
     <a class="card-link d-flex align-items-center text-danger" href="<%= posts_actions_path(type: 'destroy', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_destroy">
-      Elimina
+      <%= I18n.t('app.labels.delete') %>
     </a>
     <a class="card-link d-flex align-items-center" href="<%= posts_actions_path(type: 'edit', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_edit">
-      Modifica
+      <%= I18n.t('app.labels.edit') %>
     </a>
     <% unless post.source_url.blank? %>
-      <a href="<%= post.source_url %>" target="_blank" class="btn btn-sm btn-primary ms-3">Dettagli</a>
+      <a href="<%= post.source_url %>" target="_blank" class="btn btn-sm btn-primary ms-3"><%= I18n.t('app.labels.details') %></a>
     <% end %>
   </div>
 </div>

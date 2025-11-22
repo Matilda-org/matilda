@@ -23,7 +23,7 @@ turbo_frame_key ||= '_top'
           href="<%= tasks_actions_path(type: 'edit', id: task.id, turbo_frame_key: turbo_frame_key) %>"
           data-turbo-frame="action"
           data-controller="tooltip"
-          data-tooltip="Modifica"
+          data-tooltip="<%= I18n.t('app.labels.edit') %>"
           data-user-policies-target="item" data-policy="tasks_edit"
         >
           <i class="bi bi-pencil-fill"></i>
@@ -35,7 +35,7 @@ turbo_frame_key ||= '_top'
           data-turbo-frame="action"
           class="btn btn-<%= task.color_type %> btn-sm border-2"
           data-controller="tooltip"
-          data-tooltip="Rimanda"
+          data-tooltip="<%= I18n.t('app.labels.postpone') %>"
           data-user-policies-target="item" data-policy="tasks_edit"
         >
           <i class="bi bi-calendar-range"></i>
@@ -51,7 +51,7 @@ turbo_frame_key ||= '_top'
           data-turbo-method="post"
           data-turbo-frame="tasks-tracker"
           data-controller="tooltip"
-          data-tooltip="Avvia tracking"
+          data-tooltip="<%= I18n.t('app.labels.start_tracking')%>"
           data-user-policies-target="item" data-policy="tasks_track"
         >
           <i class="bi bi-play-circle-fill"></i>

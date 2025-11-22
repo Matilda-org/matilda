@@ -5,7 +5,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
 %>
 
 
-<%= render 'shared/action-container', title: 'Dettagli task', size: @task.description.blank? ? 'md' : 'lg' do %>
+<%= render 'shared/action-container', title: I18n.t('app.labels.task_details'), size: @task.description.blank? ? 'md' : 'lg' do %>
 
 <div class="d-flex flex-column flex-md-row-reverse">
   <div class="w-100">
@@ -39,7 +39,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         href="<%= tasks_actions_path(type: 'complete', id: @task.id) %>"
         data-turbo-frame="action"
         data-controller="tooltip"
-        data-tooltip="Completa"
+        data-tooltip="<%= I18n.t('app.labels.complete') %>"
         data-user-policies-target="item" data-policy="tasks_complete"
       ><i class="bi bi-check-circle-fill"></i></a>
     <% end %>
@@ -64,7 +64,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-turbo-frame="tasks-tracker"
         data-action="click->action#closeModal"
         data-controller="tooltip"
-        data-tooltip="Avvia tracking"
+        data-tooltip="<%= I18n.t('app.labels.start_tracking') %>"
         data-user-policies-target="item" data-policy="tasks_track"
       ><i class="bi bi-play-circle-fill"></i></a>
     <% end %>
@@ -74,7 +74,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       href="<%= tasks_show_path(id: @task.id) %>"
       data-turbo-frame="_top"
       data-controller="tooltip"
-      data-tooltip="Dettagli"
+      data-tooltip="<%= I18n.t('app.labels.details') %>"
     ><i class="bi bi-eye"></i></a>
 
     <% if @task.repeat_original_task_id %>
@@ -92,7 +92,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         href="<%= tasks_actions_path(type: 'edit', id: @task.id) %>"
         data-turbo-frame="action"
         data-controller="tooltip"
-        data-tooltip="Modifica"
+        data-tooltip="<%= I18n.t('app.labels.edit') %>"
         data-user-policies-target="item" data-policy="tasks_edit"
       ><i class="bi bi-pencil"></i></a>
     <% end %>
@@ -102,7 +102,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       href="<%= tasks_actions_path(type: 'destroy', id: @task.id) %>"
       data-turbo-frame="action"
       data-controller="tooltip"
-      data-tooltip="Elimina"
+      data-tooltip="<%= I18n.t('app.labels.delete') %>"
       data-user-policies-target="item" data-policy="tasks_destroy"
     ><i class="bi bi-trash"></i></a>
 

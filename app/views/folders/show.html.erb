@@ -9,7 +9,7 @@
   <%= render 'shared/page-grid-item' do %>
 
     <%= render 'shared/page-card',
-      title: "Dettagli",
+      title: I18n.t('app.labels.details'),
       render_content: 'folders/shared/module-infos',
       always_open: true,
       render_content_args: {

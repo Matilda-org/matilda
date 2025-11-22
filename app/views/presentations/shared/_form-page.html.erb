@@ -12,7 +12,7 @@ path ||= page.persisted? ? presentations_edit_page_action_path(id: presentation.
 <%= form_tag path, class: 'row', multipart: true, data: { controller: 'form-loading' } do %>
 
   <div class="col col-12 mb-3">
-    <label for="title" class="form-label">Titolo</label>
+    <label for="title" class="form-label"><%= I18n.t('app.labels.title') %></label>
     <input type="text" class="form-control" id="title" name="title" value="<%= page.title %>" required>
   </div>
 

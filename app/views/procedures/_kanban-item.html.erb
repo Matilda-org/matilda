@@ -21,8 +21,8 @@ turbo_frame_key = dom_id(item, 'kanban-item')
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action">Modifica</a></li>
-            <li data-user-policies-target="item" data-policy="procedures_edit"><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_status_key) %>" data-turbo-frame="action">Elimina</a></li>
+            <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action"><%= I18n.t('app.labels.edit') %></a></li>
+            <li data-user-policies-target="item" data-policy="procedures_edit"><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_status_key) %>" data-turbo-frame="action"><%= I18n.t('app.labels.delete') %></a></li>
           </ul>
         </div>
         <button

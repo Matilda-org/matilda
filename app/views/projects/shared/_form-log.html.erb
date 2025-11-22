@@ -12,7 +12,7 @@ path ||= log.persisted? ? projects_edit_log_action_path(id: project.id, log_id: 
 <%= form_tag path, class: 'row', data: { controller: "#{log.persisted? ? 'form-autosave' : ''} form-loading" } do %>
 
   <div class="col col-12 col-md-12 col-lg-8 col-xl-9 mb-3">
-    <label for="title" class="form-label">Titolo</label>
+    <label for="title" class="form-label"><%= I18n.t('app.labels.title') %></label>
     <input type="text" class="form-control" id="title" name="title" value="<%= log.title %>" required>
   </div>
 

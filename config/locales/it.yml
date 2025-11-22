@@ -32,6 +32,23 @@ it:
       go_to_projects: Vai ai progetti
       add_task: Aggiungi task
       show: Visualizza
+      involved_people: Persone coinvolte
+      estimated_minutes: stimati
+      consumed_minutes: consumati
+      add_to_folder: Aggiungi a cartella
+      add_to_favorites: Aggiungi ai preferiti
+      edit: Modifica
+      postpone: Rimanda
+      start_tracking: Avvia tracking
+      task_details: Dettagli task
+      complete: Completa
+      details: Dettagli
+      delete: Elimina
+      title: Titolo
+      actives: Attivi
+      archived: Archiviati
+      important: Importante
+      not_important: Non importante
   activerecord:
     errors:
       messages:

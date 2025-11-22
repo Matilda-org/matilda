@@ -7,7 +7,7 @@
     data-user-policies-target="item"
     data-policy="tasks_edit"
     data-controller="tooltip"
-    data-tooltip="Modifica"
+    data-tooltip="<%= I18n.t('app.labels.edit') %>"
   ><i class="bi bi-pencil"></i></a>
   <% if @task.completed %>
     <a
@@ -29,7 +29,7 @@
       data-user-policies-target="item"
       data-policy="tasks_complete"
       data-controller="tooltip"
-      data-tooltip="Completa"
+      data-tooltip="<%= I18n.t('app.labels.complete') %>"
     ><i class="bi bi-check-circle"></i></a>
   <% end %>
   <a
@@ -40,6 +40,6 @@
     data-user-policies-target="item"
     data-policy="tasks_destroy"
     data-controller="tooltip"
-    data-tooltip="Elimina"
+    data-tooltip="<%= I18n.t('app.labels.delete') %>"
   ><i class="bi bi-trash"></i></a>
 </div>

@@ -24,7 +24,7 @@ badge_type = 'primary' if badge_type.blank?
 <% end %>
 
 <% if project.cached_projects_members_count.positive? %>
-  <span class="badge bg-<%= badge_type %>"><i class="bi bi-people-fill"></i> <%= project.cached_projects_members_count %> persone coinvolte</span>
+  <span class="badge bg-<%= badge_type %>"><i class="bi bi-people-fill"></i> <%= project.cached_projects_members_count %> <%= I18n.t('app.labels.involved_people').downcase %></span>
 <% end %>
 
 <% if time_spent.positive? %>

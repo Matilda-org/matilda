@@ -43,7 +43,7 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
   <hr />
 
   <div class="col col-12 mb-3">
-    <label for="title" class="form-label">Titolo</label>
+    <label for="title" class="form-label"><%= I18n.t('app.labels.title') %></label>
     <input type="text" class="form-control" id="title" name="title" value="<%= attachment.title %>" required>
   </div>
 
