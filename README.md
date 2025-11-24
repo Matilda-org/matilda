@@ -39,7 +39,7 @@ docker compose up
 ```
 
 Se non hai eseguito il comando per creare un utente admin, puoi registrare il primo utente amministratore tramite la pagina di registrazione.
-Altrimenti puoi accedere al pannello con l' email `admin@mail.com` e password `Password1!`.
+Altrimenti puoi accedere al pannello con l'email `admin@mail.com` e password `Password1!`.
 
 ### Configurazione
 
