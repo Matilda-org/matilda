@@ -32,9 +32,26 @@ class ApplicationController < ActionController::Base
   def jobsrun
     jobs_semaphore_key = "ApplicationController/jobs_semaphore"
     unless Rails.cache.read(jobs_semaphore_key)
-      ActiveStorageCleanerJob.perform_now
-      TasksRepeatManagerJob.perform_now
-      NotificationsManagerJob.perform_now
+      begin
+        ActiveStorageCleanerJob.perform_now
+      rescue StandardError => e
+        Rails.logger.error e
+      end
+      begin
+        TasksRepeatManagerJob.perform_now
+      rescue StandardError => e
+        Rails.logger.error e
+      end
+      begin
+        ProceduresStatusAutomationsManagerJob.perform_now
+      rescue StandardError => e
+        Rails.logger.error e
+      end
+      begin
+        NotificationsManagerJob.perform_now
+      rescue StandardError => e
+        Rails.logger.error e
+      end
       Rails.cache.write(jobs_semaphore_key, true, expires_in: 30.minutes)
     end
 

@@ -9,7 +9,8 @@ class Procedures::StatusAutomation < ApplicationRecord
     order_deadline_asc_task: 4,
     take_completed_task: 5,
     cancel_deadline_task: 6,
-    take_uncompleted_task: 7
+    take_uncompleted_task: 7,
+    take_daily_tasks: 8
   }
 
   # RELATIONS
@@ -31,6 +32,12 @@ class Procedures::StatusAutomation < ApplicationRecord
     if typology_take_uncompleted_task?
       other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
       Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_uncompleted_task).destroy_all
+    end
+
+    # Per take_daily_tasks può esistere una sola automazione di questo tipo per ogni board.
+    if typology_take_daily_tasks?
+      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
+      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_daily_tasks).destroy_all
     end
   end
 
@@ -63,6 +70,10 @@ class Procedures::StatusAutomation < ApplicationRecord
 
   def typology_take_uncompleted_task?
     typology == "take_uncompleted_task"
+  end
+
+  def typology_take_daily_tasks?
+    typology == "take_daily_tasks"
   end
 
   # OPERATIONS
