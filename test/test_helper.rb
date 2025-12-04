@@ -13,14 +13,14 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # # Open SimpleCov coverage report after tests are run
-  # Minitest.after_run do
-  #   begin
-  #     `open coverage/index.html`
-  #   rescue
-  #     puts "Unable to open coverage report. Please navigate to coverage/index.html in your browser."
-  #   end
-  # end
+  # Open SimpleCov coverage report after tests are run
+  Minitest.after_run do
+    begin
+      `open coverage/index.html`
+    rescue
+      puts "Unable to open coverage report. Please navigate to coverage/index.html in your browser."
+    end
+  end
 
   # Add more helper methods to be used by all tests here...
 
