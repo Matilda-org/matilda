@@ -1,7 +1,29 @@
-<% if @task.user %>
+<% if @task.user_id %>
 <div class="mb-4">
   <h3 class="fs-4 text-muted">Assegnato a</h3>
-  <%= render 'users/shared/card', user: @task.user %>
+  <ul class="list-group">
+    <li class="list-group-item p-2 d-flex align-items-center justify-content-between">
+      <%= render 'users/shared/preview', user_id: @task.user_id %>
+      <%= link_to users_show_path(@task.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' } do %>
+        <i class="bi bi-eye-fill"></i>
+      <% end %>
+    </li>
+  </ul>
+</div>
+<% end %>
+<% if @task.tasks_followers.length.positive? %>
+<div class="mb-4">
+  <h3 class="fs-4 text-muted">Seguito da</h3>
+  <ul class="list-group">
+    <% @task.tasks_followers.each do |follower| %>
+      <li class="list-group-item p-2 d-flex align-items-center justify-content-between">
+        <%= render 'users/shared/preview', user_id: follower.user_id %>
+        <%= link_to users_show_path(follower.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' } do %>
+          <i class="bi bi-eye-fill"></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
 </div>
 <% end %>
 <% if @task.procedure_as_item&.project %>

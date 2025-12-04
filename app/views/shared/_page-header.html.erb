@@ -12,7 +12,15 @@ render_actions ||= nil
     <div class="row justify-content-between align-items-center flex-nowrap pt-3">
       <div class="col d-flex align-items-center h-text-oneline">
         <% if back %>
-          <a href="#" class="me-3 fs-5 text-primary" onclick="window.history.back()">
+          <% previous_page = request.referer %>
+          <a
+            href="<%= previous_page || '#' %>"
+            data-turbo-frame="_top"
+            class="me-3 fs-5 text-primary"
+            <% unless previous_page %>
+              onclick="window.history.back()"
+            <% end %>
+          >
             <i class="bi bi-arrow-left-circle-fill"></i>
           </a>
         <% else %>

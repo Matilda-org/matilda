@@ -47,6 +47,14 @@ class Task < ApplicationRecord
   ############################################################
 
   before_save do
+    if self.completed_changed? && self.completed
+      self.completed_at ||= Time.current
+    elsif self.completed_changed? && !self.completed
+      self.completed_at = nil
+    end
+  end
+
+  before_save do
     if self.repeat && self.repeat_from.blank?
       errors.add(:repeat_from, "è obbligatorio se si vuole ripetere il task")
       throw(:abort)
@@ -115,7 +123,7 @@ class Task < ApplicationRecord
   end
 
   # procedure automation :take_completed_task
-  after_save do
+  after_save_commit do
     if saved_change_to_completed? && completed
       procedures_as_item.each do |procedure|
         procedure.procedures_statuses.each do |status|
@@ -131,7 +139,7 @@ class Task < ApplicationRecord
   end
 
   # procedure automation :take_uncompleted_task
-  after_save do
+  after_save_commit do
     if saved_change_to_completed? && !completed
       procedures_as_item.each do |procedure|
         procedure.procedures_statuses.each do |status|

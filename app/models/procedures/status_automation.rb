@@ -17,6 +17,23 @@ class Procedures::StatusAutomation < ApplicationRecord
 
   belongs_to :procedures_status, class_name: "Procedures::Status"
 
+  # HOOKS
+  ############################################################
+
+  after_create do
+    # Per take_completed_task può esistere una sola automazione di questo tipo per ogni board.
+    if typology_take_completed_task?
+      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
+      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_completed_task).destroy_all
+    end
+
+    # Per take_uncompleted_task può esistere una sola automazione di questo tipo per ogni board.
+    if typology_take_uncompleted_task?
+      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
+      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_uncompleted_task).destroy_all
+    end
+  end
+
   # HELPERS
   ############################################################
 
@@ -38,6 +55,14 @@ class Procedures::StatusAutomation < ApplicationRecord
 
   def typology_order_deadline_asc_task?
     typology == "order_deadline_asc_task"
+  end
+
+  def typology_take_completed_task?
+    typology == "take_completed_task"
+  end
+
+  def typology_take_uncompleted_task?
+    typology == "take_uncompleted_task"
   end
 
   # OPERATIONS
