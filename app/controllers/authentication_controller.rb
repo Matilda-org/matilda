@@ -22,7 +22,7 @@ class AuthenticationController < ApplicationController
       return redirect_to authentication_login_path(user_login_params.except(:password))
     end
 
-    ApplicationMailer.login_success_mail(@user.email, request.remote_ip).deliver_later
+    ApplicationMailer.login_success_mail(@user.email, request.remote_ip).deliver_now
     cookies.encrypted[:user_id] = { value: @user.id, expires: 1.month.from_now }
     redirect_to params[:redirect] || root_path
   end
