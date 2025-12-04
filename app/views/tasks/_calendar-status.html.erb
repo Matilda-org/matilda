@@ -13,7 +13,7 @@ time_spent_sum = tasks.sum(&:time_spent)
   <div class="c-kanban__status card d-flex flex-direction-column justify-content-between me-3">
     <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
       <div class="h-text-oneline">
-        <%= raw date.strftime("<b>%a</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>%d/%m/%Y</small>") %>
+        <%= raw "<b>#{l(date, format: '%a').capitalize}</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>#{date.strftime('%d/%m/%Y')}</small>" %>
       </div>
       <div class="ms-3 d-flex align-items-center gap-1">
         <% if date <= Date.today %>
