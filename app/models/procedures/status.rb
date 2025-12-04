@@ -1,4 +1,5 @@
 class Procedures::Status < ApplicationRecord
+  include ActionView::RecordIdentifier
   include Cachable
 
   # HACK: to work on ToolsController.projects_tasks_tracking
@@ -149,5 +150,9 @@ class Procedures::Status < ApplicationRecord
     Rails.logger.error e
     errors.add(:base, e.message)
     false
+  end
+
+  def update_on_turbo_stream_kanban
+    broadcast_replace_to dom_id(self.procedure), target: dom_id(self, "kanban-status"), partial: "procedures/kanban-status", locals: { status: self }
   end
 end

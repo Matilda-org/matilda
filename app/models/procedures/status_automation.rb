@@ -7,10 +7,10 @@ class Procedures::StatusAutomation < ApplicationRecord
     archive_project: 2,
     uncomplete_task: 3,
     order_deadline_asc_task: 4,
-    take_completed_task: 5,
-    cancel_deadline_task: 6,
-    take_uncompleted_task: 7,
-    take_daily_tasks: 8
+    # take_completed_task: 5, # NOTE: Lasciato per retrocompatibilità, non va più usato
+    cancel_deadline_task: 6
+    # take_uncompleted_task: 7, # NOTE: Lasciato per retrocompatibilità, non va più usato
+    # take_daily_tasks: 8 # NOTE: Lasciato per retrocompatibilità, non va più usato
   }
 
   # RELATIONS
@@ -21,25 +21,8 @@ class Procedures::StatusAutomation < ApplicationRecord
   # HOOKS
   ############################################################
 
-  after_create do
-    # Per take_completed_task può esistere una sola automazione di questo tipo per ogni board.
-    if typology_take_completed_task?
-      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
-      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_completed_task).destroy_all
-    end
-
-    # Per take_uncompleted_task può esistere una sola automazione di questo tipo per ogni board.
-    if typology_take_uncompleted_task?
-      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
-      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_uncompleted_task).destroy_all
-    end
-
-    # Per take_daily_tasks può esistere una sola automazione di questo tipo per ogni board.
-    if typology_take_daily_tasks?
-      other_statuses = procedures_status.procedure.procedures_statuses.pluck(:id) - [ procedures_status.id ]
-      Procedures::StatusAutomation.where(procedures_status_id: other_statuses, typology: :take_daily_tasks).destroy_all
-    end
-  end
+  after_create :update_on_turbo_stream_kanban
+  after_destroy :update_on_turbo_stream_kanban
 
   # HELPERS
   ############################################################
@@ -62,18 +45,6 @@ class Procedures::StatusAutomation < ApplicationRecord
 
   def typology_order_deadline_asc_task?
     typology == "order_deadline_asc_task"
-  end
-
-  def typology_take_completed_task?
-    typology == "take_completed_task"
-  end
-
-  def typology_take_uncompleted_task?
-    typology == "take_uncompleted_task"
-  end
-
-  def typology_take_daily_tasks?
-    typology == "take_daily_tasks"
   end
 
   # OPERATIONS
@@ -104,5 +75,9 @@ class Procedures::StatusAutomation < ApplicationRecord
     Rails.logger.error e
     errors.add(:base, e.message)
     false
+  end
+
+  def update_on_turbo_stream_kanban
+    procedures_status.update_on_turbo_stream_kanban
   end
 end

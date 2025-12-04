@@ -181,27 +181,21 @@ class Procedures::Item < ApplicationRecord
 
   def create_on_turbo_stream_kanban
     # update kanban status component
-    update_kanban_status_component(procedures_status)
+    procedures_status.update_on_turbo_stream_kanban
   end
 
   def destroy_on_turbo_stream_kanban
     # update kanban status component
-    update_kanban_status_component(procedures_status)
+    procedures_status.update_on_turbo_stream_kanban
   end
 
   def update_on_turbo_stream_kanban
     # update kanban status component
-    update_kanban_status_component(procedures_status)
+    procedures_status.update_on_turbo_stream_kanban
     # update old kanban status component
     if procedures_status_id_before_last_save != procedures_status_id
       procedures_status_before_last_save = procedure.procedures_statuses.find_by(id: procedures_status_id_before_last_save)
-      update_kanban_status_component(procedures_status_before_last_save) if procedures_status_before_last_save
+      procedures_status_before_last_save.update_on_turbo_stream_kanban if procedures_status_before_last_save
     end
-  end
-
-  private
-
-  def update_kanban_status_component(status)
-    broadcast_replace_to dom_id(status.procedure), target: dom_id(status, "kanban-status"), partial: "procedures/kanban-status", locals: { status: status }
   end
 end
