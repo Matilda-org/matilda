@@ -1,6 +1,10 @@
 .c-modal-form {
   position: relative;
   padding-bottom: 53px;
+
+  @media screen and (max-width: 768px) {
+    padding-bottom: 65px;
+  }
 }
 
 .c-modal-form__fields {
