@@ -50,6 +50,60 @@ turbo_frame_key = dom_id(status, 'kanban-status')
             <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
           </ul>
         </div>
+                <% if procedure.resources_type_tasks? && !procedure.model %>
+          <div class="dropdown ms-1">
+            <button
+              class="btn btn-sm btn-link text-dark"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="bi bi-kanban-fill"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_take_tasks_to_status_action_path(id: procedure.id, status_id: status.id, tasks_type: 'not_completed_present_past') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                >
+                  Prendi task non completati scaduti
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_take_tasks_to_status_action_path(id: procedure.id, status_id: status.id, tasks_type: 'not_completed_future') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                >
+                  Prendi task non completati futuri
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_take_tasks_to_status_action_path(id: procedure.id, status_id: status.id, tasks_type: 'not_completed') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                >
+                  Prendi task non completati
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="<%= procedures_take_tasks_to_status_action_path(id: procedure.id, status_id: status.id, tasks_type: 'completed') %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
+                >
+                  Prendi task completati
+                </a>
+              </li>
+            </ul>
+          </div>
+        <% end %>
         <% if status.can_move?('left') %>
           <a
             class="btn btn-sm ms-1"

@@ -73,6 +73,7 @@ Rails.application.routes.draw do
   post "procedures/remove-status-action/:id/:status_id", to: "procedures#remove_status_action", as: "procedures_remove_status_action"
   post "procedures/move-status-action/:id/:status_id", to: "procedures#move_status_action", as: "procedures_move_status_action"
   post "procedures/toggle-status-automation-action/:id/:status_id", to: "procedures#toggle_status_automation_action", as: "procedures_toggle_status_automation_action"
+  post "procedures/take-tasks-to-status-action/:id/:status_id", to: "procedures#take_tasks_to_status_action", as: "procedures_take_tasks_to_status_action"
   post "procedures/add-item-action/:id", to: "procedures#add_item_action", as: "procedures_add_item_action"
   post "procedures/edit-item-action/:id/:item_id", to: "procedures#edit_item_action", as: "procedures_edit_item_action"
   post "procedures/remove-item-action/:id/:item_id", to: "procedures#remove_item_action", as: "procedures_remove_item_action"

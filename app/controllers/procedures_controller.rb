@@ -296,6 +296,36 @@ class ProceduresController < ApplicationController
     render "procedures/actions/show_status_automations"
   end
 
+  def take_tasks_to_status_action
+    return unless procedure_finder
+    return unless procedures_status_finder
+
+    if !@procedure.resources_type_tasks? || @procedure.model
+      flash[:danger] = "Azione non permessa"
+      redirect_to procedures_show_path(@procedure)
+      return false
+    end
+
+    tasks_type = params[:tasks_type] || "completed"
+    items = []
+    case tasks_type
+    when "completed"
+      items = @procedure.procedures_items.includes(:resource).select { |i| i.resource&.completed? }
+    when "not_completed"
+      items = @procedure.procedures_items.includes(:resource).select { |i| !i.resource&.completed? }
+    when "not_completed_future"
+      items = @procedure.procedures_items.includes(:resource).select { |i| i.resource && !i.resource.completed? && i.resource.deadline && i.resource.deadline > Date.today }
+    when "not_completed_present_past"
+      items = @procedure.procedures_items.includes(:resource).select { |i| i.resource && !i.resource.completed? && i.resource.deadline && i.resource.deadline <= Date.today }
+    end
+
+    items.each do |item|
+      item.update_columns(procedures_status_id: @status.id, order: 0) # order 0 to place item at top
+    end
+
+    render partial: "procedures/kanban", locals: { procedure: @procedure }
+  end
+
   # ITEMS
   ################################################################################
 
