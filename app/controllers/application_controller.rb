@@ -43,11 +43,6 @@ class ApplicationController < ActionController::Base
         Rails.logger.error e
       end
       begin
-        ProceduresStatusAutomationsManagerJob.perform_now
-      rescue StandardError => e
-        Rails.logger.error e
-      end
-      begin
         NotificationsManagerJob.perform_now
       rescue StandardError => e
         Rails.logger.error e
