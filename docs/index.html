@@ -14,6 +14,21 @@
                         secondary: '#19405d',
                         light: '#dde5f2',
                         dark: '#181d22',
+                        accent: '#ff6b35',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -23,7 +38,7 @@
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
     <!-- AOS (Animate On Scroll) -->
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
@@ -32,233 +47,434 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
         }
-        .hero-pattern {
-            background-color: #dde5f2;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23181d45' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        .gradient-bg {
+            background: linear-gradient(135deg, #dde5f2 0%, #ffffff 50%, #f0f4fa 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(24, 29, 69, 0.15);
+        }
+        .feature-icon {
+            background: linear-gradient(135deg, #181d45 0%, #19405d 100%);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff6b35;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 0;
         }
     </style>
 </head>
-<body class="bg-white text-dark">
+<body class="bg-white text-dark overflow-x-hidden">
+    <!-- Floating Background Elements - Adjusted for mobile -->
+    <div class="hidden md:block floating-shape w-64 h-64 bg-primary top-10 -left-32" style="animation: float 8s ease-in-out infinite;"></div>
+    <div class="hidden md:block floating-shape w-48 h-48 bg-secondary bottom-40 -right-12 lg:-right-24" style="animation: float 10s ease-in-out infinite 1s;"></div>
+    
     <!-- Header -->
-    <header class="bg-primary text-white py-6">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <img src="./icon.png" alt="Matilda Logo" class="h-12 mr-4">
-                <h1 class="text-3xl">Matilda</h1>
+    <header class="fixed w-full bg-white/90 backdrop-blur-md z-50 py-4 shadow-sm">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-primary rounded-lg">
+                    <img src="./icon.png" alt="Matilda Logo" class="h-8">
+                </div>
+                <h1 class="text-2xl font-bold text-primary">Matilda</h1>
             </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#features" class="nav-link text-dark font-medium hover:text-primary">Funzionalità</a>
+                <a href="#modules" class="nav-link text-dark font-medium hover:text-primary">Moduli</a>
+                <a href="#demo" class="nav-link text-dark font-medium hover:text-primary">Demo</a>
+            </nav>
             <div>
-                <a href="https://github.com/Matilda-org/matilda" class="border-2 border-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary transition duration-300">GitHub</a>
+                <a href="https://github.com/Matilda-org/matilda" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition duration-300 flex items-center space-x-2 shadow-md">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <span class="hidden sm:inline">GitHub</span>
+                </a>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-pattern py-20" data-aos="fade-in">
-        <div class="container mx-auto px-4 flex flex-col lg:flex-row items-center">
-            <div class="lg:w-1/2 mb-10 lg:mb-0 lg:pr-10">
-                <h2 class="text-4xl lg:text-5xl font-bold text-primary mb-6">Project manager for better companies</h2>
-                <p class="text-lg lg:text-xl mb-8">Matilda è un'<strong>applicazione web di project management</strong> con funzionalità avanzate per la <strong>gestione delle task e la digitalizzazione dei processi aziendali</strong>.</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#features" class="border-2 border-primary bg-primary text-white px-6 py-3 rounded-lg text-center hover:bg-opacity-90 transition duration-300">Scopri le funzionalità</a>
-                    <a href="#demo" class="border-2 border-primary text-primary px-6 py-3 rounded-lg text-center hover:bg-primary hover:text-white transition duration-300">Richiedi una demo</a>
+    <section class="gradient-bg pt-32 pb-20 relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0 lg:pr-10 relative z-10">
+                    <div class="inline-block bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full mb-6 animate-fade-in">
+                        ✨ Project Management Evoluto
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+                        Project manager
+                        <span class="text-accent" style="font-size: 0.7em">for better companies</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-dark/80 mb-8 leading-relaxed">
+                        Matilda è un'<b>applicazione web di project management</b> con funzionalità avanzate per la <b>gestione delle task e la digitalizzazione dei processi aziendali</b>.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#demo" class="bg-primary text-white px-6 py-4 rounded-xl font-semibold hover:bg-opacity-90 transition duration-300 shadow-lg hover:shadow-xl text-center flex items-center justify-center">
+                            <span>Richiedi Demo</span>
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                        <a href="#features" class="border-2 border-primary text-primary px-6 py-4 rounded-xl font-semibold hover:bg-primary hover:text-white transition duration-300 text-center">
+                            Scopri le Funzionalità
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="lg:w-1/2">
-                <img src="./preview.gif" alt="Matilda Preview" class="rounded-lg shadow-xl">
+                <div class="lg:w-1/2 relative z-10 mt-12 lg:mt-0">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-2xl blur-xl"></div>
+                        <img src="./preview.gif" alt="Matilda Preview" class="relative rounded-xl shadow-2xl border-8 border-white w-full">
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Features Overview -->
-    <section id="features" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div data-aos="fade-up">
-                <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12">Un'applicazione modulare per la gestione dei progetti</h2>
-                <p class="text-lg text-center max-w-3xl mx-auto mb-16">Matilda è <strong>strutturato in moduli</strong>. Ogni modulo fornisce funzionalità specifiche integrandosi con gli altri moduli per creare un sistema completo e personalizzabile.</p>
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6">
+                    Tutto ciò che ti serve in
+                    <span class="text-accent">un'unica piattaforma</span>
+                </h2>
+                <p class="text-lg sm:text-xl text-dark/70 max-w-3xl mx-auto">
+                    Matilda combina task management, gestione progetti e automazione in un'ecosistema <strong>modulare e completamente integratob</strong>.
+                </p>
             </div>
-            <!-- Task Section -->
-            <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
-                    <div class="md:w-1/2">
-                        <h3 class="text-2xl font-bold text-secondary mb-4">Task</h3>
-                        <p class="mb-4">Le task rappresentano le attività quotidiane svolte dai membri del team. Ogni task è un'unità di lavoro che può essere assegnata a un utente e monitorata nel tempo.</p>
-                        <p class="mb-4">Le task sono definite da un titolo, una descrizione, una scadenza e un tempo stimato di lavoro; possono inoltre includere una <strong>checklist</strong> di sotto-attività da portare a termine.</p>
-                        <p class="mb-4">Le task possono essere <strong>assegnate a un utente</strong> e possono essere seguite da altri utenti per monitorare il progresso del lavoro.</p>
-                        <p class="mb-4">Le task possono essere anche impostate come "ripetitive", in modo da essere automaticamente create in base a una <strong>pianificazione</strong> definita.</p>
-                        <p>Per ogni task può essere effettuato il <strong>time tracking</strong>, in modo da registrare il tempo effettivo impiegato per completare il lavoro.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                <!-- Task Card -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover border border-light" data-aos="fade-up">
+                    <div class="feature-icon w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
                     </div>
-                    <div class="md:w-1/2">
-                        <div class="bg-light p-4 rounded-lg">
-                            <h4 class="text-lg font-semibold text-primary mb-4">Visualizzazione Task</h4>
-                            <p class="mb-4">La sezione <i>Task</i> consente di visualizzare in modo centralizzato tutte le attività gestite. La visualizzazione può essere attivata in due modalità:</p>
-                            <ul class="list-disc list-inside mb-4 ml-4">
-                                <li class="mb-2"><strong>Calendario</strong>: consente di visualizzare le task in un calendario settimanale per identificare le scadenze e il carico di lavoro giorno per giorno</li>
-                                <li><strong>Utenti</strong>: consente di visualizzare le task giornaliere per ogni utente, in modo da identificare il carico di lavoro di ciascun membro del team</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-primary mb-4">Task Intelligenti</h3>
+                    <p class="text-dark/70 mb-6">Gestisci attività con checklist, time tracking, pianificazione automatica e visualizzazione multi-prospetto.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Checklist avanzate</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Time tracking integrato</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Task ripetitive automatiche</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
-                    <div>
-                        <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Visualizzazione calendario</p>
+
+                <!-- Projects Card -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover border border-light" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
                     </div>
-                    <div>
-                        <img src="./screenshots/tasks-users.jpg" alt="Utenti dei task" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Visualizzazione utenti</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-primary mb-4">Progetti Completi</h3>
+                    <p class="text-dark/70 mb-6">Gestione budget, board Kanban, documentazione e collaborazione in un unico spazio.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Monitoraggio budget in tempo reale</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Board di progetto personalizzate</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Condivisione con clienti</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Boards Card -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover border border-light" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
                     </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-primary mb-4">Board Kanban</h3>
+                    <p class="text-dark/70 mb-6">Visualizza e gestisci workflow con board aziendali e di progetto completamente personalizzabili.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Board aziendali e di progetto</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Modelli standardizzabili</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                            <span>Processi automatizzati</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Projects Section -->
-            <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
-                    <div class="w-full">
-                        <h3 class="text-2xl font-bold text-secondary mb-4">Progetti</h3>
-                        <p class="mb-4">I progetti sono l'elemento centrale dell'applicazione. Ogni progetto è un <strong>aggregatore di informazioni</strong> legati ad una commessa. Ogni progetto può utilizzare le seguenti funzionalità:</p>
-                        <ul class="list-disc list-inside mt-4 ml-4">
-                            <li class="mb-2"><strong>Gestione budget</strong>: consente di impostare il budget del progetto in termini economici e orari e monitorare in real-time l'utilizzo delle risorse</li>
-                            <li class="mb-2"><strong>Board di progetto</strong>: consente di creare specifiche Kanban dove gestire le diverse task del progetto</li>
-                            <li class="mb-2"><strong>Note</strong>: consente di gestire note e documenti testuali legati al progetto e di condividerli pubblicamente con i clienti</li>
-                            <li class="mb-2"><strong>Partecipanti</strong>: consente di gestire i partecipanti al progetto e le loro responsabilità</li>
-                            <li class="mb-2"><strong>Board aziendali</strong>: consente di inserire il progetto in uno o più Kanban che rappresentano i processi aziendali per monitorare e tracciare l'avanzamento dei lavori</li>
-                            <li class="mb-2"><strong>Allegati</strong>: consente di caricare e gestire documenti e file legati al progetto</li>
-                            <li><strong>Presentazioni</strong>: consente di creare presentazioni visuali (mockup, wireframe) legate al progetto</li>
-                        </ul>
+            <!-- Feature Details -->
+            <div class="space-y-24">
+                <!-- Task Section -->
+                <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12" data-aos="fade-up">
+                    <div class="lg:w-1/2">
+                        <div class="relative">
+                            <div class="absolute -inset-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl blur-xl"></div>
+                            <img src="./screenshots/tasks-calendar.jpg" alt="Calendario dei task" class="relative rounded-xl shadow-xl w-full">
+                        </div>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
-                    <div>
-                        <img src="./screenshots/projects-show-1.jpg" alt="Vista progetto 1" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Vista principale del progetto</p>
-                    </div>
-                    <div>
-                        <img src="./screenshots/projects-show-2.jpg" alt="Vista progetto 2" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Vista principale del progetto</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Boards Section -->
-            <div class="mb-20">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8" data-aos="fade-up">
-                    <div class="md:w-1/2">
-                        <h3 class="text-2xl font-bold text-secondary mb-4">Board</h3>
-                        <p class="mb-4">Le board sono uno strumento fondamentale per la gestione dei progetti. Le board consentono di visualizzare le task e i progetti in modo chiaro e intuitivo sotto forma di <strong>Kanban</strong>. Ogni board è composta da una serie di colonne, ognuna delle quali rappresenta uno stato specifico di un processo aziendale.</p>
-                        <p class="mb-4">Le colonne possono essere personalizzate in base alle esigenze dell'azienda e possono essere utilizzate per rappresentare stati come "Da fare", "In corso" e "Completato".</p>
-                        <p>Le board possono essere di due tipologie:</p>
-                        <ul class="list-disc list-inside mt-4 ml-4">
-                            <li class="mb-2"><strong>Board aziendali</strong>: Kanban i cui elementi sono i progetti registrati nell'applicazione</li>
-                            <li><strong>Board di progetto</strong>: Kanban i cui elementi sono le task registrate all'interno di uno specifico progetto</li>
-                        </ul>
-                    </div>
-                    <div class="md:w-1/2">
-                        <div class="bg-light p-4 rounded-lg">
-                            <h4 class="text-lg font-semibold text-primary mb-4">Standardizzare i processi</h4>
-                            <p class="mb-4">All'interno della sezione <i>Board</i> è possibile gestire anche i <strong>modelli di board</strong>, che consentono di creare specifici modelli riutilizzabili nei diversi progetti.</p>
-                            <p>I modelli permettono di <strong>standardizzare i processi aziendali</strong> e di risparmiare tempo nella creazione di nuove board.</p>
+                    <div class="lg:w-1/2">
+                        <div class="inline-flex items-center px-4 py-2 bg-accent/10 text-accent rounded-full font-medium mb-4">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-2"></div>
+                            Task Management
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-6">Gestione Task Avanzata</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-dark mb-1">Visualizzazione Multi-prospetto</h4>
+                                    <p class="text-dark/70">Calendario settimanale o vista per utente per ottimizzare il carico di lavoro.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-dark mb-1">Time Tracking Automatico</h4>
+                                    <p class="text-dark/70">Monitora il tempo effettivo e confrontalo con le stime iniziali.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-dark mb-1">Task Ripetitive</h4>
+                                    <p class="text-dark/70">Programma attività ricorrenti che si creano automaticamente.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up">
-                    <div>
-                        <img src="./screenshots/board-company.jpg" alt="Board aziendale" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Board aziendale</p>
+
+                <!-- Projects Section -->
+                <div class="flex flex-col lg:flex-row-reverse items-center gap-8 lg:gap-12" data-aos="fade-up">
+                    <div class="lg:w-1/2">
+                        <div class="relative">
+                            <div class="absolute -inset-4 bg-gradient-to-r from-secondary/10 to-primary/10 rounded-2xl blur-xl"></div>
+                            <img src="./screenshots/projects-show-1.jpg" alt="Vista progetto" class="relative rounded-xl shadow-xl w-full">
+                        </div>
                     </div>
-                    <div>
-                        <img src="./screenshots/board-project.jpg" alt="Board di progetto" class="rounded-lg shadow-lg w-full">
-                        <p class="text-center mt-2 text-sm text-gray-600">Board di progetto</p>
+                    <div class="lg:w-1/2">
+                        <div class="inline-flex items-center px-4 py-2 bg-accent/10 text-accent rounded-full font-medium mb-4">
+                            <div class="w-2 h-2 bg-accent rounded-full mr-2"></div>
+                            Gestione Progetti
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-6">Progetti Strutturati</h3>
+                        <p class="text-dark/70 mb-6">Ogni progetto è un hub completo che integra tutte le informazioni necessarie per il successo della commessa.</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-light/50 rounded-xl p-4">
+                                <div class="text-primary font-bold mb-2">💰 Budget</div>
+                                <p class="text-sm">Monitora risorse economiche e orarie in tempo reale</p>
+                            </div>
+                            <div class="bg-light/50 rounded-xl p-4">
+                                <div class="text-primary font-bold mb-2">📋 Note</div>
+                                <p class="text-sm">Documentazione condivisibile con i clienti</p>
+                            </div>
+                            <div class="bg-light/50 rounded-xl p-4">
+                                <div class="text-primary font-bold mb-2">👥 Partecipanti</div>
+                                <p class="text-sm">Gestione ruoli e responsabilità</p>
+                            </div>
+                            <div class="bg-light/50 rounded-xl p-4">
+                                <div class="text-primary font-bold mb-2">📎 Allegati</div>
+                                <p class="text-sm">File e documenti centralizzati</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Additional Features -->
-    <section class="py-16 bg-light">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl lg:text-4xl font-bold text-primary text-center mb-12" data-aos="fade-up">Funzionalità Aggiuntive</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Additional Modules -->
+    <section id="modules" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6">
+                    Moduli <span class="text-accent">Integrati</span>
+                </h2>
+                <p class="text-lg sm:text-xl text-dark/70 max-w-3xl mx-auto">
+                    Scegli solo i moduli di cui hai bisogno e integrali perfettamente nel tuo workflow.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Credenziali -->
-                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
-                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover" data-aos="fade-up">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-primary/10 rounded-xl">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-light px-3 py-1 rounded-full">Sicurezza</span>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Credenziali</h3>
-                    <p>La sezione <i>Credenziali</i> consente di gestire le <strong>credenziali aziendali</strong> (username, password). Le credenziali vengono <strong>crittografate</strong> e memorizzate in modo sicuro all'interno dell'applicazione.</p>
+                    <h3 class="text-xl font-bold text-primary mb-3">Credenziali</h3>
+                    <p class="text-dark/70">Gestione sicura delle credenziali aziendali con crittografia avanzata e accesso controllato.</p>
                 </div>
 
                 <!-- Presentazioni -->
-                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
-                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-primary/10 rounded-xl">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-light px-3 py-1 rounded-full">Design</span>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Presentazioni</h3>
-                    <p>La sezione <i>Presentazioni</i> consente di creare <strong>presentazioni visive</strong> legate ai progetti. Le presentazioni possono essere create utilizzando immagini e testi. È possibile utilizzare le presentazioni per creare <strong>wireframe e mockup</strong>.</p>
+                    <h3 class="text-xl font-bold text-primary mb-3">Presentazioni</h3>
+                    <p class="text-dark/70">Crea wireframe e mockup interattivi direttamente collegati ai tuoi progetti.</p>
                 </div>
 
                 <!-- Bacheca -->
-                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
-                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                        </svg>
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-primary/10 rounded-xl">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-light px-3 py-1 rounded-full">Comunicazione</span>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Bacheca</h3>
-                    <p>La sezione <i>Bacheca</i> consente di pubblicare <strong>articoli e notizie aziendali</strong> visualizzabili da tutti gli utenti registrati nell'applicazione.</p>
+                    <h3 class="text-xl font-bold text-primary mb-3">Bacheca</h3>
+                    <p class="text-dark/70">Condividi notizie e aggiornamenti aziendali in tempo reale con tutto il team.</p>
                 </div>
 
                 <!-- Utenti -->
-                <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up">
-                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover" data-aos="fade-up">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-primary/10 rounded-xl">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-light px-3 py-1 rounded-full">Gestione</span>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Utenti</h3>
-                    <p>La sezione <i>Utenti</i> consente di gestire gli utenti dell'applicazione e i <strong>relativi permessi</strong>. La gestione dei permessi permette di personalizzare l'accesso alle funzionalità dell'applicazione per ogni utente in base al suo ruolo e alle sue responsabilità.</p>
+                    <h3 class="text-xl font-bold text-primary mb-3">Utenti</h3>
+                    <p class="text-dark/70">Gestione granulare dei permessi e ruoli personalizzabili per ogni membro del team.</p>
                 </div>
 
                 <!-- Assistente Virtuale -->
-                <div class="bg-white p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1" data-aos="fade-up">
-                    <div class="bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover md:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-accent/10 rounded-xl">
+                            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-accent/10 text-accent px-3 py-1 rounded-full">AI</span>
                     </div>
-                    <h3 class="text-xl font-bold text-secondary mb-3">Assistente Virtuale</h3>
-                    <p>L'<strong>assistente virtuale</strong> consente di sfruttare funzionalità di <strong>intelligenza artificiale</strong> all'interno dell'applicazione. L'assistente virtuale può essere utilizzato sotto forma di chatbot per <strong>interagire con i dati dell'applicazione</strong>.</p>
+                    <h3 class="text-xl font-bold text-primary mb-3">Assistente AI</h3>
+                    <p class="text-dark/70">Chatbot intelligente che interagisce con i dati del progetto e aiuta nelle decisioni.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Demo Request Section -->
-    <section id="demo" class="py-16 bg-white" data-aos="fade-up">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-8">Richiedi una Demo</h2>
-            <p class="text-lg max-w-3xl mx-auto mb-8">Il progetto è <strong>Open Source</strong> e può essere <strong>scaricato e utilizzato liberamente</strong>. Per richiedere una demo completa dell'applicazione è possibile contattare il team di sviluppo.</p>
-            <a href="mailto:matilda@gregoriogalante.com" class="inline-block bg-secondary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition duration-300">Contattaci per una demo</a>
+    <!-- CTA Section -->
+    <section id="demo" class="py-20 bg-gradient-to-r from-primary to-secondary text-white">
+        <div class="container mx-auto px-6 text-center">
+            <div class="max-w-3xl mx-auto" data-aos="fade-up">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+                    Pronto a trasformare il tuo project management?
+                </h2>
+                <p class="text-lg sm:text-xl mb-8 opacity-90">
+                    Matilda è <strong>Open Source</strong> e completamente personalizzabile. Richiedi una demo personalizzata per vedere come può rivoluzionare il tuo workflow.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="mailto:matilda@gregoriogalante.com" class="bg-white text-primary px-6 py-4 rounded-xl font-bold hover:bg-opacity-90 transition duration-300 shadow-lg flex items-center justify-center">
+                        🚀 Richiedi Demo
+                    </a>
+                    <a href="https://github.com/Matilda-org/matilda" class="bg-transparent border-2 border-white px-6 py-4 rounded-xl font-bold hover:bg-white hover:text-primary transition duration-300">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            Esplora il Codice
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white py-12" data-aos="fade-up">
-        <div class="container mx-auto px-4">
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="flex items-center mb-6 md:mb-0">
-                    <img src="./icon.png" alt="Matilda Logo" class="h-10 mr-4">
-                    <h2 class="text-2xl">Matilda</h2>
+                    <div class="p-2 bg-white rounded-lg mr-4">
+                        <img src="./icon.png" alt="Matilda Logo" class="h-8">
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">Matilda</h2>
+                        <p class="text-light/70">Project manager for better companies</p>
+                    </div>
                 </div>
                 <div class="text-center md:text-right">
-                    <p class="mb-2">Project manager for better companies</p>
-                    <a href="https://github.com/Matilda-org/matilda" class="text-light hover:text-white transition duration-300">GitHub Repository</a>
+                    <p class="text-light/70 mb-4">© 2024 Matilda. Tutti i diritti riservati.</p>
+                    <a href="https://github.com/Matilda-org/matilda" class="text-light hover:text-white transition duration-300 inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub Repository
+                    </a>
                 </div>
             </div>
         </div>
@@ -268,7 +484,8 @@
     <script>
         AOS.init({
             duration: 800,
-            once: true
+            once: true,
+            offset: 100
         });
     </script>
 </body>
