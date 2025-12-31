@@ -61,7 +61,7 @@
   }
 
   .card-body {
-    height: calc(100vh - 230px);
+    height: calc(100svh - 230px);
     padding: 0;
   }
 
@@ -73,7 +73,7 @@
     }
 
     .card-body {
-      height: calc(100vh - 158px);
+      height: calc(100svh - 158px);
     }
   }
 }

@@ -1,7 +1,7 @@
 <% if @presentation&.shareable? %>
 
 <% if @page %>
-  <div class="w-100 mt-3 d-flex justify-content-center align-items-center" style="height: calc(100vh - 58px - 30px);">
+  <div class="w-100 mt-3 d-flex justify-content-center align-items-center" style="height: calc(100svh - 58px - 30px);">
     <%= render 'presentations/shared/player', presentation: @presentation, page: @page, ratio: true %>
   </div>
 <% else %>
