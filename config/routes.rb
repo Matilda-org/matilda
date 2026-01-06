@@ -65,6 +65,7 @@ Rails.application.routes.draw do
   post "procedures/archive-action/:id", to: "procedures#archive_action", as: "procedures_archive_action"
   post "procedures/unarchive-action/:id", to: "procedures#unarchive_action", as: "procedures_unarchive_action"
   post "procedures/toggle-show-archived-projects-action/:id", to: "procedures#toggle_show_archived_projects_action", as: "procedures_toggle_show_archived_projects_action"
+  post "procedures/remove-archived-projects-action/:id", to: "procedures#remove_archived_projects_action", as: "procedures_remove_archived_projects_action"
   post "procedures/clone-action/:id", to: "procedures#clone_action", as: "procedures_clone_action"
   post "procedures/destroy-action/:id", to: "procedures#destroy_action", as: "procedures_destroy_action"
   post "procedures/add-status-action/:id", to: "procedures#add_status_action", as: "procedures_add_status_action"

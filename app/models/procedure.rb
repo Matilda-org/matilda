@@ -1,4 +1,5 @@
 class Procedure < ApplicationRecord
+  include ActionView::RecordIdentifier
   include Cachable
   include UserPreferrable
 
@@ -54,11 +55,13 @@ class Procedure < ApplicationRecord
 
   # be sure archived procedures are not in users prefer
   after_save do
-    if archived
-      Users::Prefer.where(
-        resource_type: "Procedure",
-        resource_id: id
-      ).destroy_all
+    Users::Prefer.where(resource_type: "Procedure", resource_id: id).destroy_all if archived
+  end
+
+  # update kanban when "show_archived_projects" change
+  after_update do
+    if saved_change_to_show_archived_projects?
+      update_on_turbo_stream_kanban
     end
   end
 
@@ -211,6 +214,10 @@ class Procedure < ApplicationRecord
     Rails.logger.error e
     errors.add(:base, e.message)
     false
+  end
+
+  def update_on_turbo_stream_kanban
+    broadcast_replace_to dom_id(self), target: dom_id(self, "kanban"), partial: "procedures/kanban", locals: { procedure: self }
   end
 
   # CLASS

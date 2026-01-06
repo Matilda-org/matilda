@@ -79,7 +79,16 @@ class ProceduresController < ApplicationController
     return unless validate_policy!("procedures_edit")
     return unless procedure_finder
 
-    @procedure.update(show_archived_projects: !@procedure.show_archived_projects)
+    @procedure.update(show_archived_projects: !@procedure.show_archived_projects) if @procedure.resources_type_projects? && !@procedure.model
+
+    redirect_to procedures_show_path(@procedure)
+  end
+
+  def remove_archived_projects_action
+    return unless validate_policy!("procedures_edit")
+    return unless procedure_finder
+
+    @procedure.procedures_items.includes(:resource).select { |item| item.resource&.archived? }.each(&:destroy) if @procedure.resources_type_projects? && !@procedure.model
 
     redirect_to procedures_show_path(@procedure)
   end

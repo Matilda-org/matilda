@@ -38,6 +38,23 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
         </li>
       <% end %>
 
+      <% if @procedure.resources_type_projects? && !@procedure.model %>
+        <li data-user-policies-target="item" data-policy="procedures_edit">
+          <a class="dropdown-item" href="<%= procedures_remove_archived_projects_action_path(id: @procedure.id) %>" data-turbo-frame="_self" data-turbo-method="post">
+            Elimina progetti archiviati
+          </a>
+        </li>
+        <li data-user-policies-target="item" data-policy="procedures_edit">
+          <a class="dropdown-item" href="<%= procedures_toggle_show_archived_projects_action_path(id: @procedure.id) %>" data-turbo-frame="_self" data-turbo-method="post">
+            <% if @procedure.show_archived_projects %>
+              Nascondi progetti archiviati
+            <% else %>
+              Mostra progetti archiviati
+            <% end %>
+          </a>
+        </li>
+      <% end %>
+
       <li data-user-policies-target="item" data-policy="procedures_edit">
         <a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit', id: @procedure.id) %>" data-turbo-frame="action">
           Modifica board
@@ -74,12 +91,6 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
   </div>
 
   <div class="btn-group" role="group">
-    <% if !@procedure.model && @procedure.resources_type_projects? %>
-      <%= link_to procedures_toggle_show_archived_projects_action_path(@procedure), data: { turbo_method: :post, turbo_frame: dom_id(@procedure, 'kanban'), controller: 'tooltip', tooltip: 'Mostra/nascondi progetti archiviati' }, class: 'btn btn-primary' do %>
-        <i class="bi bi-eye"></i>
-      <% end %>
-    <% end %>
-
     <% if !@procedure.model %>
       <a
         type="button"
