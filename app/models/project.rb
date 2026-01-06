@@ -93,6 +93,7 @@ class Project < ApplicationRecord
     procedures_as_item.each do |procedure|
       procedure.cached_project_items(true)
     end
+    cached_percentage_budget_used(true)
   end
   after_destroy_commit do
     procedures.each do |procedure|
@@ -101,6 +102,7 @@ class Project < ApplicationRecord
     procedures_as_item.each do |procedure|
       procedure.cached_project_items(true)
     end
+    cached_percentage_budget_used(true)
   end
 
   # slack sync
