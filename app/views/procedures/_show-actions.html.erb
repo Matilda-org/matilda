@@ -41,7 +41,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       <% if @procedure.resources_type_projects? && !@procedure.model %>
         <li data-user-policies-target="item" data-policy="procedures_edit">
           <a class="dropdown-item" href="<%= procedures_remove_archived_projects_action_path(id: @procedure.id) %>" data-turbo-frame="_self" data-turbo-method="post">
-            Elimina progetti archiviati
+            Rimuovi progetti archiviati
           </a>
         </li>
         <li data-user-policies-target="item" data-policy="procedures_edit">
