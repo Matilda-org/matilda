@@ -126,20 +126,20 @@ class TasksControllerTest < ActionController::TestCase
 
   test "ping_track_action" do
     task = tasks(:one)
-    track = task.tasks_tracks.create!(start_at: 10.minutes.ago, user: @user)
-    assert track.ping_at <= 10.minutes.ago
+    track = task.tasks_tracks.create!(start_at: 1.minutes.ago, user: @user)
+    assert track.ping_at <= 1.minutes.ago
     matilda_controller_endpoint(:post, :ping_track_action,
       params: { id: task.id, track_id: track.id },
       policy: "tasks_track"
     )
 
     track.reload
-    assert track.ping_at > 10.minutes.ago
+    assert track.ping_at > 1.minutes.ago
   end
 
   test "end_track_action" do
     task = tasks(:one)
-    track = task.tasks_tracks.create!(start_at: 10.minutes.ago, user: @user)
+    track = task.tasks_tracks.create!(start_at: 1.minutes.ago, user: @user)
     assert_nil track.end_at
     matilda_controller_endpoint(:post, :end_track_action,
       params: { id: task.id, track_id: track.id },
