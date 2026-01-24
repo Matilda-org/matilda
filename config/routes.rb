@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root "application#index"
   get "service-worker.js", to: "application#serviceworker", as: "serviceworker"
-  get "/ping", to: "application#ping", as: :ping
+  get "/up", to: "application#up", as: "up"
   get "cacheclear", to: "application#cacheclear", as: "cacheclear"
   get "jobsrun", to: "application#jobsrun", as: "jobsrun"
 

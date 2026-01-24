@@ -235,6 +235,11 @@ class TasksController < ApplicationController
     return unless task_finder
     return unless tasks_track_finder
 
+    unless @track.end_at.blank?
+      render json: { error: "Track already ended" }, status: 422
+      return
+    end
+
     @track.update(ping_at: Time.now)
 
     render json: {}

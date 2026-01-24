@@ -52,8 +52,16 @@ export default class extends Controller {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-    }}).then(() => {
-      console.log('Ping tracking!')
+    }}).then((response) => {
+      console.log('Ping tracking!', response.status)
+      if (response.status == 422) { // Unprocessable Entity - track ended
+        if (this.intervalUI) clearInterval(this.intervalUI)
+        if (this.intervalPing) clearInterval(this.intervalPing)
+        this.element.parentNode.removeChild(this.element)
+        flashOff()
+      }
+    }).catch((error) => {
+      console.error('Error pinging tracking:', error)
     })
   }
 

@@ -7,21 +7,21 @@
 class ApplicationController < ActionController::Base
   include ActionView::RecordIdentifier
 
-  before_action :load_global_cache, except: :serviceworker
-  before_action :set_session_user_id, except: :serviceworker
-  skip_before_action :verify_authenticity_token, only: :serviceworker
+  before_action :load_global_cache, except: [ :up, :serviceworker ]
+  before_action :set_session_user_id, except: [ :up, :serviceworker ]
+  skip_before_action :verify_authenticity_token, only: [ :up, :serviceworker ]
 
   def index
     return redirect_to(users_show_path(@session_user_id)) if @session_user_id
     User.any? ? redirect_to(authentication_login_path) : redirect_to(authentication_first_run_path)
   end
 
-  def serviceworker
-    render action: "serviceworker", layout: false
+  def up
+    render plain: "OK"
   end
 
-  def ping
-    render plain: "Pong"
+  def serviceworker
+    render action: "serviceworker", layout: false
   end
 
   def cacheclear
