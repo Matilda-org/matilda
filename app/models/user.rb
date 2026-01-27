@@ -71,6 +71,12 @@ class User < ApplicationRecord
     @active_tasks_track ||= tasks_tracks.not_closed.order(start_at: :desc).first
   end
 
+  def daily_tasks_tracks_time_spent
+    @daily_tasks_tracks_time_spent ||= tasks_tracks.where(start_at: Time.now.beginning_of_day..Time.now.end_of_day).sum do |track|
+      track.duration
+    end
+  end
+
   def image_profile_thumb
     image_profile.variant(resize: "100x100")
   end

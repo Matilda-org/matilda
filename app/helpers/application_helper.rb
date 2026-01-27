@@ -34,9 +34,9 @@ module ApplicationHelper
   # Convert tracked time in seconds to "HHh MMm" format
   def track_time(seconds)
     seconds_diff = seconds
-    hours = seconds_diff / 3600
+    hours = (seconds_diff / 3600).floor
     seconds_diff -= hours * 3600
-    minutes = seconds_diff / 60
+    minutes = (seconds_diff / 60).floor
 
     "#{hours.to_s.rjust(2, '0')}h #{minutes.to_s.rjust(2, '0')}m"
   end

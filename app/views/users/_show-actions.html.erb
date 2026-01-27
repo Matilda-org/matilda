@@ -1,6 +1,14 @@
 <% if @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_edit_password') || @session_user.policy?('users_destroy') %>
 
 <div class="d-flex justify-content-center align-items-center">
+  <span
+    class="badge bg-<%= @user.daily_tasks_tracks_time_spent.positive? ? 'primary' : 'secondary' %> me-2 px-3 py-2"
+    data-controller="tooltip"
+    data-tooltip="Tempo tracciato oggi"
+  >
+    <i class="bi bi-hourglass-split"></i> <%= track_time(@user.daily_tasks_tracks_time_spent) %>
+  </span>
+
   <div class="dropdown">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="bi bi-three-dots"></i>
