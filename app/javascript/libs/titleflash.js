@@ -37,7 +37,6 @@ export function flashOn(text, speed = 2000) {
   const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
     if (!icon.href.includes('/favicon')) {
-      console.log('[DEBUG] Not changing icon because it does not include "/favicon":', icon.href)
       return
     }
     let href = icon.href.split('.')
@@ -52,7 +51,6 @@ export function flashOff() {
   const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
     if (!icon.href.includes('/favicon')) {
-      console.log('[DEBUG] Not changing icon because it does not include "/favicon":', icon.href)
       return
     }
     let href = icon.href.split('.')
