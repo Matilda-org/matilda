@@ -34,8 +34,9 @@ window.pageTitleNotification = (function () {
 export function flashOn(text, speed = 2000) {
   pageTitleNotification.on(text, speed)
 
-  const headLinkIcons = document.querySelectorAll('head link[rel="icon"], head link[rel="apple-touch-icon"]')
+  const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
+    if (!icon.href.startsWith('/favicon')) return
     let href = icon.href.split('.')
     href[href.length - 2] = href[href.length - 2] + '-alert'
     icon.href = href.join('.')
@@ -45,8 +46,9 @@ export function flashOn(text, speed = 2000) {
 export function flashOff() {
   pageTitleNotification.off()
 
-  const headLinkIcons = document.querySelectorAll('head link[rel="icon"], head link[rel="apple-touch-icon"]')
+  const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
+    if (!icon.href.startsWith('/favicon')) return
     let href = icon.href.split('.')
     href[href.length - 2] = href[href.length - 2].replace('-alert', '')
     icon.href = href.join('.')
