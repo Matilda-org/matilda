@@ -36,7 +36,7 @@ export function flashOn(text, speed = 2000) {
 
   const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
-    if (!icon.href.startsWith('/favicon')) return
+    if (!icon.href.includes('/favicon')) return
     let href = icon.href.split('.')
     href[href.length - 2] = href[href.length - 2] + '-alert'
     icon.href = href.join('.')
@@ -48,7 +48,7 @@ export function flashOff() {
 
   const headLinkIcons = document.querySelectorAll('head link[rel="icon"]')
   headLinkIcons.forEach((icon) => {
-    if (!icon.href.startsWith('/favicon')) return
+    if (!icon.href.includes('/favicon')) return
     let href = icon.href.split('.')
     href[href.length - 2] = href[href.length - 2].replace('-alert', '')
     icon.href = href.join('.')
