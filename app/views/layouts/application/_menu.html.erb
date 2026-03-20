@@ -42,8 +42,4 @@ operative ||= false
       <%= render 'layouts/application/navbar__folders', base_path: credentials_path, show_for: 'credentials' %>
     </ul>
   </li>
-
-  <li class="nav-item" data-user-policies-target="item" data-policy="presentations_index" data-policy-hide>
-    <a class="nav-link w-100 <%= @_navbar == 'presentations' ? 'active' : '' %>" href="<%= presentations_path %>" data-turbo-frame="_top"><%= nav_icon('presentations') %> <span class="ms-2">Presentazioni</span></a>
-  </li>
 <% end %>

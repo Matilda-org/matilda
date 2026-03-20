@@ -6,7 +6,6 @@ module ApplicationHelper
     return raw "<i class=\"bi bi-kanban-fill #{classes}\"></i>" if key == "procedures"
     return raw "<i class=\"bi bi-shield-fill #{classes}\"></i>" if key == "credentials"
     return raw "<i class=\"bi bi-house-fill #{classes}\"></i>" if key == "dashboard"
-    return raw "<i class=\"bi bi-collection-play-fill #{classes}\"></i>" if key == "presentations"
     return raw "<i class=\"bi bi-tools #{classes}\"></i>" if key == "tools"
     return raw "<i class=\"bi bi-gear-fill #{classes}\"></i>" if key == "settings"
     return raw "<i class=\"bi bi-newspaper #{classes}\"></i>" if key == "posts"
@@ -26,7 +25,6 @@ module ApplicationHelper
     return "Dashboard - Matilda" if key == "dashboard"
     return "Impostazioni - Matilda" if key == "settings"
     return "Strumenti - Matilda" if key == "tools"
-    return "Presentazioni - Matilda" if key == "presentations"
 
     "Matilda"
   end

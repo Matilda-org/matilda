@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_01_170210) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_20_110314) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -94,52 +94,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_170210) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_posts_on_user_id"
-  end
-
-  create_table "presentations", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.integer "project_id"
-    t.integer "width_px"
-    t.integer "height_px"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "share_code"
-    t.index ["project_id"], name: "index_presentations_on_project_id"
-  end
-
-  create_table "presentations_actions", force: :cascade do |t|
-    t.integer "presentation_id", null: false
-    t.integer "presentations_page_id", null: false
-    t.float "position_x", default: 0.0
-    t.float "position_y", default: 0.0
-    t.integer "page_destination"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["presentation_id"], name: "index_presentations_actions_on_presentation_id"
-    t.index ["presentations_page_id"], name: "index_presentations_actions_on_presentations_page_id"
-  end
-
-  create_table "presentations_notes", force: :cascade do |t|
-    t.integer "presentation_id", null: false
-    t.integer "presentations_page_id", null: false
-    t.float "position_x", default: 0.0
-    t.float "position_y", default: 0.0
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["presentation_id"], name: "index_presentations_notes_on_presentation_id"
-    t.index ["presentations_page_id"], name: "index_presentations_notes_on_presentations_page_id"
-  end
-
-  create_table "presentations_pages", force: :cascade do |t|
-    t.integer "presentation_id", null: false
-    t.string "title"
-    t.string "image_name"
-    t.integer "order", default: 1
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["presentation_id"], name: "index_presentations_pages_on_presentation_id"
   end
 
   create_table "procedures", force: :cascade do |t|
@@ -362,12 +316,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_170210) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "notifications", "users"
   add_foreign_key "posts", "users"
-  add_foreign_key "presentations", "projects"
-  add_foreign_key "presentations_actions", "presentations"
-  add_foreign_key "presentations_actions", "presentations_pages"
-  add_foreign_key "presentations_notes", "presentations"
-  add_foreign_key "presentations_notes", "presentations_pages"
-  add_foreign_key "presentations_pages", "presentations"
   add_foreign_key "procedures", "projects"
   add_foreign_key "procedures_items", "procedures"
   add_foreign_key "procedures_items", "procedures_statuses"

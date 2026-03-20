@@ -27,8 +27,6 @@ class Project < ApplicationRecord
   has_many :procedures, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
-  has_many :presentations, dependent: :destroy
-
   # VALIDATIONS
   ############################################################
 

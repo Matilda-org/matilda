@@ -24,7 +24,6 @@ class Users::Policy < ApplicationRecord
     projects_manage_attachments: 13,
     projects_manage_procedures: 25,
     projects_manage_procedures_items: 26,
-    projects_manage_presentations: 27,
     projects_manage_events: 54,
 
     # Folders # OK
@@ -54,14 +53,6 @@ class Users::Policy < ApplicationRecord
     procedures_unarchive: 42,
     procedures_clone: 43,
     procedures_destroy: 44,
-
-    # Presentations
-    presentations_index: 20,
-    presentations_show: 45,
-    presentations_create: 46,
-    presentations_edit: 47,
-    presentations_destroy: 48,
-    presentations_share: 49,
 
     # Credentials
     credentials_index: 21,

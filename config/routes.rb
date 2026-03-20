@@ -87,27 +87,6 @@ Rails.application.routes.draw do
   post "posts/edit-action/:id", to: "posts#edit_action", as: "posts_edit_action"
   post "posts/destroy-action/:id", to: "posts#destroy_action", as: "posts_destroy_action"
 
-  # Presentation
-  get "presentations", to: "presentations#index", as: "presentations"
-  get "presentations/show/:id", to: "presentations#show", as: "presentations_show"
-  get "presentations/player/:id", to: "presentations#player", as: "presentations_player"
-  get "presentations/actions/:type", to: "presentations#actions", as: "presentations_actions"
-  get "presentations/actions/:type/:id", to: "presentations#actions", as: "presentations_actions_id"
-  post "presentations/create-action", to: "presentations#create_action", as: "presentations_create_action"
-  post "presentations/edit-action/:id", to: "presentations#edit_action", as: "presentations_edit_action"
-  post "presentations/import-action/:id", to: "presentations#import_action", as: "presentations_import_action"
-  post "presentations/destroy-action/:id", to: "presentations#destroy_action", as: "presentations_destroy_action"
-  post "presentations/share-action/:id", to: "presentations#share_action", as: "presentations_share_action"
-  post "presentations/unshare-action/:id", to: "presentations#unshare_action", as: "presentations_unshare_action"
-  post "presentations/add-page-action/:id", to: "presentations#add_page_action", as: "presentations_add_page_action"
-  post "presentations/edit-page-action/:id/:page_id", to: "presentations#edit_page_action", as: "presentations_edit_page_action"
-  post "presentations/remove-page-action/:id/:page_id", to: "presentations#remove_page_action", as: "presentations_remove_page_action"
-  post "presentations/move-page-action/:id/:page_id", to: "presentations#move_page_action", as: "presentations_move_page_action"
-  post "presentations/add-action-action/:id", to: "presentations#add_action_action", as: "presentations_add_action_action"
-  post "presentations/remove-action-action/:id", to: "presentations#remove_action_action", as: "presentations_remove_action_action"
-  post "presentations/add-note-action/:id", to: "presentations#add_note_action", as: "presentations_add_note_action"
-  post "presentations/remove-note-action/:id", to: "presentations#remove_note_action", as: "presentations_remove_note_action"
-
   # Task
   get "tasks", to: "tasks#index", as: "tasks"
   get "tasks/show/:id", to: "tasks#show", as: "tasks_show"
