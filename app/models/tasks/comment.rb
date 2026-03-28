@@ -1,4 +1,6 @@
 class Tasks::Comment < ApplicationRecord
+  include Cachable
+
   # VALIDATIONS
   ############################################################
 
