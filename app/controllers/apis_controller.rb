@@ -33,7 +33,17 @@ class ApisController < ActionController::Base
 
   def task
     @task = Task.find(params[:id])
-    render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks ])
+    render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks, :tasks_comments ])
+  end
+
+  def task_comment
+    @task = Task.find(params[:id])
+    @comment = @task.tasks_comments.new(params.permit(:content, :service))
+    if @comment.save
+      render json: {}
+    else
+      render json: { errors: @comment.errors.full_messages }, status: :unprocessable_content
+    end
   end
 
   def task_update
@@ -43,9 +53,6 @@ class ApisController < ActionController::Base
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_content
     end
-  end
-
-  def task_comment
   end
 
   # Private

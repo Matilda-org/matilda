@@ -158,5 +158,6 @@ Rails.application.routes.draw do
     get "tasks", to: "apis#tasks", as: "tasks"
     get "tasks/:id", to: "apis#task", as: "task"
     patch "tasks/:id", to: "apis#task_update", as: "task_update"
+    post "tasks/:id/comment", to: "apis#task_comment", as: "task_comment"
   end
 end
