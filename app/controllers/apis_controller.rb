@@ -26,6 +26,7 @@ class ApisController < ActionController::Base
     @tasks = Task.all
     @tasks = @tasks.where(user_id: params[:user_id]) if params[:user_id].present?
     @tasks = @tasks.where(completed: params[:completed]) if params[:completed].present?
+    @tasks = @tasks.where.not(deadline: nil) if params[:with_deadline].present?
     @tasks = @tasks.order(deadline: :desc).limit(100)
     render json: @tasks.as_json
   end
