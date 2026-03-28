@@ -17,6 +17,9 @@ turbo_frame_key ||= '_top'
     <div class="mb-3 d-flex justify-content-between align-items-start">
       <div class="w-100">
         <h5 class="card-title">
+          <% if task.unresolved? %>
+            <i class="bi bi-exclamation-circle-fill me-1" style="font-size: 0.75em;" data-controller="tooltip" data-tooltip="Commenti in attesa di risposta dall'assegnatario"></i>
+          <% end %>
           <span class='<%= task.completed ? 'text-decoration-line-through' : '' %>'><%= task.title_with_filtered_long_words %></span>
         </h5>
         <% unless task.subtitle.blank? %>
