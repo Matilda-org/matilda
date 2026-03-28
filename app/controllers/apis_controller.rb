@@ -27,7 +27,7 @@ class ApisController < ActionController::Base
     @tasks = @tasks.where(user_id: params[:user_id]) if params[:user_id].present?
     @tasks = @tasks.where(completed: params[:completed]) if params[:completed].present?
     @tasks = @tasks.order(deadline: :desc).limit(100)
-    render json: @tasks.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks ])
+    render json: @tasks.as_json
   end
 
   def task
@@ -42,6 +42,9 @@ class ApisController < ActionController::Base
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_content
     end
+  end
+
+  def task_comment
   end
 
   # Private

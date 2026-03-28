@@ -7,19 +7,19 @@ task ||= Task.new
 <%= turbo_frame_tag dom_id(task, 'comments') do %>
   <% comments = task.tasks_comments.order(created_at: :asc) %>
   <% if comments.empty? %>
-    <p class="text-muted mb-3">Nessun commento.</p>
+    <p class="text-muted small mb-3">Nessun commento ancora.</p>
   <% else %>
-    <ul class="list-group list-group-flush mb-4">
+    <div class="d-flex flex-column gap-2 mb-3">
       <% comments.each do |comment| %>
-        <li class="list-group-item px-0">
-          <div class="d-flex justify-content-between align-items-start mb-1">
+        <div class="rounded border p-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
             <div class="d-flex align-items-center gap-2">
               <% if comment.user_id %>
                 <%= render 'users/shared/preview', user_id: comment.user_id %>
               <% elsif comment.service.present? %>
-                <span class="badge bg-secondary"><%= comment.service %></span>
+                <span class="badge bg-secondary"><i class="bi bi-gear-fill me-1"></i><%= comment.service %></span>
               <% else %>
-                <span class="text-muted"><i class="bi bi-person"></i> Utente sconosciuto</span>
+                <span class="text-muted small"><i class="bi bi-person"></i> Sconosciuto</span>
               <% end %>
               <small class="text-muted"><%= comment.created_at.strftime('%d/%m/%Y %H:%M') %></small>
             </div>
@@ -28,32 +28,29 @@ task ||= Task.new
                 href="<%= tasks_destroy_comment_action_path(task, comment) %>"
                 data-turbo-frame="_self"
                 data-turbo-method="post"
-                class="btn btn-sm btn-outline-danger"
+                class="btn btn-sm btn-link text-danger p-0"
                 data-controller="tooltip"
                 data-tooltip="Elimina commento"
               ><i class="bi bi-trash"></i></a>
             <% end %>
           </div>
-          <div class="mt-1"><%= comment.content %></div>
-        </li>
+          <p class="mb-0 small"><%= comment.content %></p>
+        </div>
       <% end %>
-    </ul>
+    </div>
   <% end %>
 
   <% if @session_user&.policy?('tasks_comment') %>
     <%= form_tag tasks_create_comment_action_path(task), data: { turbo_frame: '_self' } do %>
-      <div class="mb-2">
+      <div class="input-group">
         <textarea
-          class="form-control"
+          class="form-control form-control-sm"
           name="content"
-          rows="3"
+          rows="2"
           placeholder="Scrivi un commento..."
+          style="resize: none;"
         ></textarea>
-      </div>
-      <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary btn-sm">
-          <i class="bi bi-send"></i> Invia
-        </button>
+        <button type="submit" class="btn btn-primary btn-sm">Invia</button>
       </div>
     <% end %>
   <% end %>
