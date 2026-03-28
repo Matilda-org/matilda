@@ -4,7 +4,7 @@ import time
 import signal
 import sys
 
-from .config import load_config, config_is_complete, run_setup_wizard, get_instructions
+from .config import load_config, config_is_complete, run_setup_wizard, get_instructions, DEFAULT_POLL_INTERVAL
 from .database import (
     get_connection,
     get_task,
@@ -34,7 +34,7 @@ def extract_task_data(detail: dict) -> dict:
     return {
         "title": detail.get("title", ""),
         "content": detail.get("output", ""),
-        "comments": comments,
+        "tasks_comments": comments,
     }
 
 _running = True
@@ -56,7 +56,7 @@ def run_daemon():
 
     client = MatildaClient(cfg["api_url"], cfg["api_key"])
     user_id = cfg["user_id"]
-    poll_interval = cfg.get("poll_interval_seconds", 300)
+    poll_interval = cfg.get("poll_interval_seconds", DEFAULT_POLL_INTERVAL)
     conn = get_connection()
 
     machine = platform.node()
@@ -167,6 +167,9 @@ def _act_on_evaluation(conn, client: MatildaClient, task_id: int, action: str, d
         _execute_task(conn, client, task_id, task_detail, instructions)
 
     elif action == "DOMANDE":
+        if not detail_text.strip():
+            logger.error("Task #%d: domande vuote da opencode, skip invio commento.", task_id)
+            return
         logger.info("Task #%d richiede informazioni, invio domande...", task_id)
         client.post_comment(task_id, detail_text)
         record_comment(conn, task_id, "info_request")
@@ -177,8 +180,13 @@ def _execute_task(conn, client: MatildaClient, task_id: int, task_detail: dict, 
     prompt = build_execution_prompt(instructions, task_detail)
     logger.info("Esecuzione task #%d con OpenCode...", task_id)
     result = run_opencode(prompt)
-    logger.info("Task #%d completato, invio risultati...", task_id)
 
+    if not result.strip():
+        logger.error("Task #%d: opencode ha restituito una risposta vuota, skip invio commento.", task_id)
+        update_task_status(conn, task_id, "pending")
+        return
+
+    logger.info("Task #%d completato, invio risultati...", task_id)
     client.post_comment(task_id, result)
     record_comment(conn, task_id, "result")
     update_task_status(conn, task_id, "done")

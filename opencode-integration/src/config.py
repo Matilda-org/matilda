@@ -12,7 +12,7 @@ PID_PATH = BASE_DIR / "pid"
 DAEMON_LOG = LOGS_DIR / "daemon.log"
 AGENT_LOG = LOGS_DIR / "agent.log"
 
-DEFAULT_POLL_INTERVAL = 10
+DEFAULT_POLL_INTERVAL = 60
 
 INSTRUCTIONS_TEMPLATE = """# Istruzioni per l'agente
 

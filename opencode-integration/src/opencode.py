@@ -7,7 +7,12 @@ logger = logging.getLogger("matilda-opencode")
 
 def run_opencode(prompt: str, cwd: str | None = None) -> str:
     cmd = ["opencode", "run", "--format", "json", prompt]
-    logger.debug("Running opencode: %s", " ".join(cmd[:3]) + " <prompt>")
+    logger.info(
+        "\n%s\n>>> PROMPT OPENCODE >>>\n%s\n%s",
+        "=" * 60,
+        prompt,
+        "=" * 60,
+    )
     try:
         result = subprocess.run(
             cmd,

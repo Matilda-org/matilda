@@ -27,23 +27,6 @@
 
 L'utente può personalizzare questo file con informazioni che vengono sempre fornite all'LLM: directory di lavoro, convenzioni git, stack tecnologico, preferenze operative. Viene incluso in ogni prompt inviato a OpenCode.
 
-Template iniziale generato dall'installer:
-
-```markdown
-# Istruzioni per l'agente
-
-## Directory di lavoro
-working_dir: ~/projects/
-
-## Git
-- Crea sempre un branch feature prima di lavorare
-- Usa commit atomici con messaggi descrittivi
-- Non fare push direttamente su main
-
-## Note aggiuntive
-<!-- Aggiungi qui qualsiasi altra info utile per l'agente -->
-```
-
 ---
 
 ## 3. Installazione
@@ -125,7 +108,7 @@ POST /tasks/{id}/comment
 Ogni chiamata include l'header:
 
 ```
-Authorization: Bearer {api_key}
+X-Api-Key: {api_key}
 ```
 
 ### GET /tasks
@@ -134,9 +117,7 @@ Restituisce la lista dei task dell'utente. I parametri rilevanti:
 
 | Parametro | Valore | Effetto |
 |---|---|---|
-| `user_id` | ID utente | Filtra per utente |
-| `completed` | `false` | Solo task non completati |
-| `with_deadline` | qualsiasi valore truthy | Solo task con deadline |
+| `id` | ID utente | Filtra per utente |
 
 Risposta: array JSON con i campi base del task. Ordinati per `deadline DESC`, limite 100.
 
@@ -144,27 +125,14 @@ Risposta: array JSON con i campi base del task. Ordinati per `deadline DESC`, li
 
 Restituisce il dettaglio completo di un task. Include le associazioni:
 
-| Associazione | Utilizzo |
-|---|---|
-| `project` | Nome e dettagli del progetto per contestualizzare il task |
-| `tasks_comments` | Storico commenti con `content`, `service`, `user_id`, `created_at` |
-| `tasks_checks` | Checklist del task |
-| `procedures_items` | Procedure a cui il task appartiene |
-| `procedures_as_item` | Procedure che includono questo task come step |
-| `tasks_tracks` | Tracciamenti temporali |
-| `tasks_followers` | Utenti che seguono il task |
-
 Campi rilevanti del task:
 
 | Campo | Tipo | Note |
 |---|---|---|
 | `id` | integer | Chiave primaria |
 | `title` | string | Titolo del task |
-| `output` | string | Descrizione dell'output atteso |
-| `deadline` | date | Scadenza |
-| `completed` | boolean | Stato completamento |
-| `unresolved` | boolean | Task con problemi aperti |
-| `project_id` | integer | Progetto associato |
+| `content` | string | Descrizione dettagliata |
+| `tasks_comments` | array | Commenti associati al task |
 
 ### POST /tasks/{id}/comment
 
