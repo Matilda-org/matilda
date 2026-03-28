@@ -36,7 +36,7 @@ class ApisController < ActionController::Base
 
   def task
     @task = Task.find(params[:id])
-    render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks, :tasks_comments ])
+    render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks, :tasks_comments ], with_content: true)
   end
 
   def task_comment

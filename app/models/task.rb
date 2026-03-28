@@ -287,7 +287,7 @@ class Task < ApplicationRecord
 
   def as_json(options = {})
     base = super(options)
-    base[:content] = content.to_s
+    base[:content] = content.to_s if options[:with_content]
     base
   end
 end
