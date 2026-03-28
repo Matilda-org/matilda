@@ -299,7 +299,8 @@ class TasksController < ApplicationController
     params.permit(
       :title, :content, :deadline, :time_estimate, :user_id,
       :position_procedure_id,
-      :repeat, :repeat_type, :repeat_from, :repeat_to, :repeat_monthday, repeat_weekdays: [],
+      :repeat, :repeat_type, :repeat_from, :repeat_to, :repeat_monthday, :opencode_assignment,
+      repeat_weekdays: [],
       tasks_followers_user_ids: [],
       tasks_checks_texts: [],
     )
