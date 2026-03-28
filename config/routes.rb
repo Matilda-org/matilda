@@ -153,6 +153,7 @@ Rails.application.routes.draw do
   scope "apis", as: "apis" do
     get "procedures/:id", to: "apis#procedure", as: "procedure"
 
+    get "tasks", to: "apis#tasks", as: "tasks"
     get "tasks/:id", to: "apis#task", as: "task"
     patch "tasks/:id", to: "apis#task_update", as: "task_update"
   end

@@ -22,6 +22,14 @@ class ApisController < ActionController::Base
   # Tasks
   ##
 
+  def tasks
+    @tasks = Task.all
+    @tasks = @tasks.where(user_id: params[:user_id]) if params[:user_id].present?
+    @tasks = @tasks.where(completed: params[:completed]) if params[:completed].present?
+    @tasks = @tasks.order(deadline: :desc).limit(100)
+    render json: @tasks.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks ])
+  end
+
   def task
     @task = Task.find(params[:id])
     render json: @task.as_json(include: [ :user, :project, :procedures_items, :procedures_as_item, :tasks_tracks, :tasks_followers, :tasks_checks ])
