@@ -23,6 +23,20 @@ from .opencode import (
 
 logger = logging.getLogger("matilda-opencode")
 
+
+def extract_task_data(detail: dict) -> dict:
+    """Estrae solo i dati utili dal dettaglio completo di un task."""
+    comments = []
+    for c in detail.get("tasks_comments", []):
+        author = "ai" if c.get("service") == "matilda-opencode" else "utente"
+        comments.append({"author": author, "content": c.get("content", "")})
+
+    return {
+        "title": detail.get("title", ""),
+        "content": detail.get("output", ""),
+        "comments": comments,
+    }
+
 _running = True
 
 
@@ -104,7 +118,8 @@ def _handle_new_task(conn, client: MatildaClient, task_id: int, summary: dict, i
     logger.info("Nuovo task: #%d - %s", task_id, summary.get("title", ""))
     upsert_task(conn, task_id, summary.get("title", ""), summary.get("deadline", ""))
 
-    detail = client.get_task_detail(task_id)
+    raw_detail = client.get_task_detail(task_id)
+    detail = extract_task_data(raw_detail)
     prompt = build_evaluation_prompt(instructions, detail)
     logger.info("Valutazione task #%d in corso...", task_id)
     response = run_opencode(prompt)
@@ -115,8 +130,9 @@ def _handle_new_task(conn, client: MatildaClient, task_id: int, summary: dict, i
 
 
 def _handle_info_requested(conn, client: MatildaClient, task_id: int, instructions: str):
-    detail = client.get_task_detail(task_id)
-    comments = detail.get("tasks_comments", [])
+    raw_detail = client.get_task_detail(task_id)
+    comments = raw_detail.get("tasks_comments", [])
+    detail = extract_task_data(raw_detail)
 
     last_sent = get_last_comment_sent(conn, task_id)
     if last_sent is None:

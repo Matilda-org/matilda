@@ -43,8 +43,6 @@ def _extract_text_from_json(raw: str) -> str:
 
 
 def build_evaluation_prompt(instructions: str, task: dict) -> str:
-    project_name = task.get("project", {}).get("name", "N/A") if isinstance(task.get("project"), dict) else "N/A"
-    checks = _format_checks(task.get("tasks_checks", []))
     comments = _format_comments(task.get("tasks_comments", []))
 
     return f"""{instructions}
@@ -52,12 +50,7 @@ def build_evaluation_prompt(instructions: str, task: dict) -> str:
 ## Task da valutare
 
 Titolo: {task.get("title", "")}
-Output atteso: {task.get("output", "")}
-Deadline: {task.get("deadline", "")}
-Progetto: {project_name}
-
-## Checklist
-{checks}
+Contenuto: {task.get("content", "")}
 
 ## Commenti esistenti
 {comments}
@@ -81,8 +74,6 @@ DOMANDE
 
 
 def build_execution_prompt(instructions: str, task: dict) -> str:
-    project_name = task.get("project", {}).get("name", "N/A") if isinstance(task.get("project"), dict) else "N/A"
-    checks = _format_checks(task.get("tasks_checks", []))
     comments = _format_comments(task.get("tasks_comments", []))
 
     return f"""{instructions}
@@ -90,12 +81,7 @@ def build_execution_prompt(instructions: str, task: dict) -> str:
 ## Task da eseguire
 
 Titolo: {task.get("title", "")}
-Output atteso: {task.get("output", "")}
-Deadline: {task.get("deadline", "")}
-Progetto: {project_name}
-
-## Checklist
-{checks}
+Contenuto: {task.get("content", "")}
 
 ## Informazioni raccolte
 {comments}
@@ -124,17 +110,10 @@ def parse_evaluation_response(response: str) -> tuple[str, str]:
     return "DOMANDE", stripped
 
 
-def _format_checks(checks: list) -> str:
-    if not checks:
-        return "Nessuna checklist"
-    return "\n".join(f"- {'[x]' if c.get('completed') else '[ ]'} {c.get('title', c.get('content', ''))}" for c in checks)
-
-
 def _format_comments(comments: list) -> str:
     if not comments:
         return "Nessun commento"
     lines = []
     for c in comments:
-        author = c.get("service") or f"user:{c.get('user_id', '?')}"
-        lines.append(f"[{author} @ {c.get('created_at', '?')}] {c.get('content', '')}")
+        lines.append(f"[{c.get('author', '?')}] {c.get('content', '')}")
     return "\n".join(lines)

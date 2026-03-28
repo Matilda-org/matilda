@@ -281,4 +281,13 @@ class Task < ApplicationRecord
 
     "#{hours.to_s.rjust(2, '0')}h #{minutes.to_s.rjust(2, '0')}m"
   end
+
+  # AS JSON
+  ############################################################
+
+  def as_json(options = {})
+    base = super(options)
+    base[:content] = content.to_s
+    base
+  end
 end
