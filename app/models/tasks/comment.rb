@@ -13,8 +13,8 @@ class Tasks::Comment < ApplicationRecord
   # HOOKS
   ############################################################
 
-  after_create :update_task_unresolved
-  after_destroy :update_task_unresolved_on_destroy
+  after_create_commit :update_task_unresolved
+  after_destroy_commit :update_task_unresolved_on_destroy
 
   private
 

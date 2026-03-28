@@ -104,10 +104,16 @@ def cmd_logs(args):
         print("Nessun log disponibile.")
         return
 
-    lines = DAEMON_LOG.read_text().splitlines()
+    follow = args.follow if hasattr(args, "follow") else False
     n = args.lines if hasattr(args, "lines") else 50
-    for line in lines[-n:]:
-        print(line)
+
+    if follow:
+        # Mostra le ultime n righe, poi segui in tempo reale
+        subprocess.run(["tail", "-n", str(n), "-f", str(DAEMON_LOG)])
+    else:
+        lines = DAEMON_LOG.read_text().splitlines()
+        for line in lines[-n:]:
+            print(line)
 
 
 def cmd_daemon_internal(args):
@@ -159,6 +165,7 @@ def main():
 
     logs_parser = sub.add_parser("logs", help="Mostra i log recenti")
     logs_parser.add_argument("-n", "--lines", type=int, default=50, help="Numero di righe da mostrare")
+    logs_parser.add_argument("-f", "--follow", action="store_true", help="Segui i log in tempo reale (tail -f)")
 
     sub.add_parser("setup", help="Configura matilda-opencode")
     sub.add_parser("run", help="Esegui il daemon in foreground")
