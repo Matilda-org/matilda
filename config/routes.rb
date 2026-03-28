@@ -159,5 +159,7 @@ Rails.application.routes.draw do
     get "tasks/:id", to: "apis#task", as: "task"
     patch "tasks/:id", to: "apis#task_update", as: "task_update"
     post "tasks/:id/comment", to: "apis#task_comment", as: "task_comment"
+
+    post "opencode-integration/ping", to: "apis#opencode_integration_ping", as: "opencode_integration_ping"
   end
 end

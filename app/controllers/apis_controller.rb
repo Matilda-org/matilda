@@ -55,6 +55,17 @@ class ApisController < ActionController::Base
     end
   end
 
+  # Opencode integration
+  ##
+
+  def opencode_integration_ping
+    Setting.set("opencode_integration", {
+      timestamp: Time.current.to_i,
+      machine: params[:machine]
+    }.to_json)
+    render json: {}
+  end
+
   # Private
   ##
 
