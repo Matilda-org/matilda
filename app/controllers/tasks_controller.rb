@@ -269,6 +269,30 @@ class TasksController < ApplicationController
     render partial: "tasks/shared/checks", locals: { task: @task, frame_id: params[:frame_id] }
   end
 
+  # Comments
+  ################################################################################
+
+  def create_comment_action
+    return unless validate_policy!("tasks_comment")
+    return unless task_finder
+
+    @comment = @task.tasks_comments.build(comment_params)
+    @comment.user_id = @session_user_id
+    @comment.save
+
+    render partial: "tasks/shared/comments", locals: { task: @task }
+  end
+
+  def destroy_comment_action
+    return unless validate_policy!("tasks_comment")
+    return unless task_finder
+
+    comment = @task.tasks_comments.find_by(id: params[:comment_id])
+    comment&.destroy
+
+    render partial: "tasks/shared/comments", locals: { task: @task }
+  end
+
   private
 
   def task_params
@@ -279,6 +303,10 @@ class TasksController < ApplicationController
       tasks_followers_user_ids: [],
       tasks_checks_texts: [],
     )
+  end
+
+  def comment_params
+    params.permit(:content)
   end
 
   def task_finder

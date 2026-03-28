@@ -43,6 +43,7 @@ class Users::Policy < ApplicationRecord
     tasks_track: 37,
     tasks_acceptance: 59,
     tasks_check: 60,
+    tasks_comment: 62,
 
     # Procedures
     procedures_index: 19,

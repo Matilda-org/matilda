@@ -5,7 +5,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
 %>
 
 
-<%= render 'shared/action-container', title: 'Dettagli task', size: @task.description.blank? ? 'md' : 'lg' do %>
+<%= render 'shared/action-container', title: 'Dettagli task', size: 'lg' do %>
 
 <div class="d-flex flex-column flex-md-row-reverse">
   <div class="w-100">
@@ -20,6 +20,9 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       <hr>
       <%= render 'tasks/shared/checks', task: @task, frame_id: SecureRandom.hex(3) %>
     <% end %>
+    <hr>
+    <h5 class="fs-6 text-muted mb-3">Commenti</h5>
+    <%= render 'tasks/shared/comments', task: @task %>
   </div>
 
   <hr class="d-md-none">

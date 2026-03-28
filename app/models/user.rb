@@ -15,6 +15,7 @@ class User < ApplicationRecord
   has_many :tasks, dependent: :destroy
   has_many :tasks_tracks, dependent: :nullify, class_name: "Tasks::Track"
   has_many :tasks_followers, dependent: :nullify, class_name: "Tasks::Follower"
+  has_many :tasks_comments, dependent: :nullify, class_name: "Tasks::Comment"
 
   has_many :posts, dependent: :nullify
 

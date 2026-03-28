@@ -102,6 +102,8 @@ Rails.application.routes.draw do
   post "tasks/ping-track-action/:id/:track_id", to: "tasks#ping_track_action", as: "tasks_ping_track_action"
   post "tasks/end-track-action/:id/:track_id", to: "tasks#end_track_action", as: "tasks_end_track_action"
   post "tasks/toggle-check-action/:id/:check_id", to: "tasks#toggle_check_action", as: "tasks_toggle_check_action"
+  post "tasks/create-comment-action/:id", to: "tasks#create_comment_action", as: "tasks_create_comment_action"
+  post "tasks/destroy-comment-action/:id/:comment_id", to: "tasks#destroy_comment_action", as: "tasks_destroy_comment_action"
   get "tasks/resume-per-inputdate", to: "tasks#resume_per_inputdate", as: "tasks_resume_per_inputdate"
 
   # Credentials

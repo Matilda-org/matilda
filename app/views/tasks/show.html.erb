@@ -49,4 +49,14 @@
     <% end %>
   <% end %>
 
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Commenti",
+      counter: @task.tasks_comments.count,
+      render_content: 'tasks/shared/module-comments'
+    %>
+
+  <% end %>
+
 <% end %>

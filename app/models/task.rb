@@ -42,6 +42,7 @@ class Task < ApplicationRecord
   has_many :tasks_tracks, dependent: :destroy, class_name: "Tasks::Track"
   has_many :tasks_followers, dependent: :destroy, class_name: "Tasks::Follower"
   has_many :tasks_checks, dependent: :destroy, class_name: "Tasks::Check"
+  has_many :tasks_comments, dependent: :destroy, class_name: "Tasks::Comment"
 
   # HOOKS
   ############################################################

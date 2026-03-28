@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_20_110314) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_28_121938) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -252,6 +252,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_110314) do
     t.index ["task_id"], name: "index_tasks_checks_on_task_id"
   end
 
+  create_table "tasks_comments", force: :cascade do |t|
+    t.integer "task_id", null: false
+    t.integer "user_id"
+    t.string "service"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_tasks_comments_on_task_id"
+    t.index ["user_id"], name: "index_tasks_comments_on_user_id"
+  end
+
   create_table "tasks_followers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "task_id", null: false
@@ -330,6 +341,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_20_110314) do
   add_foreign_key "tasks", "projects"
   add_foreign_key "tasks", "users"
   add_foreign_key "tasks_checks", "tasks"
+  add_foreign_key "tasks_comments", "tasks"
+  add_foreign_key "tasks_comments", "users"
   add_foreign_key "tasks_followers", "tasks"
   add_foreign_key "tasks_followers", "users"
   add_foreign_key "tasks_tracks", "tasks"
