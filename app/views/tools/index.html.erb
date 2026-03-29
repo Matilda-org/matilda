@@ -41,7 +41,7 @@
         <% if @opencode_integration && @opencode_integration[:timestamp]&.to_i >= 6.minutes.ago.to_i %>
           <div class="mt-3">
             <span class="badge bg-success">Attivo</span>
-            <small class="text-muted d-block mt-2">Macchina: <b><%= @opencode_integration[:machine] %></b></small>
+            <small class="text-muted"><%= @opencode_integration[:machine] %></small>
           </div>
         <% else %>
           <div class="mt-3">

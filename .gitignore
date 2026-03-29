@@ -43,3 +43,7 @@
 
 # Docker compose to permit customization of env variables
 docker-compose.yml
+
+# Ignore opencode-integration config and instructions
+opencode-integration/config.json
+opencode-integration/INSTRUCTIONS.md
