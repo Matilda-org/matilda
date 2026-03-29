@@ -76,3 +76,11 @@ La gestione di un task prevede comportamenti differenti:
 
 OpenCode ha una CLI utilizzabile per avviare gli agenti e recuperare i loro output.
 La documentazione completa è disponibile a questo link: https://opencode.ai/docs/it/cli/.
+
+### Informazioni custom
+
+Dentro il programma può essere inserito un file INSTRUCTIONS.md che fonnisce informazioni custom da utilizzare per la gestione dei task. Il contenuto di questo file viene inviato agli agenti di OpenCode come contesto aggiuntivo per l'esecuzione dei task. Questo può essere utile per fornire istruzioni specifiche sull'ambiente di lavoro, sulle risorse disponibili o su eventuali restrizioni da rispettare durante l'esecuzione dei task.
+
+### Gestione permessi
+
+Nel caso in cui l'agente abbiamo problemi di permessi ad operare o altri errori di esecuzione che impediscono all'agente di completare il task, il programma deve stamparlo esplicitamente nei log e bloccarsi.
