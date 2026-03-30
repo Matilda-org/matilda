@@ -199,7 +199,7 @@ function startAgent(taskId, prompt) {
 
   const permissions = JSON.stringify({ external_directory: "allow" });
 
-  const child = spawn("opencode", ["run", prompt], {
+  const child = spawn("opencode", ["run", "--format", "json", prompt], {
     stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, OPENCODE_PERMISSION: permissions },
   });
@@ -229,10 +229,18 @@ function startAgent(taskId, prompt) {
       agent.stdout = stdout;
       agent.stderr = stderr;
 
+      // Check for permission errors in JSON events
+      const hasPermissionError = stdout.includes('"The user rejected permission')
+        || stderr.includes("auto-rejecting");
+
       if (code !== 0) {
         logError(`Agent for task ${taskId} exited with code ${code}`);
-        logError(`stderr: ${stderr}`);
+        logError(`stderr: ${stderr.slice(0, 500)}`);
         logError(`Permission or execution error detected. Stopping program.`);
+        process.exit(1);
+      } else if (hasPermissionError) {
+        logError(`Agent for task ${taskId} had permission errors`);
+        logError(`Stopping program due to permission issues.`);
         process.exit(1);
       } else {
         log(`Agent for task ${taskId} completed successfully`);
@@ -250,33 +258,39 @@ function startAgent(taskId, prompt) {
 }
 
 function extractAgentOutput(agent) {
-  // opencode run writes its output to stderr (stdout is empty in non-TTY mode)
-  const combined = (agent.stdout + agent.stderr);
-  // Strip ANSI escape codes
-  let raw = combined.replace(/\x1b\[[0-9;]*m/g, "").trim();
+  // With --format json, opencode outputs JSON events to stdout, one per line
+  const raw = agent.stdout.trim();
   if (!raw) return null;
 
-  // Remove opencode internal noise lines
-  raw = raw
-    .split("\n")
-    .filter((line) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith("> build ·")) return false;
-      if (trimmed.startsWith("← ")) return false;
-      if (trimmed === "Wrote file successfully.") return false;
-      if (trimmed.startsWith("Shell cwd was reset")) return false;
-      return true;
-    })
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  const lines = raw.split("\n").filter((l) => l.trim());
+  const textParts = [];
 
-  if (!raw) return null;
-
-  if (raw.length > 5000) {
-    return raw.slice(-5000);
+  for (const line of lines) {
+    try {
+      const event = JSON.parse(line);
+      if (event.type === "text" && event.part && event.part.text) {
+        textParts.push(event.part.text);
+      }
+    } catch {
+      // Not valid JSON, skip
+    }
   }
-  return raw;
+
+  if (textParts.length > 0) {
+    const output = textParts.join("\n\n");
+    if (output.length > 5000) {
+      return output.slice(-5000);
+    }
+    return output;
+  }
+
+  // No text events found — check stderr for permission errors
+  const stderr = agent.stderr || "";
+  if (stderr.includes("permission") || stderr.includes("rejected")) {
+    return null;
+  }
+
+  return null;
 }
 
 async function handleTask(config, task, instructions) {
