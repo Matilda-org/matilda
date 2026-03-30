@@ -34,7 +34,7 @@ task ||= Task.new
               ><i class="bi bi-trash"></i></a>
             <% end %>
           </div>
-          <p class="mb-0 small"><%= comment.content %></p>
+          <div class="mb-0 small markdown-content"><%= raw render_markdown(comment.content) %></div>
         </div>
       <% end %>
     </div>

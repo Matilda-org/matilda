@@ -1,4 +1,19 @@
 module ApplicationHelper
+  include ActionView::Helpers::SanitizeHelper
+
+  class MarkdownRenderer < Redcarpet::Render::HTML
+    def block_code(code, language)
+      "<pre><code>#{code}</code></pre>"
+    end
+  end
+
+  def render_markdown(text)
+    return "" if text.blank?
+
+    renderer = MarkdownRenderer.new(hard_wrap: true)
+    markdown = Redcarpet::Markdown.new(renderer, autolink: true, tables: true, fenced_code_blocks: true)
+    markdown.render(text)
+  end
   def nav_icon(key, classes = "")
     return raw "<i class=\"bi bi-people-fill #{classes}\"></i>" if key == "users"
     return raw "<i class=\"bi bi-file-earmark-text-fill #{classes}\"></i>" if key == "projects"
