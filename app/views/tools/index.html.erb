@@ -41,14 +41,9 @@
         <div class="d-flex align-items-center justify-content-between mt-3">
           <a href="/opencode-integration.zip" class="card-link" download>Scarica</a>
           <% if @opencode_integration && @opencode_integration[:timestamp]&.to_i >= 6.minutes.ago.to_i %>
-            <div>
-              <span class="badge bg-success">Attivo</span>
-              <small class="text-muted"><%= @opencode_integration[:machine] %></small>
-            </div>
+            <span class="badge bg-success" data-controller="tooltip" data-tooltip="<%= @opencode_integration[:machine] %>">Attivo</span>
           <% else %>
-            <div>
-              <span class="badge bg-danger">Inattivo</span>
-            </div>
+            <span class="badge bg-danger">Inattivo</span>
           <% end %>
         </div>
       </div>
