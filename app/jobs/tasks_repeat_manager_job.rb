@@ -50,7 +50,6 @@ class TasksRepeatManagerJob < ApplicationJob
     data = {
       user_id: task.user_id,
       title: task.title,
-      output: task.output,
       time_estimate: task.time_estimate,
       project_id: task.project_id,
       deadline: date,
