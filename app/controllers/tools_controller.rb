@@ -10,8 +10,6 @@ class ToolsController < ApplicationController
 
   caches_action :index, cache_path: -> { current_cache_action_path }, layout: false
   def index
-    @opencode_integration = Setting.get("opencode_integration")
-    @opencode_integration = JSON.parse(@opencode_integration, symbolize_names: true) if @opencode_integration.present?
   end
 
   caches_action :projects_without_procedures, cache_path: -> { current_cache_action_path }, layout: false

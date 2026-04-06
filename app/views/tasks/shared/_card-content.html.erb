@@ -5,20 +5,13 @@ hide_project ||= false
 
 %>
 
-<% if task.user || task.opencode_assignment || task.unresolved? %>
+<% if task.user || task.unresolved? %>
   <div class="mb-1 d-flex align-items-center">
     <% if task.unresolved? %>
       <i 
         class="bi bi-chat-dots me-2"
         data-controller="tooltip"
         data-tooltip="Commenti in attesa di risposta dall'assegnatario"
-      ></i>
-    <% end %>
-    <% if task.opencode_assignment %>
-      <i
-        class="bi bi-code-square me-2"
-        data-controller="tooltip"
-        data-tooltip="OpenCode può lavorare su questo task"
       ></i>
     <% end %>
     <% if task.user %>

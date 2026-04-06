@@ -28,7 +28,6 @@ class ApisController < ActionController::Base
     @tasks = @tasks.where(user_id: params[:user_id]) if params[:user_id].present?
     @tasks = @tasks.where(completed: params[:completed]) if params[:completed].present?
     @tasks = @tasks.where.not(deadline: nil) if params[:with_deadline].present?
-    @tasks = @tasks.where(opencode_assignment: params[:opencode_assignment]) if params[:opencode_assignment].present?
     # render only the 100 most recent tasks to avoid performance issues
     @tasks = @tasks.order(deadline: :desc).limit(100)
     render json: @tasks.as_json
@@ -56,17 +55,6 @@ class ApisController < ActionController::Base
     else
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_content
     end
-  end
-
-  # Opencode integration
-  ##
-
-  def opencode_integration_ping
-    Setting.set("opencode_integration", {
-      timestamp: Time.current.to_i,
-      machine: params[:machine]
-    }.to_json)
-    render json: {}
   end
 
   # Private

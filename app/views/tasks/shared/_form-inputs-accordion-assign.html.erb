@@ -24,15 +24,6 @@ follow_user_id ||= nil
           <label for="tasks_followers_user_ids" class="form-label">Seguito da</label>
           <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, task.persisted? ? task.tasks_followers_user_ids : (follow_user_id ? [follow_user_id] : []) ), class: 'form-control', multiple: true %>
         </div>
-
-        <div class="col col-12">
-          <div class="form-check">
-            <%= check_box_tag 'opencode_assignment', true, task.persisted? ? task.opencode_assignment : false, class: 'form-check-input' %>
-            <label class="form-check-label" for="opencode_assignment">
-              Permetti a OpenCode di lavorare sul task
-            </label>
-          </div>
-        </div>
       </div>
     </div>
   </div>

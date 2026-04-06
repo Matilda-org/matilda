@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_06_071603) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_06_092301) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -238,7 +238,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_06_071603) do
     t.integer "repeat_monthday", default: 0, null: false
     t.boolean "accepted", default: true
     t.boolean "unresolved", default: false
-    t.boolean "opencode_assignment", default: false, null: false
     t.index ["project_id"], name: "index_tasks_on_project_id"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
