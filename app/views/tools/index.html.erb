@@ -39,7 +39,6 @@
           <p class="card-text">Stato della connessione OpenCode con Matilda per monitoraggio.</p>
         </div>
         <div class="d-flex align-items-center justify-content-between mt-3">
-          <a href="/opencode-integration.zip" class="card-link" download>Scarica</a>
           <% if @opencode_integration && @opencode_integration[:timestamp]&.to_i >= 6.minutes.ago.to_i %>
             <span class="badge bg-success" data-controller="tooltip" data-tooltip="<%= @opencode_integration[:machine] %>">Attivo</span>
           <% else %>

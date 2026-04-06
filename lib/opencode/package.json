@@ -1,0 +1,16 @@
+{
+  "name": "matilda-opencode",
+  "version": "1.0.0",
+  "description": "Integrazione tra Matilda e OpenCode per lo sviluppo autonomo di task e progetti. Il programma richiede che OpenCode sia installato e configurato correttamente nel dispositivo.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@opencode-ai/sdk": "^1.3.16"
+  }
+}

@@ -28,6 +28,7 @@ class Tasks::Comment < ApplicationRecord
   end
 
   def update_task_unresolved_on_destroy
+    return if !task || task.destroyed?
     return unless task.user_id.present?
 
     last_comment = task.tasks_comments.order(created_at: :asc).last
