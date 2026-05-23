@@ -124,7 +124,7 @@ class Procedure < ApplicationRecord
   def cached_project_name(reset = false)
     Rails.cache.delete("Procedure/cached_project_name/#{id}") if reset
 
-    return "" unless project_id
+    return "" unless project_id && project
 
     @cached_project_name ||= Rails.cache.fetch("Procedure/cached_project_name/#{id}", expires_in: 7.days) do
       project.name
