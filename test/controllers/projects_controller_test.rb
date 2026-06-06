@@ -52,6 +52,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   test "show_attachment" do
+    @user.users_policies.create!(policy: "projects_show")
     project = projects(:one)
     attachment = project.projects_attachments.create!(title: "Test Attachment", date: Date.today)
     file_path = Rails.root.join("test/fixtures/files/test.txt")
@@ -61,9 +62,8 @@ class ProjectsControllerTest < ActionController::TestCase
     get :show_attachment, params: { id: attachment.id }
     assert_response :success
 
-    assert_raises ActiveRecord::RecordNotFound do
-      get :show_attachment, params: { id: -1 }
-    end
+    get :show_attachment, params: { id: -1 }
+    assert_response :not_found
   end
 
   test "show_log" do

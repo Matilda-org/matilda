@@ -306,6 +306,7 @@ class ProceduresController < ApplicationController
   end
 
   def take_tasks_to_status_action
+    return unless validate_policy!("procedures_edit")
     return unless procedure_finder
     return unless procedures_status_finder
 

@@ -52,13 +52,20 @@ class ProjectsController < ApplicationController
   end
 
   def show_attachment
-    @attachment = Projects::Attachment.find(params[:id])
+    return unless validate_policy!("projects_show")
+
+    @attachment = Projects::Attachment.find_by(id: params[:id])
+    unless @attachment&.project && query_projects_for_policy.exists?(@attachment.project_id)
+      send_data "", status: :not_found
+      return
+    end
+
     unless @attachment&.file&.attached?
       send_data "", status: :not_found
       return
     end
 
-    send_data @attachment.file.download, filename: @attachment.file.filename.to_s, type: @attachment.file.content_type.to_s
+    send_data @attachment.file.download, filename: @attachment.file.filename.to_s, type: @attachment.file.content_type.to_s, disposition: "attachment"
   end
 
   caches_action :show_log, cache_path: -> { current_cache_action_path }, layout: false

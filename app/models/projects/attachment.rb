@@ -14,6 +14,7 @@ class Projects::Attachment < ApplicationRecord
 
   validates :title, presence: true
   validates :date, presence: true
+  validate :file_validation
 
   # RELATIONS
   ############################################################
@@ -41,6 +42,26 @@ class Projects::Attachment < ApplicationRecord
     project.projects_events.create!(message: "Allegato #{title} (versione #{version}) - caricato su Matilda.", data: {
       attachment_id: id
     })
+  end
+
+  private
+
+  def file_validation
+    return true unless file.attached?
+
+    allowed_content_types = %w[
+      application/pdf
+      image/jpeg
+      image/png
+      text/plain
+      application/msword
+      application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      application/vnd.ms-excel
+      application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    ]
+
+    errors.add(:file, "non supportato") unless file.content_type.in?(allowed_content_types)
+    errors.add(:file, "troppo grande") if file.byte_size > 25.megabytes
   end
 
   # CLASS

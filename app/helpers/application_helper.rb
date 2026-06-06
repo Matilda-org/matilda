@@ -3,16 +3,20 @@ module ApplicationHelper
 
   class MarkdownRenderer < Redcarpet::Render::HTML
     def block_code(code, language)
-      "<pre><code>#{code}</code></pre>"
+      "<pre><code>#{ERB::Util.html_escape(code)}</code></pre>"
     end
   end
 
   def render_markdown(text)
     return "" if text.blank?
 
-    renderer = MarkdownRenderer.new(hard_wrap: true)
+    renderer = MarkdownRenderer.new(hard_wrap: true, filter_html: true)
     markdown = Redcarpet::Markdown.new(renderer, autolink: true, tables: true, fenced_code_blocks: true)
-    markdown.render(text)
+    sanitize(
+      markdown.render(text),
+      tags: %w[p br strong em a ul ol li blockquote pre code table thead tbody tr th td],
+      attributes: %w[href title]
+    )
   end
   def nav_icon(key, classes = "")
     return raw "<i class=\"bi bi-people-fill #{classes}\"></i>" if key == "users"
