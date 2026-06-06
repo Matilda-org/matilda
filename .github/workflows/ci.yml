@@ -5,6 +5,11 @@ on:
   push:
     branches: [ main ]
 
+env:
+  ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
@@ -78,6 +83,9 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
+          ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test test:system
 
