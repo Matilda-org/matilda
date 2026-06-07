@@ -182,6 +182,71 @@ end
   procedure.clone(procedure_model_tasks, 'Operativo', user_id: user.id)
 end
 
+# Project risks demo data
+##
+
+risk_projects_data = [
+  {
+    name: 'Cliente Bloccato - migrazione ecommerce',
+    description: 'Progetto demo con task scaduti e attivita ferme.',
+    budget_time: 40.hours,
+    tasks: [
+      { title: 'Recuperare accessi produzione', deadline: 10.days.ago, user: nil, time_estimate: 4.hours, time_spent: 5.hours },
+      { title: 'Validare piano redirect SEO', deadline: 4.days.ago, user: User.all.sample, time_estimate: 6.hours, time_spent: 8.hours },
+      { title: 'Aggiornare cliente sul blocco', deadline: Date.today, user: nil, time_estimate: 1.hour, time_spent: 0 }
+    ]
+  },
+  {
+    name: 'Budget Critico - restyling area riservata',
+    description: 'Progetto demo con budget tempo quasi esaurito.',
+    budget_time: 24.hours,
+    tasks: [
+      { title: 'Refactoring flusso login', deadline: 2.days.from_now, user: User.all.sample, time_estimate: 8.hours, time_spent: 12.hours },
+      { title: 'Fix responsive dashboard cliente', deadline: 5.days.from_now, user: User.all.sample, time_estimate: 6.hours, time_spent: 8.hours },
+      { title: 'QA regressione permessi', deadline: 1.week.from_now, user: nil, time_estimate: 4.hours, time_spent: 3.hours }
+    ]
+  },
+  {
+    name: 'Senza Owner - campagna lead generation',
+    description: 'Progetto demo con molte attivita non assegnate.',
+    budget_time: 30.hours,
+    tasks: [
+      { title: 'Definire audience Meta Ads', deadline: 3.days.from_now, user: nil, time_estimate: 2.hours, time_spent: 0 },
+      { title: 'Preparare copy landing', deadline: 4.days.from_now, user: nil, time_estimate: 3.hours, time_spent: 0 },
+      { title: 'Configurare tracciamenti conversione', deadline: 5.days.from_now, user: nil, time_estimate: 4.hours, time_spent: 0 }
+    ]
+  }
+]
+
+risk_projects_data.each do |project_data|
+  project = Project.create!(
+    name: project_data[:name],
+    year: Date.today.year,
+    description: project_data[:description],
+    budget_management: true,
+    budget_money: rand(8000..20_000),
+    budget_time: project_data[:budget_time]
+  )
+
+  User.all.sample(4).each do |project_user|
+    project.projects_members.create!(user_id: project_user.id, role: %w[Developer Designer Marketing PM].sample)
+  end
+
+  project_data[:tasks].each do |task_data|
+    project.tasks.create!(
+      title: task_data[:title],
+      deadline: task_data[:deadline],
+      user: task_data[:user],
+      time_estimate: task_data[:time_estimate],
+      time_spent: task_data[:time_spent],
+      accepted: true
+    )
+  end
+
+  # Make one demo project look stale in the risk report.
+  project.update_columns(updated_at: 21.days.ago) if project.name.start_with?('Cliente Bloccato')
+end
+
 # User logs
 #
 

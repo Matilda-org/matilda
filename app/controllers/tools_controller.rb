@@ -17,6 +17,11 @@ class ToolsController < ApplicationController
     @procedures = Procedure.all.not_as_model.resources_type_projects.order(name: :asc)
   end
 
+  caches_action :project_risks, cache_path: -> { current_cache_action_path }, layout: false
+  def project_risks
+    @project_risks = ProjectRiskReport.new(query_projects_for_policy).items(limit: 50)
+  end
+
   # NOTE: Cache disabled to solve some issues with layout that is not rendered correctly.
   # caches_action :projects_tasks_tracking, cache_path: -> { current_cache_action_path }, layout: false
   def projects_tasks_tracking

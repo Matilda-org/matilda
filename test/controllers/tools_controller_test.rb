@@ -21,6 +21,12 @@ class ToolsControllerTest < ActionController::TestCase
     )
   end
 
+  test "project_risks" do
+    matilda_controller_endpoint(:get, :project_risks,
+      policy: "tools"
+    )
+  end
+
   test "projects_tasks_tracking" do
     matilda_controller_endpoint(:get, :projects_tasks_tracking,
       policy: "tools"

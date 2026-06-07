@@ -135,6 +135,7 @@ Rails.application.routes.draw do
 
   # Tools
   get "tools", to: "tools#index", as: "tools"
+  get "project_risks", to: "tools#project_risks", as: "tools_project_risks"
   get "projects_without_procedures", to: "tools#projects_without_procedures", as: "tools_projects_without_procedures"
   get "projects_tasks_tracking", to: "tools#projects_tasks_tracking", as: "tools_projects_tasks_tracking"
 
