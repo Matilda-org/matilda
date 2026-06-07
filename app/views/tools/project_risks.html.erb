@@ -2,19 +2,27 @@
 
 <%= turbo_frame_tag 'projects-risks' do %>
   <% if @project_risks.length.positive? %>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p class="text-muted mb-0">Ordinati per priorità di intervento.</p>
+      <span class="badge rounded-pill bg-primary"><%= @project_risks.length %> progetti da controllare</span>
+    </div>
+
     <div class="row align-items-stretch">
       <% @project_risks.each_with_index do |item, index| %>
         <% project = item[:project] %>
+        <% severity = item[:score] >= 50 ? { label: 'Critico', color: 'danger', icon: 'bi-fire' } : item[:score] >= 25 ? { label: 'Attenzione', color: 'warning', icon: 'bi-exclamation-triangle-fill' } : { label: 'Monitorare', color: 'secondary', icon: 'bi-eye-fill' } %>
         <div class="col col-12 col-lg-6 col-xl-4 mb-3 d-flex align-items-stretch">
-          <a href="<%= projects_show_path(project) %>" data-turbo-frame="_top" class="card w-100 shadow text-decoration-none text-reset <%= index.zero? ? 'border-danger' : '' %>">
-            <div class="card-body d-flex flex-column justify-content-between">
+          <a href="<%= projects_show_path(project) %>" data-turbo-frame="_top" class="card w-100 shadow text-decoration-none text-reset border-0" style="border-left: 6px solid var(--bs-<%= severity[:color] %>) !important;">
+            <div class="card-body d-flex flex-column justify-content-between p-4">
               <div>
                 <div class="d-flex justify-content-between gap-3 mb-2">
                   <div>
                     <h2 class="fs-5 mb-1"><%= project.name %></h2>
                     <div class="small text-muted"><%= project.complete_code %></div>
                   </div>
-                  <span class="badge rounded-pill bg-<%= item[:signals].first[:level] %> align-self-start"><%= item[:score] %></span>
+                  <span class="badge rounded-pill bg-<%= severity[:color] %> align-self-start">
+                    <i class="bi <%= severity[:icon] %> me-1"></i><%= severity[:label] %>
+                  </span>
                 </div>
 
                 <% if project.description.present? %>
@@ -22,10 +30,21 @@
                 <% end %>
               </div>
 
-              <div class="d-flex flex-wrap gap-2">
-                <% item[:signals].each do |signal| %>
-                  <span class="badge rounded-pill bg-<%= signal[:level] %>"><%= signal[:label] %></span>
-                <% end %>
+              <div>
+                <div class="d-flex flex-column gap-2 mb-3">
+                  <% item[:signals].each do |signal| %>
+                    <% signal_icon = signal[:level] == :danger ? 'bi-x-octagon-fill' : signal[:level] == :warning ? 'bi-exclamation-circle-fill' : signal[:level] == :info ? 'bi-info-circle-fill' : 'bi-clock-history' %>
+                    <div class="d-flex align-items-center small">
+                      <span class="badge rounded-pill bg-<%= signal[:level] %> me-2"><i class="bi <%= signal_icon %>"></i></span>
+                      <span><%= signal[:label] %></span>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                  <span class="small text-muted">Score <%= item[:score] %></span>
+                  <span class="fw-semibold text-primary">Apri progetto <i class="bi bi-arrow-right-short"></i></span>
+                </div>
               </div>
             </div>
           </a>
@@ -35,7 +54,8 @@
   <% else %>
     <div class="text-center pt-5 pb-5">
       <i class="bi bi-shield-check fs-1 d-block mb-2 text-success"></i>
-      <p class="text-muted">Nessun rischio evidente sui progetti attivi.</p>
+      <h2 class="fs-4">Nessun rischio evidente</h2>
+      <p class="text-muted">Tutti i progetti attivi hanno scadenze, owner, budget e attività sotto controllo.</p>
     </div>
   <% end %>
 <% end %>
