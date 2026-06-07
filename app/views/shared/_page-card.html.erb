@@ -11,12 +11,23 @@ full ||= false
 auto ||= false
 always_open ||= false
 classes ||= ''
+content_id ||= "page-card-content-#{SecureRandom.hex(4)}"
+collapsed = !always_open
 
 %>
 
 <div class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card">
-  <div data-page-card-target="header" class="c-page-card__header card-header d-flex justify-content-between align-items-center rounded-bottom border-bottom-0">
-    <h2 class="fs-4 mb-0 h-text-oneline text-white"><%= raw title %></h2>
+  <button
+    type="button"
+    data-page-card-target="header"
+    data-action="click->page-card#manageHeaderClick"
+    class="c-page-card__header card-header d-flex justify-content-between align-items-center rounded-bottom border-bottom-0 w-100"
+    aria-expanded="<%= collapsed ? 'false' : 'true' %>"
+    aria-controls="<%= content_id %>"
+    aria-label="<%= collapsed ? 'Apri sezione' : 'Sezione sempre aperta' %>: <%= strip_tags(title.to_s) %>"
+    <%= always_open ? 'disabled' : '' %>
+  >
+    <span class="fs-4 mb-0 h-text-oneline text-white fw-semibold"><%= raw title %></span>
 
     <div class="d-flex align-items-center gap-2">
       <% if nav_icon_key.present? && !counter.present? %>
@@ -32,8 +43,8 @@ classes ||= ''
         <i class="bi bi-chevron-down text-white d-md-none"></i>
       <% end %>
     </div>
-  </div>
-  <div class="c-page-card__content <%= always_open ? '' : 'd-none' %> d-md-flex" data-page-card-target="content" <%= always_open ? 'always-open' : 'closed' %>>
+  </button>
+  <div id="<%= content_id %>" class="c-page-card__content <%= always_open ? '' : 'd-none' %> d-md-flex" data-page-card-target="content" <%= always_open ? 'always-open' : 'closed' %>>
     <% if render_content %>
       <div class="card-body c-page-card__body <%= full ? 'c-page-card__body--full' : '' %> <%= auto ? 'c-page-card__body--auto' : '' %>">
         <%= render render_content, render_content_args %>

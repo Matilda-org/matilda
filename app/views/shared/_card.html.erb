@@ -59,6 +59,7 @@ background = 'primary' if has_prefer
               class="ms-2 fs-4 text-primary"
               data-controller="tooltip"
               data-tooltip="<%= custom_action[:label] %>"
+              aria-label="<%= custom_action[:label] %>"
               data-user-policies-target="item" data-policy="<%= custom_action[:policy] %>"
             ><i class="<%= custom_action[:icon] %>"></i></a>
           <% end %>
@@ -69,6 +70,7 @@ background = 'primary' if has_prefer
               class="ms-2 fs-4 text-primary"
               data-controller="tooltip"
               data-tooltip="<%= folders_item[:folder_id] ? folders_item[:folder_name] : 'Aggiungi a cartella' %>"
+              aria-label="<%= folders_item[:folder_id] ? "Gestisci cartella #{folders_item[:folder_name]}" : 'Aggiungi a cartella' %>"
               data-user-policies-target="item" data-policy="folders_manage_resources"
             ><i class="bi <%= folders_item[:folder_id] ? 'bi-folder-fill' : 'bi-folder-plus' %>"></i></a>
           <% end %>
@@ -80,6 +82,7 @@ background = 'primary' if has_prefer
               class="ms-2 fs-4 text-<%= has_prefer ? 'warning' : 'primary' %>"
               data-controller="tooltip"
               data-tooltip="<%= has_prefer ? 'Rimuovi preferito' : 'Aggiungi ai preferiti' %>"
+              aria-label="<%= has_prefer ? 'Rimuovi preferito' : 'Aggiungi ai preferiti' %>"
             ><i class="bi <%= has_prefer ? 'bi-bookmark-check-fill' : 'bi-bookmark' %>"></i></a>
           <% end %>
         </div>

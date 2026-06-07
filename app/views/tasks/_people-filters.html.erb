@@ -21,10 +21,10 @@ project_id ||= nil
       <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="<%= date %>" required data-controller="tasks-inputdate">
     </div>
     <div class="col-auto">
-      <%= link_to tasks_path(date: date - 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary' do %>
+      <%= link_to tasks_path(date: date - 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary', aria: { label: 'Giorno precedente' } do %>
         <i class="bi bi-arrow-left"></i>
       <% end %>
-      <%= link_to tasks_path(date: date + 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary' do %>
+      <%= link_to tasks_path(date: date + 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary', aria: { label: 'Giorno successivo' } do %>
         <i class="bi bi-arrow-right"></i>
       <% end %>
       <button type="submit" class="btn btn-primary d-none d-lg-inline-block">Applica</button>

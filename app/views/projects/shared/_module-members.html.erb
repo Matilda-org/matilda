@@ -16,8 +16,8 @@ project ||= Project.new
         </div>
       </div>
       <div class="ms-3 d-flex">
-        <a href="<%= projects_actions_path(id: project.id, type: 'edit-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
-        <a href="<%= projects_actions_path(id: project.id, type: 'remove-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+        <a href="<%= projects_actions_path(id: project.id, type: 'edit-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary me-1" aria-label="Modifica partecipante <%= member.user.complete_name %>"><i class="bi bi-pencil"></i></a>
+        <a href="<%= projects_actions_path(id: project.id, type: 'remove-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-danger" aria-label="Rimuovi partecipante <%= member.user.complete_name %>"><i class="bi bi-trash"></i></a>
       </div>
     </li>
   <% end %>

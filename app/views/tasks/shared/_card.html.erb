@@ -32,6 +32,7 @@ turbo_frame_key ||= '_top'
             class="btn btn-success btn-sm border-2"
             data-controller="tooltip"
             data-tooltip="Completa"
+            aria-label="Completa task"
             data-user-policies-target="item" data-policy="tasks_complete"
           >
             <i class="bi bi-check-circle-fill"></i>
@@ -54,10 +55,10 @@ turbo_frame_key ||= '_top'
       <div class="list-group">
         <% task.tasks_checks_texts.each do |text| %>
           <% next if text.empty? %>
-          <a class="list-group-item bg-transparent d-flex align-items-center">
+          <div class="list-group-item bg-transparent d-flex align-items-center">
               <i class="bi bi-circle"></i>
               <span class="ms-2 text-truncate"><%= text %></span>
-          </a>
+          </div>
         <% end %>
       </div>
     <% end %>

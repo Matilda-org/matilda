@@ -29,10 +29,10 @@ project_id ||= nil
       <input type="date" class="form-control" id="date_end" name="date_end" placeholder="Date end" value="<%= date_end %>" required data-controller="tasks-inputdate">
     </div>
     <div class="col-auto">
-      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week - 7.days, date_end: date_start.at_beginning_of_week - 1.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary' do %>
+      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week - 7.days, date_end: date_start.at_beginning_of_week - 1.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary', aria: { label: 'Settimana precedente' } do %>
         <i class="bi bi-arrow-left"></i>
       <% end %>
-      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week + 7.days, date_end: date_start.at_beginning_of_week + 13.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary' do %>
+      <%= link_to tasks_path(date_start: date_start.at_beginning_of_week + 7.days, date_end: date_start.at_beginning_of_week + 13.days, user_id: user_id, project_id: project_id), class: 'btn btn-primary', aria: { label: 'Settimana successiva' } do %>
         <i class="bi bi-arrow-right"></i>
       <% end %>
       <button type="submit" class="btn btn-primary d-none d-lg-inline-block">Applica</button>

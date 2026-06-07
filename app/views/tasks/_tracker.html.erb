@@ -29,6 +29,7 @@ track = @session_user.active_tasks_track
           data-turbo-frame="action"
           data-controller="tooltip"
           data-tooltip="Visualizza"
+          aria-label="Visualizza task in tracking"
         ><i class="bi bi-info-circle-fill"></i></a>
         <a
           href="<%= tasks_end_track_action_path(id: track.task.id, track_id: track.id) %>"
@@ -36,6 +37,7 @@ track = @session_user.active_tasks_track
           data-turbo-frame="tasks-tracker"
           data-controller="tooltip"
           data-tooltip="Ferma tracking"
+          aria-label="Ferma tracking task"
         ><i class="bi bi-stop-circle-fill"></i></a>
       </div>
     </div>

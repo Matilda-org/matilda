@@ -15,7 +15,7 @@ project ||= Project.new
       </div>
       <div class="ms-3 d-flex">
         <div class="dropdown me-1">
-          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu allegato <%= attachment.title %>">
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
@@ -24,9 +24,9 @@ project ||= Project.new
           </ul>
         </div>
         <% if attachment.file.attached? %>
-          <a href="<%= url_for(attachment.file) %>" class="btn btn-sm btn-outline-primary" data-turbo="false" target="_blank"><i class="bi bi-cloud-arrow-down"></i></a>
+          <a href="<%= url_for(attachment.file) %>" class="btn btn-sm btn-outline-primary" data-turbo="false" target="_blank" aria-label="Scarica allegato <%= attachment.title %>"><i class="bi bi-cloud-arrow-down"></i></a>
         <% else %>
-          <button class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-cloud-arrow-down"></i></button>
+          <button class="btn btn-sm btn-outline-primary" disabled aria-label="Allegato <%= attachment.title %> non disponibile"><i class="bi bi-cloud-arrow-down"></i></button>
         <% end %>
       </div>
     </li>

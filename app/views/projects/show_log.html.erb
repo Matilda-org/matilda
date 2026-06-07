@@ -3,7 +3,7 @@
     <div class="me-3">
       <%= @log.project.complete_code_name %>
     </div>
-    <a href="<%= projects_show_log_path(@log, share_code: params[:share_code], print: true) %>" class="btn btn-primary btn-sm">
+    <a href="<%= projects_show_log_path(@log, share_code: params[:share_code], print: true) %>" class="btn btn-primary btn-sm" aria-label="Stampa nota">
       <i class="bi bi-printer"></i>
     </a>
   </div>

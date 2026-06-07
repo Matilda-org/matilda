@@ -1,7 +1,7 @@
 <% if @session_user %>
 
   <div class="vectorsearch" data-controller="vectorsearch">
-    <button class="vectorsearch__opener shadow" data-action="click->vectorsearch#open">
+    <button class="vectorsearch__opener shadow" data-action="click->vectorsearch#open" aria-label="Apri assistente virtuale">
       <i class="bi bi-robot"></i>
     </button>
 
@@ -10,10 +10,10 @@
         <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
           <h2 class="fs-5 mb-0">Assistente virtuale</h2>
           <div>
-            <%= link_to vectorsearch_clear_messages_path, data: { turbo_method: :post }, class: 'btn btn-outline-light rounded btn-sm' do %>
+            <%= link_to vectorsearch_clear_messages_path, data: { turbo_method: :post }, class: 'btn btn-outline-light rounded btn-sm', aria: { label: 'Cancella messaggi assistente virtuale' } do %>
               <i class="bi bi-trash"></i>
             <% end %>
-            <button class="btn btn-outline-light rounded btn-sm" data-action="click->vectorsearch#close">
+            <button class="btn btn-outline-light rounded btn-sm" data-action="click->vectorsearch#close" aria-label="Chiudi assistente virtuale">
               <i class="bi bi-x-lg"></i>
             </button>
           </div>
@@ -33,4 +33,3 @@
   <%= turbo_stream_from "vectorsearch_#{@session_user_id}" %>
 
 <% end %>
-

@@ -14,7 +14,7 @@ project ||= Project.new
       </div>
       <div class="ms-3 d-flex">
         <div class="dropdown me-1">
-          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu nota <%= log.title %>">
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
@@ -34,7 +34,7 @@ project ||= Project.new
           </ul>
         </div>
 
-        <a href="<%= projects_actions_id_path(id: project.id, type: 'show-log', log_id: log.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+        <a href="<%= projects_actions_id_path(id: project.id, type: 'show-log', log_id: log.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary" aria-label="Visualizza nota <%= log.title %>"><i class="bi bi-eye"></i></a>
       </div>
     </li>
   <% end %>

@@ -20,7 +20,7 @@
       <label for="project" class="form-label">Progetto</label>
       <div class="input-group mb-3">
         <input type="text" class="form-control" id="project" name="project" value="<%= @project.complete_code_name %>" disabled>
-        <%= link_to request.params.except(:project_id), class: 'btn btn-danger' do %>
+        <%= link_to request.params.except(:project_id), class: 'btn btn-danger', aria: { label: 'Rimuovi filtro progetto' } do %>
           <i class="bi bi-trash"></i>
         <% end %>
       </div>
@@ -32,7 +32,7 @@
       <label for="procedure" class="form-label">Board</label>
       <div class="input-group mb-3">
         <input type="text" class="form-control" id="procedure" name="procedure" value="<%= @procedure.name %>" disabled>
-        <%= link_to request.params.except(:procedure_id), class: 'btn btn-danger' do %>
+        <%= link_to request.params.except(:procedure_id), class: 'btn btn-danger', aria: { label: 'Rimuovi filtro board' } do %>
           <i class="bi bi-trash"></i>
         <% end %>
       </div>
@@ -44,7 +44,7 @@
       <label for="procedure_status" class="form-label">Stato</label>
       <div class="input-group mb-3">
         <input type="text" class="form-control" id="procedure_status" name="procedure_status" value="<%= @procedure_status.title %>" disabled>
-        <%= link_to request.params.except(:procedure_status_id), class: 'btn btn-danger' do %>
+        <%= link_to request.params.except(:procedure_status_id), class: 'btn btn-danger', aria: { label: 'Rimuovi filtro stato' } do %>
           <i class="bi bi-trash"></i>
         <% end %>
       </div>

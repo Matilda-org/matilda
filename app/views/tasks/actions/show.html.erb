@@ -36,6 +36,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-turbo-frame="action"
         data-controller="tooltip"
         data-tooltip="Riattiva"
+        aria-label="Riattiva task"
         data-user-policies-target="item" data-policy="tasks_uncomplete"
       ><i class="bi bi-x-circle-fill"></i></a>
     <% elsif @task.accepted %>
@@ -45,6 +46,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-turbo-frame="action"
         data-controller="tooltip"
         data-tooltip="Completa"
+        aria-label="Completa task"
         data-user-policies-target="item" data-policy="tasks_complete"
       ><i class="bi bi-check-circle-fill"></i></a>
     <% end %>
@@ -59,6 +61,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-tasks-tracker-start-value="<%= active_track.start_at.to_i %>"
         data-action="click->action#closeModal"
         data-tooltip="Ferma tracking"
+        aria-label="Ferma tracking task"
         data-user-policies-target="item" data-policy="tasks_track"
       ><i class="bi bi-stop-circle-fill"></i></a>
     <% elsif @task.accepted %>
@@ -70,6 +73,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-action="click->action#closeModal"
         data-controller="tooltip"
         data-tooltip="Avvia tracking"
+        aria-label="Avvia tracking task"
         data-user-policies-target="item" data-policy="tasks_track"
       ><i class="bi bi-play-circle-fill"></i></a>
     <% end %>
@@ -80,6 +84,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       data-turbo-frame="_top"
       data-controller="tooltip"
       data-tooltip="Dettagli"
+      aria-label="Apri dettagli task"
     ><i class="bi bi-eye"></i></a>
 
     <% if @task.repeat_original_task_id %>
@@ -89,6 +94,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-turbo-frame="action"
         data-controller="tooltip"
         data-tooltip="Modifica originale"
+        aria-label="Modifica task originale"
         data-user-policies-target="item" data-policy="tasks_edit"
       ><i class="bi bi-pencil"></i></a>
     <% else %>
@@ -98,6 +104,7 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
         data-turbo-frame="action"
         data-controller="tooltip"
         data-tooltip="Modifica"
+        aria-label="Modifica task"
         data-user-policies-target="item" data-policy="tasks_edit"
       ><i class="bi bi-pencil"></i></a>
     <% end %>
@@ -108,11 +115,12 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       data-turbo-frame="action"
       data-controller="tooltip"
       data-tooltip="Elimina"
+      aria-label="Elimina task"
       data-user-policies-target="item" data-policy="tasks_destroy"
     ><i class="bi bi-trash"></i></a>
 
     <div class="dropdown d-block ms-1 ms-md-0 mb-md-1">
-      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri opzioni calendario">
         <i class="bi bi-calendar-plus"></i>
       </button>
       <ul class="dropdown-menu">

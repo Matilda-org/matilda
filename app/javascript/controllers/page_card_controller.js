@@ -8,11 +8,13 @@ export default class extends Controller {
 
   connect() {
     this.isMobile = window.matchMedia('(max-width: 768px)').matches
+    this.headerTarget.disabled = !this.isMobile || this.contentTarget.hasAttribute('always-open')
+    this.setExpanded(!this.contentTarget.hasAttribute('closed'))
+
     if (!this.isMobile) return
     if (this.contentTarget.hasAttribute('always-open')) return
     
     this.close(true)
-    this.headerTarget.addEventListener('click', this.manageHeaderClick.bind(this))
 
     this.contentObserver = new MutationObserver(() => this.manageContentChange())
     this.contentObserver.observe(this.contentTarget, { childList: true, subtree: true })
@@ -22,12 +24,14 @@ export default class extends Controller {
     if (!this.isMobile) return
     if (this.contentTarget.hasAttribute('always-open')) return
 
-    this.headerTarget.removeEventListener('click', this.manageHeaderClick.bind(this))
     this.contentObserver.disconnect()
   }
 
   manageHeaderClick(e = null) {
     if (e) e.preventDefault()
+    if (!this.isMobile) return
+    if (this.contentTarget.hasAttribute('always-open')) return
+
     if (this.contentTarget.hasAttribute('closed')) {
       this.open()
     } else {
@@ -50,6 +54,7 @@ export default class extends Controller {
     const height = this.getHeight()
     this.contentTarget.style.height = `${height}px`
     this.contentTarget.removeAttribute('closed')
+    this.setExpanded(true)
   }
 
   close(firstClose = false) {
@@ -57,10 +62,15 @@ export default class extends Controller {
 
     this.contentTarget.style.height = '0px'
     this.contentTarget.setAttribute('closed', true)
+    this.setExpanded(false)
 
     setTimeout(() => {
       this.headerTarget.classList.add('rounded-bottom')
     }, firstClose ? 0 : 300)
+  }
+
+  setExpanded(expanded) {
+    this.headerTarget.setAttribute('aria-expanded', expanded ? 'true' : 'false')
   }
 
   getHeight() {

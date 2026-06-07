@@ -25,9 +25,9 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
     <div class="col col-12 mb-3">
       <div class="input-group">
         <% if attachment.file.attached? %>
-          <a class="btn btn-primary" href="<%= url_for(attachment.file) %>" download><i class="bi bi-cloud-arrow-down"></i></a>
+          <a class="btn btn-primary" href="<%= url_for(attachment.file) %>" download aria-label="Scarica allegato"><i class="bi bi-cloud-arrow-down"></i></a>
         <% else %>
-          <button class="btn btn-primary" type="button" disabled><i class="bi bi-cloud-arrow-down"></i></button>
+          <button class="btn btn-primary" type="button" disabled aria-label="Allegato non disponibile"><i class="bi bi-cloud-arrow-down"></i></button>
         <% end %>
         <input type="text" class="form-control" placeholder="File" value="<%= attachment.file&.filename || 'Non disponibile' %>" readonly>
       </div>

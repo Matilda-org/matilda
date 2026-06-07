@@ -13,8 +13,8 @@ search_has_results = false
     <%= form_tag '', method: :get, class: 'd-flex', data: { turbo_frame: 'module-search-results', controller: 'filters' } do %>
       <div class="input-group">
         <input type="text" name="search" list="moduleSearchSuggestions" class="form-control" placeholder="Ricerca" value="<%= search %>" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced" autofocus>
-        <button class="btn btn-light border" type="button" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
-        <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
+        <button class="btn btn-light border" type="button" data-action="click->filters#clear" aria-label="Cancella ricerca"><i class="bi bi-x-circle"></i></button>
+        <button class="btn btn-primary" data-filters-target="submit" type="submit" aria-label="Cerca"><i class="bi bi-search"></i></button>
       </div>
       <datalist id="moduleSearchSuggestions">
         <% @session_user.cached_users_logs_search_values.each do |log_value| %>

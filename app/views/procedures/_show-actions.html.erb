@@ -20,7 +20,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
   <% end %>
 
   <div class="dropdown me-1">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu board">
       <i class="bi bi-three-dots"></i>
     </button>
     <ul class="dropdown-menu">
@@ -99,6 +99,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
         class="btn btn-primary"
         data-controller="tooltip"
         data-tooltip="Ricerca"
+        aria-label="Ricerca nella board"
       >
         <i class="bi bi-search"></i>
       </a>
@@ -113,6 +114,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       data-policy="procedures_edit"
       data-controller="tooltip"
       data-tooltip="Aggiungi stato"
+      aria-label="Aggiungi stato"
     >
       <i class="bi bi-plus-circle"></i>
     </a>

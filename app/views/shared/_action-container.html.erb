@@ -22,9 +22,10 @@ feedback ||= false
               data-action="click->action#closeModal"
             <% end %>
             class="btn-close h-cursor-pointer"
+            aria-label="Chiudi"
           ></a>
         <% else %>
-          <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal"></a>
+          <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal" aria-label="Chiudi"></a>
         <% end %>
       </div>
       <div class="modal-body">

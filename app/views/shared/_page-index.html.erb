@@ -51,8 +51,8 @@ tags ||= []
                   data-action="keyup->filters#submitDebounced"
                   value="<%= params[:search] || '' %>"
                 >
-                <button class="btn btn-secondary" type="button" data-filters-target="buttonClear" data-action="click->filters#clear"><i class="bi bi-x-circle"></i></button>
-                <button class="btn btn-primary" data-filters-target="submit" type="submit"><i class="bi bi-search"></i></button>
+                <button class="btn btn-secondary" type="button" data-filters-target="buttonClear" data-action="click->filters#clear" aria-label="Cancella ricerca"><i class="bi bi-x-circle"></i></button>
+                <button class="btn btn-primary" data-filters-target="submit" type="submit" aria-label="Cerca"><i class="bi bi-search"></i></button>
               </div>
             </div>
           </div>

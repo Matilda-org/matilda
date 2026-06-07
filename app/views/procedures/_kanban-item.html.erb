@@ -17,7 +17,7 @@ turbo_frame_key = dom_id(item, 'kanban-item')
       </div>
       <div class="d-flex justify-content-end">
         <div class="dropdown">
-          <button class="btn btn-sm btn-outline me-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-sm btn-outline me-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu elemento <%= item.secure_title %>">
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
@@ -30,6 +30,7 @@ turbo_frame_key = dom_id(item, 'kanban-item')
           data-policy="procedures_edit"
           class="btn btn-sm btn-outline-primary kanban_controller-move-button"
           type="button"
+          aria-label="Sposta elemento <%= item.secure_title %>"
         >
           <i class="bi bi-arrows-move kanban_controller-move-button"></i>
         </button>

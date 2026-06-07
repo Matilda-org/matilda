@@ -12,7 +12,7 @@
     <% end %>
   </figcaption>
 
-  <%= link_to rails_blob_path(blob), class: 'attachment__download', target: '_blank', rel: 'noopener' do %>
+  <%= link_to rails_blob_path(blob), class: 'attachment__download', target: '_blank', rel: 'noopener', aria: { label: "Apri allegato #{blob.filename}" } do %>
     <i class="bi bi-eye"></i>
   <% end %>
 </figure>

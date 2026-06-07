@@ -17,6 +17,7 @@ render_actions ||= nil
             href="<%= previous_page || '#' %>"
             data-turbo-frame="_top"
             class="me-3 fs-5 text-primary"
+            aria-label="Torna indietro"
             <% unless previous_page %>
               onclick="window.history.back()"
             <% end %>

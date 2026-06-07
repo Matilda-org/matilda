@@ -4,7 +4,7 @@
   <ul class="list-group">
     <li class="list-group-item p-2 d-flex align-items-center justify-content-between">
       <%= render 'users/shared/preview', user_id: @task.user_id %>
-      <%= link_to users_show_path(@task.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' } do %>
+      <%= link_to users_show_path(@task.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' }, aria: { label: 'Visualizza profilo assegnatario' } do %>
         <i class="bi bi-eye-fill"></i>
       <% end %>
     </li>
@@ -18,7 +18,7 @@
     <% @task.tasks_followers.each do |follower| %>
       <li class="list-group-item p-2 d-flex align-items-center justify-content-between">
         <%= render 'users/shared/preview', user_id: follower.user_id %>
-        <%= link_to users_show_path(follower.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' } do %>
+        <%= link_to users_show_path(follower.user_id), class: 'btn btn-sm btn-outline-primary', data: { turbo_frame: '_top', controller: 'tooltip', tooltip: 'Visualizza profilo' }, aria: { label: 'Visualizza profilo follower' } do %>
           <i class="bi bi-eye-fill"></i>
         <% end %>
       </li>

@@ -3,6 +3,17 @@
   background: $gradient_secondary;
   padding-top: 10px;
   padding-bottom: 10px;
+  border: 0;
+  text-align: left;
+
+  &:disabled {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(var(--bs-white-rgb), 0.8);
+    outline-offset: -6px;
+  }
 }
 
 @media (max-width: 767px) {
