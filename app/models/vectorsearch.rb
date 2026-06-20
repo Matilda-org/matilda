@@ -41,7 +41,7 @@ class Vectorsearch
     begin
       llm = Langchain::LLM::OpenAI.new(
         api_key: Setting.get("vectorsearch_openai_key"),
-        default_options: { temperature: 0.7, chat_model: "gpt-4.1-mini" }
+        default_options: { temperature: 0.7, chat_model: "gpt-5-nano" }
       )
 
       assistant = Langchain::Assistant.new(
