@@ -1,0 +1,21 @@
+<div
+  class="c-offline-overlay"
+  data-controller="offline-overlay"
+  data-offline-overlay-target="overlay"
+  hidden
+  aria-live="assertive"
+  aria-atomic="true"
+  aria-hidden="true"
+>
+  <div class="card c-offline-overlay__card text-center">
+    <div class="card-body p-4 p-md-5">
+      <div class="c-offline-overlay__icon mb-3">
+        <i class="bi bi-wifi-off fs-2 text-primary" aria-hidden="true"></i>
+      </div>
+      <h1 class="h3 mb-3">Sei offline</h1>
+      <p class="mb-0 text-muted" data-offline-overlay-target="status">
+        Controlla la connessione e riprova.
+      </p>
+    </div>
+  </div>
+</div>

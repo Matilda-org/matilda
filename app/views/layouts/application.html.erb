@@ -85,6 +85,8 @@
     data-controller="user-policies"
     data-user-policies-list="<%= @session_user&.cached_policies&.join(',') %>"
   >
+    <%= render 'layouts/application/offline_overlay' %>
+
     <% if @_authentication %>
       <%= render 'layouts/application/background', primary: true %>
     <% end %>
