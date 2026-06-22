@@ -30,7 +30,8 @@
 }
 
 .c-offline-overlay__card {
-  width: unquote("min(100%, 32rem)");
+  width: 100%;
+  max-width: 32rem;
   border: 0;
   border-radius: 28px;
   box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.35);
