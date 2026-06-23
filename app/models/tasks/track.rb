@@ -48,6 +48,17 @@ class Tasks::Track < ApplicationRecord
   # OPERATIONS
   ############################################################
 
+  # Destroy the track rolling back the time it contributed to the task aggregate,
+  # mirroring how #close adds it. Safe for still-open tracks (time_spent == 0).
+  def destroy_with_time_rollback!
+    ActiveRecord::Base.transaction do
+      if task && time_spent.to_i.positive?
+        task.update_columns(time_spent: [ (task.time_spent || 0) - time_spent.to_i, 0 ].max)
+      end
+      destroy!
+    end
+  end
+
   def close(with_time_limit = false)
     unless end_at.nil?
       errors.add(:base, "Track già chiuso")

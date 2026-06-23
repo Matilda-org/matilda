@@ -286,6 +286,56 @@ class TasksController < ApplicationController
     }
   end
 
+  def tracks
+    return unless validate_policy!("tasks_index")
+
+    project_param = params[:project_id].presence
+    task_param = params[:task_id].presence
+
+    @task = Task.find_by(id: task_param) if task_param
+    # if a project is explicitly chosen and the task is not in it, drop the task filter
+    @task = nil if @task && project_param && @task.project_id.to_s != project_param
+
+    @project_id = project_param || @task&.project_id
+    @project = query_projects_for_policy.find_by(id: @project_id) if @project_id
+
+    tracks = Tasks::Track.includes(:user, task: :project).order(start_at: :desc)
+
+    if @session_user.policy?("only_data_projects_as_member")
+      accessible_task_ids = Task.where(project_id: @session_user.projects_as_member_ids).select(:id)
+      tracks = tracks.where(task_id: accessible_task_ids)
+    end
+
+    if @task
+      tracks = tracks.where(task_id: @task.id)
+    elsif @project
+      tracks = tracks.where(task_id: @project.tasks.select(:id))
+    end
+
+    @total = tracks.sum(:time_spent)
+    @tracks = paginate_query(tracks)
+  end
+
+  def destroy_track_action
+    return unless validate_policy!("tasks_track")
+
+    track = Tasks::Track.find_by(id: params[:track_id])
+    unless track
+      flash[:danger] = "Tracking non trovato"
+      return redirect_to tasks_tracks_path
+    end
+
+    if @session_user.policy?("only_data_projects_as_member") &&
+       !@session_user.projects_as_member_ids.include?(track.task&.project_id)
+      flash[:danger] = "Non hai i permessi per eliminare questo tracking"
+      return redirect_to tasks_tracks_path
+    end
+
+    track.destroy_with_time_rollback!
+
+    redirect_to tasks_tracks_path(project_id: params[:project_id], task_id: params[:task_id], page: params[:page])
+  end
+
   # Checks
   ################################################################################
 

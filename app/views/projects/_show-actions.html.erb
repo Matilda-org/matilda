@@ -23,6 +23,12 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
       <i class="bi bi-three-dots"></i>
     </button>
     <ul class="dropdown-menu">
+      <li data-user-policies-target="item" data-policy="tasks_index">
+        <a class="dropdown-item" href="<%= tasks_tracks_path(project_id: @project.id) %>" data-turbo-frame="_top">
+          Tracking tempo
+        </a>
+      </li>
+
       <% if has_prefer %>
         <li>
           <a class="dropdown-item" href="<%= users_toggle_prefer_action_path(resource_id: @project.id, resource_type: @project.class.name) %>" data-turbo-method="post" data-turbo-frame="action">
@@ -42,7 +48,7 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
           Modifica progetto
         </a>
       </li>
-      
+
       <% if @project.archived %>
         <li data-user-policies-target="item" data-policy="projects_unarchive">
           <a class="dropdown-item" href="<%= projects_actions_path(type: 'unarchive', id: @project.id) %>" data-turbo-frame="action">

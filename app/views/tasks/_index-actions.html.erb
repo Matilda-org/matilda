@@ -28,6 +28,18 @@
   <a
     type="button"
     class="btn btn-primary"
+    href="<%= tasks_tracks_path %>"
+    data-turbo-frame="_top"
+    data-controller="tooltip"
+    data-tooltip="Tracking tempo"
+    aria-label="Tracking tempo"
+  >
+    <i class="bi bi-clock-history"></i>
+  </a>
+
+  <a
+    type="button"
+    class="btn btn-primary"
     href="<%= tasks_actions_path(type: 'create', turbo_frame_key: "tasks-#{@mode}") %>"
     data-turbo-frame="action"
     data-user-policies-target="item"

@@ -41,15 +41,17 @@ durations = [
       <div class="mb-2">
         <label class="form-label">Durata</label>
         <input type="hidden" name="duration" data-manual-track-target="duration">
-        <div class="d-flex flex-wrap gap-2">
+        <div class="row row-cols-4 g-2">
           <% durations.each do |label, seconds| %>
-            <button
-              type="button"
-              class="btn btn-outline-primary"
-              data-manual-track-target="button"
-              data-seconds="<%= seconds %>"
-              data-action="click->manual-track#select"
-            ><%= label %></button>
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-outline-primary w-100"
+                data-manual-track-target="button"
+                data-seconds="<%= seconds %>"
+                data-action="click->manual-track#select"
+              ><%= label %></button>
+            </div>
           <% end %>
         </div>
       </div>

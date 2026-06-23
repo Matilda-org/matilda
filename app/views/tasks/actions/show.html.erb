@@ -79,16 +79,6 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
     <% end %>
 
     <a
-      class="btn btn-info text-white d-block ms-1 ms-md-0 mb-md-1"
-      href="<%= tasks_actions_path(type: 'add-track', id: @task.id) %>"
-      data-turbo-frame="action"
-      data-controller="tooltip"
-      data-tooltip="Aggiungi tempo manualmente"
-      aria-label="Aggiungi tempo di lavoro manualmente"
-      data-user-policies-target="item" data-policy="tasks_track"
-    ><i class="bi bi-clock-history"></i></a>
-
-    <a
       class="btn btn-primary d-block ms-1 ms-md-0 mb-md-1"
       href="<%= tasks_show_path(id: @task.id) %>"
       data-turbo-frame="_top"
@@ -128,6 +118,24 @@ active_track = @task.open_tasks_track_for_user(@session_user_id)
       aria-label="Elimina task"
       data-user-policies-target="item" data-policy="tasks_destroy"
     ><i class="bi bi-trash"></i></a>
+
+    <div class="dropdown d-block ms-1 ms-md-0 mb-md-1">
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri opzioni tracking">
+        <i class="bi bi-clock-history"></i>
+      </button>
+      <ul class="dropdown-menu">
+        <li data-user-policies-target="item" data-policy="tasks_track">
+          <a class="dropdown-item" href="<%= tasks_actions_path(type: 'add-track', id: @task.id) %>" data-turbo-frame="action">
+            <i class="bi bi-plus-circle me-2"></i>Aggiungi tracking
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="<%= tasks_tracks_path(task_id: @task.id) %>" data-turbo-frame="_top">
+            <i class="bi bi-list-ul me-2"></i>Lista tracking
+          </a>
+        </li>
+      </ul>
+    </div>
 
     <div class="dropdown d-block ms-1 ms-md-0 mb-md-1">
       <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri opzioni calendario">

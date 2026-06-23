@@ -106,6 +106,8 @@ Rails.application.routes.draw do
   post "tasks/create-comment-action/:id", to: "tasks#create_comment_action", as: "tasks_create_comment_action"
   post "tasks/destroy-comment-action/:id/:comment_id", to: "tasks#destroy_comment_action", as: "tasks_destroy_comment_action"
   get "tasks/resume-per-inputdate", to: "tasks#resume_per_inputdate", as: "tasks_resume_per_inputdate"
+  get "tasks/tracks", to: "tasks#tracks", as: "tasks_tracks"
+  post "tasks/destroy-track-action/:track_id", to: "tasks#destroy_track_action", as: "tasks_destroy_track_action"
 
   # Credentials
   get "credentials", to: "credentials#index", as: "credentials"

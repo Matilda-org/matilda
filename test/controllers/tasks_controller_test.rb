@@ -178,4 +178,37 @@ class TasksControllerTest < ActionController::TestCase
     task.reload
     assert_equal before, task.time_spent
   end
+
+  test "tracks index" do
+    task = tasks(:one)
+    task.tasks_tracks.create!(start_at: 1.hour.ago, end_at: Time.now, time_spent: 3600, user: @user)
+
+    matilda_controller_endpoint(:get, :tracks, policy: "tasks_index")
+  end
+
+  test "tracks index filtered by task" do
+    task = tasks(:one)
+    task.tasks_tracks.create!(start_at: 1.hour.ago, end_at: Time.now, time_spent: 3600, user: @user)
+    @user.users_policies.create!(policy: "tasks_index")
+
+    get :tracks, params: { task_id: task.id }
+    assert_response :success
+    assert_select "table"
+  end
+
+  test "destroy_track_action rolls back task time" do
+    task = tasks(:one)
+    before = task.time_spent
+    track = task.tasks_tracks.create!(start_at: 1.hour.ago, end_at: Time.now, time_spent: 3600, user: @user)
+    task.update_columns(time_spent: before + 3600)
+
+    matilda_controller_endpoint(:post, :destroy_track_action,
+      params: { track_id: track.id },
+      policy: "tasks_track",
+      redirect: tasks_tracks_path
+    )
+
+    assert_not Tasks::Track.exists?(track.id)
+    assert_equal before, task.reload.time_spent
+  end
 end
