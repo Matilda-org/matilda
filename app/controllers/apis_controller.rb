@@ -11,6 +11,15 @@ class ApisController < ActionController::Base
   # Verifica che la API key sia corretta
   before_action :validate_api_key
 
+  # Risposte di errore coerenti in JSON (la superficie API forza il formato JSON,
+  # quindi non deve mai restituire le pagine di errore HTML di default)
+  rescue_from ActiveRecord::RecordNotFound do
+    render json: { error: "Risorsa non trovata" }, status: :not_found
+  end
+  rescue_from ActionController::ParameterMissing do |e|
+    render json: { error: "Parametro mancante: #{e.param}" }, status: :bad_request
+  end
+
   # Procedures
   ##
 
@@ -84,7 +93,8 @@ class ApisController < ActionController::Base
       return
     end
 
-    if request_api_key != settings_api_key
+    # confronto a tempo costante per evitare timing attack sulla chiave
+    unless ActiveSupport::SecurityUtils.secure_compare(request_api_key, settings_api_key)
       render json: { error: "API key non valida" }, status: :unauthorized
       return
     end

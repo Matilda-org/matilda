@@ -54,4 +54,19 @@ class ApisControllerTest < ActionController::TestCase
     json_response = JSON.parse(@response.body)
     assert_includes json_response["errors"], "Title è troppo lungo (il massimo è 200 caratteri)"
   end
+
+  test "should return json not_found for a missing task" do
+    get :task, params: { id: 0, api_key: "test_api_key" }
+    assert_response :not_found
+    json_response = JSON.parse(@response.body)
+    assert_equal "Risorsa non trovata", json_response["error"]
+  end
+
+  test "should return json bad_request when task param is missing on update" do
+    task = tasks(:one)
+    patch :task_update, params: { id: task.id, api_key: "test_api_key" }
+    assert_response :bad_request
+    json_response = JSON.parse(@response.body)
+    assert_includes json_response["error"], "Parametro mancante"
+  end
 end
