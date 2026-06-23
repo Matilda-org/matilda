@@ -67,4 +67,21 @@ class TaskTest < ActiveSupport::TestCase
     task = tasks(:two)
   assert_equal "secondary", task.color_type
   end
+
+  test "add_manual_track! crea un track chiuso e incrementa time_spent" do
+    task = tasks(:one)
+    before = task.time_spent
+
+    track = task.add_manual_track!(user: users(:one), date: Date.today - 2, duration: 7200)
+
+    assert_not_nil track.end_at
+    assert_equal 7200, track.time_spent
+    assert_equal 7200, (track.end_at - track.start_at).to_i
+    assert_equal before + 7200, task.reload.time_spent
+  end
+
+  test "add_manual_track! rifiuta durate non positive" do
+    task = tasks(:one)
+    assert_raises(ArgumentError) { task.add_manual_track!(user: users(:one), date: Date.today, duration: 0) }
+  end
 end

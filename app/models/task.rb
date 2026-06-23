@@ -286,6 +286,33 @@ class Task < ApplicationRecord
     "#{hours.to_s.rjust(2, '0')}h #{minutes.to_s.rjust(2, '0')}m"
   end
 
+  # OPERATIONS
+  ############################################################
+
+  # Manually log a closed time track of the given duration (in seconds) on the
+  # given day, mirroring how Tasks::Track#close updates the aggregate time spent.
+  def add_manual_track!(user:, date:, duration:)
+    duration = duration.to_i
+    raise ArgumentError, "Durata non valida" unless duration.positive?
+
+    # default to 9:00 of the chosen day; never let start_at land in the future,
+    # otherwise Tasks::Track would reset it to Time.now on create
+    start_at = date.to_time.change(hour: 9)
+    start_at = Time.current - duration if start_at > Time.current
+
+    ActiveRecord::Base.transaction do
+      track = tasks_tracks.create!(
+        user: user,
+        start_at: start_at,
+        end_at: start_at + duration,
+        ping_at: start_at,
+        time_spent: duration
+      )
+      update_columns(time_spent: (time_spent || 0) + duration)
+      track
+    end
+  end
+
   # AS JSON
   ############################################################
 

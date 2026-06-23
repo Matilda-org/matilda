@@ -18,6 +18,7 @@ class TasksControllerTest < ActionController::TestCase
     matilda_controller_action("complete", "Completa task", task.id)
     matilda_controller_action("postpone", "Rimanda task", task.id)
     matilda_controller_action("uncomplete", "Attiva task", task.id)
+    matilda_controller_action("add-track", "Aggiungi tempo di lavoro", task.id)
     matilda_controller_action_invalid
   end
 
@@ -148,5 +149,33 @@ class TasksControllerTest < ActionController::TestCase
 
     track.reload
     assert_not_nil track.end_at
+  end
+
+  test "add_track_action" do
+    task = tasks(:one)
+    before = task.time_spent
+    matilda_controller_endpoint(:post, :add_track_action,
+      params: { id: task.id, date: Date.today.strftime("%Y-%m-%d"), duration: 3600 },
+      policy: "tasks_track",
+      title: "Aggiungi tempo",
+      feedback: "Tempo aggiunto"
+    )
+
+    task.reload
+    assert_equal before + 3600, task.time_spent
+    track = task.tasks_tracks.where.not(end_at: nil).order(:created_at).last
+    assert_not_nil track
+    assert_equal 3600, track.time_spent
+  end
+
+  test "add_track_action with invalid duration re-renders the form" do
+    task = tasks(:one)
+    @user.users_policies.create!(policy: "tasks_track")
+    before = task.time_spent
+    post :add_track_action, params: { id: task.id, date: Date.today.strftime("%Y-%m-%d"), duration: 0 }
+
+    assert_response :unprocessable_content
+    task.reload
+    assert_equal before, task.time_spent
   end
 end

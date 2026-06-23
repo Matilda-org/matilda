@@ -1,0 +1,70 @@
+<%
+
+durations = [
+  ['15 min', 900],
+  ['30 min', 1800],
+  ['1 h', 3600],
+  ['2 h', 7200],
+  ['4 h', 14400],
+  ['6 h', 21600],
+  ['8 h', 28800],
+  ['12 h', 43200]
+]
+
+%>
+
+<%= render 'shared/action-container', title: 'Aggiungi tempo di lavoro' do %>
+
+  <% if flash.now[:danger].present? %>
+    <div class="alert alert-danger"><%= flash.now[:danger] %></div>
+  <% end %>
+
+  <%= form_tag tasks_add_track_action_path(id: @task.id, turbo_frame_key: params[:turbo_frame_key]),
+        class: 'c-modal-form', data: { controller: 'manual-track form-loading' } do %>
+
+    <div class="c-modal-form__fields">
+      <p class="text-muted">Registra del tempo di lavoro per questo task scegliendo il giorno e una durata.</p>
+
+      <div class="mb-3">
+        <label for="date" class="form-label">Giorno</label>
+        <input
+          type="date"
+          class="form-control"
+          id="date"
+          name="date"
+          value="<%= Date.today.strftime('%Y-%m-%d') %>"
+          max="<%= Date.today.strftime('%Y-%m-%d') %>"
+          required
+        >
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">Durata</label>
+        <input type="hidden" name="duration" data-manual-track-target="duration">
+        <div class="d-flex flex-wrap gap-2">
+          <% durations.each do |label, seconds| %>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              data-manual-track-target="button"
+              data-seconds="<%= seconds %>"
+              data-action="click->manual-track#select"
+            ><%= label %></button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-modal-form__submit">
+      <button
+        type="submit"
+        class="btn btn-primary btn-form-submit"
+        data-manual-track-target="submit"
+        data-form-loading-target="submit"
+        disabled
+      >Aggiungi tempo</button>
+    </div>
+
+  <% end %>
+
+<% end %>

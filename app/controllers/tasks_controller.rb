@@ -90,6 +90,7 @@ class TasksController < ApplicationController
     return render "tasks/actions/complete" if @type == "complete"
     return render "tasks/actions/postpone" if @type == "postpone"
     return render "tasks/actions/uncomplete" if @type == "uncomplete"
+    return render "tasks/actions/add-track" if @type == "add-track"
 
     render partial: "shared/action-error"
   end
@@ -253,6 +254,36 @@ class TasksController < ApplicationController
     @track.close
 
     render partial: "tasks/tracker", locals: { track: @track }
+  end
+
+  def add_track_action
+    return unless validate_policy!("tasks_track")
+    return unless task_finder
+
+    date = safe_date(params[:date], Date.today)
+    duration = params[:duration].to_i
+
+    begin
+      raise ArgumentError, "Durata non valida" unless duration.positive?
+
+      @task.add_manual_track!(user: @session_user, date: date, duration: duration)
+    rescue StandardError => e
+      Rails.logger.error e
+      flash.now[:danger] = "Non è stato possibile aggiungere il tempo. Seleziona un giorno e una durata validi."
+      return render "tasks/actions/add-track", status: :unprocessable_content
+    end
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Aggiungi tempo",
+      turbo_frame: params[:turbo_frame_key] || "_top",
+      feedback_args: {
+        title: "Tempo aggiunto",
+        subtitle: "Registrati #{helpers.track_time(duration)} di lavoro per il #{date.strftime('%d/%m/%Y')}.",
+        render_content: "tasks/shared/card",
+        render_content_args: { task: @task },
+        type: "success"
+      }
+    }
   end
 
   # Checks
