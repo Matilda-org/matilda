@@ -26,7 +26,7 @@
 
       <% if @tracks.any? %>
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table class="table table-hover table-bordered align-middle mb-0 small">
             <thead>
               <tr>
                 <th scope="col">Giorno</th>
@@ -34,7 +34,7 @@
                 <th scope="col">Progetto</th>
                 <th scope="col">Utente</th>
                 <th scope="col">Durata</th>
-                <th scope="col" class="text-end">Azioni</th>
+                <th scope="col" class="text-end" style="width: 1px; white-space: nowrap;"><span class="visually-hidden">Azioni</span></th>
               </tr>
             </thead>
             <tbody>
@@ -63,7 +63,7 @@
                       <span class="badge bg-info text-white">in corso</span>
                     <% end %>
                   </td>
-                  <td class="text-end">
+                  <td class="text-end" style="width: 1px; white-space: nowrap;">
                     <a
                       href="<%= tasks_destroy_track_action_path(track_id: track.id, project_id: @project_id, task_id: @task&.id, page: params[:page]) %>"
                       data-turbo-method="post"
