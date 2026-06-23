@@ -149,8 +149,12 @@ class Task < ApplicationRecord
   after_create_commit do
     TasksRepeatManagerJob.perform_now(id) if repeat
   end
+  REPEAT_RELATED_COLUMNS = %w[repeat repeat_from repeat_to repeat_weekdays repeat_type repeat_monthday deadline].freeze
   after_update_commit do
-    TasksRepeatManagerJob.perform_now
+    # only re-run the (synchronous, full-scan) repeat manager when a repeat-relevant
+    # attribute actually changed; avoids scanning every repeating task on unrelated
+    # updates (comments, checks, time tracking, cache touches, etc.)
+    TasksRepeatManagerJob.perform_now if saved_changes.keys.intersect?(REPEAT_RELATED_COLUMNS)
   end
   after_destroy_commit do
     TasksRepeatManagerJob.perform_now

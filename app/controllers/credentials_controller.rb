@@ -89,7 +89,7 @@ class CredentialsController < ApplicationController
     return unless validate_policy!("credentials_edit")
     return unless credential_finder
 
-    return render "projects/actions/edit" unless @credential.update(credential_params)
+    return render "credentials/actions/edit" unless @credential.update(credential_params)
 
     render partial: "shared/action-feedback", locals: {
       title: "Modifica credenziale",

@@ -48,7 +48,7 @@ class TasksController < ApplicationController
     @mode = params[:mode] || "calendar"
 
     if @mode == "people"
-      @date = params[:date] ? Date.parse(params[:date]) : Date.today
+      @date = safe_date(params[:date], Date.today)
       @project_id = params[:project_id]
 
       tasks = Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil))
@@ -57,8 +57,8 @@ class TasksController < ApplicationController
       @tasks_per_user = tasks.group_by(&:user_id)
       render :index_people
     else
-      @date_start = params[:date_start] ? Date.parse(params[:date_start]) : Date.today.at_beginning_of_week
-      @date_end = params[:date_end] ? Date.parse(params[:date_end]) : Date.today.at_end_of_week
+      @date_start = safe_date(params[:date_start], Date.today.at_beginning_of_week)
+      @date_end = safe_date(params[:date_end], Date.today.at_end_of_week)
       @date_end = @date_start if @date_end < @date_start
       @user_id = params[:user_id]
       @project_id = params[:project_id]
@@ -308,6 +308,13 @@ class TasksController < ApplicationController
 
   def comment_params
     params.permit(:content)
+  end
+
+  # safely parse a date param, falling back when the value is missing or malformed
+  def safe_date(value, fallback)
+    value.present? ? Date.parse(value) : fallback
+  rescue ArgumentError, TypeError
+    fallback
   end
 
   def task_finder

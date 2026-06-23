@@ -179,7 +179,7 @@ class User < ApplicationRecord
 
   def image_profile_validation
     return true unless image_profile.attached?
-    return true if image_profile.content_type.in?(%('image/jpeg image/png'))
+    return true if image_profile.content_type.in?(%w[image/jpeg image/png])
 
     errors.add(:image_profile, "needs to be a jpeg or png")
   end

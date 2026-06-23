@@ -79,7 +79,9 @@ class TasksRepeatManagerJob < ApplicationJob
       task_clone_item = task_clone.procedures_items.find_by(procedure_id: procedures_item.procedure_id, procedures_status_id: procedures_item.procedures_status_id)
       next if task_clone_item
 
-      task_clone.procedures_items.create!(procedure_id: procedures_item.procedure_id, procedures_status_id: procedures_item.procedures_status_id, resource_type: "Task", resource_id: task.id)
+      # resource_type/resource_id are set automatically by the polymorphic
+      # `as: :resource` association, pointing at task_clone (the correct owner)
+      task_clone.procedures_items.create!(procedure_id: procedures_item.procedure_id, procedures_status_id: procedures_item.procedures_status_id)
     end
     task_clone.procedures_items.where.not(procedure_id: task.procedures_items.pluck(:procedure_id), procedures_status_id: task.procedures_items.pluck(:procedures_status_id)).destroy_all
   end
