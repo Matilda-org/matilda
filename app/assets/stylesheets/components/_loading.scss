@@ -1,0 +1,55 @@
+// Loading feedback for Turbo Frames.
+//
+// Turbo sets a `busy` attribute on a <turbo-frame> while it is loading its
+// content. We dim the current content and overlay a spinner so that frame
+// targeted navigations (kanban operations, lazy-loaded panels, search results)
+// give visible feedback instead of appearing frozen.
+//
+// We deliberately do NOT force a min-height: while a frame loads, Turbo keeps
+// its current content in place, so the frame already has its natural size and
+// the spinner overlays it without any layout shift. Forcing a min-height made
+// small frames suddenly grow to fit the spinner (e.g. the header task tracker),
+// which looked jarring.
+//
+// Excluded frames:
+// - `#action`: the shared modal frame has its own loader (action_loader_controller.js)
+// - `#tasks-tracker`: a tiny inline pill in the header, see the dedicated rule below
+
+turbo-frame[busy]:not(#action):not(#tasks-tracker) {
+  display: block;
+  position: relative;
+
+  > * {
+    opacity: 0.45;
+    transition: opacity 0.15s ease-in;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: -0.625rem 0 0 -0.625rem;
+    border: 0.18rem solid var(--bs-light);
+    border-top-color: var(--bs-primary);
+    border-radius: 50%;
+    animation: c-loading-spin 0.6s linear infinite;
+    z-index: 5;
+  }
+}
+
+// Tiny inline frames: just dim the content, no overlay spinner and no resize.
+turbo-frame#tasks-tracker[busy] > * {
+  opacity: 0.5;
+  transition: opacity 0.15s ease-in;
+  pointer-events: none;
+}
+
+@keyframes c-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
