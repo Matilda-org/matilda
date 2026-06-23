@@ -21,5 +21,10 @@
     { label: 'Nome DESC', value: 'name_desc' },
     { label: 'Anno ASC', value: 'year_asc' },
     { label: 'Anno DESC', value: 'year_desc' }
-  ]
+  ],
+  empty_message: 'Nessun progetto qui',
+  empty_icon: 'folder2-open',
+  empty_cta_label: 'Crea il primo progetto',
+  empty_cta_href: projects_actions_path(type: 'create', folder_id: @folder&.id),
+  empty_cta_policy: 'projects_create'
 %>

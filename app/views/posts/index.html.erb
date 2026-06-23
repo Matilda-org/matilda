@@ -12,5 +12,10 @@
     render_item: 'posts/shared/card',
     render_item_param: :post,
     tags: @tags,
-    search: true
+    search: true,
+    empty_message: 'Ancora nessun post in bacheca',
+    empty_icon: 'pin-angle',
+    empty_cta_label: 'Crea il primo post',
+    empty_cta_href: posts_actions_path(type: 'create'),
+    empty_cta_policy: 'posts_create'
   %>

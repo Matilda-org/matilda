@@ -9,6 +9,12 @@ filters ||= []
 sorts ||= []
 tags ||= []
 
+empty_message ||= nil
+empty_icon ||= nil
+empty_cta_label ||= nil
+empty_cta_href ||= nil
+empty_cta_policy ||= nil
+
 %>
 
 <% if search || filters.any? || sorts.any? %>
@@ -130,7 +136,16 @@ tags ||= []
 <% else %>
 
 <div class="text-center pt-5 pb-5">
-  <%= render 'shared/placeholder' %>
+  <% if params[:search].present? %>
+    <%= render 'shared/placeholder', message: 'Nessun risultato per la ricerca', icon: 'search' %>
+  <% else %>
+    <%= render 'shared/placeholder',
+        message: empty_message || 'Nessun elemento da visualizzare',
+        icon: empty_icon || 'book',
+        cta_label: empty_cta_label,
+        cta_href: empty_cta_href,
+        cta_policy: empty_cta_policy %>
+  <% end %>
 </div>
 
 <% end %>

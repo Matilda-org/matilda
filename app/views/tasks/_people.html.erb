@@ -22,7 +22,12 @@ users = User.where(id: tasks_per_user.keys).order(:surname, :name)
     </div>
   <% else %>
     <div class="text-center pt-5 pb-5">
-      <%= render 'shared/placeholder' %>
+      <%= render 'shared/placeholder',
+          message: 'Nessun task assegnato per questa data',
+          icon: 'check2-circle',
+          cta_label: 'Crea nuovo task',
+          cta_href: tasks_actions_path(type: 'create', turbo_frame_key: 'tasks-people'),
+          cta_policy: 'tasks_create' %>
     </div>
   <% end %>
 <% end %>
