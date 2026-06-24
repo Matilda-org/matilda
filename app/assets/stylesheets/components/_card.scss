@@ -89,7 +89,8 @@
   }
 
   .text-muted {
-    color: var(--bs-gray-500) !important;
+    // Lighter muted tone for adequate contrast on dark cards (WCAG AA)
+    color: rgba(var(--bs-white-rgb), 0.7) !important;
   }
 }
 
