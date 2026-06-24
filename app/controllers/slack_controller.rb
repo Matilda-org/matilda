@@ -44,7 +44,14 @@ class SlackController < ApplicationController
   private
 
   def validate_slack_token
-    return true if params[:token] == Setting.get("slack_verification_token")
+    settings_token = Setting.get("slack_verification_token")
+    request_token = params[:token]
+
+    # se il token non è configurato o non è fornito, la verifica fallisce sempre
+    if settings_token.present? && request_token.present? &&
+       ActiveSupport::SecurityUtils.secure_compare(request_token, settings_token)
+      return true
+    end
 
     render plain: "Per utilizzare questa funzione è necessario configurare correttamente Slack nelle impostazioni di Matilda."
     false

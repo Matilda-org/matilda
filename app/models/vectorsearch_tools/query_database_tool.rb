@@ -17,8 +17,8 @@ class VectorsearchTools::QueryDatabaseTool
     user_id = data[:user_id]
     search = data[:search]
 
-    projects = Project.all.includes(:folder, :projects_members)
-    projects = Project.where(archived: !!archived)
+    projects = Project.includes(:folder, :projects_members)
+    projects = projects.where(archived: !!archived)
     projects = projects.where(year: year) if year.present?
     projects = projects.joins(:projects_members).where(projects_members: { user_id: user_id }) if user_id.present?
     projects = projects.search(search) if search.present?
@@ -45,7 +45,7 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def prjs_log_content(data)
-    log = Projects::Log.find_by_id(data[:project_log_id])
+    log = Projects::Log.find_by_id(data[:projects_log_id])
     return "Nota non trovata" unless log
 
     log.content
@@ -84,7 +84,7 @@ class VectorsearchTools::QueryDatabaseTool
     search = data[:search]
 
     tasks = Task.all
-    tasks = Task.where(project_id: project_id) if project_id.present?
+    tasks = tasks.where(project_id: project_id) if project_id.present?
     tasks = tasks.where(user_id: user_id) if user_id.present?
     tasks = tasks.where(completed: !!completed)
     tasks = tasks.where(deadline: deadline) if deadline.present?

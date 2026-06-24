@@ -49,7 +49,7 @@ class Task < ApplicationRecord
 
   before_save do
     if self.completed_changed? && self.completed
-      self.completed_at ||= Time.current
+      self.completed_at = Time.current
     elsif self.completed_changed? && !self.completed
       self.completed_at = nil
     end
