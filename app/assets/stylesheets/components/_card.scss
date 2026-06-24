@@ -1,8 +1,15 @@
 .c-card {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
   --bs-bg-opacity: 0.9;
+
+  // Lift cards on hover to signal interactivity
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), 0 14px 36px rgba(0, 0, 0, 0.10);
+  }
   &.bg-white {
     --bs-bg-opacity: 0.7;
   }
@@ -21,6 +28,13 @@
     --bs-bg-opacity: 0.4 !important;
     border-color: transparent !important;
     overflow: hidden;
+    box-shadow: none;
+
+    // Lighter lift, proportionate to the smaller nested card
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10), 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
 
     .card-header {
       border-top-left-radius: var(--bs-border-radius-sm);
@@ -70,7 +84,7 @@
   }
 
   .badge.bg-primary, .progress.bg-primary {
-    background-color: rgba(var(--bs-white-rgb), 0.75) !important;
+    background-color: rgba(var(--bs-white-rgb), 0.92) !important;
     color: var(--bs-primary) !important;
   }
 

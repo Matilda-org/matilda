@@ -68,7 +68,8 @@ body {
 
 .navbar {
   background-color: var(--bs-primary);
-  background: var(--bs-gradient);
+  // Softer, near-horizontal gradient instead of the 45° diagonal
+  background: linear-gradient(100deg, var(--bs-primary) 0%, var(--bs-secondary) 140%);
 }
 @media screen and (max-width: 767px) {
   .navbar {
@@ -278,35 +279,35 @@ a.badge:hover {
 }
 
 .badge.bg-danger {
-  background-color: rgba(var(--bs-danger-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-danger-rgb), 0.9) !important;
 }
 
 .badge.bg-warning {
-  background-color: rgba(var(--bs-warning-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-warning-rgb), 0.9) !important;
 }
 
 .badge.bg-success {
-  background-color: rgba(var(--bs-success-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-success-rgb), 0.9) !important;
 }
 
 .badge.bg-info {
-  background-color: rgba(var(--bs-info-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-info-rgb), 0.9) !important;
 }
 
 .badge.bg-primary {
-  background-color: rgba(var(--bs-primary-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-primary-rgb), 0.9) !important;
 }
 
 .badge.bg-secondary {
-  background-color: rgba(var(--bs-secondary-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-secondary-rgb), 0.9) !important;
 }
 
 .badge.bg-dark {
-  background-color: rgba(var(--bs-dark-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-dark-rgb), 0.9) !important;
 }
 
 .badge.bg-light {
-  background-color: rgba(var(--bs-light-rgb), 0.75) !important;
+  background-color: rgba(var(--bs-light-rgb), 0.9) !important;
 }
 
 /**
@@ -404,4 +405,42 @@ a.badge:hover {
       border-color: var(--bs-primary);
     }
   }
+}
+
+/**
+ * Protector — privacy-masked content, revealed on hover.
+ * Blurred (not skeleton bars) so it reads as "hidden", not "loading".
+ */
+
+[data-controller="protector"] {
+  position: relative;
+
+  [data-protector-target="content"] {
+    transition: filter 0.2s ease;
+    padding-right: 1.25rem; // leave room for the hint icon (kept on hover to avoid reflow)
+  }
+}
+
+.protector--masked {
+  cursor: help;
+
+  [data-protector-target="content"] {
+    filter: blur(5px);
+    user-select: none;
+    pointer-events: none;
+  }
+}
+
+.protector__hint {
+  position: absolute;
+  top: 0;
+  right: 6px; // nudge left so it lines up under the action icons above
+  font-size: 13px;
+  opacity: 0.45;
+  pointer-events: none;
+  display: none;
+}
+
+.protector--masked .protector__hint {
+  display: block;
 }

@@ -9,6 +9,9 @@ $success: #27ae60;
 $warning: #f39c12;
 $danger: #c0392b;
 
+// Heavier headings for stronger typographic hierarchy
+$headings-font-weight: 600;
+
 $body-bg: lighten($light, 2.5%);
 
 $input-bg: lighten($light, 5%);
