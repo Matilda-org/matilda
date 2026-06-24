@@ -28,9 +28,11 @@ turbo_frame_key = dom_id(item, 'kanban-item')
         <button
           data-user-policies-target="item"
           data-policy="procedures_edit"
+          data-action="keydown->kanban#moveKeydown"
           class="btn btn-sm btn-outline-primary kanban_controller-move-button"
           type="button"
-          aria-label="Sposta elemento <%= item.secure_title %>"
+          aria-label="Sposta elemento <%= item.secure_title %>. Usa le frecce per spostarlo tra le colonne o nella colonna."
+          aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown"
         >
           <i class="bi bi-arrows-move kanban_controller-move-button"></i>
         </button>

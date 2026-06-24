@@ -7,6 +7,23 @@ export default class extends Controller {
 
     if (this.detectActionInsideModalDOM()) {
       this.modal.show()
+      this.focusFirstField()
+    }
+  }
+
+  // Sposta il focus sul primo campo del contenuto caricato in async nella modale.
+  // Bootstrap intrappola e ripristina già il focus, ma non lo porta sul contenuto
+  // del turbo frame quando arriva.
+  focusFirstField() {
+    const selector = 'input:not([type=hidden]):not([disabled]), select:not([disabled]), textarea:not([disabled]), trix-editor'
+    const target = this.modalDOM.querySelector(selector) ||
+      this.modalDOM.querySelector('a[href], button:not([disabled])')
+    if (!target) return
+
+    if (this.modalDOM.classList.contains('show')) {
+      target.focus()
+    } else {
+      this.modalDOM.addEventListener('shown.bs.modal', () => target.focus(), { once: true })
     }
   }
 

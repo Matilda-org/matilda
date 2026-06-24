@@ -7,7 +7,8 @@ export default class extends Controller {
     'container',
     'prev',
     'next',
-    'scrollable'
+    'scrollable',
+    'announcer'
   ]
 
   static values = {
@@ -107,19 +108,90 @@ export default class extends Controller {
   }
 
   onDrop(el, target) {
-    const item = el.dataset.item
-    const container = target.dataset.container
     const order = Array.from(target.children).indexOf(el) + 1
-    const updater = el.querySelector('.kanban_controller-item-updater')
+    this.commitMove(el, target, order)
+  }
+
+  // Alternativa da tastiera al drag&drop: con il focus sul pulsante "sposta"
+  // le frecce spostano l'elemento tra le colonne (sinistra/destra) e all'interno
+  // della colonna (su/giù).
+  moveKeydown(e) {
+    const directions = {
+      ArrowLeft: 'left',
+      ArrowRight: 'right',
+      ArrowUp: 'up',
+      ArrowDown: 'down'
+    }
+    const direction = directions[e.key]
+    if (!direction) return
+
+    const itemEl = e.target.closest('[data-item]')
+    if (!itemEl) return
+    const currentContainer = itemEl.parentElement
+    if (!currentContainer) return
+
+    e.preventDefault()
+
+    const containers = this.containerTargets
+    const containerIndex = containers.indexOf(currentContainer)
+    const siblings = Array.from(currentContainer.children)
+    const currentIndex = siblings.indexOf(itemEl)
+
+    if (direction == 'left' || direction == 'right') {
+      const targetContainer = containers[containerIndex + (direction == 'left' ? -1 : 1)]
+      if (!targetContainer) return
+
+      const order = targetContainer.children.length + 1
+      this.commitMove(itemEl, targetContainer, order)
+    } else {
+      const newIndex = currentIndex + (direction == 'up' ? -1 : 1)
+      if (newIndex < 0 || newIndex > siblings.length - 1) return
+
+      this.commitMove(itemEl, currentContainer, newIndex + 1)
+    }
+  }
+
+  commitMove(itemEl, containerEl, order) {
+    const updater = itemEl.querySelector('.kanban_controller-item-updater')
     if (!updater) return
 
     const updaterUrl = new URL(updater.href)
-    updaterUrl.searchParams.set(this.updaterParamContainerValue, container)
-    updaterUrl.searchParams.set(this.updaterParamItemValue, item)
+    updaterUrl.searchParams.set(this.updaterParamContainerValue, containerEl.dataset.container)
+    updaterUrl.searchParams.set(this.updaterParamItemValue, itemEl.dataset.item)
     updaterUrl.searchParams.set(this.updaterParamOrderValue, order)
     updater.href = updaterUrl.href
 
+    this.announce(itemEl, containerEl, order)
+    this.restoreFocus(itemEl.id)
+
     updater.click()
+  }
+
+  announce(itemEl, containerEl, order) {
+    if (!this.hasAnnouncerTarget) return
+
+    const title = itemEl.querySelector('.c-kanban__item-title')?.textContent?.trim() || 'Elemento'
+    const column = containerEl.dataset.statusTitle || ''
+    this.announcerTarget.textContent = `${title} spostato in ${column}, posizione ${order}.`
+  }
+
+  // Dopo lo spostamento il frame dell'item viene rigenerato dal server: riporta
+  // il focus sul pulsante "sposta" non appena ricompare, così la navigazione da
+  // tastiera resta fluida.
+  restoreFocus(frameId) {
+    if (!frameId) return
+
+    let attempts = 0
+    const tryFocus = () => {
+      const frame = document.getElementById(frameId)
+      const button = frame?.querySelector('.kanban_controller-move-button')
+      if (button instanceof HTMLElement) {
+        button.focus()
+        return
+      }
+      if (attempts++ < 30) requestAnimationFrame(tryFocus)
+    }
+    requestAnimationFrame(tryFocus)
   }
 
   containerTargetConnected(element) {

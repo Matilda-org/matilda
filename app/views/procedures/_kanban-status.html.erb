@@ -132,7 +132,7 @@ turbo_frame_key = dom_id(status, 'kanban-status')
         <% end %>
       </div>
     </div>
-    <ul class="list-group list-group-flush h-fullscroll" data-kanban-target="container" data-container="<%= status.id %>">
+    <ul class="list-group list-group-flush h-fullscroll" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>">
       <% if status.procedures_items.length.positive? %>
         <% status.procedures_items_ordered_and_filtered.each do |item| %>
           <%= render 'procedures/kanban-item', item: item, turbo_frame_status_key: turbo_frame_key %>
