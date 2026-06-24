@@ -299,6 +299,8 @@ class TasksController < ApplicationController
     @project_id = project_param || @task&.project_id
     @project = query_projects_for_policy.find_by(id: @project_id) if @project_id
 
+    @date = Date.parse(params[:date]) if params[:date].present? rescue nil
+
     tracks = Tasks::Track.includes(:user, task: :project).order(start_at: :desc)
 
     if @session_user.policy?("only_data_projects_as_member")
@@ -311,6 +313,8 @@ class TasksController < ApplicationController
     elsif @project
       tracks = tracks.where(task_id: @project.tasks.select(:id))
     end
+
+    tracks = tracks.where(start_at: @date.all_day) if @date
 
     @total = tracks.sum(:time_spent)
     @tracks = paginate_query(tracks)
@@ -333,7 +337,7 @@ class TasksController < ApplicationController
 
     track.destroy_with_time_rollback!
 
-    redirect_to tasks_tracks_path(project_id: params[:project_id], task_id: params[:task_id], page: params[:page])
+    redirect_to tasks_tracks_path(project_id: params[:project_id], task_id: params[:task_id], date: params[:date], page: params[:page])
   end
 
   # Checks

@@ -196,6 +196,31 @@ class TasksControllerTest < ActionController::TestCase
     assert_select "table"
   end
 
+  test "tracks index filtered by date" do
+    task = tasks(:one)
+    task.tasks_tracks.create!(start_at: Time.current.change(hour: 10), end_at: Time.current.change(hour: 11), time_spent: 3600, user: @user)
+    task.tasks_tracks.create!(start_at: 3.days.ago.change(hour: 10), end_at: 3.days.ago.change(hour: 11), time_spent: 3600, user: @user)
+    @user.users_policies.create!(policy: "tasks_index")
+
+    get :tracks, params: { date: Date.current.iso8601 }
+    assert_response :success
+    # solo il track odierno deve comparire
+    assert_select "tbody tr", 1
+    assert_select "input#date[value=?]", Date.current.iso8601
+  end
+
+  test "tracks index ignores invalid date" do
+    task = tasks(:one)
+    task.tasks_tracks.create!(start_at: 1.hour.ago, end_at: Time.now, time_spent: 3600, user: @user)
+    @user.users_policies.create!(policy: "tasks_index")
+
+    get :tracks, params: { date: "not-a-date" }
+    assert_response :success
+    # data non valida ignorata: il track resta visibile e il campo è vuoto
+    assert_select "tbody tr", 1
+    assert_select "input#date[value=?]", ""
+  end
+
   test "destroy_track_action rolls back task time" do
     task = tasks(:one)
     before = task.time_spent

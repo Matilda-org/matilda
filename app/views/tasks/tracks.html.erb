@@ -2,23 +2,67 @@
 
 <%= turbo_frame_tag 'tracks-list' do %>
 
+  <% if @project || @task %>
+    <div class="mb-3">
+      <% if @project %>
+        <div class="d-flex align-items-center bg-white border rounded-3 shadow-sm px-3 py-2 mb-2">
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-primary me-3 flex-shrink-0" style="width: 40px; height: 40px; background-color: rgba(var(--bs-primary-rgb), .1);">
+            <i class="bi bi-folder-fill fs-5"></i>
+          </span>
+          <div class="flex-grow-1" style="min-width: 0;">
+            <div class="text-uppercase text-muted fw-semibold" style="font-size: .7rem; letter-spacing: .05em;">Progetto</div>
+            <div class="fw-semibold text-break lh-sm"><%= @project.name %></div>
+          </div>
+          <% unless @task %>
+            <a href="<%= tasks_tracks_path(date: @date&.iso8601) %>" data-turbo-frame="tracks-list" class="btn btn-sm btn-link text-secondary ms-2 flex-shrink-0" aria-label="Rimuovi filtro progetto">
+              <i class="bi bi-x-lg"></i>
+            </a>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @task %>
+        <div class="d-flex align-items-center bg-white border rounded-3 shadow-sm px-3 py-2 mb-2">
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-primary me-3 flex-shrink-0" style="width: 40px; height: 40px; background-color: rgba(var(--bs-primary-rgb), .1);">
+            <i class="bi bi-check2-square fs-5"></i>
+          </span>
+          <div class="flex-grow-1" style="min-width: 0;">
+            <div class="text-uppercase text-muted fw-semibold" style="font-size: .7rem; letter-spacing: .05em;">Task</div>
+            <div class="fw-semibold text-break lh-sm"><%= @task.title %></div>
+          </div>
+          <a href="<%= tasks_tracks_path(project_id: @project_id, date: @date&.iso8601) %>" data-turbo-frame="tracks-list" class="btn btn-sm btn-link text-secondary ms-2 flex-shrink-0" aria-label="Rimuovi filtro task">
+            <i class="bi bi-x-lg"></i>
+          </a>
+        </div>
+      <% end %>
+      <div class="text-end">
+        <a href="<%= tasks_tracks_path(date: @date&.iso8601) %>" data-turbo-frame="tracks-list" class="small text-muted">
+          <i class="bi bi-x-circle me-1"></i>Rimuovi tutti i filtri
+        </a>
+      </div>
+    </div>
+  <% end %>
+
   <div class="card">
     <div class="card-body">
 
       <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <div>
-          <% if @task || @project %>
-            <span class="badge bg-info text-white">
-              <i class="bi bi-funnel-fill me-1"></i>
-              <% if @task %>
-                Task: <%= @task.title %>
-              <% else %>
-                Progetto: <%= @project.name %>
-              <% end %>
-            </span>
-            <a href="<%= tasks_tracks_path %>" data-turbo-frame="tracks-list" class="small ms-2">Mostra tutti</a>
+        <form method="GET" action="<%= tasks_tracks_path %>" class="d-flex align-items-center gap-2" data-controller="filters">
+          <%= hidden_field_tag 'project_id', @project_id if @project_id %>
+          <%= hidden_field_tag 'task_id', @task&.id if @task %>
+          <label for="date" class="visually-hidden">Filtra per giornata</label>
+          <input
+            type="date"
+            class="form-control form-control-sm"
+            id="date"
+            name="date"
+            value="<%= @date&.iso8601 %>"
+            max="<%= Date.current.iso8601 %>"
+            data-action="change->filters#submit"
+          >
+          <% if @date %>
+            <a href="<%= tasks_tracks_path(project_id: @project_id, task_id: @task&.id) %>" data-turbo-frame="tracks-list" class="small">Azzera</a>
           <% end %>
-        </div>
+        </form>
         <div class="text-muted">
           Totale: <span class="fw-bold text-body"><%= track_time(@total) %></span>
         </div>
