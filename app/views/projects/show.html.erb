@@ -28,6 +28,7 @@
       <%= turbo_frame_tag "module-procedure-#{procedure.id}", class: 'w-100' do %>
         <%= render 'shared/page-card',
           title: procedure.name,
+          always_open: true,
           nav_icon_key: 'procedures',
           render_content: 'projects/shared/module-procedure',
           render_content_args: {
