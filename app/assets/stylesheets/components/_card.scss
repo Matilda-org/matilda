@@ -1,6 +1,9 @@
 .c-card {
   position: relative;
   overflow: hidden;
+  // Own stacking context so the stretched-link overlay and the z-index:2
+  // controls below stay contained and don't bleed over the column's sticky bars
+  isolation: isolate;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   --bs-bg-opacity: 0.9;
@@ -12,6 +15,16 @@
   }
   &.bg-white {
     --bs-bg-opacity: 0.7;
+  }
+
+  // Whole-card click: "Visualizza" carries .stretched-link to cover the card.
+  // Keep the other controls — and the hover-to-reveal description — above the
+  // overlay so they stay interactive.
+  a:not(.stretched-link),
+  button,
+  [data-controller="protector"] {
+    position: relative;
+    z-index: 2;
   }
 
   .card-header {
