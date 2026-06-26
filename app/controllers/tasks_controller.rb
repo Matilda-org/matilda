@@ -81,6 +81,7 @@ class TasksController < ApplicationController
   def actions
     @type = params[:type]
     @task = params[:id].present? ? Task.find(params[:id]) : Task.new
+    @task = build_duplicated_task(params[:duplicate_id]) if @type == "create" && params[:duplicate_id].present?
 
     @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
     return render "tasks/actions/create" if @type == "create"
@@ -393,6 +394,29 @@ class TasksController < ApplicationController
 
   def comment_params
     params.permit(:content)
+  end
+
+  # build an unsaved task pre-filled with the data of an existing one, so the
+  # create form can be opened as a "duplicate"
+  def build_duplicated_task(source_id)
+    source = Task.find(source_id)
+    task = Task.new(
+      title: source.title,
+      deadline: source.deadline,
+      time_estimate: source.time_estimate,
+      user_id: source.user_id,
+      repeat: source.repeat,
+      repeat_type: source.repeat_type,
+      repeat_from: source.repeat_from,
+      repeat_to: source.repeat_to,
+      repeat_monthday: source.repeat_monthday,
+      repeat_weekdays: source.repeat_weekdays,
+    )
+    task.content = source.content.body.to_trix_html if source.content&.body.present?
+    task.tasks_checks_texts = source.tasks_checks_texts
+    task.tasks_followers_user_ids = source.tasks_followers_user_ids
+    task.position_procedure_id = source.procedure_as_item&.id
+    task
   end
 
   # safely parse a date param, falling back when the value is missing or malformed

@@ -46,7 +46,7 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
           <option value="">Nessuna</option>
           <% @projects_for_position.each do |project| %>
             <% project.procedures.not_archived.not_as_model.where.not(statuses_count: 0).order(name: :asc).each do |procedure| %>
-              <option value="<%= procedure.id %>" <%= task.procedure_as_item&.id == procedure.id ? 'selected' : '' %>><%= project.name %> | <%= procedure.name %></option>
+              <option value="<%= procedure.id %>" <%= (task.position_procedure_id.presence&.to_i || task.procedure_as_item&.id) == procedure.id ? 'selected' : '' %>><%= project.name %> | <%= procedure.name %></option>
             <% end %>
           <% end %>
         </select>

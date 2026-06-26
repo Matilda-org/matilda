@@ -1,0 +1,165 @@
+<%
+
+task ||= Task.new
+turbo_frame_key ||= '_top'
+context ||= 'page' # 'page' = show vero e proprio, 'overlay' = modale dettagli
+
+active_track = task.open_tasks_track_for_user(@session_user_id)
+
+# Nell'overlay le azioni sono in colonna laterale (verticali su md+, in riga su mobile),
+# nello show reale sono una toolbar orizzontale.
+wrapper_class = context == 'overlay' ?
+  'd-flex gap-1 flex-wrap flex-row justify-content-end flex-md-column justify-content-md-start' :
+  'd-flex gap-1 flex-wrap align-items-center justify-content-end'
+
+%>
+
+<div class="<%= wrapper_class %>">
+
+  <%# Dettagli: solo nell'overlay, è l'azione valorizzata %>
+  <% if context == 'overlay' %>
+    <a
+      class="btn btn-primary"
+      href="<%= tasks_show_path(id: task.id) %>"
+      data-turbo-frame="_top"
+      data-controller="tooltip"
+      data-tooltip="Apri dettagli"
+      aria-label="Apri dettagli task"
+      data-user-policies-target="item" data-policy="tasks_show"
+    ><i class="bi bi-arrows-fullscreen"></i></a>
+  <% end %>
+
+  <%# Stato: completa / riattiva %>
+  <% if task.completed %>
+    <a
+      class="btn btn-warning"
+      href="<%= tasks_actions_path(type: 'uncomplete', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+      data-turbo-frame="action"
+      data-controller="tooltip"
+      data-tooltip="Riattiva"
+      aria-label="Riattiva task"
+      data-user-policies-target="item" data-policy="tasks_uncomplete"
+    ><i class="bi bi-arrow-counterclockwise"></i></a>
+  <% elsif task.accepted %>
+    <a
+      class="btn btn-success"
+      href="<%= tasks_actions_path(type: 'complete', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+      data-turbo-frame="action"
+      data-controller="tooltip"
+      data-tooltip="Completa"
+      aria-label="Completa task"
+      data-user-policies-target="item" data-policy="tasks_complete"
+    ><i class="bi bi-check-circle-fill"></i></a>
+  <% end %>
+
+  <%# Tracking: avvia / ferma %>
+  <% if active_track %>
+    <a
+      class="btn btn-info text-white"
+      href="<%= tasks_end_track_action_path(id: task.id, track_id: active_track) %>"
+      data-turbo-method="post"
+      data-turbo-frame="tasks-tracker"
+      data-controller="tasks-tracker tooltip"
+      data-tasks-tracker-start-value="<%= active_track.start_at.to_i %>"
+      data-action="click->action#closeModal"
+      data-tooltip="Ferma tracking"
+      aria-label="Ferma tracking task"
+      data-user-policies-target="item" data-policy="tasks_track"
+    ><i class="bi bi-stop-circle-fill"></i></a>
+  <% elsif task.accepted %>
+    <a
+      class="btn btn-info text-white"
+      href="<%= tasks_start_track_action_path(id: task.id) %>"
+      data-turbo-method="post"
+      data-turbo-frame="tasks-tracker"
+      data-action="click->action#closeModal"
+      data-controller="tooltip"
+      data-tooltip="Avvia tracking"
+      aria-label="Avvia tracking task"
+      data-user-policies-target="item" data-policy="tasks_track"
+    ><i class="bi bi-play-circle-fill"></i></a>
+  <% end %>
+
+  <%# Modifica (o modifica dell'originale per le ripetizioni) %>
+  <% if task.repeat_original_task_id %>
+    <a
+      class="btn btn-primary"
+      href="<%= tasks_actions_path(type: 'edit', id: task.repeat_original_task_id, turbo_frame_key: turbo_frame_key) %>"
+      data-turbo-frame="action"
+      data-controller="tooltip"
+      data-tooltip="Modifica originale"
+      aria-label="Modifica task originale"
+      data-user-policies-target="item" data-policy="tasks_edit"
+    ><i class="bi bi-pencil"></i></a>
+  <% else %>
+    <a
+      class="btn btn-primary"
+      href="<%= tasks_actions_path(type: 'edit', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+      data-turbo-frame="action"
+      data-controller="tooltip"
+      data-tooltip="Modifica"
+      aria-label="Modifica task"
+      data-user-policies-target="item" data-policy="tasks_edit"
+    ><i class="bi bi-pencil"></i></a>
+  <% end %>
+
+  <%# Elimina %>
+  <a
+    class="btn btn-danger"
+    href="<%= tasks_actions_path(type: 'destroy', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+    data-turbo-frame="action"
+    data-controller="tooltip"
+    data-tooltip="Elimina"
+    aria-label="Elimina task"
+    data-user-policies-target="item" data-policy="tasks_destroy"
+  ><i class="bi bi-trash"></i></a>
+
+  <%# Azioni secondarie %>
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Altre azioni" data-controller="tooltip" data-tooltip="Altre azioni">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <% if !task.completed && !task.repeat_original_task_id %>
+        <li data-user-policies-target="item" data-policy="tasks_edit">
+          <a class="dropdown-item" href="<%= tasks_actions_path(type: 'postpone', id: task.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action">
+            <i class="bi bi-calendar-range me-2"></i>Rimanda
+          </a>
+        </li>
+      <% end %>
+      <li data-user-policies-target="item" data-policy="tasks_create">
+        <a class="dropdown-item" href="<%= tasks_actions_path(type: 'create', duplicate_id: task.id) %>" data-turbo-frame="action">
+          <i class="bi bi-files me-2"></i>Duplica
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li data-user-policies-target="item" data-policy="tasks_track">
+        <a class="dropdown-item" href="<%= tasks_actions_path(type: 'add-track', id: task.id) %>" data-turbo-frame="action">
+          <i class="bi bi-plus-circle me-2"></i>Aggiungi tracking
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="<%= tasks_tracks_path(task_id: task.id) %>" data-turbo-frame="_top">
+          <i class="bi bi-list-ul me-2"></i>Lista tracking
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li><h6 class="dropdown-header">Aggiungi a calendario</h6></li>
+      <li>
+        <a class="dropdown-item" href="<%= task_google_calendar_url(task) %>" target="_blank" rel="noopener">
+          <i class="bi bi-google me-2"></i>Google Calendar
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="<%= task_outlook_calendar_url(task) %>" target="_blank" rel="noopener">
+          <i class="bi bi-microsoft me-2"></i>Outlook
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>

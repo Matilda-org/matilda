@@ -22,7 +22,7 @@ follow_user_id ||= nil
         <div class="col col-12 mb-3">
           <%= hidden_field_tag 'tasks_followers_user_ids[]', '' %>
           <label for="tasks_followers_user_ids" class="form-label">Seguito da</label>
-          <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, task.persisted? ? task.tasks_followers_user_ids : (follow_user_id ? [follow_user_id] : []) ), class: 'form-control', multiple: true %>
+          <%= select_tag 'tasks_followers_user_ids', options_for_select(users_for_select, (task.persisted? || task.tasks_followers_user_ids.present?) ? task.tasks_followers_user_ids : (follow_user_id ? [follow_user_id] : []) ), class: 'form-control', multiple: true %>
         </div>
       </div>
     </div>
