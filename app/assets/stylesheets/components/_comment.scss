@@ -1,18 +1,86 @@
+// Thread / chat-style comment list with an avatar gutter
 .c-comment {
-  background-color: var(--bs-gray-100);
-  border: 1px solid rgba(var(--bs-dark-rgb), 0.06);
+  align-items: flex-start;
+
+  // Own comments flip to the right, like outgoing messages in a chat.
+  &--own {
+    flex-direction: row-reverse;
+  }
+
+  // The bubble carries the surface; the avatar sits in its own gutter.
+  &__avatar {
+    img,
+    .c-comment__avatar-icon {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  &__avatar-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--bs-gray-200);
+    color: var(--bs-gray-600);
+    font-size: 0.875rem;
+
+    &--service {
+      background-color: rgba(var(--bs-secondary-rgb), 0.15);
+      color: var(--bs-secondary);
+    }
+  }
+
+  // min-width:0 lets the bubble (and its truncating author) shrink inside flex;
+  // the cap keeps bubbles from spanning the full width for a real chat feel.
+  &__main {
+    min-width: 0;
+    max-width: 85%;
+  }
+
+  &__bubble {
+    position: relative;
+    background-color: var(--bs-gray-100);
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.06);
+
+    // A small tail points the bubble back toward its avatar.
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0.6rem;
+      left: -0.28rem;
+      width: 0.55rem;
+      height: 0.55rem;
+      background-color: inherit;
+      transform: rotate(45deg);
+    }
+  }
 
   // Own comments stand out slightly, for a thread/chat feel
-  &--own {
+  &--own &__bubble {
     background-color: rgba(var(--bs-primary-rgb), 0.07);
     border-color: rgba(var(--bs-primary-rgb), 0.15);
+
+    // tail flips to the right edge
+    &::before {
+      left: auto;
+      right: -0.28rem;
+    }
   }
 
   // Automated / service-imported comments
-  &--service {
+  &--service &__bubble {
     background-color: rgba(var(--bs-secondary-rgb), 0.08);
     border-color: rgba(var(--bs-secondary-rgb), 0.15);
   }
+}
+
+.c-comment__author {
+  max-width: 60%;
 }
 
 .c-comment__delete {
@@ -34,10 +102,16 @@
   }
 }
 
-// The shared user preview lifts the avatar (-0.15em) for inline text flow;
-// inside a comment header it's flex-centered, so keep it on the baseline.
-.c-comment img {
-  top: 0 !important;
+// Reveal the delete affordance on hover for a cleaner resting state
+.c-comment:not(:hover) .c-comment__delete {
+  opacity: 0;
+}
+
+.c-comment-empty {
+  i {
+    font-size: 1.75rem;
+    opacity: 0.4;
+  }
 }
 
 // Unified composer: the textarea and the send button share one bordered box

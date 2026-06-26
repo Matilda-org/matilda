@@ -7,44 +7,63 @@ task ||= Task.new
 <%= turbo_frame_tag dom_id(task, 'comments') do %>
   <% comments = task.tasks_comments.order(created_at: :asc) %>
   <% if comments.empty? %>
-    <p class="text-muted small mb-3"><i class="bi bi-chat-left-text me-1"></i> Nessun commento ancora.</p>
+    <div class="c-comment-empty text-center text-muted py-4">
+      <i class="bi bi-chat-left-text d-block mb-2"></i>
+      <p class="small mb-0">Nessun commento ancora.</p>
+    </div>
   <% else %>
-    <div class="d-flex flex-column gap-2 mb-3">
+    <div class="c-comment-thread d-flex flex-column gap-3 mb-3">
       <% comments.each do |comment| %>
         <%
           own = comment.user_id.present? && comment.user_id == @session_user_id
-          modifier = if comment.service.present?
+          is_service = comment.service.present?
+          modifier = if is_service
             'c-comment--service'
           elsif own
             'c-comment--own'
           end
+          preview = comment.user_id ? User.cached_preview_data(comment.user_id) : nil
         %>
-        <div class="c-comment rounded-3 px-2 px-md-3 py-2 <%= modifier %>">
-          <div class="d-flex align-items-center mb-1">
-            <span class="fw-semibold small">
-              <% if comment.user_id %>
-                <%= render 'users/shared/preview', user_id: comment.user_id %>
-              <% elsif comment.service.present? %>
-                <span class="badge bg-secondary"><i class="bi bi-gear-fill me-1"></i><%= comment.service %></span>
-              <% else %>
-                <span class="text-muted"><i class="bi bi-person"></i> Sconosciuto</span>
-              <% end %>
-            </span>
-            <small class="text-muted ms-2 flex-shrink-0"><%= comment.created_at.strftime('%d/%m/%Y %H:%M') %></small>
-            <% if @session_user&.policy?('tasks_comment') %>
-              <a
-                href="<%= tasks_destroy_comment_action_path(task, comment) %>"
-                data-turbo-frame="_self"
-                data-turbo-method="post"
-                class="c-comment__delete btn btn-sm btn-link text-danger p-0 ms-auto ps-2"
-                data-controller="tooltip"
-                data-tooltip="Elimina commento"
-                aria-label="Elimina commento"
-              ><i class="bi bi-trash"></i></a>
+        <div class="c-comment d-flex gap-2 <%= modifier %>">
+          <div class="c-comment__avatar flex-shrink-0">
+            <% if preview %>
+              <img src="<%= preview[:image_profile_url] %>" class="rounded-circle border border-primary border-2" alt="">
+            <% elsif is_service %>
+              <span class="c-comment__avatar-icon c-comment__avatar-icon--service"><i class="bi bi-gear-fill"></i></span>
+            <% else %>
+              <span class="c-comment__avatar-icon"><i class="bi bi-person"></i></span>
             <% end %>
           </div>
-          <div class="c-comment__body small">
-            <%= render_markdown(comment.content) %>
+
+          <div class="c-comment__main">
+            <div class="c-comment__bubble rounded-3 px-3 py-2">
+              <div class="c-comment__header d-flex align-items-center mb-1">
+                <span class="c-comment__author fw-semibold small text-truncate">
+                  <% if preview %>
+                    <%= preview[:complete_name] %>
+                  <% elsif is_service %>
+                    <%= comment.service %>
+                  <% else %>
+                    Sconosciuto
+                  <% end %>
+                </span>
+                <small class="text-muted ms-2 flex-shrink-0"><%= comment.created_at.strftime('%d/%m/%Y %H:%M') %></small>
+                <% if @session_user&.policy?('tasks_comment') %>
+                  <a
+                    href="<%= tasks_destroy_comment_action_path(task, comment) %>"
+                    data-turbo-frame="_self"
+                    data-turbo-method="post"
+                    class="c-comment__delete btn btn-sm btn-link text-danger p-0 ms-auto ps-2"
+                    data-controller="tooltip"
+                    data-tooltip="Elimina commento"
+                    aria-label="Elimina commento"
+                  ><i class="bi bi-trash"></i></a>
+                <% end %>
+              </div>
+              <div class="c-comment__body small">
+                <%= render_markdown(comment.content) %>
+              </div>
+            </div>
           </div>
         </div>
       <% end %>
