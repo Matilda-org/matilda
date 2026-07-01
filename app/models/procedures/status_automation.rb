@@ -71,7 +71,6 @@ class Procedures::StatusAutomation < ApplicationRecord
 
     true
   rescue StandardError => e
-    puts "🚨" * 100
     Rails.logger.error e
     errors.add(:base, e.message)
     false
