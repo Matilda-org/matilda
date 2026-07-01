@@ -423,6 +423,42 @@ class ProjectsController < ApplicationController
     }
   end
 
+  def pin_log_action
+    return unless validate_policy!("projects_manage_logs")
+    return unless project_finder
+    return unless projects_log_finder
+
+    @log.update(pinned: true)
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Metti in evidenza nota",
+      turbo_frame: "module-logs",
+      feedback_args: {
+        title: "Nota in evidenza",
+        subtitle: "La nota è stata messa in evidenza",
+        type: "success"
+      }
+    }
+  end
+
+  def unpin_log_action
+    return unless validate_policy!("projects_manage_logs")
+    return unless project_finder
+    return unless projects_log_finder
+
+    @log.update(pinned: false)
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Rimuovi nota dalle evidenze",
+      turbo_frame: "module-logs",
+      feedback_args: {
+        title: "Nota non più in evidenza",
+        subtitle: "La nota non è più in evidenza",
+        type: "success"
+      }
+    }
+  end
+
   def remove_log_action
     return unless validate_policy!("projects_manage_logs")
     return unless project_finder

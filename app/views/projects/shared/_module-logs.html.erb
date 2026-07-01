@@ -6,10 +6,14 @@ project ||= Project.new
 
 <% if project.projects_logs.length.positive? %>
 <ol class="list-group">
-  <% project.projects_logs.order(date: :desc, created_at: :desc).each do |log| %>
+  <% project.projects_logs.pinned_first.each do |log| %>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
-        <div class="fw-bold mb-1"><%= log.title %> <%= raw log.shareable? ? '<small class="text-primary"><i class="bi bi-eye-fill"></i></small>' : '' %></div>
+        <div class="fw-bold mb-1">
+          <%= raw log.pinned? ? '<small class="text-warning"><i class="bi bi-pin-angle-fill"></i></small>' : '' %>
+          <%= log.title %>
+          <%= raw log.shareable? ? '<small class="text-primary"><i class="bi bi-eye-fill"></i></small>' : '' %>
+        </div>
         <div class="text-muted" style="font-size: 14px;"><%= log.date.strftime('%d/%m/%Y') %></div>
       </div>
       <div class="ms-3 d-flex">
@@ -18,6 +22,12 @@ project ||= Project.new
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu">
+            <% if log.pinned? %>
+              <li><a class="dropdown-item" href="<%= projects_unpin_log_action_path(id: project.id, log_id: log.id) %>" data-turbo-method="post" data-turbo-frame="action">Rimuovi da in evidenza</a></li>
+            <% else %>
+              <li><a class="dropdown-item" href="<%= projects_pin_log_action_path(id: project.id, log_id: log.id) %>" data-turbo-method="post" data-turbo-frame="action">Metti in evidenza</a></li>
+            <% end %>
+            <li><hr class="dropdown-divider"></li>
             <% if log.shareable? %>
               <li>
                 <div class="ps-3 pe-3">

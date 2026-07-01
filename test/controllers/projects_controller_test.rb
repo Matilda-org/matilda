@@ -270,6 +270,34 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_nil log.share_code
   end
 
+  test "pin_log_action" do
+    project = projects(:one)
+    log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)
+    matilda_controller_endpoint(:post, :pin_log_action,
+      params: { id: project.id, log_id: log.id },
+      policy: "projects_manage_logs",
+      title: "Metti in evidenza nota",
+      feedback: "Nota in evidenza"
+    )
+
+    log.reload
+    assert log.pinned?
+  end
+
+  test "unpin_log_action" do
+    project = projects(:one)
+    log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id, pinned: true)
+    matilda_controller_endpoint(:post, :unpin_log_action,
+      params: { id: project.id, log_id: log.id },
+      policy: "projects_manage_logs",
+      title: "Rimuovi nota dalle evidenze",
+      feedback: "Nota non più in evidenza"
+    )
+
+    log.reload
+    assert_not log.pinned?
+  end
+
   test "remove_log_action" do
     project = projects(:one)
     log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)

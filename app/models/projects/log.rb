@@ -16,6 +16,11 @@ class Projects::Log < ApplicationRecord
   belongs_to :project
   belongs_to :user, optional: true
 
+  # SCOPES
+  ############################################################
+
+  scope :pinned_first, -> { order(pinned: :desc, date: :desc, created_at: :desc) }
+
   # HOOKS
   ############################################################
 

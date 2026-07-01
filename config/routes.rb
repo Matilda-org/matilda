@@ -50,6 +50,8 @@ Rails.application.routes.draw do
   post "projects/share-log-action/:id/:log_id", to: "projects#share_log_action", as: "projects_share_log_action"
   post "projects/unshare-log-action/:id/:log_id", to: "projects#unshare_log_action", as: "projects_unshare_log_action"
   post "projects/remove-log-action/:id/:log_id", to: "projects#remove_log_action", as: "projects_remove_log_action"
+  post "projects/pin-log-action/:id/:log_id", to: "projects#pin_log_action", as: "projects_pin_log_action"
+  post "projects/unpin-log-action/:id/:log_id", to: "projects#unpin_log_action", as: "projects_unpin_log_action"
   post "projects/add-attachment-action/:id", to: "projects#add_attachment_action", as: "projects_add_attachment_action"
   post "projects/edit-attachment-action/:id/:attachment_id", to: "projects#edit_attachment_action", as: "projects_edit_attachment_action"
   post "projects/remove-attachment-action/:id/:attachment_id", to: "projects#remove_attachment_action", as: "projects_remove_attachment_action"
