@@ -26,7 +26,7 @@ class ToolsController < ApplicationController
   # caches_action :projects_tasks_tracking, cache_path: -> { current_cache_action_path }, layout: false
   def projects_tasks_tracking
     @date_start = params[:date_start] ? Date.parse(params[:date_start]) : Date.today.at_beginning_of_month
-    @date_end = params[:date_end] ? Date.parse(params[:date_end]) : Date.today.at_end_of_month
+    @date_end = params[:date_end] ? Date.parse(params[:date_end]).end_of_day : Date.today.at_end_of_month.end_of_day
     @user_id = params[:user_id].blank? ? nil : params[:user_id]
     @user = User.find(@user_id) if @user_id
 
