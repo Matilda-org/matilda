@@ -60,6 +60,10 @@ class ProceduresController < ApplicationController
       return unless procedures_status_finder
       return render "procedures/actions/show_status_assignments"
     end
+    if @type == "reload-status"
+      return unless procedures_status_finder
+      return render partial: "procedures/kanban-status", locals: { status: @status }
+    end
 
     return render "procedures/actions/add_item" if @type == "add-item"
     return render "procedures/actions/add_item_existing" if @type == "add-item-existing"

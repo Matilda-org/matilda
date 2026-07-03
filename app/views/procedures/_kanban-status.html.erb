@@ -19,7 +19,7 @@ turbo_frame_key = dom_id(status, 'kanban-status')
         <span class="d-inline-block me-1 border border-white border-2" style="width: 18px; height: 18px; border-radius: 50%; background-color: <%= status.color %>;"></span>
         <span class="fw-bold h-text-oneline" style="flex: 1;"><%= status.title.truncate(18) %></span>
       </div>
-      <div 
+      <div
         class="ms-3 d-flex"
       >
         <div class="dropdown" data-user-policies-target="item" data-policy="procedures_edit">
@@ -51,6 +51,14 @@ turbo_frame_key = dom_id(status, 'kanban-status')
             <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
           </ul>
         </div>
+        <a
+          class="btn btn-sm btn-outline ms-1"
+          href="<%= procedures_actions_path(type: 'reload-status', id: procedure.id, status_id: status.id) %>"
+          data-turbo-frame="<%= turbo_frame_key %>"
+          data-controller="tooltip"
+          data-tooltip="Ricarica stato"
+          aria-label="Ricarica stato <%= status.title %>"
+        ><i class="bi bi-arrow-clockwise"></i></a>
                 <% if procedure.resources_type_tasks? && !procedure.model %>
           <div class="dropdown ms-1">
             <button
