@@ -1,12 +1,27 @@
 <%
 
 task ||= Task.new
+move_context ||= {}
 turbo_frame_key = dom_id(task, 'tasks-people-item')
 
 %>
 
-<%= turbo_frame_tag turbo_frame_key do %>
+<%= turbo_frame_tag turbo_frame_key, data: { item: task.id } do %>
   <li class="c-kanban__item list-group-item">
+    <div class="c-kanban__item-actions d-flex justify-content-end mb-1">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary kanban_controller-move-button"
+        data-action="keydown->kanban#moveKeydown"
+        data-user-policies-target="item" data-policy="tasks_edit"
+        aria-label="Sposta il task <%= task.title %>. Usa le frecce sinistra/destra per cambiare assegnatario."
+        aria-keyshortcuts="ArrowLeft ArrowRight"
+      >
+        <i class="bi bi-arrows-move kanban_controller-move-button"></i>
+      </button>
+    </div>
+    <%# hidden link the kanban controller rewrites (adds assignee_id/item_id/order) and clicks on drop %>
+    <a class="d-none kanban_controller-item-updater" href="<%= tasks_move_action_path(task.id, move_context) %>" data-turbo-method="post" data-turbo-frame="tasks-people"></a>
     <%= render 'tasks/shared/card', task: task, turbo_frame_key: 'tasks-people' %>
   </li>
 <% end %>

@@ -60,10 +60,6 @@ class ProceduresController < ApplicationController
       return unless procedures_status_finder
       return render "procedures/actions/show_status_assignments"
     end
-    if @type == "reload-status"
-      return unless procedures_status_finder
-      return render partial: "procedures/kanban-status", locals: { status: @status }
-    end
 
     return render "procedures/actions/add_item" if @type == "add-item"
     return render "procedures/actions/add_item_existing" if @type == "add-item-existing"
@@ -406,9 +402,28 @@ class ProceduresController < ApplicationController
     return unless procedures_item_finder
 
     p = params.permit(:procedures_status_id, :order)
-    @item.move(p[:procedures_status_id], p[:order])
+    target_status = @procedure.procedures_statuses.find_by(id: p[:procedures_status_id])
 
-    render partial: "procedures/kanban-item", locals: { item: @item, turbo_frame_status_key: dom_id(@item.procedures_status, "kanban-status") }
+    if target_status && @item.move(target_status.id, p[:order])
+      # Success: the client already applied the move optimistically and the model
+      # broadcasts the affected columns to every board subscriber (including the
+      # actor), so the HTTP response must be an empty stream to avoid a second,
+      # redundant re-render of the moved item.
+      render turbo_stream: []
+    else
+      # Failure: revert the optimistic move by re-rendering the involved columns
+      # from the persisted state and surface the reason to the user.
+      message = @item.errors.full_messages.first || "Impossibile spostare l'elemento."
+      @item.reload
+
+      statuses = [ @item.procedures_status, target_status ].compact.uniq
+      streams = statuses.map do |status|
+        turbo_stream.replace(dom_id(status, "kanban-status"), partial: "procedures/kanban-status", locals: { status: status })
+      end
+      streams << turbo_stream.append(dom_id(@procedure, "kanban-flash"), partial: "procedures/kanban-flash", locals: { message: message })
+
+      render turbo_stream: streams, status: :unprocessable_entity
+    end
   end
 
   private
@@ -431,7 +446,7 @@ class ProceduresController < ApplicationController
   def procedures_status_finder
     @status = @procedure.procedures_statuses.find_by(id: params[:status_id])
     unless @status
-      flash[:danger] = "Partecipante non trovato"
+      flash[:danger] = "Stato non trovato"
       redirect_to procedures_show_path(@procedure)
       return false
     end

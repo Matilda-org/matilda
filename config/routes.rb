@@ -99,6 +99,7 @@ Rails.application.routes.draw do
   post "tasks/destroy-action/:id", to: "tasks#destroy_action", as: "tasks_destroy_action"
   post "tasks/complete-action/:id", to: "tasks#complete_action", as: "tasks_complete_action"
   post "tasks/postpone-action/:id", to: "tasks#postpone_action", as: "tasks_postpone_action"
+  post "tasks/move-action/:id", to: "tasks#move_action", as: "tasks_move_action"
   post "tasks/uncomplete-action/:id", to: "tasks#uncomplete_action", as: "tasks_uncomplete_action"
   post "tasks/start-track-action/:id", to: "tasks#start_track_action", as: "tasks_start_track_action"
   post "tasks/ping-track-action/:id/:track_id", to: "tasks#ping_track_action", as: "tasks_ping_track_action"

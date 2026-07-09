@@ -1,7 +1,13 @@
 <%
 
 tasks_per_user ||= {}
-users = User.where(id: tasks_per_user.keys).order(:surname, :name)
+date ||= Date.today
+project_id ||= nil
+# show every user as a column (even without tasks) so each is a valid drop target
+users = User.order(:surname, :name)
+
+# context needed by the server to rebuild this board after a drag & drop move
+move_context = { mode: "people", date: date, project_id: project_id }
 
 %>
 
@@ -9,16 +15,23 @@ users = User.where(id: tasks_per_user.keys).order(:surname, :name)
   <% if users.length.positive? %>
     <div
       class="c-kanban"
+      data-controller="kanban"
+      data-kanban-id="tasks-people"
+      data-kanban-sort-value="false"
+      data-kanban-updater-param-container-value="assignee_id"
+      data-kanban-updater-param-item-value="item_id"
+      data-kanban-updater-param-order-value="order"
     >
-      <div class="c-kanban__prev"><i class="bi bi-arrow-left-circle"></i></div>
-      <div class="c-kanban__scrollable">
+      <button type="button" class="c-kanban__nav c-kanban__nav--prev" data-kanban-target="prev" data-action="kanban#scrollPrev" aria-label="Scorri a sinistra"><i class="bi bi-arrow-left-circle"></i></button>
+      <div data-kanban-target="scrollable" class="c-kanban__scrollable">
         <% users.each do |user| %>
-          <%= render 'tasks/people-status', user: user, tasks: tasks_per_user[user.id] %>
+          <%= render 'tasks/people-status', user: user, tasks: tasks_per_user[user.id], move_context: move_context %>
         <% end %>
         <% if tasks_per_user[nil] %>
-          <%= render 'tasks/people-status', tasks: tasks_per_user[nil] %>
+          <%= render 'tasks/people-status', tasks: tasks_per_user[nil], move_context: move_context %>
         <% end %>
       </div>
+      <button type="button" class="c-kanban__nav c-kanban__nav--next" data-kanban-target="next" data-action="kanban#scrollNext" aria-label="Scorri a destra"><i class="bi bi-arrow-right-circle"></i></button>
     </div>
   <% else %>
     <div class="text-center pt-5 pb-5">

@@ -2,10 +2,13 @@
 
 date ||= Date.today
 tasks ||= []
+move_context ||= {}
 turbo_frame_key = "tasks-calendar-status-#{date.strftime("%Y-%m-%d")}"
 
 time_estimate_sum = tasks.sum(&:time_estimate)
 time_spent_sum = tasks.sum(&:time_spent)
+
+sorted_tasks = tasks.sort_by { |t| t.title.downcase }.sort_by { |t| t.completed ? 1 : 0 }
 
 %>
 
@@ -44,12 +47,6 @@ time_spent_sum = tasks.sum(&:time_spent)
         </span>
       </div>
     </div>
-    <ul class="list-group list-group-flush h-fullscroll">
-      <% if tasks.length.positive? %>
-        <% tasks.sort_by { |t| t.title.downcase }.sort_by { |t| t.completed ? 1 : 0 }.each do |task| %>
-          <%= render 'tasks/calendar-item', task: task %>
-        <% end %>
-      <% end %>
-    </ul>
+    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= date.strftime('%Y-%m-%d') %>" data-status-title="<%= "#{l(date, format: '%a').capitalize} #{date.strftime('%d/%m/%Y')}" %>"><%= safe_join(sorted_tasks.map { |task| render("tasks/calendar-item", task: task, move_context: move_context) }) %></ul>
   </div>
 <% end %>

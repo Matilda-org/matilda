@@ -3,18 +3,30 @@
 date_start ||= Date.today
 date_end ||= Date.today
 tasks_per_date ||= {}
+user_id ||= nil
+project_id ||= nil
+
+# context needed by the server to rebuild this board after a drag & drop move
+move_context = { mode: "calendar", date_start: date_start, date_end: date_end, user_id: user_id, project_id: project_id }
 
 %>
 
 <%= turbo_frame_tag 'tasks-calendar' do %>
   <div
     class="c-kanban"
+    data-controller="kanban"
+    data-kanban-id="tasks-calendar"
+    data-kanban-sort-value="false"
+    data-kanban-updater-param-container-value="deadline"
+    data-kanban-updater-param-item-value="item_id"
+    data-kanban-updater-param-order-value="order"
   >
-    <div class="c-kanban__prev"><i class="bi bi-arrow-left-circle"></i></div>
-    <div class="c-kanban__scrollable">
+    <button type="button" class="c-kanban__nav c-kanban__nav--prev" data-kanban-target="prev" data-action="kanban#scrollPrev" aria-label="Scorri a sinistra"><i class="bi bi-arrow-left-circle"></i></button>
+    <div data-kanban-target="scrollable" class="c-kanban__scrollable">
       <% (date_start..date_end).each do |date| %>
-        <%= render 'tasks/calendar-status', date: date, tasks: tasks_per_date[date] %>
+        <%= render 'tasks/calendar-status', date: date, tasks: tasks_per_date[date], move_context: move_context %>
       <% end %>
     </div>
+    <button type="button" class="c-kanban__nav c-kanban__nav--next" data-kanban-target="next" data-action="kanban#scrollNext" aria-label="Scorri a destra"><i class="bi bi-arrow-right-circle"></i></button>
   </div>
 <% end %>

@@ -1,0 +1,10 @@
+<%
+
+message ||= "Si è verificato un errore."
+
+%>
+
+<div class="alert alert-danger alert-dismissible fade show c-kanban__flash-item shadow-sm" role="alert">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i><%= message %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+</div>

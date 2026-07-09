@@ -48,25 +48,34 @@ class TasksController < ApplicationController
     @mode = params[:mode] || "calendar"
 
     if @mode == "people"
-      @date = safe_date(params[:date], Date.today)
-      @project_id = params[:project_id]
-
-      tasks = Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil))
-      tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
-      tasks = tasks.order(deadline: :asc, title: :asc)
-      @tasks_per_user = tasks.group_by(&:user_id)
+      load_people_grouping
       render :index_people
     else
-      @date_start = safe_date(params[:date_start], Date.today.at_beginning_of_week)
-      @date_end = safe_date(params[:date_end], Date.today.at_end_of_week)
-      @date_end = @date_start if @date_end < @date_start
-      @user_id = params[:user_id]
-      @project_id = params[:project_id]
+      load_calendar_grouping
+    end
+  end
 
-      tasks = Task.where(deadline: (@date_start..@date_end)).includes(:tasks_checks)
-      tasks = tasks.where(user_id: @user_id) unless @user_id.blank?
-      tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
-      @tasks_per_date = tasks.group_by(&:deadline)
+  # Drag & drop from the calendar/people boards: dropping a task on another column
+  # changes its deadline (calendar) or its assignee (people). Only the affected
+  # columns are re-rendered (source + target) so the board controller stays mounted
+  # and headers/counters stay in sync.
+  def move_action
+    return unless validate_policy!("tasks_edit")
+    return unless task_finder
+
+    if params[:mode] == "people"
+      old_user_id = @task.user_id
+      @task.update(user_id: params[:assignee_id].presence)
+      load_people_grouping
+      affected = [ old_user_id, @task.user_id ].uniq
+      render turbo_stream: affected.map { |user_id| people_status_stream(user_id) }
+    else
+      old_deadline = @task.deadline
+      deadline = safe_date(params[:deadline], nil)
+      @task.update(deadline: deadline) if deadline
+      load_calendar_grouping
+      affected = [ old_deadline, @task.deadline ].compact.uniq
+      render turbo_stream: affected.map { |date| calendar_status_stream(date) }
     end
   end
 
@@ -424,6 +433,51 @@ class TasksController < ApplicationController
     value.present? ? Date.parse(value) : fallback
   rescue ArgumentError, TypeError
     fallback
+  end
+
+  # Build @tasks_per_date for the calendar board from the current filters.
+  def load_calendar_grouping
+    @date_start = safe_date(params[:date_start], Date.today.at_beginning_of_week)
+    @date_end = safe_date(params[:date_end], Date.today.at_end_of_week)
+    @date_end = @date_start if @date_end < @date_start
+    @user_id = params[:user_id]
+    @project_id = params[:project_id]
+
+    tasks = Task.where(deadline: (@date_start..@date_end)).includes(:tasks_checks)
+    tasks = tasks.where(user_id: @user_id) unless @user_id.blank?
+    tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
+    @tasks_per_date = tasks.group_by(&:deadline)
+  end
+
+  # Turbo Stream to replace a single calendar day column with its current tasks.
+  def calendar_status_stream(date)
+    move_context = { mode: "calendar", date_start: @date_start, date_end: @date_end, user_id: @user_id, project_id: @project_id }
+    turbo_stream.replace(
+      "tasks-calendar-status-#{date.strftime('%Y-%m-%d')}",
+      partial: "tasks/calendar-status",
+      locals: { date: date, tasks: @tasks_per_date[date] || [], move_context: move_context }
+    )
+  end
+
+  # Turbo Stream to replace a single people column with its current tasks.
+  def people_status_stream(user_id)
+    move_context = { mode: "people", date: @date, project_id: @project_id }
+    turbo_stream.replace(
+      "tasks-people-status-#{user_id}",
+      partial: "tasks/people-status",
+      locals: { user: user_id ? User.find_by(id: user_id) : nil, tasks: @tasks_per_user[user_id] || [], move_context: move_context }
+    )
+  end
+
+  # Build @tasks_per_user for the people board from the current filters.
+  def load_people_grouping
+    @date = safe_date(params[:date], Date.today)
+    @project_id = params[:project_id]
+
+    tasks = Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil))
+    tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
+    tasks = tasks.order(deadline: :asc, title: :asc)
+    @tasks_per_user = tasks.group_by(&:user_id)
   end
 
   def task_finder

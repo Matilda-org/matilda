@@ -3,6 +3,7 @@
 status ||= Procedure::Status.new
 procedure = status.procedure
 turbo_frame_key = dom_id(status, 'kanban-status')
+items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : []
 
 %>
 
@@ -51,15 +52,7 @@ turbo_frame_key = dom_id(status, 'kanban-status')
             <li><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Elimina</a></li>
           </ul>
         </div>
-        <a
-          class="btn btn-sm btn-outline ms-1"
-          href="<%= procedures_actions_path(type: 'reload-status', id: procedure.id, status_id: status.id) %>"
-          data-turbo-frame="<%= turbo_frame_key %>"
-          data-controller="tooltip"
-          data-tooltip="Ricarica stato"
-          aria-label="Ricarica stato <%= status.title %>"
-        ><i class="bi bi-arrow-clockwise"></i></a>
-                <% if procedure.resources_type_tasks? && !procedure.model %>
+        <% if procedure.resources_type_tasks? && !procedure.model %>
           <div class="dropdown ms-1">
             <button
               class="btn btn-sm btn-link text-dark"
@@ -140,13 +133,9 @@ turbo_frame_key = dom_id(status, 'kanban-status')
         <% end %>
       </div>
     </div>
-    <ul class="list-group list-group-flush h-fullscroll" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>">
-      <% if status.procedures_items.length.positive? %>
-        <% status.procedures_items_ordered_and_filtered.each do |item| %>
-          <%= render 'procedures/kanban-item', item: item, turbo_frame_status_key: turbo_frame_key %>
-        <% end %>
-      <% end %>
-    </ul>
+    <%# safe_join keeps the <ul> free of stray whitespace, so :empty (and its %>
+    <%# "drop here" hint) matches when the column has no items %>
+    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>"><%= safe_join(items.map { |item| render("procedures/kanban-item", item: item, turbo_frame_status_key: turbo_frame_key) }) %></ul>
     <div class="card-footer d-flex">
       <% if procedure.resources_type_tasks? && !procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="tasks_create">

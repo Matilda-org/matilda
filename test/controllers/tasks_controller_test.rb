@@ -99,6 +99,46 @@ class TasksControllerTest < ActionController::TestCase
     assert_equal 1.day.from_now.to_date, task.deadline.to_date
   end
 
+  test "move_action reschedules a task to the dropped day (calendar)" do
+    @user.users_policies.create!(policy: "tasks_edit")
+    task = tasks(:one)
+    target = Date.today + 3
+
+    post :move_action, params: { id: task.id, mode: "calendar", deadline: target.strftime("%Y-%m-%d") }
+
+    assert_response :success
+    assert_equal target, task.reload.deadline
+  end
+
+  test "move_action reassigns a task to the dropped user (people)" do
+    @user.users_policies.create!(policy: "tasks_edit")
+    task = tasks(:one)
+
+    post :move_action, params: { id: task.id, mode: "people", assignee_id: users(:two).id }
+
+    assert_response :success
+    assert_equal users(:two).id, task.reload.user_id
+  end
+
+  test "move_action unassigns a task when dropped on the unassigned column" do
+    @user.users_policies.create!(policy: "tasks_edit")
+    task = tasks(:one)
+    task.update!(user_id: users(:two).id)
+
+    post :move_action, params: { id: task.id, mode: "people", assignee_id: "" }
+
+    assert_response :success
+    assert_nil task.reload.user_id
+  end
+
+  test "move_action requires the tasks_edit policy" do
+    task = tasks(:one)
+
+    post :move_action, params: { id: task.id, mode: "calendar", deadline: Date.today.strftime("%Y-%m-%d") }
+
+    assert_redirected_to root_path
+  end
+
   test "uncomplete_action" do
     task = tasks(:one)
     task.update(completed: true, completed_at: Time.now)

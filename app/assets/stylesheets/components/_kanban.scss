@@ -30,43 +30,59 @@
   overflow-x: auto;
 }
 
-.c-kanban__prev, .c-kanban__next {
+/** Horizontal scroll buttons (always available, not only while dragging) **/
+
+.c-kanban__nav {
   position: absolute;
   top: 50%;
-  width: 75px;
-  height: 100px;
-  z-index: 1;
-  background-color: rgba(0,0,0, 0.25);
-  transition: all 0.35s ease;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  z-index: 3;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgba(var(--bs-primary-rgb), 0.85);
+  color: $white;
+  font-size: 22px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: $white;
-  font-size: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, background-color 0.2s ease;
 }
 
-.c-kanban__prev.is-over, .c-kanban__next.is-over {
-  background-color: rgba(0,0,0, 0.5);
+// shown only when the board can actually scroll in that direction
+.c-kanban__nav.is-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.c-kanban__prev {
-  left: 0;
-  transform: translate(-100%, -50%);
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
-}
-.c-kanban__prev.is-active {
-  transform: translate(0, -50%);
+.c-kanban__nav:hover {
+  background-color: rgba(var(--bs-primary-rgb), 1);
 }
 
-.c-kanban__next {
-  right: 0;
-  transform: translate(100%, -50%);
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
+.c-kanban__nav--prev { left: 6px; }
+.c-kanban__nav--next { right: 6px; }
+
+// On touch / small screens the native horizontal swipe (and SortableJS
+// auto-scroll while dragging) already cover scrolling, so the arrows are hidden
+// to avoid overlapping the cards.
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .c-kanban__nav { display: none; }
 }
-.c-kanban__next.is-active {
-  transform: translate(0, -50%);
+
+/** Move-in error toasts (revert feedback) **/
+
+.c-kanban__flash {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: 420px;
+  max-width: 90%;
 }
 
 .c-kanban__item {
@@ -105,21 +121,54 @@
   display: none;
 }
 
-/** Custom style during drag **/
+/** Empty column: droppable target with a hint **/
 
-.c-kanban.is-dragging .c-kanban__item-card, .gu-mirror .c-kanban__item-card {
-  display: none;
+.c-kanban__container {
+  min-height: 60px;
 }
 
-.c-kanban.is-dragging .c-kanban__item-title, .gu-mirror .c-kanban__item-title {
-  display: inline;
+// when empty, stretch the hint to fill the whole column scroll area
+.c-kanban__container:empty {
+  display: flex;
 }
 
-.c-kanban.is-dragging .c-kanban__item-background, .gu-mirror .c-kanban__item-background {
-  display: block;
-}
-
-.gu-mirror .c-kanban__item {
-  padding: 15px;
+.c-kanban__container:empty::after {
+  content: "Trascina qui gli elementi";
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px;
+  border: 2px dashed var(--bs-border-color);
   border-radius: var(--bs-border-radius);
+  color: var(--bs-secondary-color);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/** Drag & drop states (SortableJS) **/
+
+// the gap left where the item will land
+.c-kanban__item--ghost {
+  opacity: 0.4;
+}
+
+.c-kanban__item--ghost .c-kanban__item-card {
+  outline: 2px dashed rgba(var(--bs-primary-rgb), 0.6);
+  outline-offset: -2px;
+  border-radius: var(--bs-border-radius);
+}
+
+// the card being picked up
+.c-kanban__item--chosen {
+  cursor: grabbing;
+}
+
+// the floating card following the pointer
+.c-kanban__item--drag {
+  padding: 10px;
+  border-radius: var(--bs-border-radius);
+  box-shadow: 0 10px 24px rgba(0,0,0, 0.18);
+  background-color: var(--bs-white);
+  opacity: 0.98;
 }

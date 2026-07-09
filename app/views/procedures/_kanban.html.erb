@@ -10,17 +10,19 @@ procedure ||= Procedure.new
   <div
     class="c-kanban"
     data-controller="kanban"
+    data-kanban-id="<%= procedure.id %>"
     data-kanban-updater-param-container-value="procedures_status_id"
     data-kanban-updater-param-item-value="item_id"
     data-kanban-updater-param-order-value="order"
   >
-    <div class="c-kanban__prev" data-kanban-target="prev"><i class="bi bi-arrow-left-circle"></i></div>
+    <button type="button" class="c-kanban__nav c-kanban__nav--prev" data-kanban-target="prev" data-action="kanban#scrollPrev" aria-label="Scorri a sinistra"><i class="bi bi-arrow-left-circle"></i></button>
     <div data-kanban-target="scrollable" class="c-kanban__scrollable">
       <% procedure.procedures_statuses.order(order: :asc).each do |status| %>
         <%= render 'procedures/kanban-status', status: status %>
       <% end %>
     </div>
-    <div class="c-kanban__next" data-kanban-target="next"><i class="bi bi-arrow-right-circle"></i></div>
+    <button type="button" class="c-kanban__nav c-kanban__nav--next" data-kanban-target="next" data-action="kanban#scrollNext" aria-label="Scorri a destra"><i class="bi bi-arrow-right-circle"></i></button>
+    <div id="<%= dom_id(procedure, 'kanban-flash') %>" class="c-kanban__flash" aria-live="assertive"></div>
     <div class="visually-hidden" role="status" aria-live="polite" data-kanban-target="announcer"></div>
   </div>
 <% end %>

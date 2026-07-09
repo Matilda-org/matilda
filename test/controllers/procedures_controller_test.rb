@@ -233,8 +233,20 @@ class ProceduresControllerTest < ActionController::TestCase
     procedure = procedures(:one)
     item = procedure.procedures_items.first
     matilda_controller_endpoint(:post, :move_item_action,
-      params: { id: procedure.id, item_id: item.id, direction: "up" },
+      params: { id: procedure.id, item_id: item.id, procedures_status_id: item.procedures_status_id, order: 1 },
       policy: "procedures_edit",
     )
+  end
+
+  test "move_item_action reverts on an invalid target status" do
+    @user.users_policies.create!(policy: "procedures_edit")
+    procedure = procedures(:one)
+    item = procedure.procedures_items.first
+    original_status_id = item.procedures_status_id
+
+    post :move_item_action, params: { id: procedure.id, item_id: item.id, procedures_status_id: 0, order: 1 }
+
+    assert_response :unprocessable_content
+    assert_equal original_status_id, item.reload.procedures_status_id
   end
 end
