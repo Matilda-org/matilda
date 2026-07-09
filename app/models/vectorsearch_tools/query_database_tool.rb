@@ -1,6 +1,12 @@
 class VectorsearchTools::QueryDatabaseTool
   extend Langchain::ToolDefinition
 
+  # The querying user, used to enforce the same row/feature level
+  # authorization the controllers apply (see #accessible_projects etc).
+  def initialize(user = nil)
+    @user = user
+  end
+
   # Projects
   ##
 
@@ -17,7 +23,7 @@ class VectorsearchTools::QueryDatabaseTool
     user_id = data[:user_id]
     search = data[:search]
 
-    projects = Project.includes(:folder, :projects_members)
+    projects = accessible_projects.includes(:folder, :projects_members)
     projects = projects.where(archived: !!archived)
     projects = projects.where(year: year) if year.present?
     projects = projects.joins(:projects_members).where(projects_members: { user_id: user_id }) if user_id.present?
@@ -34,7 +40,7 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def prjs_logs(data)
-    project = Project.find_by_id(data[:project_id])
+    project = accessible_projects.find_by_id(data[:project_id])
     return "Progetto non trovato" unless project
 
     project.projects_logs.map { |log| project_log_to_string(log) }.join("\n")
@@ -46,7 +52,7 @@ class VectorsearchTools::QueryDatabaseTool
 
   def prjs_log_content(data)
     log = Projects::Log.find_by_id(data[:projects_log_id])
-    return "Nota non trovata" unless log
+    return "Nota non trovata" unless log && accessible_projects.exists?(log.project_id)
 
     log.content
   end
@@ -59,7 +65,7 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def prjs_atchs(data)
-    project = Project.find_by_id(data[:project_id])
+    project = accessible_projects.find_by_id(data[:project_id])
     return "Progetto non trovato" unless project
 
     project.attachments.map { |a| project_attachment_to_string(a) }.join("\n")
@@ -83,7 +89,7 @@ class VectorsearchTools::QueryDatabaseTool
     deadline = data[:deadline]
     search = data[:search]
 
-    tasks = Task.all
+    tasks = accessible_tasks
     tasks = tasks.where(project_id: project_id) if project_id.present?
     tasks = tasks.where(user_id: user_id) if user_id.present?
     tasks = tasks.where(completed: !!completed)
@@ -112,6 +118,12 @@ class VectorsearchTools::QueryDatabaseTool
     procedure_id = data[:procedure_id]
     procedure_status_id = data[:procedure_status_id]
 
+    # a member-restricted user can only file tasks on boards of projects they can access
+    if restricted_to_member_projects? && procedure_id.present?
+      procedure = Procedure.find_by_id(procedure_id)
+      return "Non hai i permessi per creare task su questa board" unless procedure && accessible_projects.exists?(procedure.project_id)
+    end
+
     task = Task.create!(
       user_id: user_id,
       title: title,
@@ -136,6 +148,8 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   def credentials(data)
+    return "Non hai i permessi per consultare le credenziali" unless can_access_credentials?
+
     search = data[:search]
 
     credentials = Credential.all
@@ -145,6 +159,27 @@ class VectorsearchTools::QueryDatabaseTool
   end
 
   private
+
+  # Authorization scopes
+  ##
+
+  # Mirrors ApplicationController#query_projects_for_policy: users flagged
+  # only_data_projects_as_member can only see projects they belong to.
+  def restricted_to_member_projects?
+    @user&.policy?("only_data_projects_as_member")
+  end
+
+  def accessible_projects
+    restricted_to_member_projects? ? Project.where(id: @user.projects_as_member_ids) : Project.all
+  end
+
+  def accessible_tasks
+    restricted_to_member_projects? ? Task.where(project_id: @user.projects_as_member_ids) : Task.all
+  end
+
+  def can_access_credentials?
+    @user&.policy?("credentials_index")
+  end
 
   # To string methods
   ##

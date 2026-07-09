@@ -49,7 +49,7 @@ class Vectorsearch
         instructions: prompt_template.gsub("{{track_time_string}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
         tools: [
           VectorsearchTools::BrowserWebTool.new,
-          VectorsearchTools::QueryDatabaseTool.new
+          VectorsearchTools::QueryDatabaseTool.new(self.user)
         ]
       )
 

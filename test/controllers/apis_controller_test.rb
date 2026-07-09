@@ -38,6 +38,16 @@ class ApisControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "task endpoint does not expose the owner password digest" do
+    task = Task.create!(title: "With owner", user: users(:one))
+    get :task, params: { id: task.id, api_key: "test_api_key" }
+    assert_response :success
+
+    body = JSON.parse(@response.body)
+    assert_not_nil body["user"]
+    assert_not_includes body["user"].keys, "password_digest"
+  end
+
   test "should update task title" do
     task = tasks(:one)
     patch :task_update, params: { id: task.id, api_key: "test_api_key", task: { title: "Updated Task Title" } }

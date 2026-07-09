@@ -118,4 +118,11 @@ class UserTest < ActiveSupport::TestCase
     )
     assert_equal user.email.downcase, user.reload.email
   end
+
+  test "serialization never exposes the password digest" do
+    user = users(:one)
+
+    assert_not_includes user.as_json.keys, "password_digest"
+    assert_not_includes user.serializable_hash.keys, "password_digest"
+  end
 end

@@ -64,6 +64,12 @@ class User < ApplicationRecord
   # HELPERS
   ############################################################
 
+  # Never expose the password hash through serialization (as_json/to_json),
+  # so API responses and any include: [:user] can't leak crackable digests.
+  def serializable_hash(options = nil)
+    super(options).except("password_digest")
+  end
+
   def complete_name
     [ surname, name ].join(" ")
   end
