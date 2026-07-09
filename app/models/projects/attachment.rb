@@ -35,6 +35,38 @@ class Projects::Attachment < ApplicationRecord
     @typology_string ||= Projects::Attachment.typology_string(typology)
   end
 
+  # Bootstrap color used for the typology badge.
+  def typology_color
+    Projects::Attachment.typology_color(typology)
+  end
+
+  # Bootstrap Icons class for the attached file, based on its content type.
+  def file_icon
+    return "bi-paperclip" unless file.attached?
+
+    case file.content_type
+    when "application/pdf" then "bi-file-earmark-pdf"
+    when "image/jpeg", "image/png" then "bi-file-earmark-image"
+    when "text/plain" then "bi-file-earmark-text"
+    when "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" then "bi-file-earmark-word"
+    when "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" then "bi-file-earmark-spreadsheet"
+    else "bi-file-earmark"
+    end
+  end
+
+  # Bootstrap text color paired with #file_icon.
+  def file_icon_color
+    return "secondary" unless file.attached?
+
+    case file.content_type
+    when "application/pdf" then "danger"
+    when "image/jpeg", "image/png" then "info"
+    when "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" then "primary"
+    when "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" then "success"
+    else "secondary"
+    end
+  end
+
   # OPERATIONS
   ############################################################
 
@@ -75,5 +107,15 @@ class Projects::Attachment < ApplicationRecord
     return "Materiale cliente" if typology == "client_content"
 
     "Non definito"
+  end
+
+  def self.typology_color(typology)
+    {
+      "general" => "secondary",
+      "quotation_delivered" => "info",
+      "quotation_accepted" => "success",
+      "presentation" => "primary",
+      "client_content" => "warning"
+    }[typology] || "secondary"
   end
 end

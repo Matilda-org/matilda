@@ -1,0 +1,56 @@
+// Vertical timeline (used for the project events list)
+.c-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.c-timeline__item {
+  position: relative;
+  padding: 0 0 1.35rem 1.75rem;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+// connecting line between markers (hidden after the last item)
+.c-timeline__item::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 0.35rem;
+  bottom: -0.35rem;
+  width: 2px;
+  background: var(--bs-border-color);
+}
+
+.c-timeline__item:last-child::before {
+  display: none;
+}
+
+.c-timeline__marker {
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bs-primary);
+  border: 3px solid var(--bs-body-bg);
+  box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.25);
+  z-index: 1;
+}
+
+.c-timeline__message {
+  font-size: 14px;
+  line-height: 1.35;
+  margin-bottom: 0.15rem;
+}
+
+.c-timeline__time {
+  display: block;
+  font-size: 12px;
+  color: var(--bs-secondary-color);
+}

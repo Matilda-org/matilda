@@ -5,16 +5,17 @@ project ||= Project.new
 %>
 
 <% if project.projects_events.length.positive? %>
-<ol class="list-group">
-  <% project.projects_events.order(created_at: :desc).each do |event| %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div class="mb-1" style="font-size: 14px;"><%= event.message %></div>
-        <div class="text-muted" style="font-size: 12px;"><%= event.created_at.strftime('%d/%m/%Y %H:%M') %></div>
-      </div>
-    </li>
-  <% end %>
-</ol>
+  <ul class="c-timeline">
+    <% project.projects_events.order(created_at: :desc).each do |event| %>
+      <li class="c-timeline__item">
+        <span class="c-timeline__marker"></span>
+        <div class="c-timeline__content">
+          <div class="c-timeline__message"><%= event.message %></div>
+          <time class="c-timeline__time" datetime="<%= event.created_at.iso8601 %>"><%= event.created_at.strftime('%d/%m/%Y %H:%M') %></time>
+        </div>
+      </li>
+    <% end %>
+  </ul>
 <% else %>
   <%= render 'shared/placeholder' %>
 <% end %>
