@@ -50,6 +50,9 @@ class Task < ApplicationRecord
   before_save do
     if self.completed_changed? && self.completed
       self.completed_at = Time.current
+      # se la scadenza è futura al completamento, la si porta a oggi
+      # (una scadenza passata resta invariata; esclusi i task ripetuti)
+      self.deadline = Date.today if !repeat && deadline && deadline > Date.today
     elsif self.completed_changed? && !self.completed
       self.completed_at = nil
     end
