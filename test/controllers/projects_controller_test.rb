@@ -51,6 +51,19 @@ class ProjectsControllerTest < ActionController::TestCase
     )
   end
 
+  test "show references the folder the project belongs to" do
+    @user.users_policies.create!(policy: "projects_show")
+    project = projects(:one)
+    folder = folders(:one)
+    project.create_folders_item!(folder: folder)
+
+    get :show, params: { id: project.id }
+
+    assert_response :success
+    assert_includes @response.body, folder.name
+    assert_includes @response.body, folders_show_path(folder.id)
+  end
+
   test "show_attachment" do
     @user.users_policies.create!(policy: "projects_show")
     project = projects(:one)

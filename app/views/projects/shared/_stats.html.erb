@@ -1,0 +1,62 @@
+<%
+
+project ||= Project.new
+
+total_tasks = project.tasks.count
+completed_tasks = project.tasks.completed.count
+open_tasks = total_tasks - completed_tasks
+members_count = project.cached_projects_members_count
+budget_pct = project.cached_percentage_budget_used
+budget_color = budget_pct > 100 ? "danger" : (budget_pct >= 80 ? "warning" : "success")
+
+%>
+
+<div class="row g-2 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><%= nav_icon('tasks') %></div>
+      <div>
+        <div class="c-stat__value"><%= open_tasks %></div>
+        <div class="c-stat__label">Task aperti</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-success bg-opacity-10 text-success"><%= nav_icon('tasks') %></div>
+      <div>
+        <div class="c-stat__value"><%= completed_tasks %>/<%= total_tasks %></div>
+        <div class="c-stat__label">Task completati</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-info bg-opacity-10 text-info"><%= nav_icon('users') %></div>
+      <div>
+        <div class="c-stat__value"><%= members_count %></div>
+        <div class="c-stat__label">Partecipanti</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <% if project.budget_management %>
+        <div class="c-stat__icon rounded-circle bg-<%= budget_color %> bg-opacity-10 text-<%= budget_color %>"><i class="bi bi-speedometer2"></i></div>
+        <div>
+          <div class="c-stat__value"><%= budget_pct %>%</div>
+          <div class="c-stat__label">Budget tempo</div>
+        </div>
+      <% else %>
+        <div class="c-stat__icon rounded-circle bg-<%= project.archived ? 'secondary' : 'success' %> bg-opacity-10 text-<%= project.archived ? 'secondary' : 'success' %>"><i class="bi bi-<%= project.archived ? 'archive' : 'play-circle' %>"></i></div>
+        <div>
+          <div class="c-stat__value"><%= project.archived ? 'Archiviato' : 'Attivo' %></div>
+          <div class="c-stat__label">Stato</div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

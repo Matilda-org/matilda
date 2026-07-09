@@ -1,0 +1,47 @@
+<%
+
+folder ||= Folder.new
+
+%>
+
+<div class="row g-2 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><%= nav_icon('projects') %></div>
+      <div>
+        <div class="c-stat__value"><%= folder.total_projects %></div>
+        <div class="c-stat__label">Progetti</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><%= nav_icon('credentials') %></div>
+      <div>
+        <div class="c-stat__value"><%= folder.total_credentials %></div>
+        <div class="c-stat__label">Credenziali</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-calendar-event"></i></div>
+      <div>
+        <div class="c-stat__value"><%= folder.last_project&.created_at&.strftime('%m/%Y') || '—' %></div>
+        <div class="c-stat__label">Ultimo progetto</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-calendar-event"></i></div>
+      <div>
+        <div class="c-stat__value"><%= folder.last_credential&.created_at&.strftime('%m/%Y') || '—' %></div>
+        <div class="c-stat__label">Ultima credenziale</div>
+      </div>
+    </div>
+  </div>
+</div>

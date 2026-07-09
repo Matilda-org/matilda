@@ -7,21 +7,31 @@ project ||= Project.new
 <% if project.projects_members.length.positive? %>
 <ol class="list-group">
   <% project.projects_members.joins(:user).order('users.surname ASC, users.name ASC').each do |member| %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <img src="<%= member.user.image_profile.attached? ? url_for(member.user.image_profile_thumb) : '/statics/placeholder-profile.jpg' %>" style="width: 50px; height: 50px; object-fit: cover;" class="rounded-circle">
-        <div class="ms-2">
-          <div class="fw-bold mb-1"><%= member.user.complete_name %></div>
-          <div class="text-muted" style="font-size: 14px;"><%= member.role %></div>
+    <li class="list-group-item">
+      <div class="c-list-item">
+        <% if member.user.image_profile.attached? %>
+          <img src="<%= url_for(member.user.image_profile_thumb) %>" class="c-list-item__avatar rounded-circle" alt="">
+        <% else %>
+          <div class="c-list-item__avatar c-list-item__icon rounded-circle bg-primary bg-opacity-10 text-primary"><%= member.user.complete_name.split.map { |w| w[0] }.first(2).join.upcase %></div>
+        <% end %>
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate"><%= member.user.complete_name %></div>
+          <div class="c-list-item__meta">
+            <span class="badge rounded-pill bg-secondary bg-opacity-75"><%= member.role %></span>
+          </div>
         </div>
-      </div>
-      <div class="ms-3 d-flex">
-        <a href="<%= projects_actions_path(id: project.id, type: 'edit-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary me-1" aria-label="Modifica partecipante <%= member.user.complete_name %>"><i class="bi bi-pencil"></i></a>
-        <a href="<%= projects_actions_path(id: project.id, type: 'remove-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-danger" aria-label="Rimuovi partecipante <%= member.user.complete_name %>"><i class="bi bi-trash"></i></a>
+        <div class="c-list-item__actions">
+          <a href="<%= projects_actions_path(id: project.id, type: 'edit-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary me-1" aria-label="Modifica partecipante <%= member.user.complete_name %>"><i class="bi bi-pencil"></i></a>
+          <a href="<%= projects_actions_path(id: project.id, type: 'remove-member', member_id: member.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-danger" aria-label="Rimuovi partecipante <%= member.user.complete_name %>"><i class="bi bi-trash"></i></a>
+        </div>
       </div>
     </li>
   <% end %>
 </ol>
 <% else %>
-  <%= render 'shared/placeholder' %>
+  <%= render 'shared/placeholder',
+    message: 'Nessun partecipante',
+    icon: 'people',
+    cta_label: 'Aggiungi partecipante',
+    cta_href: projects_actions_path(type: 'add-member', id: project.id) %>
 <% end %>

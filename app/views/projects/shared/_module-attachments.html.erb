@@ -7,19 +7,20 @@ project ||= Project.new
 <% if project.projects_attachments.length.positive? %>
 <ol class="list-group">
   <% project.projects_attachments.order(date: :desc, created_at: :desc).each do |attachment| %>
-    <li class="list-group-item d-flex align-items-center">
-      <div class="c-attachment__icon bg-<%= attachment.file_icon_color %> bg-opacity-10 text-<%= attachment.file_icon_color %> rounded-circle me-3">
-        <i class="bi <%= attachment.file_icon %>"></i>
-      </div>
-      <div class="flex-grow-1 min-w-0">
-        <div class="fw-bold text-truncate"><%= attachment.title %></div>
-        <div class="d-flex align-items-center flex-wrap gap-2 mt-1">
-          <span class="badge rounded-pill bg-<%= attachment.typology_color %> bg-opacity-75"><%= attachment.typology_string %></span>
-          <span class="text-muted" style="font-size: 12px;"><i class="bi bi-calendar3 me-1"></i><%= attachment.date.strftime('%d/%m/%Y') %></span>
-          <span class="text-muted" style="font-size: 12px;"><i class="bi bi-tag me-1"></i>v<%= attachment.version %></span>
+    <li class="list-group-item">
+      <div class="c-list-item">
+        <div class="c-list-item__icon bg-<%= attachment.file_icon_color %> bg-opacity-10 text-<%= attachment.file_icon_color %> rounded-circle">
+          <i class="bi <%= attachment.file_icon %>"></i>
         </div>
-      </div>
-      <div class="ms-3 d-flex">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate"><%= attachment.title %></div>
+          <div class="c-list-item__meta">
+            <span class="badge rounded-pill bg-<%= attachment.typology_color %> bg-opacity-75"><%= attachment.typology_string %></span>
+            <span><i class="bi bi-calendar3 me-1"></i><%= attachment.date.strftime('%d/%m/%Y') %></span>
+            <span><i class="bi bi-tag me-1"></i>v<%= attachment.version %></span>
+          </div>
+        </div>
+        <div class="c-list-item__actions">
         <div class="dropdown me-1">
           <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu allegato <%= attachment.title %>">
             <i class="bi bi-three-dots"></i>
@@ -34,10 +35,15 @@ project ||= Project.new
         <% else %>
           <button class="btn btn-sm btn-outline-primary" disabled aria-label="Allegato <%= attachment.title %> non disponibile"><i class="bi bi-cloud-arrow-down"></i></button>
         <% end %>
+        </div>
       </div>
     </li>
   <% end %>
 </ol>
 <% else %>
-  <%= render 'shared/placeholder' %>
+  <%= render 'shared/placeholder',
+    message: 'Nessun allegato',
+    icon: 'paperclip',
+    cta_label: 'Aggiungi allegato',
+    cta_href: projects_actions_path(type: 'add-attachment', id: project.id) %>
 <% end %>

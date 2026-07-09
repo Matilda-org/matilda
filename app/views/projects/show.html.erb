@@ -1,8 +1,13 @@
+<% folder_data = @project.cached_folder_item_data %>
+
 <%= render 'shared/page-header',
   title: @project.complete_code,
+  subtitle: folder_data && link_to(folder_data[:folder_name], folders_show_path(folder_data[:folder_id]), data: { turbo: false }),
   render_actions: 'projects/show-actions',
   back: true
 %>
+
+<%= render 'projects/shared/stats', project: @project %>
 
 <%= render 'shared/page-grid' do %>
 

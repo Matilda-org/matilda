@@ -7,16 +7,17 @@ project ||= Project.new
 <% if project.projects_logs.length.positive? %>
 <ol class="list-group">
   <% project.projects_logs.pinned_first.each do |log| %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div class="fw-bold mb-1">
-          <%= raw log.pinned? ? '<small class="text-warning"><i class="bi bi-pin-angle-fill"></i></small>' : '' %>
-          <%= log.title %>
-          <%= raw log.shareable? ? '<small class="text-primary"><i class="bi bi-eye-fill"></i></small>' : '' %>
+    <li class="list-group-item <%= 'c-list-item--highlight' if log.pinned? %>">
+      <div class="c-list-item">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate"><%= log.title %></div>
+          <div class="c-list-item__meta">
+            <span><i class="bi bi-calendar3 me-1"></i><%= log.date.strftime('%d/%m/%Y') %></span>
+            <% if log.pinned? %><span class="badge rounded-pill bg-warning bg-opacity-75"><i class="bi bi-pin-angle-fill me-1"></i>In evidenza</span><% end %>
+            <% if log.shareable? %><span class="badge rounded-pill bg-primary bg-opacity-75"><i class="bi bi-eye-fill me-1"></i>Condivisa</span><% end %>
+          </div>
         </div>
-        <div class="text-muted" style="font-size: 14px;"><%= log.date.strftime('%d/%m/%Y') %></div>
-      </div>
-      <div class="ms-3 d-flex">
+        <div class="c-list-item__actions">
         <div class="dropdown me-1">
           <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu nota <%= log.title %>">
             <i class="bi bi-three-dots"></i>
@@ -45,10 +46,15 @@ project ||= Project.new
         </div>
 
         <a href="<%= projects_actions_id_path(id: project.id, type: 'show-log', log_id: log.id) %>" data-turbo-frame="action" class="btn btn-sm btn-outline-primary" aria-label="Visualizza nota <%= log.title %>"><i class="bi bi-eye"></i></a>
+        </div>
       </div>
     </li>
   <% end %>
 </ol>
 <% else %>
-  <%= render 'shared/placeholder' %>
+  <%= render 'shared/placeholder',
+    message: 'Nessuna nota',
+    icon: 'journal-text',
+    cta_label: 'Aggiungi nota',
+    cta_href: projects_actions_path(type: 'add-log', id: project.id) %>
 <% end %>

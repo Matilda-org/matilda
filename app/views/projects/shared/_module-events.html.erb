@@ -17,5 +17,5 @@ project ||= Project.new
     <% end %>
   </ul>
 <% else %>
-  <%= render 'shared/placeholder' %>
+  <%= render 'shared/placeholder', message: 'Nessun evento registrato', icon: 'clock-history' %>
 <% end %>

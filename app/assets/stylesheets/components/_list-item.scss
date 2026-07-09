@@ -1,0 +1,58 @@
+// Shared media row used across the project modules (members, logs, attachments):
+// [leading icon/avatar] [title + meta] [actions]
+.c-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.c-list-item__body {
+  flex: 1 1 auto;
+  min-width: 0; // lets .text-truncate work inside the flex row
+}
+
+.c-list-item__title {
+  font-weight: 700;
+}
+
+.c-list-item__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  margin-top: 0.15rem;
+  font-size: 12px;
+  color: var(--bs-secondary-color);
+}
+
+.c-list-item__actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+// leading circular icon (file type, etc.)
+.c-list-item__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+// leading avatar image / initials
+.c-list-item__avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  font-weight: 700;
+}
+
+// highlighted row (e.g. pinned note)
+.c-list-item--highlight {
+  background: rgba(var(--bs-warning-rgb), 0.08);
+}
