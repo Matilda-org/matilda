@@ -26,11 +26,17 @@ export default class extends Controller {
   connect() {
     // tracks Sortable instances already destroyed so teardown never double-frees
     this.destroyed = new WeakSet()
+
+    // resolve the horizontal scroll container BEFORE building the sortables:
+    // buildSortable() reads it to wire SortableJS auto-scroll, otherwise the
+    // initial columns would fall back to auto-detection (unreliable) while only
+    // later-streamed columns got the explicit element.
+    this.scrollableEl = this.hasScrollableTarget ? this.scrollableTarget : null
+
     this.sortables = this.containerTargets.map((container) => this.buildSortable(container))
 
     // scroll arrows are pure manual-scroll helpers now (SortableJS auto-scrolls
     // while dragging): show each one only when the board can scroll that way.
-    this.scrollableEl = this.hasScrollableTarget ? this.scrollableTarget : null
     this.onScroll = () => this.updateNav()
     this.scrollableEl?.addEventListener('scroll', this.onScroll, { passive: true })
     window.addEventListener('resize', this.onScroll)
@@ -66,10 +72,16 @@ export default class extends Controller {
       // while moving to another column still works
       sort: this.sortValue,
       animation: 150,
-      // auto-scroll the horizontal board while dragging near its edges
+      // auto-scroll the horizontal board while dragging near its edges.
+      // forceAutoScrollFallback bypasses the browser's native drag auto-scroll
+      // (which is flaky/absent on several browsers and touch) and uses
+      // SortableJS's own rAF loop, so scrolling to off-screen columns works
+      // reliably while holding a card. Wider sensitivity = larger edge trigger zone.
       scroll: this.scrollableEl || true,
-      scrollSensitivity: 80,
-      scrollSpeed: 12,
+      forceAutoScrollFallback: true,
+      bubbleScroll: true,
+      scrollSensitivity: 120,
+      scrollSpeed: 18,
       ghostClass: 'c-kanban__item--ghost',
       chosenClass: 'c-kanban__item--chosen',
       dragClass: 'c-kanban__item--drag',
