@@ -31,3 +31,6 @@
 
 en:
   hello: "Hello world"
+  users:
+    year_progress:
+      tooltip: "Year %{year}: %{percent}% of elapsed time completed"

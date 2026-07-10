@@ -212,3 +212,6 @@ it:
       long: "%d %B %Y %H:%M"
       short: "%d %b %H:%M"
     pm: pm
+  users:
+    year_progress:
+      tooltip: "Anno %{year}: completato il %{percent}% del tempo trascorso"
