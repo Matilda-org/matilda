@@ -41,7 +41,7 @@ class UsersControllerTest < ActionController::TestCase
     user = users(:one)
 
     matilda_controller_endpoint(:patch, :edit_action,
-      params: { id: user.id, name: "Updated", surname: "User", email: "update_test@example.com" },
+      params: { id: user.id, name: "Updated", surname: "User", email: "update_test@example.com", description: "A short bio" },
       policy: "users_edit",
       title: "Modifica profilo",
       feedback: "Profilo aggiornato"
@@ -51,6 +51,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal "Updated", user.name
     assert_equal "User", user.surname
     assert_equal "update_test@example.com", user.email
+    assert_equal "A short bio", user.description
   end
 
   test "edit_policies_action" do

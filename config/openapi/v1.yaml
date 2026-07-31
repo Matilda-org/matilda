@@ -446,6 +446,7 @@ components:
         name: { type: string }
         surname: { type: string }
         email: { type: string }
+        description: { type: string, nullable: true }
         admin: { type: boolean }
         policies:
           type: array

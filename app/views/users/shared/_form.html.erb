@@ -25,6 +25,11 @@ path ||= user.persisted? ? users_edit_action_path(user) : users_create_action_pa
     </div>
 
     <div class="col col-12 mb-3">
+      <label for="description" class="form-label">Descrizione</label>
+      <textarea class="form-control" id="description" name="description" rows="4"><%= user.description %></textarea>
+    </div>
+
+    <div class="col col-12 mb-3">
       <div class="row">
         <div class="col col-auto mb-3">
           <img src="<%= user.image_profile.attached? ? url_for(user.image_profile_thumb) : '/statics/placeholder-profile.jpg' %>" style="width: 100px; height: 100px; object-fit: cover;" class="img-thumbnail">

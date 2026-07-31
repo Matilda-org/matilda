@@ -8,12 +8,14 @@ class Api::V1::UsersTest < ApiIntegrationTest
   end
 
   test "me returns the authenticated user without secrets" do
+    @user.update!(description: "A short bio")
     get "/api/v1/me", headers: api_headers
     assert_response :success
 
     body = json_response
     assert_equal @user.id, body["id"]
     assert_equal @user.email, body["email"]
+    assert_equal "A short bio", body["description"]
     assert_kind_of Array, body["policies"]
     assert_not_includes body.keys, "api_key"
     assert_not_includes body.keys, "password_digest"
