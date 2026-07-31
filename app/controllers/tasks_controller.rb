@@ -332,22 +332,32 @@ class TasksController < ApplicationController
 
   def destroy_track_action
     return unless validate_policy!("tasks_track")
+    return redirect_to tasks_tracks_path unless manageable_track_finder
 
-    track = Tasks::Track.find_by(id: params[:track_id])
-    unless track
-      flash[:danger] = "Tracking non trovato"
-      return redirect_to tasks_tracks_path
+    @track.destroy_with_time_rollback!
+
+    redirect_to tracks_path_with_current_filters
+  end
+
+  # Move an existing track to another day, keeping time of day and duration.
+  # Future days are allowed on purpose (planned work).
+  def update_track_date_action
+    return unless validate_policy!("tasks_track")
+    return redirect_to tasks_tracks_path unless manageable_track_finder
+
+    date = safe_date(params[:date], nil)
+    if date.nil?
+      flash[:danger] = "Data non valida"
+    else
+      begin
+        @track.move_to_date!(date)
+      rescue StandardError => e
+        Rails.logger.error e
+        flash[:danger] = "Non è stato possibile aggiornare la data del tracking"
+      end
     end
 
-    if @session_user.policy?("only_data_projects_as_member") &&
-       !@session_user.projects_as_member_ids.include?(track.task&.project_id)
-      flash[:danger] = "Non hai i permessi per eliminare questo tracking"
-      return redirect_to tasks_tracks_path
-    end
-
-    track.destroy_with_time_rollback!
-
-    redirect_to tasks_tracks_path(project_id: params[:project_id], task_id: params[:task_id], date: params[:date], page: params[:page])
+    redirect_to tracks_path_with_current_filters
   end
 
   # Checks
@@ -500,5 +510,34 @@ class TasksController < ApplicationController
     end
 
     true
+  end
+
+  # Load a track from the tracking list checking the data visibility policy,
+  # used by the actions reachable from that page (destroy, change date).
+  def manageable_track_finder
+    @track = Tasks::Track.find_by(id: params[:track_id])
+    unless @track
+      flash[:danger] = "Tracking non trovato"
+      return false
+    end
+
+    if @session_user.policy?("only_data_projects_as_member") &&
+       !@session_user.projects_as_member_ids.include?(@track.task&.project_id)
+      flash[:danger] = "Non hai i permessi per gestire questo tracking"
+      return false
+    end
+
+    true
+  end
+
+  # Keep the tracking list filters/pagination when redirecting back to it.
+  # The day filter travels as `filter_date` because `date` is an action payload.
+  def tracks_path_with_current_filters
+    tasks_tracks_path(
+      project_id: params[:project_id],
+      task_id: params[:task_id],
+      date: params[:filter_date].presence,
+      page: params[:page]
+    )
   end
 end

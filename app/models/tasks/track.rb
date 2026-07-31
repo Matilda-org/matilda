@@ -59,6 +59,22 @@ class Tasks::Track < ApplicationRecord
     end
   end
 
+  # Move the track to another day keeping its time of day and duration untouched.
+  # Future days are allowed: the guard that pulls start_at back to now only runs
+  # on create, so the task/project aggregates stay unchanged here.
+  def move_to_date!(date)
+    raise ArgumentError, "Data non valida" if date.blank?
+
+    new_start_at = start_at.change(year: date.year, month: date.month, day: date.day)
+    delta = new_start_at - start_at
+
+    attrs = { start_at: new_start_at }
+    attrs[:ping_at] = ping_at + delta if ping_at
+    attrs[:end_at] = end_at + delta if end_at
+
+    update!(attrs)
+  end
+
   def close(with_time_limit = false)
     unless end_at.nil?
       errors.add(:base, "Track già chiuso")

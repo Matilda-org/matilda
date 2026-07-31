@@ -276,4 +276,34 @@ class TasksControllerTest < ActionController::TestCase
     assert_not Tasks::Track.exists?(track.id)
     assert_equal before, task.reload.time_spent
   end
+
+  test "update_track_date_action sposta il tracking nel futuro" do
+    task = tasks(:one)
+    start_at = 2.days.ago.change(hour: 9)
+    track = task.tasks_tracks.create!(start_at: start_at, end_at: start_at + 3600, ping_at: start_at, time_spent: 3600, user: @user)
+    new_date = Date.current + 3.days
+
+    matilda_controller_endpoint(:post, :update_track_date_action,
+      params: { track_id: track.id, date: new_date.iso8601 },
+      policy: "tasks_track",
+      redirect: tasks_tracks_path
+    )
+
+    assert_equal new_date, track.reload.start_at.to_date
+    assert_equal 3600, track.time_spent
+  end
+
+  test "update_track_date_action ignora una data non valida" do
+    task = tasks(:one)
+    start_at = 2.days.ago.change(hour: 9)
+    track = task.tasks_tracks.create!(start_at: start_at, end_at: start_at + 3600, ping_at: start_at, time_spent: 3600, user: @user)
+
+    matilda_controller_endpoint(:post, :update_track_date_action,
+      params: { track_id: track.id, date: "not-a-date" },
+      policy: "tasks_track",
+      redirect: tasks_tracks_path
+    )
+
+    assert_equal start_at.to_date, track.reload.start_at.to_date
+  end
 end

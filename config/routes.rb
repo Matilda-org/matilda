@@ -111,6 +111,7 @@ Rails.application.routes.draw do
   get "tasks/resume-per-inputdate", to: "tasks#resume_per_inputdate", as: "tasks_resume_per_inputdate"
   get "tasks/tracks", to: "tasks#tracks", as: "tasks_tracks"
   post "tasks/destroy-track-action/:track_id", to: "tasks#destroy_track_action", as: "tasks_destroy_track_action"
+  post "tasks/update-track-date-action/:track_id", to: "tasks#update_track_date_action", as: "tasks_update_track_date_action"
 
   # Credentials
   get "credentials", to: "credentials#index", as: "credentials"

@@ -1,3 +1,10 @@
+<%
+
+# the tracking day is editable inline only with the track policy
+can_edit_tracks = @session_user&.policy?('tasks_track')
+
+%>
+
 <%= render 'shared/page-header', title: 'Tracking', back: true %>
 
 <%= turbo_frame_tag 'tracks-list' do %>
@@ -56,7 +63,6 @@
             id="date"
             name="date"
             value="<%= @date&.iso8601 %>"
-            max="<%= Date.current.iso8601 %>"
             data-action="change->filters#submit"
           >
           <% if @date %>
@@ -84,7 +90,27 @@
             <tbody>
               <% @tracks.each do |track| %>
                 <tr>
-                  <td><%= track.start_at&.strftime('%d/%m/%Y') %></td>
+                  <td style="width: 1px; white-space: nowrap;">
+                    <% if can_edit_tracks %>
+                      <%= form_tag tasks_update_track_date_action_path(track_id: track.id),
+                            data: { controller: 'auto-submit', turbo_frame: 'tracks-list' } do %>
+                        <%= hidden_field_tag 'project_id', @project_id %>
+                        <%= hidden_field_tag 'task_id', @task&.id %>
+                        <%= hidden_field_tag 'filter_date', @date&.iso8601 %>
+                        <%= hidden_field_tag 'page', params[:page] %>
+                        <input
+                          type="date"
+                          class="form-control form-control-sm"
+                          name="date"
+                          value="<%= track.start_at&.to_date&.iso8601 %>"
+                          aria-label="Giorno del tracking"
+                          data-action="change->auto-submit#submit"
+                        >
+                      <% end %>
+                    <% else %>
+                      <%= track.start_at&.strftime('%d/%m/%Y') %>
+                    <% end %>
+                  </td>
                   <td>
                     <a href="<%= tasks_show_path(track.task_id) %>" data-turbo-frame="_top">
                       <%= track.task&.title || '—' %>
@@ -109,7 +135,7 @@
                   </td>
                   <td class="text-end" style="width: 1px; white-space: nowrap;">
                     <a
-                      href="<%= tasks_destroy_track_action_path(track_id: track.id, project_id: @project_id, task_id: @task&.id, page: params[:page]) %>"
+                      href="<%= tasks_destroy_track_action_path(track_id: track.id, project_id: @project_id, task_id: @task&.id, filter_date: @date&.iso8601, page: params[:page]) %>"
                       data-turbo-method="post"
                       data-turbo-confirm="Vuoi eliminare questo tracking? Il tempo verrà sottratto dal task."
                       data-turbo-frame="tracks-list"
