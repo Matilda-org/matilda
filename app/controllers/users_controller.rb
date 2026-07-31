@@ -54,6 +54,7 @@ class UsersController < ApplicationController
     return render "users/actions/edit" if @type == "edit"
     return render "users/actions/edit_policies" if @type == "edit-policies"
     return render "users/actions/regenerate_password" if @type == "regenerate-password"
+    return render "users/actions/regenerate_api_key" if @type == "regenerate-api-key"
     return render "users/actions/destroy" if @type == "destroy"
 
     render partial: "shared/action-error"
@@ -145,6 +146,26 @@ class UsersController < ApplicationController
       feedback_args: {
         title: "Password rigenerata",
         subtitle: "La password di #{@user.complete_name} è stata rigenerata con successo. La nuova password è <b>#{password}</b>.",
+        type: "success"
+      }
+    }
+  end
+
+  # Regenerate the personal API key: allowed on your own profile, or on other
+  # users with the users_edit_password policy (same trust level as passwords).
+  # The key is shown only here, right after generation (never stored in views).
+  def regenerate_api_key_action
+    return unless user_finder
+    return redirect_to(root_path) unless @user.id == @session_user_id || @session_user.policy?("users_edit_password")
+
+    @user.regenerate_api_key
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Rigenera API Key",
+      turbo_frame: "_top",
+      feedback_args: {
+        title: "API Key rigenerata",
+        subtitle: "La nuova API Key di #{@user.complete_name} è <b>#{@user.api_key}</b>. Salvala ora: non sarà più visibile.",
         type: "success"
       }
     }

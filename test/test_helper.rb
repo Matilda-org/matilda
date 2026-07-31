@@ -37,6 +37,48 @@ class ActiveSupport::TestCase
   end
 end
 
+# Shared helpers for API (/api/v1) integration tests.
+class ApiIntegrationTest < ActionDispatch::IntegrationTest
+  def setup
+    @user = users(:one)
+    Rails.cache.clear
+  end
+
+  # Headers authenticating the request with the user's personal API key.
+  def api_headers(user = @user)
+    { "X-API-Key" => user.api_key }
+  end
+
+  def give_policy(policy, user = @user)
+    user.users_policies.create!(policy: policy)
+    Rails.cache.clear
+  end
+
+  def json_response
+    JSON.parse(@response.body)
+  end
+
+  # Every endpoint must reject requests without a valid API key.
+  def assert_requires_api_key(method, path)
+    send(method, path)
+    assert_response :unauthorized
+
+    send(method, path, headers: { "X-API-Key" => "invalid_key" })
+    assert_response :unauthorized
+  end
+
+  # Every policy-gated endpoint must return 403 without the policy
+  # and succeed once the user has it.
+  def assert_requires_policy(method, path, policy, params: {}, success_status: :success)
+    send(method, path, params: params, headers: api_headers, as: :json)
+    assert_response :forbidden
+
+    give_policy(policy)
+    send(method, path, params: params, headers: api_headers, as: :json)
+    assert_response success_status
+  end
+end
+
 class ActionController::TestCase
   def matilda_controller_action(type, title = nil, id = nil, other_params = {})
     # test valid request

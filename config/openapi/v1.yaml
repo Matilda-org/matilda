@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: Matilda API
+  version: "1.0"
+  description: |
+    API di Matilda. L'autenticazione avviene con una API key personale (header `X-API-Key`),
+    associata ad un utente: ogni richiesta applica le stesse policy di accesso ai dati dell'app web.
+    La API key si genera dalla pagina del proprio profilo ("Rigenera API Key").
+servers:
+  - url: /api/v1
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: me
+  - name: users
+  - name: projects
+  - name: tasks
+  - name: tracks
+  - name: procedures
+  - name: posts
+  - name: folders
+
+paths:
+  /me:
+    get:
+      tags: [me]
+      summary: Profilo dell'utente autenticato (con policy)
+      responses:
+        "200":
+          description: Utente autenticato
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithPolicies"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /users:
+    get:
+      tags: [users]
+      summary: Lista utenti
+      description: Richiede la policy `users_index`.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /users/{id}:
+    get:
+      tags: [users]
+      summary: Dettaglio utente
+      description: Richiede la policy `users_show`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Utente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithPolicies"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /projects:
+    get:
+      tags: [projects]
+      summary: Lista progetti
+      description: |
+        Richiede la policy `projects_index`. Di default esclude i progetti archiviati.
+        Con la policy `only_data_projects_as_member` sono visibili solo i progetti di cui si è membri.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: archived
+          in: query
+          description: Se presente, restituisce solo i progetti archiviati
+          schema: { type: boolean }
+        - name: search
+          in: query
+          description: Ricerca su codice e nome
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /projects/{id}:
+    get:
+      tags: [projects]
+      summary: Dettaglio progetto (con membri, allegati, repository, procedure)
+      description: Richiede la policy `projects_show`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Progetto
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /projects/{id}/logs:
+    get:
+      tags: [projects]
+      summary: Log del progetto
+      description: Richiede la policy `projects_show`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /tasks:
+    get:
+      tags: [tasks]
+      summary: Lista task
+      description: |
+        Richiede la policy `tasks_index`. Con `only_data_projects_as_member` sono visibili
+        solo i task dei propri progetti e quelli assegnati a sé.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: user_id
+          in: query
+          schema: { type: integer }
+        - name: project_id
+          in: query
+          schema: { type: integer }
+        - name: completed
+          in: query
+          schema: { type: boolean }
+        - name: with_deadline
+          in: query
+          description: Se presente, solo task con deadline
+          schema: { type: boolean }
+        - name: deadline_from
+          in: query
+          schema: { type: string, format: date }
+        - name: deadline_to
+          in: query
+          schema: { type: string, format: date }
+        - name: search
+          in: query
+          description: Ricerca sul titolo
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [tasks]
+      summary: Crea un task
+      description: Richiede la policy `tasks_create`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "201":
+          description: Task creato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /tasks/{id}:
+    get:
+      tags: [tasks]
+      summary: Dettaglio task (con tracks, followers, checks, commenti e contenuto)
+      description: Richiede la policy `tasks_show`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Task
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [tasks]
+      summary: Aggiorna un task
+      description: Richiede la policy `tasks_edit`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "200":
+          description: Task aggiornato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+    delete:
+      tags: [tasks]
+      summary: Elimina un task
+      description: Richiede la policy `tasks_destroy`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Task eliminato
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /tasks/{id}/complete:
+    post:
+      tags: [tasks]
+      summary: Completa un task
+      description: Richiede la policy `tasks_complete`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Task completato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /tasks/{id}/uncomplete:
+    post:
+      tags: [tasks]
+      summary: Riattiva un task completato
+      description: Richiede la policy `tasks_uncomplete`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Task riattivato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /tasks/{id}/comments:
+    post:
+      tags: [tasks]
+      summary: Aggiungi un commento al task
+      description: Richiede la policy `tasks_comment`. Il commento è attribuito all'utente della API key.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string }
+                service: { type: string }
+      responses:
+        "201":
+          description: Commento creato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /tracks:
+    get:
+      tags: [tracks]
+      summary: Lista tracking temporali
+      description: Richiede la policy `tasks_index`. Stesso scoping per progetto dei task.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: user_id
+          in: query
+          schema: { type: integer }
+        - name: task_id
+          in: query
+          schema: { type: integer }
+        - name: date
+          in: query
+          description: Filtra i tracking iniziati in questo giorno
+          schema: { type: string, format: date }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /procedures:
+    get:
+      tags: [procedures]
+      summary: Lista procedure
+      description: Richiede la policy `procedures_index`. Di default esclude le archiviate.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: archived
+          in: query
+          description: Se presente, restituisce solo le procedure archiviate
+          schema: { type: boolean }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /procedures/{id}:
+    get:
+      tags: [procedures]
+      summary: Dettaglio procedura (con stati, item e risorse collegate)
+      description: Richiede la policy `procedures_show`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Procedura
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /posts:
+    get:
+      tags: [posts]
+      summary: Lista post della bacheca
+      description: Richiede la policy `posts_index`.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: search
+          in: query
+          description: Ricerca su contenuto e tag
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [posts]
+      summary: Crea un post
+      description: Richiede la policy `posts_create`. Il post è attribuito all'utente della API key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string }
+                tags: { type: string }
+      responses:
+        "201":
+          description: Post creato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /folders:
+    get:
+      tags: [folders]
+      summary: Lista cartelle
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /folders/{id}:
+    get:
+      tags: [folders]
+      summary: Dettaglio cartella (con progetti visibili all'utente)
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Cartella
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key personale dell'utente (rigenerabile dal proprio profilo)
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, default: 1 }
+    PerPage:
+      name: per_page
+      in: query
+      schema: { type: integer, default: 25, maximum: 100 }
+
+  schemas:
+    UserWithPolicies:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        surname: { type: string }
+        email: { type: string }
+        admin: { type: boolean }
+        policies:
+          type: array
+          items: { type: string }
+    TaskInput:
+      type: object
+      properties:
+        title: { type: string }
+        content: { type: string, description: "Contenuto (HTML rich text)" }
+        deadline: { type: string, format: date }
+        time_estimate: { type: integer, description: "Stima in secondi" }
+        user_id: { type: integer }
+        project_id: { type: integer }
+        repeat: { type: boolean }
+        repeat_type: { type: string, enum: [weekly, monthly] }
+        repeat_from: { type: string, format: date }
+        repeat_to: { type: string, format: date }
+        repeat_monthday: { type: string, enum: [first, last, middle] }
+        repeat_weekdays:
+          type: array
+          items: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+    ValidationErrors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items: { type: string }
+    Meta:
+      type: object
+      properties:
+        page: { type: integer }
+        per_page: { type: integer }
+        total_count: { type: integer }
+        total_pages: { type: integer }
+
+  responses:
+    PaginatedList:
+      description: Lista paginata
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items: { type: object }
+              meta:
+                $ref: "#/components/schemas/Meta"
+    BadRequest:
+      description: Parametri non validi
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: API key mancante o non valida
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Policy mancante per l'operazione richiesta
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Risorsa non trovata o non visibile
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    UnprocessableContent:
+      description: Errori di validazione
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ValidationErrors" }

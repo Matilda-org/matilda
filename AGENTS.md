@@ -11,6 +11,12 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - Test: `bin/rails test`
 - System test: `bin/rails test:system`
 
+## API
+
+- JSON API under `/api/v1` (`app/controllers/api/v1`), authenticated with a per-user API key (`X-API-Key` header). The key authenticates a real user, so `Users::Policy` checks and the `only_data_projects_as_member` scoping apply to API requests too.
+- Users generate/regenerate their key from their profile page ("Rigenera API Key"); the key is shown only once.
+- OpenAPI spec lives in `config/openapi/v1.yaml`, served at `/api/v1/openapi` with Swagger UI at `/api/v1/docs`. A test (`test/controllers/api/v1/docs_test.rb`) fails if a route is missing from the spec — update the YAML when adding endpoints.
+
 ## Conventions
 
 - Ruby strings use double quotes.

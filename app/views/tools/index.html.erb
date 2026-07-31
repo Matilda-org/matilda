@@ -62,4 +62,24 @@
 
   <% end %>
 
+  <%= render 'shared/page-grid-item' do %>
+
+    <div class="card w-100 shadow h-100 border-0">
+      <div class="card-body d-flex flex-column justify-content-between p-4">
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
+              <i class="bi bi-braces fs-5"></i>
+            </span>
+            <span class="badge rounded-pill bg-light text-primary">Integrazioni</span>
+          </div>
+          <h5 class="card-title mb-2">Documentazione API</h5>
+          <p class="card-text text-muted mb-0">Consulta la documentazione Swagger delle API. L'autenticazione usa la API key personale, rigenerabile dal tuo profilo.</p>
+        </div>
+        <a href="<%= api_v1_docs_path %>" target="_blank" rel="noopener" class="btn btn-outline-primary mt-4 align-self-start">Apri Swagger</a>
+      </div>
+    </div>
+
+  <% end %>
+
 <% end %>

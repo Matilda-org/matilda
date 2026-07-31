@@ -1,4 +1,4 @@
-<% if @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_edit_password') || @session_user.policy?('users_destroy') %>
+<% if @user.id == @session_user.id || @session_user.policy?('users_edit') || @session_user.policy?('users_edit_policies') || @session_user.policy?('users_edit_password') || @session_user.policy?('users_destroy') %>
 
 <div class="d-flex justify-content-center align-items-center">
   <span
@@ -39,6 +39,21 @@
         </a>
       </li>
       
+      <%# API key regeneration: always available on your own profile, policy-gated on others %>
+      <% if @user.id == @session_user.id %>
+        <li>
+          <a class="dropdown-item" href="<%= users_actions_path(type: 'regenerate-api-key', id: @user.id) %>" data-turbo-frame="action">
+            Rigenera API Key
+          </a>
+        </li>
+      <% else %>
+        <li data-user-policies-target="item" data-policy="users_edit_password">
+          <a class="dropdown-item" href="<%= users_actions_path(type: 'regenerate-api-key', id: @user.id) %>" data-turbo-frame="action">
+            Rigenera API Key
+          </a>
+        </li>
+      <% end %>
+
       <li data-user-policies-target="item" data-policy="users_destroy">
         <a class="dropdown-item text-danger" href="<%= users_actions_path(type: 'destroy', id: @user.id) %>" data-turbo-frame="action">
           Elimina utente

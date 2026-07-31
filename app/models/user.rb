@@ -36,6 +36,10 @@ class User < ApplicationRecord
   validate :image_profile_validation
   has_secure_password
 
+  # Per-user API key: authenticates API requests as this user so data access
+  # policies apply to the API too. Regenerate with #regenerate_api_key.
+  has_secure_token :api_key, length: 36
+
   # HOOKS
   ############################################################
 
@@ -64,10 +68,10 @@ class User < ApplicationRecord
   # HELPERS
   ############################################################
 
-  # Never expose the password hash through serialization (as_json/to_json),
-  # so API responses and any include: [:user] can't leak crackable digests.
+  # Never expose secrets through serialization (as_json/to_json), so API
+  # responses and any include: [:user] can't leak digests or API keys.
   def serializable_hash(options = nil)
-    super(options).except("password_digest")
+    super(options).except("password_digest", "api_key")
   end
 
   def complete_name

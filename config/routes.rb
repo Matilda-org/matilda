@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post "users/edit-action/:id", to: "users#edit_action", as: "users_edit_action"
   post "users/edit-policies-action/:id", to: "users#edit_policies_action", as: "users_edit_policies_action"
   post "users/regenerate-password-action/:id", to: "users#regenerate_password_action", as: "users_regenerate_password_action"
+  post "users/regenerate-api-key-action/:id", to: "users#regenerate_api_key_action", as: "users_regenerate_api_key_action"
   post "users/destroy-action/:id", to: "users#destroy_action", as: "users_destroy_action"
   post "users/toggle-prefer-action", to: "users#toggle_prefer_action", as: "users_toggle_prefer_action"
 
@@ -163,12 +164,30 @@ Rails.application.routes.draw do
   # APIs
   ##
 
-  scope "apis", as: "apis" do
-    get "procedures/:id", to: "apis#procedure", as: "procedure"
+  namespace :api do
+    namespace :v1 do
+      # documentation (public, no api key required)
+      get "docs", to: "docs#index"
+      get "openapi", to: "docs#openapi", defaults: { format: "yaml" }
 
-    get "tasks", to: "apis#tasks", as: "tasks"
-    get "tasks/:id", to: "apis#task", as: "task"
-    patch "tasks/:id", to: "apis#task_update", as: "task_update"
-    post "tasks/:id/comment", to: "apis#task_comment", as: "task_comment"
+      get "me", to: "users#me"
+      resources :users, only: [ :index, :show ]
+      resources :projects, only: [ :index, :show ] do
+        member do
+          get :logs
+        end
+      end
+      resources :tasks, only: [ :index, :show, :create, :update, :destroy ] do
+        member do
+          post :complete
+          post :uncomplete
+          post :comments, action: :create_comment
+        end
+      end
+      resources :tracks, only: [ :index ]
+      resources :procedures, only: [ :index, :show ]
+      resources :posts, only: [ :index, :create ]
+      resources :folders, only: [ :index, :show ]
+    end
   end
 end

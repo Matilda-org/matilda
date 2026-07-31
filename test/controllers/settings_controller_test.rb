@@ -38,14 +38,12 @@ class SettingsControllerTest < ActionController::TestCase
   test "edit_functionalities_action" do
     matilda_controller_endpoint(:post, :edit_functionalities_action,
       params: {
-        functionalities_api_key: "newapikey123",
         functionalities_task_acceptance: 1
       },
       policy: "settings",
       redirect: settings_path
     )
 
-    assert_equal "newapikey123", Setting.get("functionalities_api_key")
     assert_equal true, Setting.get("functionalities_task_acceptance")
   end
 
