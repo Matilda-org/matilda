@@ -55,6 +55,9 @@ Rails.application.routes.draw do
   post "projects/add-attachment-action/:id", to: "projects#add_attachment_action", as: "projects_add_attachment_action"
   post "projects/edit-attachment-action/:id/:attachment_id", to: "projects#edit_attachment_action", as: "projects_edit_attachment_action"
   post "projects/remove-attachment-action/:id/:attachment_id", to: "projects#remove_attachment_action", as: "projects_remove_attachment_action"
+  post "projects/add-repository-action/:id", to: "projects#add_repository_action", as: "projects_add_repository_action"
+  post "projects/edit-repository-action/:id/:repository_id", to: "projects#edit_repository_action", as: "projects_edit_repository_action"
+  post "projects/remove-repository-action/:id/:repository_id", to: "projects#remove_repository_action", as: "projects_remove_repository_action"
   get "projects/:folder_id", to: "projects#index", as: "projects_for_folder"
 
   # Procedure

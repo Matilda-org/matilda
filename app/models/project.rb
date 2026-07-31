@@ -20,6 +20,7 @@ class Project < ApplicationRecord
   has_many :projects_logs, dependent: :destroy, class_name: "Projects::Log"
   has_many :projects_attachments, dependent: :destroy, class_name: "Projects::Attachment"
   has_many :projects_events, dependent: :destroy, class_name: "Projects::Event"
+  has_many :projects_repositories, dependent: :destroy, class_name: "Projects::Repository"
 
   has_many :procedures_items, as: :resource, dependent: :destroy, class_name: "Procedures::Item"
   has_many :procedures_as_item, through: :procedures_items, source: :procedure

@@ -140,6 +140,16 @@ class ProjectsController < ApplicationController
       return render "projects/actions/remove_attachment"
     end
 
+    return render "projects/actions/add_repository" if @type == "add-repository"
+    if @type == "edit-repository"
+      return unless projects_repository_finder
+      return render "projects/actions/edit_repository"
+    end
+    if @type == "remove-repository"
+      return unless projects_repository_finder
+      return render "projects/actions/remove_repository"
+    end
+
     render partial: "shared/action-error"
   end
 
@@ -534,6 +544,60 @@ class ProjectsController < ApplicationController
     }
   end
 
+  def add_repository_action
+    return unless validate_policy!("projects_manage_repositories")
+    return unless project_finder
+
+    @repository = @project.projects_repositories.new(projects_repository_params)
+    return render "projects/actions/add_repository" unless @repository.save
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Collega repository",
+      turbo_frame: "module-repositories",
+      feedback_args: {
+        title: "Repository collegata",
+        subtitle: "La repository è stata collegata correttamente",
+        type: "success"
+      }
+    }
+  end
+
+  def edit_repository_action
+    return unless validate_policy!("projects_manage_repositories")
+    return unless project_finder
+    return unless projects_repository_finder
+
+    return render "projects/actions/edit_repository" unless @repository.update(projects_repository_params)
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Modifica repository",
+      turbo_frame: "module-repositories",
+      feedback_args: {
+        title: "Repository modificata",
+        subtitle: "La repository è stata modificata correttamente",
+        type: "success"
+      }
+    }
+  end
+
+  def remove_repository_action
+    return unless validate_policy!("projects_manage_repositories")
+    return unless project_finder
+    return unless projects_repository_finder
+
+    @repository.destroy
+
+    render partial: "shared/action-feedback", locals: {
+      title: "Scollega repository",
+      turbo_frame: "module-repositories",
+      feedback_args: {
+        title: "Repository scollegata",
+        subtitle: "La repository è stata scollegata correttamente",
+        type: "success"
+      }
+    }
+  end
+
   private
 
   def project_params
@@ -577,6 +641,21 @@ class ProjectsController < ApplicationController
     @attachment = @project.projects_attachments.find_by(id: params[:attachment_id])
     unless @attachment
       flash[:danger] = "Allegato non trovato"
+      redirect_to projects_show_path(@project)
+      return false
+    end
+
+    true
+  end
+
+  def projects_repository_params
+    params.permit(:provider, :url, :default_branch)
+  end
+
+  def projects_repository_finder
+    @repository = @project.projects_repositories.find_by(id: params[:repository_id])
+    unless @repository
+      flash[:danger] = "Repository non trovata"
       redirect_to projects_show_path(@project)
       return false
     end

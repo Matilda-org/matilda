@@ -1,0 +1,46 @@
+<%
+
+project ||= Project.new
+
+%>
+
+<% if project.projects_repositories.length.positive? %>
+<ol class="list-group">
+  <% project.projects_repositories.order(:provider, :name).each do |repository| %>
+    <li class="list-group-item">
+      <div class="c-list-item">
+        <div class="c-list-item__icon bg-<%= repository.provider_color %> bg-opacity-10 text-<%= repository.provider_color %> rounded-circle">
+          <i class="bi <%= repository.provider_icon %>"></i>
+        </div>
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate"><%= repository.name %></div>
+          <div class="c-list-item__meta">
+            <span class="badge rounded-pill bg-<%= repository.provider_color %> bg-opacity-75"><%= repository.provider_string %></span>
+            <% if repository.default_branch.present? %>
+              <span><i class="bi bi-git me-1"></i><%= repository.default_branch %></span>
+            <% end %>
+          </div>
+        </div>
+        <div class="c-list-item__actions">
+          <div class="dropdown me-1">
+            <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu repository <%= repository.name %>">
+              <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="<%= projects_actions_path(id: project.id, type: 'edit-repository', repository_id: repository.id) %>" data-turbo-frame="action">Modifica</a></li>
+              <li><a class="dropdown-item text-danger" href="<%= projects_actions_path(id: project.id, type: 'remove-repository', repository_id: repository.id) %>" data-turbo-frame="action">Scollega</a></li>
+            </ul>
+          </div>
+          <a href="<%= repository.url %>" class="btn btn-sm btn-outline-primary" data-turbo="false" target="_blank" rel="noopener" aria-label="Apri repository <%= repository.name %>"><i class="bi bi-box-arrow-up-right"></i></a>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder',
+    message: 'Nessuna repository',
+    icon: 'git',
+    cta_label: 'Collega repository',
+    cta_href: projects_actions_path(type: 'add-repository', id: project.id) %>
+<% end %>

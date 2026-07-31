@@ -14,6 +14,7 @@ class ProjectsControllerTest < ActionController::TestCase
     member = project.projects_members.create!(user: @user, role: "member")
     log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)
     attachment = project.projects_attachments.create!(title: "Test Attachment", date: Date.today)
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
 
     matilda_controller_action("create", "Nuovo progetto")
     matilda_controller_action("edit", "Modifica progetto", project.id)
@@ -33,6 +34,9 @@ class ProjectsControllerTest < ActionController::TestCase
     matilda_controller_action("add-attachment", "Aggiungi allegato", project.id)
     matilda_controller_action("edit-attachment", "Modifica allegato", project.id, { attachment_id: attachment.id })
     matilda_controller_action("remove-attachment", "Rimuovi allegato", project.id, { attachment_id: attachment.id })
+    matilda_controller_action("add-repository", "Collega repository", project.id)
+    matilda_controller_action("edit-repository", "Modifica repository", project.id, { repository_id: repository.id })
+    matilda_controller_action("remove-repository", "Scollega repository", project.id, { repository_id: repository.id })
 
     matilda_controller_action_invalid
   end
@@ -369,5 +373,48 @@ class ProjectsControllerTest < ActionController::TestCase
     )
 
     assert_not project.projects_attachments.where(id: attachment.id).exists?
+  end
+
+  test "add_repository_action" do
+    project = projects(:one)
+
+    matilda_controller_endpoint(:post, :add_repository_action,
+      params: { id: project.id, url: "https://github.com/owner/repo" },
+      policy: "projects_manage_repositories",
+      title: "Collega repository",
+      feedback: "Repository collegata"
+    )
+
+    project.reload
+    assert project.projects_repositories.where(name: "owner/repo").exists?
+  end
+
+  test "edit_repository_action" do
+    project = projects(:one)
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
+
+    matilda_controller_endpoint(:post, :edit_repository_action,
+      params: { id: project.id, repository_id: repository.id, url: repository.url, default_branch: "main" },
+      policy: "projects_manage_repositories",
+      title: "Modifica repository",
+      feedback: "Repository modificata"
+    )
+
+    repository.reload
+    assert_equal "main", repository.default_branch
+  end
+
+  test "remove_repository_action" do
+    project = projects(:one)
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
+
+    matilda_controller_endpoint(:post, :remove_repository_action,
+      params: { id: project.id, repository_id: repository.id },
+      policy: "projects_manage_repositories",
+      title: "Scollega repository",
+      feedback: "Repository scollegata"
+    )
+
+    assert_not project.projects_repositories.where(id: repository.id).exists?
   end
 end

@@ -143,6 +143,25 @@
 
   <% end %>
 
+  <%= render 'shared/page-grid-item', policy: 'projects_manage_repositories' do %>
+
+    <%= turbo_frame_tag 'module-repositories', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Repository",
+        counter: @project.projects_repositories.size,
+        render_content: 'projects/shared/module-repositories',
+        render_content_args: {
+          project: @project
+        },
+        render_footer: 'projects/shared/module-repositories-actions',
+        render_footer_args: {
+          project: @project
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
   <%= render 'shared/page-grid-item', policy: 'projects_manage_events' do %>
 
     <%= turbo_frame_tag 'module-events', class: 'w-100' do %>

@@ -1,0 +1,34 @@
+<%
+
+project ||= Project.new
+repository ||= Projects::Repository.new
+
+path ||= repository.persisted? ? projects_edit_repository_action_path(id: project.id, repository_id: repository.id) : projects_add_repository_action_path(project)
+
+%>
+
+<%= render 'shared/form-errors', item: repository %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="url" class="form-label">URL repository</label>
+    <input type="text" class="form-control" id="url" name="url" value="<%= repository.url %>" placeholder="https://github.com/owner/repo" required>
+    <div class="form-text">Accettata anche la url ssh (git@github.com:owner/repo.git)</div>
+  </div>
+
+  <div class="col col-6 mb-3">
+    <label for="provider" class="form-label">Servizio</label>
+    <%= select_tag :provider, options_for_select(Projects::Repository.providers.keys.map { |key| [Projects::Repository.provider_string(key), key] }, repository.provider), class: 'form-control', required: true %>
+    <div class="form-text">Rilevato dalla url, da scegliere solo per istanze self hosted</div>
+  </div>
+
+  <div class="col col-6 mb-3">
+    <label for="default_branch" class="form-label">Branch principale</label>
+    <input type="text" class="form-control" id="default_branch" name="default_branch" value="<%= repository.default_branch %>" placeholder="main">
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>
