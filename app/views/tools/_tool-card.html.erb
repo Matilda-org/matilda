@@ -1,0 +1,23 @@
+<%
+
+# Uniform card for a tool entry.
+# tool: { icon:, title:, description:, cta:, href:, external: (opens in a new tab) }
+
+%>
+
+<div class="card w-100 shadow h-100 border-0">
+  <div class="card-body d-flex flex-column justify-content-between p-4">
+    <div>
+      <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 46px; height: 46px;">
+        <i class="bi <%= tool[:icon] %> fs-5"></i>
+      </span>
+      <h5 class="card-title mb-2"><%= tool[:title] %></h5>
+      <p class="card-text text-muted mb-0"><%= tool[:description] %></p>
+    </div>
+    <% if tool[:external] %>
+      <a href="<%= tool[:href] %>" target="_blank" rel="noopener" class="btn btn-outline-primary mt-4 align-self-start"><%= tool[:cta] %></a>
+    <% else %>
+      <a href="<%= tool[:href] %>" data-turbo-frame="_top" class="btn btn-outline-primary mt-4 align-self-start"><%= tool[:cta] %></a>
+    <% end %>
+  </div>
+</div>

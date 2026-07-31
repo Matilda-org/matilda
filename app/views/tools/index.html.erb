@@ -1,85 +1,56 @@
+<%
+
+# Tools grouped by category: each entry renders with the same tools/tool-card UI.
+tools_by_category = {
+  "Operatività" => [
+    {
+      icon: "bi-kanban-fill",
+      title: "Controllo progetti su board",
+      description: "Trova i progetti che non sono ancora collegati alle board operative.",
+      cta: "Apri controllo",
+      href: tools_projects_without_procedures_path
+    }
+  ],
+  "Analisi" => [
+    {
+      icon: "bi-clock-history",
+      title: "Report attività svolte",
+      description: "Analizza il tempo consuntivato per periodo, progetto, board e stato.",
+      cta: "Apri report",
+      href: tools_projects_tasks_tracking_path
+    },
+    {
+      icon: "bi-exclamation-triangle-fill",
+      title: "Rischi progetto",
+      description: "Individua progetti con task scaduti, senza owner, budget critici o attività ferme.",
+      cta: "Controlla rischi",
+      href: tools_project_risks_path
+    }
+  ],
+  "Integrazioni" => [
+    {
+      icon: "bi-braces",
+      title: "Documentazione API",
+      description: "Consulta la documentazione Swagger delle API. L'autenticazione usa la API key personale, rigenerabile dal tuo profilo.",
+      cta: "Apri Swagger",
+      href: api_v1_docs_path,
+      external: true
+    }
+  ]
+}
+
+%>
+
 <%= render 'shared/page-header', title: 'Strumenti' %>
 
-<%= render 'shared/page-grid' do %>
+<% tools_by_category.each do |category, tools| %>
+  <h2 class="fs-5 fw-semibold mb-3"><%= category %></h2>
 
-  <%= render 'shared/page-grid-item' do %>
-
-    <div class="card w-100 shadow h-100 border-0">
-      <div class="card-body d-flex flex-column justify-content-between p-4">
-        <div>
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
-              <i class="bi bi-kanban-fill fs-5"></i>
-            </span>
-            <span class="badge rounded-pill bg-light text-primary">Operatività</span>
-          </div>
-          <h5 class="card-title mb-2">Controllo progetti su board</h5>
-          <p class="card-text text-muted mb-0">Trova i progetti che non sono ancora collegati alle board operative.</p>
-        </div>
-        <a href="<%= tools_projects_without_procedures_path %>" class="btn btn-outline-primary mt-4 align-self-start" data-turbo-frame="_top">Apri controllo</a>
-      </div>
-    </div>
-
+  <%= render 'shared/page-grid' do %>
+    <% tools.each do |tool| %>
+      <%= render 'shared/page-grid-item' do %>
+        <%= render 'tools/tool-card', tool: tool %>
+      <% end %>
+    <% end %>
   <% end %>
-
-  <%= render 'shared/page-grid-item' do %>
-
-    <div class="card w-100 shadow h-100 border-0">
-      <div class="card-body d-flex flex-column justify-content-between p-4">
-        <div>
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
-              <i class="bi bi-clock-history fs-5"></i>
-            </span>
-            <span class="badge rounded-pill bg-light text-primary">Analisi</span>
-          </div>
-          <h5 class="card-title mb-2">Report attività svolte</h5>
-          <p class="card-text text-muted mb-0">Analizza il tempo consuntivato per periodo, progetto, board e stato.</p>
-        </div>
-        <a href="<%= tools_projects_tasks_tracking_path %>" class="btn btn-outline-primary mt-4 align-self-start" data-turbo-frame="_top">Apri report</a>
-      </div>
-    </div>
-
-  <% end %>
-
-  <%= render 'shared/page-grid-item' do %>
-
-    <div class="card w-100 shadow h-100 border-0">
-      <div class="card-body d-flex flex-column justify-content-between p-4">
-        <div>
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
-              <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-            </span>
-            <span class="badge rounded-pill bg-danger">Analisi</span>
-          </div>
-          <h5 class="card-title mb-2">Rischi progetto</h5>
-          <p class="card-text text-muted mb-0">Individua progetti con task scaduti, senza owner, budget critici o attività ferme.</p>
-        </div>
-        <a href="<%= tools_project_risks_path %>" class="btn btn-danger mt-4 align-self-start" data-turbo-frame="_top">Controlla rischi</a>
-      </div>
-    </div>
-
-  <% end %>
-
-  <%= render 'shared/page-grid-item' do %>
-
-    <div class="card w-100 shadow h-100 border-0">
-      <div class="card-body d-flex flex-column justify-content-between p-4">
-        <div>
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
-              <i class="bi bi-braces fs-5"></i>
-            </span>
-            <span class="badge rounded-pill bg-light text-primary">Integrazioni</span>
-          </div>
-          <h5 class="card-title mb-2">Documentazione API</h5>
-          <p class="card-text text-muted mb-0">Consulta la documentazione Swagger delle API. L'autenticazione usa la API key personale, rigenerabile dal tuo profilo.</p>
-        </div>
-        <a href="<%= api_v1_docs_path %>" target="_blank" rel="noopener" class="btn btn-outline-primary mt-4 align-self-start">Apri Swagger</a>
-      </div>
-    </div>
-
-  <% end %>
-
 <% end %>
