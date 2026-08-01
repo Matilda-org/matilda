@@ -18,9 +18,13 @@ function systemPrompt (employee, me) {
       ? [
           `- You can read and edit code in these local workspace directories: ${workspace.join(', ')}.`,
           '  Project repositories listed in Matilda (get_project) usually match folder names in the workspace.',
-          '- Code changes go on a dedicated branch named crew/<task-id>-<short-slug>, created from the default branch.',
-          '  Commit with a conventional message. NEVER push, never force, never delete branches or stashes.',
-          '- If the repository working tree has uncommitted changes that are not yours, do not touch it: report it and stop.',
+          '- NEVER switch branches or edit files in the user\'s checkout: it is shared and may hold their work in progress.',
+          '  For code changes create a linked worktree next to the repo and work ONLY inside it:',
+          '  `git -C <repo> worktree add <repo>-crew-<task-id> -b crew/<task-id>-<short-slug>`',
+          '  (if the worktree or branch already exists from a previous session, reuse it and continue).',
+          '- Commit incrementally with conventional messages as each piece is done — never leave finished work uncommitted.',
+          '  If you are running low on turns, commit what you have and report partial progress instead of pushing on.',
+          '- NEVER push, never force, never delete branches, stashes or worktrees.',
           '- When you change code, end your task comment with: repository, branch name, and the `git diff --stat` summary.'
         ]
       : ['- Work only through the Matilda tools. You have no filesystem or shell.']),
