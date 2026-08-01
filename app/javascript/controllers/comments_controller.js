@@ -64,7 +64,7 @@ export default class extends Controller {
     if (!this.hasThreadTarget) return
 
     const thread = this.threadTarget
-    if (!thread.scrollHeight) return // ancora senza layout: riprova al resize
+    if (!thread.scrollHeight) return // no layout yet: the resize observer retries
 
     thread.scrollTo({ top: thread.scrollHeight, behavior: smooth ? 'smooth' : 'auto' })
     this.landed = true

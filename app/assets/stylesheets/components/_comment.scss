@@ -163,8 +163,8 @@
 // thread whatever is left after the composer instead of using the fixed cap.
 // Only on md+: below that the card body grows freely and the cap must survive.
 @media (min-width: 768px) {
-  // Il turbo-frame è il figlio diretto del body: senza flex la catena si spezza
-  // e il thread non riceve mai l'altezza residua.
+  // Il turbo-frame è il figlio diretto del body della card: senza flex la catena
+  // si spezza, il thread non riceve l'altezza residua e il composer viene tagliato.
   .c-page-card__body--no-scroll > turbo-frame {
     display: flex;
     flex-direction: column;
