@@ -88,7 +88,13 @@ export async function startLoop (config, { once = false, log = console.log } = {
     }
     if (once || !running) break
     log(`Round complete. Sleeping ${interval / 1000}s.`)
-    await new Promise((resolve) => { wake = resolve; setTimeout(resolve, interval) })
+    await new Promise((resolve) => {
+      wake = resolve
+      // A stop signal may land between the running check and this point:
+      // resolve immediately instead of sleeping a full interval.
+      if (!running) return resolve()
+      setTimeout(resolve, interval)
+    })
     wake = null
   }
 }
