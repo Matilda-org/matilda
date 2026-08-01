@@ -1,7 +1,12 @@
 // Agent sessions: one query() per unit of work, Matilda tools only.
+import path from 'node:path'
 import { query } from '@anthropic-ai/claude-agent-sdk'
 import { buildMatildaServer, SERVER_NAME, ALLOWED_TOOLS } from './tools.js'
-import { appendLog } from './config.js'
+import { appendLog, HOME_DIR } from './config.js'
+
+// Employee worktrees live out of sight: the user's workspace keeps a single
+// folder per repo, branches are inspected from there with plain git.
+const WORKTREES_DIR = path.join(HOME_DIR, 'worktrees')
 
 function systemPrompt (employee, me) {
   // Instructions = profile description stored in Matilda (shared, human-visible)
@@ -19,8 +24,8 @@ function systemPrompt (employee, me) {
           `- You can read and edit code in these local workspace directories: ${workspace.join(', ')}.`,
           '  Project repositories listed in Matilda (get_project) usually match folder names in the workspace.',
           '- NEVER switch branches or edit files in the user\'s checkout: it is shared and may hold their work in progress.',
-          '  For code changes create a linked worktree next to the repo and work ONLY inside it:',
-          '  `git -C <repo> worktree add <repo>-crew-<task-id> -b crew/<task-id>-<short-slug>`',
+          '  For code changes create a linked worktree and work ONLY inside it:',
+          `  \`git -C <repo> worktree add ${WORKTREES_DIR}/<repo-name>-<task-id> -b crew/<task-id>-<short-slug>\``,
           '  (if the worktree or branch already exists from a previous session, reuse it and continue).',
           '- Commit incrementally with conventional messages as each piece is done — never leave finished work uncommitted.',
           '  If you are running low on turns, commit what you have and report partial progress instead of pushing on.',
@@ -64,7 +69,7 @@ async function runSession (employee, me, client, prompt, { onEvent } = {}) {
         permissionMode: 'dontAsk',
         abortController: abort,
         ...(employee.max_turns ? { maxTurns: employee.max_turns } : {}),
-        ...(workspace.length ? { cwd: workspace[0], additionalDirectories: workspace.slice(1) } : {}),
+        ...(workspace.length ? { cwd: workspace[0], additionalDirectories: [...workspace.slice(1), WORKTREES_DIR] } : {}),
         ...(employee.model ? { model: employee.model } : {})
       }
     })) {
