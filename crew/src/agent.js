@@ -42,34 +42,48 @@ function systemPrompt (employee, me) {
 const WORKSPACE_TOOLS = ['Read', 'Grep', 'Glob', 'Edit', 'Write', 'MultiEdit', 'Bash(git:*)']
 
 // Run one session and return { result, cost, turns }.
+// No turn cap by default: sessions run until done. The real guard is a
+// wall-clock timeout (session_timeout minutes, default 30) so a runaway
+// session can't block the loop forever.
 async function runSession (employee, me, client, prompt, { onEvent } = {}) {
   const server = buildMatildaServer(client)
   const workspace = employee.workspace || []
+  const abort = new AbortController()
+  const timeoutMs = (employee.session_timeout || 30) * 60 * 1000
+  const timer = setTimeout(() => abort.abort(new Error(`session timeout after ${timeoutMs / 60000} minutes`)), timeoutMs)
   let result = null
   let usage = null
 
-  for await (const message of query({
-    prompt,
-    options: {
-      systemPrompt: systemPrompt(employee, me),
-      mcpServers: { [SERVER_NAME]: server },
-      allowedTools: workspace.length ? [...ALLOWED_TOOLS, ...WORKSPACE_TOOLS] : ALLOWED_TOOLS,
-      permissionMode: 'dontAsk',
-      maxTurns: employee.max_turns || 15,
-      ...(workspace.length ? { cwd: workspace[0], additionalDirectories: workspace.slice(1) } : {}),
-      ...(employee.model ? { model: employee.model } : {})
-    }
-  })) {
-    if (message.type === 'assistant' && onEvent) {
-      for (const block of message.message.content || []) {
-        if (block.type === 'text' && block.text.trim()) onEvent('text', block.text)
-        if (block.type === 'tool_use') onEvent('tool', `${block.name} ${JSON.stringify(block.input)}`)
+  try {
+    for await (const message of query({
+      prompt,
+      options: {
+        systemPrompt: systemPrompt(employee, me),
+        mcpServers: { [SERVER_NAME]: server },
+        allowedTools: workspace.length ? [...ALLOWED_TOOLS, ...WORKSPACE_TOOLS] : ALLOWED_TOOLS,
+        permissionMode: 'dontAsk',
+        abortController: abort,
+        ...(employee.max_turns ? { maxTurns: employee.max_turns } : {}),
+        ...(workspace.length ? { cwd: workspace[0], additionalDirectories: workspace.slice(1) } : {}),
+        ...(employee.model ? { model: employee.model } : {})
+      }
+    })) {
+      if (message.type === 'assistant' && onEvent) {
+        for (const block of message.message.content || []) {
+          if (block.type === 'text' && block.text.trim()) onEvent('text', block.text)
+          if (block.type === 'tool_use') onEvent('tool', `${block.name} ${JSON.stringify(block.input)}`)
+        }
+      }
+      if (message.type === 'result') {
+        result = message.subtype === 'success' ? message.result : `[${message.subtype}]`
+        usage = { cost_usd: message.total_cost_usd, turns: message.num_turns }
       }
     }
-    if (message.type === 'result') {
-      result = message.subtype === 'success' ? message.result : `[${message.subtype}]`
-      usage = { cost_usd: message.total_cost_usd, turns: message.num_turns }
-    }
+  } catch (err) {
+    if (!abort.signal.aborted) throw err
+    result = '[timeout]'
+  } finally {
+    clearTimeout(timer)
   }
 
   return { result, ...usage }

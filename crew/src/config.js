@@ -19,7 +19,7 @@ export const CONFIG_TEMPLATE = {
       api_key: 'MATILDA_API_KEY_OF_THE_CREW_USER',
       description: 'Junior project assistant: read assigned tasks, do the work you can do with your tools, report results as task comments.',
       poll_interval: 300,
-      max_turns: 15
+      session_timeout: 30
     }
   ]
 }

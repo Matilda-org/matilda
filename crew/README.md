@@ -38,7 +38,7 @@ Config lives in `~/.matilda-crew/config.json`:
       "api_key": "...",
       "description": "Junior PM: triage assigned tasks, answer questions in comments, publish weekly reports.",
       "poll_interval": 300,
-      "max_turns": 15
+      "session_timeout": 30
     }
   ]
 }
@@ -49,7 +49,8 @@ The LLM instructions are the **profile description saved in Matilda** (user page
 Optional per-employee:
 
 - `model` — Claude model used for the employee's sessions, e.g. `"claude-sonnet-5"`, `"claude-opus-5"` or an alias like `"sonnet"`/`"opus"`. Unset = the default model of your local Claude Code installation (subscription login or API key, see Requirements). Cheaper models keep the loop economical; stronger models reason better on vague tasks.
-- `max_turns` — hard cap of agent turns per session (default 15), the main cost guard
+- `session_timeout` — wall-clock limit per session in minutes (default 30). Sessions have **no turn cap**: they run until the work is done or the timeout fires. The incremental-commit rule means a timed-out coding session still leaves its finished pieces committed.
+- `max_turns` — optional hard cap of agent turns per session; unset = unlimited
 - `workspace` — array of local directories the employee may read and edit (e.g. `["/Users/me/Workspace"]`). Grants Read/Grep/Glob/Edit/Write plus Bash restricted to `git`. Rules enforced by prompt: dedicated `crew/<task-id>-<slug>` branches, commits allowed, **push never**, dirty working trees are left untouched, and every code change is reported in the task comment with repo, branch and diff-stat. Omit the field for a Matilda-only employee (no filesystem at all).
 
 ## Run
