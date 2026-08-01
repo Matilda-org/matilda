@@ -17,6 +17,12 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - Users generate/regenerate their key from their profile page ("Rigenera API Key"); the key is shown only once.
 - OpenAPI spec lives in `config/openapi/v1.yaml`, served at `/api/v1/openapi` with Swagger UI at `/api/v1/docs`. A test (`test/controllers/api/v1/docs_test.rb`) fails if a route is missing from the spec — update the YAML when adding endpoints.
 
+## Crew
+
+- `crew/` is a standalone Node.js CLI package (`matilda-crew`) that runs Claude-powered pseudo-employees against the API v1: each employee is a real Matilda user polled for assigned tasks. See `crew/README.md`.
+- `rake crew:pack` builds the npm tarball + `manifest.json` into `public/crew/` (gitignored); the web page at `/crew` (tools section) shows install instructions and `crew update` uses the manifest for self-updates.
+- Comment activity does NOT touch a task's `updated_at`; the crew loop relies on the task `unresolved` flag (true when the last comment is not the assignee's).
+
 ## Conventions
 
 - Ruby strings use double quotes.
