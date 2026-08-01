@@ -36,6 +36,10 @@
 !/app/assets/builds/.keep
 /public/assets
 
+# Ignore crew build artifacts (rebuilt in the Docker build stage).
+/crew/node_modules/
+/public/crew/
+
 # Ignore CI service files.
 /.github
 

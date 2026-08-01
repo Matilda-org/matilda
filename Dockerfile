@@ -30,7 +30,7 @@ FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config && \
+    apt-get install --no-install-recommends -y build-essential git pkg-config npm && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install application gems
@@ -51,6 +51,9 @@ RUN SECRET_KEY_BASE_DUMMY=1 \
     ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
     ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
     ./bin/rails assets:precompile
+
+# Build the downloadable matilda-crew package (served from public/crew)
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails crew:pack
 
 # Final stage for app image
 FROM base
