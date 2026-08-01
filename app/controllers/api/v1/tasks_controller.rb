@@ -85,6 +85,9 @@ class Api::V1::TasksController < Api::V1::BaseController
 
     comment = task_finder.tasks_comments.build(params.permit(:content, :service))
     comment.user_id = @current_user.id
+    # Comments are Markdown, but API clients (LLM agents included) sometimes send
+    # CDATA-wrapped HTML mimicking task contents: unwrap instead of showing it raw.
+    comment.content = comment.content.to_s.strip.sub(/\A<!\[CDATA\[/, "").sub(/\]\]>\z/, "").strip
     return render_record_errors(comment) unless comment.save
 
     render json: comment.as_json, status: :created

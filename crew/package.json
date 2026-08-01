@@ -1,6 +1,6 @@
 {
   "name": "matilda-crew",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Run Claude-powered pseudo-employees on your Matilda instance",
   "type": "module",
   "bin": {

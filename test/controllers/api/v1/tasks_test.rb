@@ -111,6 +111,15 @@ class Api::V1::TasksTest < ApiIntegrationTest
     assert_equal @user.id, comment.user_id
   end
 
+  test "comments strip CDATA wrappers sent by API clients" do
+    task = tasks(:one)
+    give_policy "tasks_comment"
+    post "/api/v1/tasks/#{task.id}/comments",
+      params: { content: "<![CDATA[**Markdown** body]]>" }, headers: api_headers
+    assert_response :created
+    assert_equal "**Markdown** body", task.tasks_comments.last.content
+  end
+
   test "limited users cannot touch tasks outside their projects" do
     other_project = Project.create!(code: "other", name: "Other project", year: 2026)
     hidden = Task.create!(title: "Hidden task", project: other_project, user: users(:two))

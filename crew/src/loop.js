@@ -3,7 +3,6 @@ import { MatildaClient } from './matilda.js'
 import { runTaskSession } from './agent.js'
 import { loadState, saveState, appendLog } from './config.js'
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // A task needs attention when it's new to us, when someone else commented last
 // (Matilda sets `unresolved: true` when the last comment is not the assignee's —
@@ -60,16 +59,23 @@ async function pollEmployee (employee, state, log) {
   for (const id of Object.keys(employeeState.tasks)) {
     if (!openIds.has(id)) delete employeeState.tasks[id]
   }
+
 }
 
 export async function startLoop (config, { once = false, log = console.log } = {}) {
   const interval = Math.min(...config.employees.map((e) => e.poll_interval || 300)) * 1000
   const state = { server: config.server, data: loadState() }
   let running = true
-  process.on('SIGINT', () => { running = false; log('Stopping after current round...') })
+  let wake = null
+
+  // Graceful stop: finish the session in flight, skip the rest of the sleep.
+  const stop = () => { running = false; wake?.(); log('Stopping after current work...') }
+  process.on('SIGINT', stop)
+  process.on('SIGTERM', stop)
 
   while (running) {
     for (const employee of config.employees) {
+      if (!running) break
       try {
         await pollEmployee(employee, state, log)
       } catch (err) {
@@ -77,8 +83,9 @@ export async function startLoop (config, { once = false, log = console.log } = {
       }
       saveState(state.data)
     }
-    if (once) break
+    if (once || !running) break
     log(`Round complete. Sleeping ${interval / 1000}s.`)
-    await sleep(interval)
+    await new Promise((resolve) => { wake = resolve; setTimeout(resolve, interval) })
+    wake = null
   }
 }

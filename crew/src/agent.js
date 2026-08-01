@@ -4,23 +4,43 @@ import { buildMatildaServer, SERVER_NAME, ALLOWED_TOOLS } from './tools.js'
 import { appendLog } from './config.js'
 
 function systemPrompt (employee, me) {
+  // Instructions = profile description stored in Matilda (shared, human-visible)
+  // + local config description (machine-specific). Either may be empty.
+  const description = [me.description, employee.description].filter(Boolean).join('\n\n')
+  const workspace = employee.workspace || []
   return [
     `You are "${employee.name}", a virtual employee working on the Matilda project management system.`,
-    `Your Matilda user id is ${me.id}. Your role: ${employee.role}`,
+    `Your Matilda user id is ${me.id}.`,
+    ...(description ? [`Your role and instructions:\n${description}`] : []),
     '',
     'Rules:',
-    '- Work only through the Matilda tools. You have no filesystem or shell.',
+    ...(workspace.length
+      ? [
+          `- You can read and edit code in these local workspace directories: ${workspace.join(', ')}.`,
+          '  Project repositories listed in Matilda (get_project) usually match folder names in the workspace.',
+          '- Code changes go on a dedicated branch named crew/<task-id>-<short-slug>, created from the default branch.',
+          '  Commit with a conventional message. NEVER push, never force, never delete branches or stashes.',
+          '- If the repository working tree has uncommitted changes that are not yours, do not touch it: report it and stop.',
+          '- When you change code, end your task comment with: repository, branch name, and the `git diff --stat` summary.'
+        ]
+      : ['- Work only through the Matilda tools. You have no filesystem or shell.']),
     '- Always report your work as a task comment (comment_task) so humans can read it.',
     '- Complete a task (complete_task) only when the requested work is truly done.',
     '- If you cannot do something or need input, say so in a comment and do NOT complete the task.',
     '- Write comments in the same language the task is written in.',
+    '- Comments are plain Markdown. Task contents are HTML. Never wrap anything in CDATA.',
     '- Be concise and concrete: results first, then reasoning if useful.'
   ].join('\n')
 }
 
+// Coding tools granted only when a workspace is configured. Bash is restricted
+// to git; reading goes through Read/Grep/Glob, editing through Edit/Write.
+const WORKSPACE_TOOLS = ['Read', 'Grep', 'Glob', 'Edit', 'Write', 'MultiEdit', 'Bash(git:*)']
+
 // Run one session and return { result, cost, turns }.
 async function runSession (employee, me, client, prompt, { onEvent } = {}) {
   const server = buildMatildaServer(client)
+  const workspace = employee.workspace || []
   let result = null
   let usage = null
 
@@ -29,9 +49,10 @@ async function runSession (employee, me, client, prompt, { onEvent } = {}) {
     options: {
       systemPrompt: systemPrompt(employee, me),
       mcpServers: { [SERVER_NAME]: server },
-      allowedTools: ALLOWED_TOOLS,
+      allowedTools: workspace.length ? [...ALLOWED_TOOLS, ...WORKSPACE_TOOLS] : ALLOWED_TOOLS,
       permissionMode: 'dontAsk',
       maxTurns: employee.max_turns || 15,
+      ...(workspace.length ? { cwd: workspace[0], additionalDirectories: workspace.slice(1) } : {}),
       ...(employee.model ? { model: employee.model } : {})
     }
   })) {

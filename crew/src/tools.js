@@ -50,7 +50,7 @@ export function buildMatildaServer (client) {
     }, safe(({ id }) => client.getTask(id)), readOnly),
     tool('create_task', 'Create a task', {
       title: z.string(),
-      content: z.string().optional(),
+      content: z.string().optional().describe('Rich text HTML (ActionText), e.g. <div>...</div>'),
       project_id: z.number().optional(),
       user_id: z.number().optional().describe('Assignee user id'),
       deadline: z.string().optional().describe('ISO date'),
@@ -59,15 +59,15 @@ export function buildMatildaServer (client) {
     tool('update_task', 'Update a task (title, content, deadline, estimate, assignee, project)', {
       id: z.number(),
       title: z.string().optional(),
-      content: z.string().optional(),
+      content: z.string().optional().describe('Rich text HTML (ActionText), e.g. <div>...</div>'),
       project_id: z.number().optional(),
       user_id: z.number().optional(),
       deadline: z.string().optional(),
       time_estimate: z.number().optional()
     }, safe(({ id, ...attrs }) => client.updateTask(id, attrs))),
-    tool('comment_task', 'Add a comment to a task. This is your main way to report work and answer people', {
+    tool('comment_task', 'Add a comment to a task. This is your main way to report work and answer people. Content MUST be plain Markdown text: never send HTML tags or CDATA wrappers, even if task contents you read are HTML', {
       id: z.number(),
-      content: z.string()
+      content: z.string().describe('Plain Markdown text (no HTML, no CDATA)')
     }, safe(({ id, content }) => client.commentTask(id, content))),
     tool('complete_task', 'Mark a task as completed. Only do this when the work is actually done', {
       id: z.number()

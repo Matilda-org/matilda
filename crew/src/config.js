@@ -3,10 +3,13 @@ import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
 
-export const HOME_DIR = path.join(os.homedir(), '.matilda-crew')
+// CREW_HOME overrides the state/config location (useful for tests and multi-crew setups).
+export const HOME_DIR = process.env.CREW_HOME || path.join(os.homedir(), '.matilda-crew')
 export const CONFIG_PATH = path.join(HOME_DIR, 'config.json')
 export const STATE_PATH = path.join(HOME_DIR, 'state.json')
 export const LOGS_DIR = path.join(HOME_DIR, 'logs')
+export const PID_PATH = path.join(HOME_DIR, 'crew.pid')
+export const DAEMON_LOG_PATH = path.join(HOME_DIR, 'crew.log')
 
 export const CONFIG_TEMPLATE = {
   server: 'https://matilda.example.com',
@@ -14,7 +17,7 @@ export const CONFIG_TEMPLATE = {
     {
       name: 'ada',
       api_key: 'MATILDA_API_KEY_OF_THE_CREW_USER',
-      role: 'Junior project assistant: read assigned tasks, do the work you can do with your tools, report results as task comments.',
+      description: 'Junior project assistant: read assigned tasks, do the work you can do with your tools, report results as task comments.',
       poll_interval: 300,
       max_turns: 15
     }
