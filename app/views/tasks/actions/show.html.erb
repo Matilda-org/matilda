@@ -1,7 +1,8 @@
 <%= render 'shared/action-container', title: 'Dettagli task', size: 'lg' do %>
 
-<div class="d-flex flex-column flex-md-row-reverse">
-  <div class="w-100">
+<%# column-reverse su mobile: le azioni restano in cima, non in fondo ai commenti %>
+<div class="d-flex flex-column-reverse flex-md-row-reverse">
+  <div class="c-task-overlay__main w-100">
     <h3 class="fs-5"><%= @task.title %></h3>
     <h4 class="fs-6 text-muted"><%= @task.completed ? @task.completed_at_in_words : @task.deadline_in_words %></h4>
     <%= render 'tasks/shared/card-content', task: @task %>
@@ -14,15 +15,22 @@
       <%= render 'tasks/shared/checks', task: @task, frame_id: SecureRandom.hex(3) %>
     <% end %>
     <hr class="mt-3 mb-2">
-    <p class="text-muted small text-uppercase fw-semibold mb-2" style="letter-spacing: 0.05em;">
+    <% comments_count = @task.tasks_comments.size %>
+    <p class="c-comment-thread-title text-muted small text-uppercase fw-semibold mb-2">
       Commenti
+      <% if comments_count.positive? %>
+        <span class="badge rounded-pill bg-secondary ms-1"><%= comments_count %></span>
+      <% end %>
     </p>
     <%= render 'tasks/shared/comments', task: @task %>
   </div>
 
   <hr class="d-md-none">
-  <div class="h-md-less-border-end-none border-end pe-md-3 me-md-3">
-    <%= render 'tasks/shared/actions', task: @task, context: 'overlay' %>
+  <%# Sticky: nel modale scrollabile le azioni restavano indietro leggendo i commenti %>
+  <div class="c-task-side-actions h-md-less-border-end-none border-end pe-md-3 me-md-3">
+    <div class="c-task-side-actions__inner">
+      <%= render 'tasks/shared/actions', task: @task, context: 'overlay' %>
+    </div>
   </div>
 </div>
 <% end %>
