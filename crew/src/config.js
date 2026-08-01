@@ -56,6 +56,30 @@ export function saveState (state) {
   fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + '\n')
 }
 
+// Live marker of the session in flight, so `crew status` can show real work.
+// Guarded by the loop's pid: a marker left by a crashed process is ignored.
+export const ACTIVITY_PATH = path.join(HOME_DIR, 'activity.json')
+
+export function setActivity (data) {
+  if (!data) {
+    fs.rmSync(ACTIVITY_PATH, { force: true })
+    return
+  }
+  fs.mkdirSync(HOME_DIR, { recursive: true })
+  fs.writeFileSync(ACTIVITY_PATH, JSON.stringify({ ...data, pid: process.pid }))
+}
+
+export function getActivity () {
+  if (!fs.existsSync(ACTIVITY_PATH)) return null
+  try {
+    const activity = JSON.parse(fs.readFileSync(ACTIVITY_PATH, 'utf8'))
+    process.kill(activity.pid, 0) // throws if the loop died mid-session
+    return activity
+  } catch {
+    return null
+  }
+}
+
 // Append a JSONL entry to the employee's activity log.
 export function appendLog (employeeName, entry) {
   fs.mkdirSync(LOGS_DIR, { recursive: true })

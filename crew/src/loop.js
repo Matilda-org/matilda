@@ -1,7 +1,7 @@
 // Poll loop: for each employee, pick up assigned open tasks that need attention.
 import { MatildaClient } from './matilda.js'
 import { runTaskSession } from './agent.js'
-import { loadState, saveState, appendLog } from './config.js'
+import { loadState, saveState, appendLog, setActivity } from './config.js'
 
 
 // A task needs attention when it's new to us, when someone else commented last
@@ -33,6 +33,7 @@ async function pollEmployee (employee, state, log) {
     if (!needsAttention(task, taskState)) continue
 
     log(`${employee.name}: working on task #${task.id} "${task.title}"`)
+    setActivity({ employee: employee.name, task_id: task.id, task_title: task.title, started_at: new Date().toISOString() })
     try {
       const outcome = await runTaskSession(employee, me, client, task, {
         onEvent: (kind, text) => log(`${employee.name} [${kind}] ${text}`)
@@ -41,6 +42,8 @@ async function pollEmployee (employee, state, log) {
     } catch (err) {
       log(`${employee.name}: session failed on task #${task.id}: ${err.message}`)
       appendLog(employee.name, { kind: 'error', task_id: task.id, error: err.message })
+    } finally {
+      setActivity(null)
     }
 
     // Refresh state after the session: our own comment resets unresolved server-side,

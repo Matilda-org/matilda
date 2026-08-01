@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
-import { loadConfig, loadState, writeConfigTemplate, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH } from './config.js'
+import { loadConfig, loadState, writeConfigTemplate, getActivity, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH } from './config.js'
 import { MatildaClient } from './matilda.js'
 import { startLoop } from './loop.js'
 import { runAskSession } from './agent.js'
@@ -85,6 +85,10 @@ async function cmdStatus () {
     const lastPoll = employeeState.last_poll_at
     const stale = !lastPoll || Date.now() - Date.parse(lastPoll) > 2 * interval
     console.log(`\n${employee.name}: ${identity}`)
+    const activity = getActivity()
+    if (activity?.employee === employee.name) {
+      console.log(`  >>> WORKING NOW on task #${activity.task_id} "${activity.task_title}" (started ${ago(activity.started_at)})`)
+    }
     console.log(`  last poll: ${ago(lastPoll)}${stale ? ' — LOOP NOT RUNNING? (start with: crew start)' : ''}`)
     console.log(`  instructions: matilda profile description ${me?.description ? 'set' : 'EMPTY'} + local config description ${employee.description ? 'set' : 'EMPTY'}`)
 
