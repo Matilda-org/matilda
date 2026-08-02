@@ -8,7 +8,9 @@ long_comment_chars = 700
 
 %>
 
-<%= turbo_frame_tag dom_id(task, 'comments') do %>
+<%# Il controller sta sul frame, non sul thread: così resta attivo anche quando
+    non c'è nessun commento e può comunque risincronizzare il contatore. %>
+<%= turbo_frame_tag dom_id(task, 'comments'), data: { controller: 'comments' } do %>
   <% comments = task.tasks_comments.order(created_at: :asc) %>
   <% if comments.empty? %>
     <div class="c-comment-empty text-center text-muted py-4">
@@ -16,7 +18,7 @@ long_comment_chars = 700
       <p class="small mb-0">Nessun commento ancora.</p>
     </div>
   <% else %>
-    <div class="c-comment-thread-wrap position-relative mb-3" data-controller="comments">
+    <div class="c-comment-thread-wrap position-relative mb-3">
       <div
         class="c-comment-thread d-flex flex-column gap-3"
         data-comments-target="thread"

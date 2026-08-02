@@ -9,6 +9,7 @@ export default class extends Controller {
   connect () {
     this.landed = false
     this.resolveClamps()
+    this.syncCount()
 
     // The thread has no layout while the card is collapsed or the modal is still
     // animating: re-run clamping and the initial jump once it gets measured.
@@ -78,6 +79,17 @@ export default class extends Controller {
     const thread = this.threadTarget
     const distanceFromBottom = thread.scrollHeight - thread.scrollTop - thread.clientHeight
     this.jumpTarget.classList.toggle('d-none', distanceFromBottom < 80)
+  }
+
+  // The comments count badge lives outside the frame (in the tab header), so a
+  // frame swap after a post or a delete would leave it stale.
+  syncCount () {
+    const badge = document.querySelector('[data-comments-count]')
+    if (!badge) return
+
+    const count = this.element.querySelectorAll('.c-comment').length
+    badge.textContent = count
+    badge.classList.toggle('d-none', count === 0)
   }
 
   toggleFor (body) {

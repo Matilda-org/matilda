@@ -1,36 +1,79 @@
-<%= render 'shared/action-container', title: 'Dettagli task', size: 'lg' do %>
+<%= render 'shared/action-container', title: 'Dettagli task', size: 'lg', body_classes: 'c-task-overlay__body' do %>
+
+<%
+comments_count = @task.tasks_comments.size
+# Il modale può convivere con altri contenuti in pagina: id univoci per i tab.
+tabs_id = SecureRandom.hex(3)
+%>
 
 <%# column-reverse su mobile: le azioni restano in cima, non in fondo ai commenti %>
-<div class="d-flex flex-column-reverse flex-md-row-reverse">
-  <div class="c-task-overlay__main w-100">
-    <h3 class="fs-5"><%= @task.title %></h3>
-    <h4 class="fs-6 text-muted"><%= @task.completed ? @task.completed_at_in_words : @task.deadline_in_words %></h4>
-    <%= render 'tasks/shared/card-content', task: @task %>
-    <% unless @task.description.blank? %>
-      <hr>
-      <%= @task.content %>
-    <% end %>
-    <% unless @task.tasks_checks.empty? %>
-      <hr>
-      <%= render 'tasks/shared/checks', task: @task, frame_id: SecureRandom.hex(3) %>
-    <% end %>
-    <hr class="mt-3 mb-2">
-    <% comments_count = @task.tasks_comments.size %>
-    <p class="c-comment-thread-title text-muted small text-uppercase fw-semibold mb-2">
-      Commenti
-      <% if comments_count.positive? %>
-        <span class="badge rounded-pill bg-secondary ms-1"><%= comments_count %></span>
-      <% end %>
-    </p>
-    <%= render 'tasks/shared/comments', task: @task %>
+<div class="c-task-overlay d-flex flex-column-reverse flex-md-row-reverse">
+  <div class="c-task-overlay__main">
+    <h3 class="fs-5 mb-1"><%= @task.title %></h3>
+    <h4 class="fs-6 text-muted mb-0"><%= @task.completed ? @task.completed_at_in_words : @task.deadline_in_words %></h4>
+
+    <%# Task e commenti competevano per lo stesso spazio: separati in due tab %>
+    <ul class="nav nav-tabs mt-3 flex-shrink-0" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          type="button"
+          role="tab"
+          data-bs-toggle="tab"
+          data-bs-target="#task-tab-details-<%= tabs_id %>"
+          aria-controls="task-tab-details-<%= tabs_id %>"
+          aria-selected="true"
+        >Task</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          type="button"
+          role="tab"
+          data-bs-toggle="tab"
+          data-bs-target="#task-tab-comments-<%= tabs_id %>"
+          aria-controls="task-tab-comments-<%= tabs_id %>"
+          aria-selected="false"
+        >
+          Commenti
+          <span
+            class="badge rounded-pill bg-secondary ms-1 <%= 'd-none' unless comments_count.positive? %>"
+            data-comments-count
+          ><%= comments_count %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content c-task-overlay__panes">
+      <div
+        class="tab-pane c-task-overlay__pane c-task-overlay__pane--details fade show active"
+        id="task-tab-details-<%= tabs_id %>"
+        role="tabpanel"
+      >
+        <%= render 'tasks/shared/card-content', task: @task %>
+        <% unless @task.description.blank? %>
+          <hr>
+          <%= @task.content %>
+        <% end %>
+        <% unless @task.tasks_checks.empty? %>
+          <hr>
+          <%= render 'tasks/shared/checks', task: @task, frame_id: SecureRandom.hex(3) %>
+        <% end %>
+      </div>
+
+      <div
+        class="tab-pane c-task-overlay__pane c-task-overlay__pane--comments fade"
+        id="task-tab-comments-<%= tabs_id %>"
+        role="tabpanel"
+      >
+        <%= render 'tasks/shared/comments', task: @task %>
+      </div>
+    </div>
   </div>
 
-  <hr class="d-md-none">
-  <%# Sticky: nel modale scrollabile le azioni restavano indietro leggendo i commenti %>
+  <hr class="d-md-none flex-shrink-0">
   <div class="c-task-side-actions h-md-less-border-end-none border-end pe-md-3 me-md-3">
-    <div class="c-task-side-actions__inner">
-      <%= render 'tasks/shared/actions', task: @task, context: 'overlay' %>
-    </div>
+    <%= render 'tasks/shared/actions', task: @task, context: 'overlay' %>
   </div>
 </div>
 <% end %>

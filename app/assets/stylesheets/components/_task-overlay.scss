@@ -1,0 +1,74 @@
+// Overlay "Dettagli task": modale a due tab (Task / Commenti).
+//
+// Regola guida: un solo scroller. Il body del modale non scrolla; l'altezza
+// scende lungo la catena flex (body → riga → colonna → pane) fino all'unico
+// elemento che scrolla davvero, cioè il pane attivo (tab Task) o il thread dei
+// commenti (tab Commenti). Ogni anello ha min-height:0, altrimenti il default
+// `min-height:auto` dei flex item blocca lo shrink e il contenuto sfonda.
+
+// Batte l'overflow-y:auto che .modal-dialog-scrollable mette sul body.
+.c-task-overlay__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.c-task-overlay {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+// min-width:0 sblocca lo shrink orizzontale: senza, un blocco largo non
+// spezzabile (pre, tabella) allarga la colonna e spinge le azioni fuori.
+.c-task-overlay__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.c-task-overlay__panes {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 1rem;
+}
+
+// Il pane inattivo è display:none, quindi non partecipa al flex.
+.c-task-overlay__panes > .c-task-overlay__pane.active {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+// Tab Task: scrolla il pane stesso.
+.c-task-overlay__pane--details.active {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+// Tab Commenti: il pane non scrolla, scrolla solo il thread, così il composer
+// resta ancorato in fondo invece di scorrere via con i messaggi.
+// Specificità alzata di proposito: deve battere il display:block di .tab-pane.
+.c-task-overlay__panes > .c-task-overlay__pane--comments.active {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// turbo-frame è un custom element inline: senza questo la catena flex si spezza
+// e il thread non riceve l'altezza residua.
+.c-task-overlay__pane--comments > turbo-frame {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+// Colonna azioni laterale: la colonna contenuto è flex:1, senza questo le
+// azioni verrebbero schiacciate.
+.c-task-side-actions {
+  flex-shrink: 0;
+}

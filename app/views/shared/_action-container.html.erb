@@ -4,6 +4,7 @@ title ||= 'Titolo'
 size ||= ''
 turbo_frame ||= nil
 classes ||= ''
+body_classes ||= '' # per chi deve gestire da sé lo scroll del body (es. overlay task)
 feedback ||= false
 
 %>
@@ -28,7 +29,7 @@ feedback ||= false
           <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal" aria-label="Chiudi"></a>
         <% end %>
       </div>
-      <div class="modal-body">
+      <div class="modal-body <%= body_classes %>">
         <%= yield %>
       </div>
     </div>

@@ -78,7 +78,11 @@
   .c-page-card__body--full {
     height: auto;
   }
+  // Il modulo interno scrolla da sé: qui serve un tetto, non un'altezza fissa.
+  // Senza tetto la card cresce all'infinito e il composer finisce sepolto sotto
+  // tutti i commenti; con height fissa una card quasi vuota resterebbe alta.
   .c-page-card__body--no-scroll {
     height: auto;
+    max-height: 70svh;
   }
 }

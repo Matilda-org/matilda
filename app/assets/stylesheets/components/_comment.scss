@@ -148,44 +148,18 @@
   min-height: 0;
 }
 
-// The thread owns its scrolling: the page stays short and the composer is
-// always one glance away, however many comments pile up.
+// Nessun cap di altezza: il thread prende quello che il contenitore gli lascia.
+// Dove il contenitore ha un'altezza definita (overlay, card su desktop) diventa
+// lui l'unico scroller e il composer resta ancorato; dove non ce l'ha (card su
+// mobile) cresce e scrolla solo la pagina. In entrambi i casi: uno scroll solo.
 .c-comment-thread {
-  // Via custom property on purpose: libsass re-parses plain (even interpolated)
-  // values and dies on "Incompatible units: 'px' and 'svh'", while custom
-  // property values are emitted verbatim, so the browser resolves min().
-  --comment-thread-max-height: min(58svh, 460px);
-  max-height: var(--comment-thread-max-height);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   // Don't chain the scroll to the modal or the page behind it.
   overscroll-behavior: contain;
   padding-right: 0.25rem;
   scroll-padding-bottom: 1rem;
-}
-
-// Inside a page card the body already has a fixed height, so let flex hand the
-// thread whatever is left after the composer instead of using the fixed cap.
-// Only on md+: below that the card body grows freely and the cap must survive.
-@media (min-width: 768px) {
-  // Il turbo-frame è il figlio diretto del body della card: senza flex la catena
-  // si spezza, il thread non riceve l'altezza residua e il composer viene tagliato.
-  .c-page-card__body--no-scroll > turbo-frame {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-
-  .c-page-card__body--no-scroll .c-comment-thread {
-    max-height: none;
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-}
-
-// Titolo di sezione dei commenti nel modale dettagli
-.c-comment-thread-title {
-  letter-spacing: 0.05em;
 }
 
 // Floating shortcut back to the newest comment while reading older ones
