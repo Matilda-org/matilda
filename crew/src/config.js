@@ -9,6 +9,8 @@ export const CONFIG_PATH = path.join(HOME_DIR, 'config.json')
 export const STATE_PATH = path.join(HOME_DIR, 'state.json')
 export const LOGS_DIR = path.join(HOME_DIR, 'logs')
 export const PID_PATH = path.join(HOME_DIR, 'crew.pid')
+// Present while the loop received a stop signal and is finishing work in flight.
+export const STOPPING_PATH = path.join(HOME_DIR, 'crew.stopping')
 export const DAEMON_LOG_PATH = path.join(HOME_DIR, 'crew.log')
 
 export const CONFIG_TEMPLATE = {

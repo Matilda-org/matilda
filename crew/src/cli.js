@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn, execFileSync } from 'node:child_process'
-import { loadConfig, loadState, writeConfigTemplate, getActivity, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH } from './config.js'
+import { loadConfig, loadState, writeConfigTemplate, getActivity, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH, STOPPING_PATH } from './config.js'
 import { MatildaClient } from './matilda.js'
 import { startLoop } from './loop.js'
 import { runAskSession } from './agent.js'
@@ -172,18 +172,28 @@ async function cmdStart (args) {
   const existing = runningPid()
   if (existing) throw new Error(`Loop already running (pid ${existing}). Use: crew stop`)
   fs.writeFileSync(PID_PATH, String(process.pid))
-  process.on('exit', () => { try { fs.rmSync(PID_PATH, { force: true }) } catch {} })
+  fs.rmSync(STOPPING_PATH, { force: true }) // stale marker from a force kill
+  process.on('exit', () => {
+    try {
+      fs.rmSync(PID_PATH, { force: true })
+      fs.rmSync(STOPPING_PATH, { force: true })
+    } catch {}
+  })
   const log = (message) => console.log(`[${new Date().toISOString().slice(0, 19)}] ${message}`)
   await startLoop(config, { once: args.includes('--once'), log })
 }
 
-async function cmdStop ({ quiet = false } = {}) {
+async function cmdStop ({ quiet = false, wait = true } = {}) {
   const pid = runningPid()
   if (!pid) {
     if (!quiet) console.log('Loop not running.')
     return false
   }
   process.kill(pid, 'SIGTERM')
+  if (!wait) {
+    console.log(`Stop signal sent to pid ${pid}: it exits when work in flight is done.`)
+    return true
+  }
   process.stdout.write(`Stopping loop (pid ${pid}), waiting for work in flight...`)
   // Wait up to 3 minutes: an agent session mid-flight is finished, not killed.
   for (let i = 0; i < 180; i++) {
@@ -210,12 +220,13 @@ function cmdMenubar (args) {
   let config = null
   try { config = loadConfig() } catch {}
   const pid = runningPid()
+  const stopping = pid && fs.existsSync(STOPPING_PATH)
   const activity = pid ? getActivity() : null
   const state = loadState()
 
   // Menu bar title
-  if (!config) console.log('⚫️ crew')
-  else if (!pid) console.log('⚫️ crew')
+  if (!config || !pid) console.log('⚫️ crew')
+  else if (stopping) console.log('🟠 crew')
   else if (activity) console.log(`🔵 #${activity.task_id}`)
   else console.log('🟢 crew')
   console.log('---')
@@ -226,7 +237,8 @@ function cmdMenubar (args) {
     return
   }
 
-  console.log(pid ? `Loop running (pid ${pid}) | color=green` : 'Loop stopped | color=red')
+  if (stopping) console.log('Stopping — finishing work in flight… | color=orange')
+  else console.log(pid ? `Loop running (pid ${pid}) | color=green` : 'Loop stopped | color=red')
   if (activity) {
     console.log(`⚙️ ${activity.employee} on #${activity.task_id} (${ago(activity.started_at)})`)
     console.log(`-- ${clean(activity.task_title)} | length=70`)
@@ -247,10 +259,10 @@ function cmdMenubar (args) {
   console.log('---')
 
   console.log(`Apri Matilda | href=${config.server}`)
-  if (pid) {
-    console.log(action('⏹ Stop loop', 'stop'))
+  if (pid && !stopping) {
+    console.log(action('⏹ Stop loop', 'stop', '--no-wait'))
     console.log(action('🔄 Restart loop', 'restart'))
-  } else {
+  } else if (!pid) {
     console.log(action('▶️ Start loop', 'start', '--daemon'))
   }
 }
@@ -315,7 +327,7 @@ async function main () {
       await cmdStart(args)
       break
     case 'stop':
-      await cmdStop()
+      await cmdStop({ wait: !args.includes('--no-wait') })
       break
     case 'restart':
       await cmdStop({ quiet: true })
@@ -338,6 +350,9 @@ async function main () {
       if (command) process.exitCode = 1
   }
 }
+
+// Piping into `head` etc. must not crash the CLI.
+process.stdout.on('error', (err) => { if (err.code === 'EPIPE') process.exit(0) })
 
 main().catch((err) => {
   console.error(`Error: ${err.message}`)

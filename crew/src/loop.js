@@ -1,7 +1,8 @@
 // Poll loop: for each employee, pick up assigned open tasks that need attention.
 import { MatildaClient } from './matilda.js'
 import { runTaskSession } from './agent.js'
-import { loadState, saveState, appendLog, setActivity } from './config.js'
+import fs from 'node:fs'
+import { loadState, saveState, appendLog, setActivity, STOPPING_PATH } from './config.js'
 import { findRepoDir, setupWorktree, teardownWorktree } from './workspace.js'
 
 
@@ -99,7 +100,13 @@ export async function startLoop (config, { once = false, log = console.log } = {
   let wake = null
 
   // Graceful stop: finish the session in flight, skip the rest of the sleep.
-  const stop = () => { running = false; wake?.(); log('Stopping after current work...') }
+  // The marker file lets status/menubar show a "stopping" state meanwhile.
+  const stop = () => {
+    running = false
+    wake?.()
+    try { fs.writeFileSync(STOPPING_PATH, '') } catch {}
+    log('Stopping after current work...')
+  }
   process.on('SIGINT', stop)
   process.on('SIGTERM', stop)
 
