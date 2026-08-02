@@ -1,4 +1,7 @@
 class Projects::Event < ApplicationRecord
+  # Same reason as the other project modules: the project page is action cached.
+  include Cachable
+
   # VALIDATIONS
   ############################################################
 

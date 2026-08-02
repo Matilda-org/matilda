@@ -47,4 +47,16 @@ class Projects::RepositoryTest < ActiveSupport::TestCase
       project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
     end
   end
+
+  # Without this the project page keeps serving the action cached html
+  # and the repository looks missing even if it is stored.
+  test "clears the views cache on create and destroy" do
+    Rails.cache.write("views/some-fragment", "cached")
+    repository = projects(:one).projects_repositories.create!(url: "https://github.com/owner/repo")
+    assert_nil Rails.cache.read("views/some-fragment")
+
+    Rails.cache.write("views/some-fragment", "cached")
+    repository.destroy!
+    assert_nil Rails.cache.read("views/some-fragment")
+  end
 end
