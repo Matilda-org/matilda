@@ -73,6 +73,15 @@ How the loop decides to act on a task: it is assigned to the employee, not compl
 
 State and activity logs live in `~/.matilda-crew/` (`state.json`, `logs/<name>.jsonl`). Package updates never touch them.
 
+## Start at login (macOS)
+
+```bash
+crew autostart --install   # launchd agent: the loop starts at login
+crew autostart --uninstall
+```
+
+Pair it with SwiftBar set as a login item (System Settings → Login Items, or SwiftBar preferences) so the menu bar indicator is there too. `crew stop` keeps working: the agent has no KeepAlive, so a stopped loop stays stopped until you start it again (menu bar ▶️ or next login).
+
 ## macOS menu bar indicator
 
 With [SwiftBar](https://github.com/swiftbar/SwiftBar) (or xbar) installed:

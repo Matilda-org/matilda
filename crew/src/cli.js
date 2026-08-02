@@ -26,6 +26,8 @@ Usage:
   crew chat [name]           Interactive chat with an employee (default: the first one)
   crew menubar               Print current state in SwiftBar/xbar plugin format
   crew menubar --install     Install the SwiftBar/xbar menu bar plugin
+  crew autostart --install   Start the loop automatically at login (launchd agent)
+  crew autostart --uninstall Remove the login autostart
   crew update                Check the Matilda server for a newer package and install it
   crew version               Print version
 `
@@ -331,6 +333,43 @@ function installMenubar () {
   console.log('It refreshes every 5 seconds. Rename the file (e.g. crew.30s.sh) to change the interval.')
 }
 
+// Login autostart via launchd user agent. KeepAlive stays off on purpose:
+// `crew stop` must actually stop the loop, not fight a supervisor.
+const LAUNCH_AGENT_PATH = path.join(process.env.HOME || '', 'Library/LaunchAgents/com.matilda.crew.plist')
+
+function cmdAutostart (args) {
+  if (args.includes('--uninstall')) {
+    try { execFileSync('launchctl', ['unload', LAUNCH_AGENT_PATH], { stdio: 'ignore' }) } catch {}
+    fs.rmSync(LAUNCH_AGENT_PATH, { force: true })
+    console.log('Autostart removed.')
+    return
+  }
+  if (!args.includes('--install')) throw new Error('Usage: crew autostart --install | --uninstall')
+
+  const plist = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.matilda.crew</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>${process.execPath}</string>
+    <string>${fileURLToPath(import.meta.url)}</string>
+    <string>start</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>${DAEMON_LOG_PATH}</string>
+  <key>StandardErrorPath</key><string>${DAEMON_LOG_PATH}</string>
+</dict>
+</plist>
+`
+  fs.mkdirSync(path.dirname(LAUNCH_AGENT_PATH), { recursive: true })
+  fs.writeFileSync(LAUNCH_AGENT_PATH, plist)
+  console.log(`Launch agent installed: ${LAUNCH_AGENT_PATH}`)
+  console.log('The loop will start automatically at login. Load it now with:')
+  console.log(`  launchctl load ${LAUNCH_AGENT_PATH}`)
+}
+
 async function cmdUpdate () {
   const config = loadConfig()
   const res = await fetch(`${config.server.replace(/\/$/, '')}/crew/manifest.json`)
@@ -385,6 +424,9 @@ async function main () {
       break
     case 'menubar':
       cmdMenubar(args)
+      break
+    case 'autostart':
+      cmdAutostart(args)
       break
     case 'update':
       await cmdUpdate()
