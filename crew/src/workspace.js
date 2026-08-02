@@ -48,8 +48,12 @@ export function setupWorktree (repoDir, taskId) {
     } else {
       git(repoDir, 'worktree', 'add', worktreePath, '-b', branch, defaultRef(repoDir))
     }
+    return { repoDir, path: worktreePath, branch }
   }
-  return { repoDir, path: worktreePath, branch }
+
+  // Reused mount (leftover of a forced kill): trust its actual branch, which
+  // may differ from the canonical name if older code created it.
+  return { repoDir, path: worktreePath, branch: git(worktreePath, 'branch', '--show-current') || branch }
 }
 
 // Reuse the task's existing crew branch when present (older naming carried a
