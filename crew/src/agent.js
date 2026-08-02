@@ -1,12 +1,8 @@
 // Agent sessions: one query() per unit of work, Matilda tools only.
-import path from 'node:path'
 import { query } from '@anthropic-ai/claude-agent-sdk'
 import { buildMatildaServer, SERVER_NAME, ALLOWED_TOOLS } from './tools.js'
-import { appendLog, HOME_DIR } from './config.js'
-
-// Employee worktrees live out of sight: the user's workspace keeps a single
-// folder per repo, branches are inspected from there with plain git.
-const WORKTREES_DIR = path.join(HOME_DIR, 'worktrees')
+import { appendLog } from './config.js'
+import { WORKTREES_DIR } from './workspace.js'
 
 function systemPrompt (employee, me) {
   // Instructions = profile description stored in Matilda (shared, human-visible)
@@ -21,15 +17,15 @@ function systemPrompt (employee, me) {
     'Rules:',
     ...(workspace.length
       ? [
-          `- You can read and edit code in these local workspace directories: ${workspace.join(', ')}.`,
-          '  Project repositories listed in Matilda (get_project) usually match folder names in the workspace.',
-          '- NEVER switch branches or edit files in the user\'s checkout: it is shared and may hold their work in progress.',
-          '  For code changes create a linked worktree and work ONLY inside it:',
-          `  \`git -C <repo> worktree add ${WORKTREES_DIR}/<repo-name>-<task-id> -b crew/<task-id>-<short-slug>\``,
-          '  (if the worktree or branch already exists from a previous session, reuse it and continue).',
-          '- Commit incrementally with conventional messages as each piece is done — never leave finished work uncommitted.',
-          '  If you are running low on turns, commit what you have and report partial progress instead of pushing on.',
-          '- NEVER push, never force, never delete branches, stashes or worktrees.',
+          `- You can READ code in these local workspace directories: ${workspace.join(', ')}.`,
+          '- Code changes are allowed ONLY inside the prepared worktree announced in the task prompt: it is already',
+          '  mounted on the task\'s dedicated branch. It is unmounted automatically after every session — uncommitted',
+          '  leftovers get auto-saved, but only proper commits on the branch are real work: commit incrementally',
+          '  with conventional messages as each piece is done.',
+          '- If no worktree is announced, the task\'s project has no linked repository here: you cannot change code.',
+          '  Say so in your comment if code work was expected (the fix: link the repository to the Matilda project).',
+          '- NEVER run git checkout/switch/worktree, never push, never force, never delete branches or stashes,',
+          '  never edit files in the user\'s checkouts outside your worktree.',
           '- When you change code, end your task comment with: repository, branch name, and the `git diff --stat` summary.'
         ]
       : ['- Work only through the Matilda tools. You have no filesystem or shell.']),
@@ -50,7 +46,7 @@ const WORKSPACE_TOOLS = ['Read', 'Grep', 'Glob', 'Edit', 'Write', 'MultiEdit', '
 // No turn cap by default: sessions run until done. The real guard is a
 // wall-clock timeout (session_timeout minutes, default 30) so a runaway
 // session can't block the loop forever.
-async function runSession (employee, me, client, prompt, { onEvent } = {}) {
+async function runSession (employee, me, client, prompt, { onEvent, worktree } = {}) {
   const server = buildMatildaServer(client)
   const workspace = employee.workspace || []
   const abort = new AbortController()
@@ -69,7 +65,9 @@ async function runSession (employee, me, client, prompt, { onEvent } = {}) {
         permissionMode: 'dontAsk',
         abortController: abort,
         ...(employee.max_turns ? { maxTurns: employee.max_turns } : {}),
-        ...(workspace.length ? { cwd: workspace[0], additionalDirectories: [...workspace.slice(1), WORKTREES_DIR] } : {}),
+        ...(workspace.length
+          ? { cwd: worktree?.path || workspace[0], additionalDirectories: [...workspace, WORKTREES_DIR] }
+          : {}),
         ...(employee.model ? { model: employee.model } : {})
       }
     })) {
@@ -95,7 +93,7 @@ async function runSession (employee, me, client, prompt, { onEvent } = {}) {
 }
 
 // Handle one assigned task end-to-end.
-export async function runTaskSession (employee, me, client, task, opts) {
+export async function runTaskSession (employee, me, client, task, opts = {}) {
   const detail = await client.getTask(task.id)
   const prompt = [
     `You have been assigned Matilda task #${task.id}. Here is its current state (JSON):`,
@@ -103,6 +101,13 @@ export async function runTaskSession (employee, me, client, task, opts) {
     JSON.stringify(detail, null, 2),
     '```',
     '',
+    ...(opts.worktree
+      ? [
+          `A git worktree for this task is mounted at ${opts.worktree.path} (your current directory),`,
+          `on branch ${opts.worktree.branch} of repository ${opts.worktree.repoDir}. All code changes go there.`,
+          ''
+        ]
+      : []),
     'Read it carefully (fetch project context with your tools if useful), do the work your role and tools allow,',
     'then report the outcome with comment_task. If — and only if — the request is fully satisfied, call complete_task.'
   ].join('\n')

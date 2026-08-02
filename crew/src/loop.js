@@ -2,6 +2,7 @@
 import { MatildaClient } from './matilda.js'
 import { runTaskSession } from './agent.js'
 import { loadState, saveState, appendLog, setActivity } from './config.js'
+import { findRepoDir, setupWorktree, teardownWorktree } from './workspace.js'
 
 
 // A task needs attention when it's new to us, when someone else commented last
@@ -34,9 +35,27 @@ async function pollEmployee (employee, state, log) {
 
     log(`${employee.name}: working on task #${task.id} "${task.title}"`)
     setActivity({ employee: employee.name, task_id: task.id, task_title: task.title, started_at: new Date().toISOString() })
+
+    // Mount the task worktree (branch crew/<task_id>) when the task's project
+    // has a repository present in the workspace. Unmounted in the finally:
+    // between sessions only the branch remains.
+    let worktree = null
+    if ((employee.workspace || []).length) {
+      try {
+        const repoDir = await findRepoDir(client, task, employee.workspace)
+        if (repoDir) {
+          worktree = setupWorktree(repoDir, task.id)
+          log(`${employee.name}: worktree ready at ${worktree.path} (${worktree.branch})`)
+        }
+      } catch (err) {
+        log(`${employee.name}: worktree setup failed for task #${task.id}: ${err.message}`)
+      }
+    }
+
     try {
       const outcome = await runTaskSession(employee, me, client, task, {
-        onEvent: (kind, text) => log(`${employee.name} [${kind}] ${text}`)
+        onEvent: (kind, text) => log(`${employee.name} [${kind}] ${text}`),
+        worktree
       })
       log(`${employee.name}: task #${task.id} done (${outcome.turns} turns, $${outcome.cost_usd?.toFixed(4)})`)
     } catch (err) {
@@ -44,6 +63,14 @@ async function pollEmployee (employee, state, log) {
       appendLog(employee.name, { kind: 'error', task_id: task.id, error: err.message })
     } finally {
       setActivity(null)
+      if (worktree) {
+        try {
+          teardownWorktree(worktree)
+          log(`${employee.name}: worktree unmounted, work saved on ${worktree.branch}`)
+        } catch (err) {
+          log(`${employee.name}: worktree teardown failed: ${err.message}`)
+        }
+      }
     }
 
     // Refresh state after the session: our own comment resets unresolved server-side,
