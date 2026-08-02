@@ -304,7 +304,7 @@ function cmdMenubar (args) {
   console.log(`Apri Matilda | href=${config.server}`)
   console.log(`💬 Chat con la crew | bash=${process.execPath} param1=${fileURLToPath(import.meta.url)} param2=chat terminal=true`)
   if (pid && !stopping) {
-    console.log(action('⏹ Stop loop', 'stop', '--no-wait'))
+    console.log(action('🛑 Stop loop', 'stop', '--no-wait'))
     console.log(action('🔄 Restart loop', 'restart'))
   } else if (!pid) {
     console.log(action('▶️ Start loop', 'start', '--daemon'))
