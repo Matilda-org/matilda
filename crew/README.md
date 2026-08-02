@@ -73,6 +73,16 @@ How the loop decides to act on a task: it is assigned to the employee, not compl
 
 State and activity logs live in `~/.matilda-crew/` (`state.json`, `logs/<name>.jsonl`). Package updates never touch them.
 
+## macOS menu bar indicator
+
+With [SwiftBar](https://github.com/swiftbar/SwiftBar) (or xbar) installed:
+
+```bash
+crew menubar --install
+```
+
+Shows ⚫️ loop stopped / 🟢 idle / 🔵 `#<task>` working, with a dropdown carrying the session in flight, recent activity per employee and clickable start/stop/restart. `crew menubar` prints the plugin output for debugging. Refresh interval is the number in the plugin filename (`crew.5s.sh`).
+
 ## Publishing the package (Matilda server side)
 
 ```bash
