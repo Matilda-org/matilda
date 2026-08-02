@@ -7,6 +7,15 @@ badge_type = 'secondary' if badge_type.blank?
 
 %>
 
+<%# Task id: dark badge in first position so it stays readable on every card color %>
+<% if task.persisted? %>
+  <span
+    class="badge bg-dark font-monospace"
+    data-controller="tooltip"
+    data-tooltip="ID di questo task"
+  >#<%= task.id %></span>
+<% end %>
+
 <% if !task.accepted %>
   <span
     class="badge bg-danger"
