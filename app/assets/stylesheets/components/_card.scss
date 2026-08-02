@@ -103,13 +103,14 @@
   // text carry the semantic hue instead of the background.
   .badge[class*="bg-"], .progress[class*="bg-"] {
     background-color: rgba(var(--bs-white-rgb), 0.92) !important;
+    // Default ink, so a variant with no rule below (bg-white, a custom
+    // utility) can never end up white-on-white. Also outranks the
+    // `a:not(.text-warning)` override above, which anchor badges would hit.
+    color: $primary !important;
   }
 
-  // One rule per variant: the `a:not(.text-warning)` override above outranks a
-  // bare `.badge`, so anchor badges need the extra class to win. Danger,
-  // success and warning are shaded because the raw brand color would fail AA
-  // on a near-white pill (success 2.9:1, warning 2.1:1).
-  .badge.bg-primary, .badge.bg-light, .progress.bg-primary { color: $primary !important; }
+  // Semantic hues. Danger, success and warning are darkened because the raw
+  // brand color fails AA on a near-white pill (success 2.9:1, warning 2.1:1).
   .badge.bg-secondary { color: $secondary !important; }
   .badge.bg-info { color: $info !important; }
   .badge.bg-dark { color: $dark !important; }
