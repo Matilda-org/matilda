@@ -96,10 +96,26 @@
     color: var(--bs-white) !important;
   }
 
-  .badge.bg-primary, .progress.bg-primary {
+  // Badges on a dark card (a procedure card added to favorites is forced to
+  // .bg-primary). Saturated fills sink into the card — bg-info lands at ~1.4:1
+  // against it — and bg-light keeps the white text forced above, so the label
+  // disappears entirely. Invert every variant to a near-white pill and let the
+  // text carry the semantic hue instead of the background.
+  .badge[class*="bg-"], .progress[class*="bg-"] {
     background-color: rgba(var(--bs-white-rgb), 0.92) !important;
-    color: var(--bs-primary) !important;
   }
+
+  // One rule per variant: the `a:not(.text-warning)` override above outranks a
+  // bare `.badge`, so anchor badges need the extra class to win. Danger,
+  // success and warning are shaded because the raw brand color would fail AA
+  // on a near-white pill (success 2.9:1, warning 2.1:1).
+  .badge.bg-primary, .badge.bg-light, .progress.bg-primary { color: $primary !important; }
+  .badge.bg-secondary { color: $secondary !important; }
+  .badge.bg-info { color: $info !important; }
+  .badge.bg-dark { color: $dark !important; }
+  .badge.bg-danger { color: mix(black, $danger, 10%) !important; }
+  .badge.bg-success { color: mix(black, $success, 40%) !important; }
+  .badge.bg-warning { color: mix(black, $warning, 65%) !important; }
 
   .text-muted {
     // Lighter muted tone for adequate contrast on dark cards (WCAG AA)
