@@ -4,6 +4,9 @@ title ||= 'Title'
 subtitle ||= nil
 back ||= false
 render_actions ||= nil
+# Optional avatar shown right before the title (eg. user profile image)
+image ||= nil
+image_alt ||= nil
 
 %>
 
@@ -28,6 +31,13 @@ render_actions ||= nil
           <div class="me-3 fs-5">
             <%= nav_icon(@_navbar) %>
           </div>
+        <% end %>
+        <% if image %>
+          <img
+            src="<%= image %>"
+            class="me-2 rounded-circle border border-primary border-2 c-page-header__image"
+            alt="<%= image_alt %>"
+          >
         <% end %>
         <div class="c-page-header__intestation">
           <h1 class="c-page-header__title fs-3 mb-0 h-text-oneline"><%= title %></h1>
