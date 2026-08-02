@@ -151,7 +151,9 @@
 // The thread owns its scrolling: the page stays short and the composer is
 // always one glance away, however many comments pile up.
 .c-comment-thread {
-  max-height: min(58svh, 460px);
+  // Interpolated on purpose: Sass would try to resolve min() itself and dies on
+  // "Incompatible units: 'px' and 'svh'". This hands it to the browser as-is.
+  max-height: #{"min(58svh, 460px)"};
   overflow-y: auto;
   // Don't chain the scroll to the modal or the page behind it.
   overscroll-behavior: contain;
