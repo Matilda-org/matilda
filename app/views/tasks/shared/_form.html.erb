@@ -55,7 +55,7 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
 
     <div class="accordion mb-3" id="formTaskAccordion">
       <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
-      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task, assignment_user_id: procedures_status&.assignment_user_id, follow_user_id: procedures_status&.follow_user_id %>
+      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task, assignment_user_id: procedures_status&.assignment_user_id, follow_user_id: procedures_status&.follow_user_id || @session_user_id %>
       <% if task.repeat_original_task_id.nil? %>
         <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
       <% end %>
