@@ -92,6 +92,13 @@ class User < ApplicationRecord
     image_profile.variant(resize: "100x100")
   end
 
+  # Thumb url with placeholder fallback, safe to use in any view
+  def image_profile_url
+    return "/statics/placeholder-profile.jpg" unless image_profile.attached?
+
+    Rails.application.routes.url_helpers.url_for(image_profile_thumb)
+  end
+
   def policies
     @policies ||= users_policies.pluck(:policy).map(&:to_s)
   end
@@ -173,13 +180,8 @@ class User < ApplicationRecord
     Rails.cache.fetch("User/cached_preview_data/#{user_id}", expires_in: 7.days) do
       user = User.find_by(id: user_id)
 
-      image_profile_url = "/statics/placeholder-profile.jpg"
-      if user.image_profile.attached?
-        image_profile_url = Rails.application.routes.url_helpers.url_for(user.image_profile_thumb)
-      end
-
       {
-        image_profile_url: image_profile_url,
+        image_profile_url: user.image_profile_url,
         complete_name: user.complete_name
       }
     end

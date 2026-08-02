@@ -1,6 +1,8 @@
 <%= render 'shared/page-header',
   title: @_is_dashboard ? "#{I18n.t('date.day_names')[Time.now.wday].capitalize} #{Time.now.strftime('%d/%m')}" : @user.complete_name,
   subtitle: @_is_dashboard ? render('shared/year_progress') : nil,
+  image: @_is_dashboard ? nil : @user.image_profile_url,
+  image_alt: @_is_dashboard ? nil : @user.complete_name,
   render_actions: 'users/show-actions',
   back: !@_is_dashboard
 %>
