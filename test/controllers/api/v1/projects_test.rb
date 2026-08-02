@@ -34,6 +34,23 @@ class Api::V1::ProjectsTest < ApiIntegrationTest
     assert_not_includes ids, other.id
   end
 
+  test "create requires projects_create policy and creates the project" do
+    assert_requires_policy :post, "/api/v1/projects", "projects_create",
+      params: { code: "crew-prj", name: "Crew project" },
+      success_status: :created
+
+    project = Project.find_by(code: "CREW-PRJ") # code is upcased on create
+    assert_equal "Crew project", project.name
+    assert_equal Date.today.year, project.year
+  end
+
+  test "create returns validation errors" do
+    give_policy "projects_create"
+    post "/api/v1/projects", params: { code: "" }, headers: api_headers
+    assert_response :unprocessable_content
+    assert json_response["errors"].any?
+  end
+
   test "show requires projects_show policy and includes relations" do
     assert_requires_policy :get, "/api/v1/projects/#{projects(:one).id}", "projects_show"
 

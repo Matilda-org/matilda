@@ -173,7 +173,7 @@ Rails.application.routes.draw do
 
       get "me", to: "users#me"
       resources :users, only: [ :index, :show ]
-      resources :projects, only: [ :index, :show ] do
+      resources :projects, only: [ :index, :show, :create ] do
         member do
           get :logs
         end

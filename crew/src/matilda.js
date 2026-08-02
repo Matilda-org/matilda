@@ -33,6 +33,7 @@ export class MatildaClient {
   me () { return this.request('GET', '/me') }
   listUsers (params) { return this.request('GET', '/users', { params }) }
   listProjects (params) { return this.request('GET', '/projects', { params }) }
+  createProject (attrs) { return this.request('POST', '/projects', { body: attrs }) }
   getProject (id) { return this.request('GET', `/projects/${id}`) }
   projectLogs (id, params) { return this.request('GET', `/projects/${id}/logs`, { params }) }
   listTasks (params) { return this.request('GET', '/tasks', { params }) }

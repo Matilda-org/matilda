@@ -1,7 +1,18 @@
 # frozen_string_literal: true
 
-# Projects API: read access to projects and their logs.
+# Projects API: read access to projects and their logs, creation.
 class Api::V1::ProjectsController < Api::V1::BaseController
+  # POST /api/v1/projects
+  def create
+    return unless require_policy!("projects_create")
+
+    project = Project.new(params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time))
+    project.year ||= Date.today.year
+    return render_record_errors(project) unless project.save
+
+    render json: project.as_json, status: :created
+  end
+
   # GET /api/v1/projects
   def index
     return unless require_policy!("projects_index")

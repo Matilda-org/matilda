@@ -87,6 +87,34 @@ paths:
         "200": { $ref: "#/components/responses/PaginatedList" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [projects]
+      summary: Crea progetto
+      description: Richiede la policy `projects_create`. Se `year` è omesso, usa l'anno corrente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name]
+              properties:
+                code: { type: string, maxLength: 50 }
+                name: { type: string, maxLength: 100 }
+                year: { type: integer }
+                description: { type: string, maxLength: 255 }
+                budget_management: { type: boolean }
+                budget_money: { type: number }
+                budget_time: { type: number }
+      responses:
+        "201":
+          description: Progetto creato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
 
   /projects/{id}:
     get:

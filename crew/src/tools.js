@@ -29,6 +29,15 @@ export function buildMatildaServer (client) {
       user_id: z.number().optional(),
       page: z.number().optional()
     }, safe((args) => client.listProjects(args)), readOnly),
+    tool('create_project', 'Create a project. Code is short and unique (gets uppercased), year defaults to the current one', {
+      code: z.string(),
+      name: z.string(),
+      year: z.number().optional(),
+      description: z.string().optional(),
+      budget_management: z.boolean().optional(),
+      budget_money: z.number().optional(),
+      budget_time: z.number().optional().describe('Budget in hours')
+    }, safe((args) => client.createProject(args))),
     tool('get_project', 'Get a project with members, attachments, repositories and boards', {
       id: z.number()
     }, safe(({ id }) => client.getProject(id)), readOnly),

@@ -46,7 +46,7 @@ const WORKSPACE_TOOLS = ['Read', 'Grep', 'Glob', 'Edit', 'Write', 'MultiEdit', '
 // No turn cap by default: sessions run until done. The real guard is a
 // wall-clock timeout (session_timeout minutes, default 30) so a runaway
 // session can't block the loop forever.
-async function runSession (employee, me, client, prompt, { onEvent, worktree } = {}) {
+async function runSession (employee, me, client, prompt, { onEvent, worktree, resume } = {}) {
   const server = buildMatildaServer(client)
   const workspace = employee.workspace || []
   const abort = new AbortController()
@@ -54,6 +54,7 @@ async function runSession (employee, me, client, prompt, { onEvent, worktree } =
   const timer = setTimeout(() => abort.abort(new Error(`session timeout after ${timeoutMs / 60000} minutes`)), timeoutMs)
   let result = null
   let usage = null
+  let sessionId = null
 
   try {
     for await (const message of query({
@@ -64,6 +65,7 @@ async function runSession (employee, me, client, prompt, { onEvent, worktree } =
         allowedTools: workspace.length ? [...ALLOWED_TOOLS, ...WORKSPACE_TOOLS] : ALLOWED_TOOLS,
         permissionMode: 'dontAsk',
         abortController: abort,
+        ...(resume ? { resume } : {}),
         ...(employee.max_turns ? { maxTurns: employee.max_turns } : {}),
         ...(workspace.length
           ? { cwd: worktree?.path || workspace[0], additionalDirectories: [...workspace, WORKTREES_DIR] }
@@ -71,6 +73,7 @@ async function runSession (employee, me, client, prompt, { onEvent, worktree } =
         ...(employee.model ? { model: employee.model } : {})
       }
     })) {
+      if (message.type === 'system' && message.subtype === 'init') sessionId = message.session_id
       if (message.type === 'assistant' && onEvent) {
         for (const block of message.message.content || []) {
           if (block.type === 'text' && block.text.trim()) onEvent('text', block.text)
@@ -89,7 +92,7 @@ async function runSession (employee, me, client, prompt, { onEvent, worktree } =
     clearTimeout(timer)
   }
 
-  return { result, ...usage }
+  return { result, session_id: sessionId, ...usage }
 }
 
 // Handle one assigned task end-to-end.
@@ -114,6 +117,16 @@ export async function runTaskSession (employee, me, client, task, opts = {}) {
 
   const outcome = await runSession(employee, me, client, prompt, opts)
   appendLog(employee.name, { kind: 'task', task_id: task.id, ...outcome })
+  return outcome
+}
+
+// Interactive chat turn (`crew chat`): multi-turn via SDK session resume.
+export async function runChatTurn (employee, me, client, text, { sessionId, onEvent } = {}) {
+  const prompt = sessionId
+    ? text
+    : `You are in an interactive chat with a human operator: execute what they ask with your tools and answer here, concisely. Do not comment on tasks unless asked.\n\n${text}`
+  const outcome = await runSession(employee, me, client, prompt, { resume: sessionId, onEvent })
+  appendLog(employee.name, { kind: 'chat', question: text, ...outcome })
   return outcome
 }
 

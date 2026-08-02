@@ -7,7 +7,8 @@ import { spawn, execFileSync } from 'node:child_process'
 import { loadConfig, loadState, writeConfigTemplate, getActivity, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH, STOPPING_PATH } from './config.js'
 import { MatildaClient } from './matilda.js'
 import { startLoop } from './loop.js'
-import { runAskSession } from './agent.js'
+import { runAskSession, runChatTurn } from './agent.js'
+import readline from 'node:readline/promises'
 
 const pkg = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf8'))
 
@@ -22,6 +23,7 @@ Usage:
   crew stop                  Stop the running loop (graceful: finishes work in flight)
   crew restart               Stop the loop and start it again as daemon
   crew ask <name> <question> Ask an employee a one-shot question
+  crew chat [name]           Interactive chat with an employee (default: the first one)
   crew menubar               Print current state in SwiftBar/xbar plugin format
   crew menubar --install     Install the SwiftBar/xbar menu bar plugin
   crew update                Check the Matilda server for a newer package and install it
@@ -208,6 +210,47 @@ async function cmdStop ({ quiet = false, wait = true } = {}) {
   return false
 }
 
+// Interactive chat: multi-turn REPL with SDK session continuity.
+async function cmdChat (name) {
+  const config = loadConfig()
+  const employee = name ? findEmployee(config, name) : config.employees[0]
+  const client = new MatildaClient(config.server, employee.api_key)
+  const me = await client.me()
+  console.log(`Chat con ${employee.name} (${config.server}) — /exit per uscire\n`)
+
+  // Piped stdin (scripting): read every line upfront — readline would lose
+  // buffered lines while a turn is in flight. TTY: normal interactive REPL.
+  let nextLine
+  let rl = null
+  if (process.stdin.isTTY) {
+    rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+    rl.on('SIGINT', () => { rl.close(); process.exit(0) })
+    nextLine = () => rl.question('tu> ')
+  } else {
+    const lines = fs.readFileSync(0, 'utf8').split('\n')
+    nextLine = async () => lines.length ? lines.shift() : '/exit'
+  }
+
+  let sessionId = null
+  while (true) {
+    const text = (await nextLine()).trim()
+    if (!text) continue
+    if (text === '/exit') break
+    if (!process.stdin.isTTY) console.log(`tu> ${text}`)
+    try {
+      const outcome = await runChatTurn(employee, me, client, text, {
+        sessionId,
+        onEvent: (kind, detail) => { if (kind === 'tool') console.log(`  ⚙︎ ${detail.slice(0, 120)}`) }
+      })
+      sessionId = outcome.session_id || sessionId
+      console.log(`\n${employee.name}> ${outcome.result}\n`)
+    } catch (err) {
+      console.error(`Errore: ${err.message}`)
+    }
+  }
+  rl?.close()
+}
+
 // SwiftBar/xbar plugin output: menu bar title, then dropdown lines.
 // Reads only local files (pid, activity, state, logs) — safe at short refresh.
 function cmdMenubar (args) {
@@ -259,6 +302,7 @@ function cmdMenubar (args) {
   console.log('---')
 
   console.log(`Apri Matilda | href=${config.server}`)
+  console.log(`💬 Chat con la crew | bash=${process.execPath} param1=${fileURLToPath(import.meta.url)} param2=chat terminal=true`)
   if (pid && !stopping) {
     console.log(action('⏹ Stop loop', 'stop', '--no-wait'))
     console.log(action('🔄 Restart loop', 'restart'))
@@ -335,6 +379,9 @@ async function main () {
       break
     case 'ask':
       await cmdAsk(args[0], args.slice(1).join(' '))
+      break
+    case 'chat':
+      await cmdChat(args[0])
       break
     case 'menubar':
       cmdMenubar(args)
