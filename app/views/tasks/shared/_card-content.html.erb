@@ -5,18 +5,9 @@ hide_project ||= false
 
 %>
 
-<% if task.user || task.unresolved? %>
+<% if task.user %>
   <div class="mb-1 d-flex align-items-center">
-    <% if task.unresolved? %>
-      <i 
-        class="bi bi-chat-dots me-2"
-        data-controller="tooltip"
-        data-tooltip="Commenti in attesa di risposta dall'assegnatario"
-      ></i>
-    <% end %>
-    <% if task.user %>
-      <%= render 'users/shared/preview', user_id: task.user_id, size: 'sm', type: hide_project ? task.color_type : 'light' %>
-    <% end %>
+    <%= render 'users/shared/preview', user_id: task.user_id, size: 'sm', type: hide_project ? task.color_type : 'light' %>
   </div>
 <% end %>
 

@@ -15,6 +15,15 @@ badge_type = 'secondary' if badge_type.blank?
   ><i class="bi bi-bell-fill"></i> da approvare</span>
 <% end %>
 
+<% if task.comments_label %>
+  <% last_comment_author = task.last_comment_author_name %>
+  <span
+    class="badge bg-<%= badge_type %>"
+    data-controller="tooltip"
+    data-tooltip="<%= last_comment_author ? "Ultimo commento scritto da #{last_comment_author}" : 'Questo task ha dei commenti' %>"
+  ><i class="bi bi-chat-dots-fill"></i> <%= task.comments_label %></span>
+<% end %>
+
 <% if task.repeat %>
   <span
     class="badge bg-<%= badge_type %>"

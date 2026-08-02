@@ -10,32 +10,35 @@ class Tasks::Comment < ApplicationRecord
   ############################################################
 
   belongs_to :user, optional: true
-  belongs_to :task
+  # counter_cache keeps tasks.tasks_comments_count in sync without touching
+  # the task updated_at
+  # explicit column: the default derived from the demodulized class name would
+  # be comments_count, while the has_many side reads tasks_comments_count
+  belongs_to :task, counter_cache: :tasks_comments_count
 
   # HOOKS
   ############################################################
 
-  after_create_commit :update_task_unresolved
-  after_destroy_commit :update_task_unresolved_on_destroy
+  after_create_commit :sync_task_comment_state
+  after_destroy_commit :sync_task_comment_state
 
   private
 
-  def update_task_unresolved
-    return unless task.user_id.present?
+  # Keeps the task denormalized comment data aligned with the last comment:
+  # who wrote it (shown on the task card) and whether it still awaits a reply
+  # from the assignee (used by the crew loop).
+  def sync_task_comment_state
+    return if task.nil? || task.destroyed?
 
-    last_comment_by_assignee = user_id == task.user_id
-    task.update_column(:unresolved, !last_comment_by_assignee)
-  end
+    last_comment = task.tasks_comments.order(created_at: :asc, id: :asc).last
 
-  def update_task_unresolved_on_destroy
-    return if !task || task.destroyed?
-    return unless task.user_id.present?
-
-    last_comment = task.tasks_comments.order(created_at: :asc).last
-    if last_comment.nil?
-      task.update_column(:unresolved, false)
-    else
-      task.update_column(:unresolved, last_comment.user_id != task.user_id)
+    attributes = { last_comment_user_id: last_comment&.user_id }
+    # unresolved only makes sense on assigned tasks
+    if task.user_id.present?
+      attributes[:unresolved] = last_comment.present? && last_comment.user_id != task.user_id
     end
+
+    # update_columns on purpose: commenting must not bump the task updated_at
+    task.update_columns(attributes)
   end
 end
