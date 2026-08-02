@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawn } from 'node:child_process'
+import { spawn, execFileSync } from 'node:child_process'
 import { loadConfig, loadState, writeConfigTemplate, getActivity, CONFIG_PATH, LOGS_DIR, PID_PATH, DAEMON_LOG_PATH } from './config.js'
 import { MatildaClient } from './matilda.js'
 import { startLoop } from './loop.js'
@@ -22,6 +22,8 @@ Usage:
   crew stop                  Stop the running loop (graceful: finishes work in flight)
   crew restart               Stop the loop and start it again as daemon
   crew ask <name> <question> Ask an employee a one-shot question
+  crew menubar               Print current state in SwiftBar/xbar plugin format
+  crew menubar --install     Install the SwiftBar/xbar menu bar plugin
   crew update                Check the Matilda server for a newer package and install it
   crew version               Print version
 `
@@ -196,6 +198,83 @@ async function cmdStop ({ quiet = false } = {}) {
   return false
 }
 
+// SwiftBar/xbar plugin output: menu bar title, then dropdown lines.
+// Reads only local files (pid, activity, state, logs) — safe at short refresh.
+function cmdMenubar (args) {
+  if (args.includes('--install')) return installMenubar()
+
+  const clean = (text) => String(text).replace(/\|/g, '∣').replace(/\n/g, ' ')
+  const action = (label, ...params) =>
+    `${label} | bash=${process.execPath} param1=${fileURLToPath(import.meta.url)} ${params.map((p, i) => `param${i + 2}=${p}`).join(' ')} terminal=false refresh=true`
+
+  let config = null
+  try { config = loadConfig() } catch {}
+  const pid = runningPid()
+  const activity = pid ? getActivity() : null
+  const state = loadState()
+
+  // Menu bar title
+  if (!config) console.log('⚫️ crew')
+  else if (!pid) console.log('⚫️ crew')
+  else if (activity) console.log(`🔵 #${activity.task_id}`)
+  else console.log('🟢 crew')
+  console.log('---')
+
+  if (!config) {
+    console.log('Crew not configured | color=red')
+    console.log(`Run: crew init --server <url> | font=Menlo size=11`)
+    return
+  }
+
+  console.log(pid ? `Loop running (pid ${pid}) | color=green` : 'Loop stopped | color=red')
+  if (activity) {
+    console.log(`⚙️ ${activity.employee} on #${activity.task_id} (${ago(activity.started_at)})`)
+    console.log(`-- ${clean(activity.task_title)} | length=70`)
+  }
+  console.log('---')
+
+  for (const employee of config.employees) {
+    const employeeState = state.employees?.[employee.name] || {}
+    const tracked = Object.keys(employeeState.tasks || {}).length
+    console.log(`${employee.name} — last poll ${ago(employeeState.last_poll_at)}, ${tracked} tracked tasks`)
+    for (const entry of readLogEntries(employee.name, 3).reverse()) {
+      const line = entry.kind === 'error'
+        ? `❌ #${entry.task_id} ${clean(entry.error)}`
+        : `✔︎ #${entry.task_id || '-'} ${clean(String(entry.result || '').split('\n')[0])}`
+      console.log(`-- ${entry.at?.slice(11, 16)} ${line} | length=80 font=Menlo size=11`)
+    }
+  }
+  console.log('---')
+
+  console.log(`Apri Matilda | href=${config.server}`)
+  if (pid) {
+    console.log(action('⏹ Stop loop', 'stop'))
+    console.log(action('🔄 Restart loop', 'restart'))
+  } else {
+    console.log(action('▶️ Start loop', 'start', '--daemon'))
+  }
+}
+
+// Install the plugin into the SwiftBar (or xbar) plugin directory.
+function installMenubar () {
+  let dir = null
+  try {
+    dir = execFileSync('defaults', ['read', 'com.ameba.SwiftBar', 'PluginDirectory'], { encoding: 'utf8' }).trim()
+  } catch {}
+  if (!dir) {
+    const xbarDir = path.join(process.env.HOME || '', 'Library/Application Support/xbar/plugins')
+    if (fs.existsSync(xbarDir)) dir = xbarDir
+  }
+  if (!dir || !fs.existsSync(dir)) {
+    throw new Error('No SwiftBar/xbar plugin directory found. Install one first: brew install swiftbar (then launch it once) — or brew install xbar.')
+  }
+
+  const plugin = path.join(dir, 'crew.5s.sh')
+  fs.writeFileSync(plugin, `#!/bin/bash\nexec "${process.execPath}" "${fileURLToPath(import.meta.url)}" menubar\n`, { mode: 0o755 })
+  console.log(`Plugin installed: ${plugin}`)
+  console.log('It refreshes every 5 seconds. Rename the file (e.g. crew.30s.sh) to change the interval.')
+}
+
 async function cmdUpdate () {
   const config = loadConfig()
   const res = await fetch(`${config.server.replace(/\/$/, '')}/crew/manifest.json`)
@@ -244,6 +323,9 @@ async function main () {
       break
     case 'ask':
       await cmdAsk(args[0], args.slice(1).join(' '))
+      break
+    case 'menubar':
+      cmdMenubar(args)
       break
     case 'update':
       await cmdUpdate()
