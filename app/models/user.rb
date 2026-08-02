@@ -180,11 +180,6 @@ class User < ApplicationRecord
     Rails.cache.fetch("User/cached_preview_data/#{user_id}", expires_in: 7.days) do
       user = User.find_by(id: user_id)
 
-<<<<<<< HEAD
-      {
-        image_profile_url: user.image_profile_url,
-        complete_name: user.complete_name
-=======
       image_profile_url = "/statics/placeholder-profile.jpg"
       if user&.image_profile&.attached?
         image_profile_url = Rails.application.routes.url_helpers.url_for(user.image_profile_thumb)
@@ -195,7 +190,6 @@ class User < ApplicationRecord
         # the user may have been deleted while references to it survive
         # (comments and tracks are nullified, denormalized ids are not)
         complete_name: user&.complete_name || "Utente rimosso"
->>>>>>> crew/3117
       }
     end
   end
