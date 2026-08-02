@@ -1,4 +1,8 @@
 class Projects::Repository < ApplicationRecord
+  # The project page is action cached ("views/*"), so without this the linked
+  # repository stays in the database but never shows up on the page.
+  include Cachable
+
   enum :provider, {
     github: 0,
     gitlab: 1
