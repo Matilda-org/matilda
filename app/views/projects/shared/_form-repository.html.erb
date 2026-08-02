@@ -9,17 +9,17 @@ path ||= repository.persisted? ? projects_edit_repository_action_path(id: projec
 
 <%= render 'shared/form-errors', item: repository %>
 
-<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+<%= form_tag path, class: 'row', data: { controller: 'form-loading repository-form' } do %>
 
   <div class="col col-12 mb-3">
     <label for="url" class="form-label">URL repository</label>
-    <input type="text" class="form-control" id="url" name="url" value="<%= repository.url %>" placeholder="https://github.com/owner/repo" required>
+    <input type="text" class="form-control" id="url" name="url" value="<%= repository.url %>" placeholder="https://github.com/owner/repo" data-repository-form-target="urlInput" required>
     <div class="form-text">Accettata anche la url ssh (git@github.com:owner/repo.git)</div>
   </div>
 
   <div class="col col-6 mb-3">
     <label for="provider" class="form-label">Servizio</label>
-    <%= select_tag :provider, options_for_select(Projects::Repository.providers.keys.map { |key| [Projects::Repository.provider_string(key), key] }, repository.provider), class: 'form-control', required: true %>
+    <%= select_tag :provider, options_for_select(Projects::Repository.providers.keys.map { |key| [Projects::Repository.provider_string(key), key] }, repository.provider), class: 'form-control', required: true, data: { repository_form_target: 'providerInput' } %>
     <div class="form-text">Rilevato dalla url, da scegliere solo per istanze self hosted</div>
   </div>
 
