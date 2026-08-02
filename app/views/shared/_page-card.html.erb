@@ -9,6 +9,7 @@ render_footer ||= nil
 render_footer_args ||= {}
 full ||= false
 auto ||= false
+no_scroll ||= false # il modulo interno gestisce il proprio scroll (es. thread commenti)
 always_open ||= false
 classes ||= ''
 content_id ||= "page-card-content-#{SecureRandom.hex(4)}"
@@ -46,7 +47,7 @@ collapsed = !always_open
   </button>
   <div id="<%= content_id %>" class="c-page-card__content <%= always_open ? '' : 'd-none' %> d-md-flex" data-page-card-target="content" <%= always_open ? 'always-open' : 'closed' %>>
     <% if render_content %>
-      <div class="card-body c-page-card__body <%= full ? 'c-page-card__body--full' : '' %> <%= auto ? 'c-page-card__body--auto' : '' %>">
+      <div class="card-body c-page-card__body <%= full ? 'c-page-card__body--full' : '' %> <%= auto ? 'c-page-card__body--auto' : '' %> <%= no_scroll ? 'c-page-card__body--no-scroll' : '' %>">
         <%= render render_content, render_content_args %>
       </div>
     <% end %>

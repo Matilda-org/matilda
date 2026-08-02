@@ -54,6 +54,7 @@
     <%= render 'shared/page-card',
       title: "Commenti",
       counter: @task.tasks_comments.count,
+      no_scroll: true,
       render_content: 'tasks/shared/module-comments'
     %>
 

@@ -100,6 +100,31 @@
   p:last-child {
     margin-bottom: 0;
   }
+
+  // Code blocks and tables must scroll on their own: left unbounded they set a
+  // huge min-content width and blow up the layout around them.
+  pre,
+  table {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+// Very long comments open collapsed, so a wall of text never buries the thread.
+.c-comment__body--clamped {
+  max-height: 11rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
+}
+
+.c-comment__more {
+  text-decoration: none;
+  font-size: 0.8125rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 // Reveal the delete affordance on hover for a cleaner resting state
@@ -111,6 +136,75 @@
   i {
     font-size: 1.75rem;
     opacity: 0.4;
+  }
+}
+
+// Anchor for the floating jump button, and flex parent so the thread can be
+// told to fill the space left over by the composer.
+.c-comment-thread-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+// The thread owns its scrolling: the page stays short and the composer is
+// always one glance away, however many comments pile up.
+.c-comment-thread {
+  // Interpolated on purpose: Sass would try to resolve min() itself and dies on
+  // "Incompatible units: 'px' and 'svh'". This hands it to the browser as-is.
+  max-height: #{"min(58svh, 460px)"};
+  overflow-y: auto;
+  // Don't chain the scroll to the modal or the page behind it.
+  overscroll-behavior: contain;
+  padding-right: 0.25rem;
+  scroll-padding-bottom: 1rem;
+}
+
+// Inside a page card the body already has a fixed height, so let flex hand the
+// thread whatever is left after the composer instead of using the fixed cap.
+// Only on md+: below that the card body grows freely and the cap must survive.
+@media (min-width: 768px) {
+  // Il turbo-frame è il figlio diretto del body della card: senza flex la catena
+  // si spezza, il thread non riceve l'altezza residua e il composer viene tagliato.
+  .c-page-card__body--no-scroll > turbo-frame {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .c-page-card__body--no-scroll .c-comment-thread {
+    max-height: none;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+// Titolo di sezione dei commenti nel modale dettagli
+.c-comment-thread-title {
+  letter-spacing: 0.05em;
+}
+
+// Floating shortcut back to the newest comment while reading older ones
+.c-comment-thread__jump {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  z-index: 2;
+}
+
+.c-comment-day {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  &__label {
+    background-color: rgba(var(--bs-dark-rgb), 0.55);
+    color: var(--bs-white);
+    font-weight: 500;
+    font-size: 0.6875rem;
   }
 }
 

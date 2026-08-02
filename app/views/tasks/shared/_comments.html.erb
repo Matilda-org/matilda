@@ -2,6 +2,10 @@
 
 task ||= Task.new
 
+# Oltre questa soglia il commento nasce collassato: il JS verifica poi se
+# l'altezza reale giustifica davvero il toggle.
+long_comment_chars = 700
+
 %>
 
 <%= turbo_frame_tag dom_id(task, 'comments') do %>
@@ -12,61 +16,102 @@ task ||= Task.new
       <p class="small mb-0">Nessun commento ancora.</p>
     </div>
   <% else %>
-    <div class="c-comment-thread d-flex flex-column gap-3 mb-3">
-      <% comments.each do |comment| %>
-        <%
-          own = comment.user_id.present? && comment.user_id == @session_user_id
-          is_service = comment.service.present?
-          modifier = if is_service
-            'c-comment--service'
-          elsif own
-            'c-comment--own'
-          end
-          preview = comment.user_id ? User.cached_preview_data(comment.user_id) : nil
-        %>
-        <div class="c-comment d-flex gap-2 <%= modifier %>">
-          <div class="c-comment__avatar flex-shrink-0">
-            <% if preview %>
-              <img src="<%= preview[:image_profile_url] %>" class="rounded-circle border border-primary border-2" alt="">
-            <% elsif is_service %>
-              <span class="c-comment__avatar-icon c-comment__avatar-icon--service"><i class="bi bi-gear-fill"></i></span>
-            <% else %>
-              <span class="c-comment__avatar-icon"><i class="bi bi-person"></i></span>
-            <% end %>
-          </div>
+    <div class="c-comment-thread-wrap position-relative mb-3" data-controller="comments">
+      <div
+        class="c-comment-thread d-flex flex-column gap-3"
+        data-comments-target="thread"
+        data-action="scroll->comments#updateJump"
+      >
+        <% last_day = nil %>
+        <% comments.each do |comment| %>
+          <%
+            own = comment.user_id.present? && comment.user_id == @session_user_id
+            is_service = comment.service.present?
+            modifier = if is_service
+              'c-comment--service'
+            elsif own
+              'c-comment--own'
+            end
+            preview = comment.user_id ? User.cached_preview_data(comment.user_id) : nil
+            long = comment.content.to_s.length > long_comment_chars
+            day = comment.created_at.to_date
+          %>
 
-          <div class="c-comment__main">
-            <div class="c-comment__bubble rounded-3 px-3 py-2">
-              <div class="c-comment__header d-flex align-items-center mb-1">
-                <span class="c-comment__author fw-semibold small text-truncate">
-                  <% if preview %>
-                    <%= preview[:complete_name] %>
-                  <% elsif is_service %>
-                    <%= comment.service %>
-                  <% else %>
-                    Sconosciuto
-                  <% end %>
-                </span>
-                <small class="text-muted ms-2 flex-shrink-0"><%= comment.created_at.strftime('%d/%m/%Y %H:%M') %></small>
-                <% if @session_user&.policy?('tasks_comment') %>
-                  <a
-                    href="<%= tasks_destroy_comment_action_path(task, comment) %>"
-                    data-turbo-frame="_self"
-                    data-turbo-method="post"
-                    class="c-comment__delete btn btn-sm btn-link text-danger p-0 ms-auto ps-2"
+          <%# Separatore di giornata: dà punti di riferimento in un thread lungo %>
+          <% if day != last_day %>
+            <% last_day = day %>
+            <div class="c-comment-day text-center">
+              <span class="c-comment-day__label badge rounded-pill"><%= l(day, format: :long) %></span>
+            </div>
+          <% end %>
+
+          <div class="c-comment d-flex gap-2 <%= modifier %>">
+            <div class="c-comment__avatar flex-shrink-0">
+              <% if preview %>
+                <img src="<%= preview[:image_profile_url] %>" class="rounded-circle border border-primary border-2" alt="">
+              <% elsif is_service %>
+                <span class="c-comment__avatar-icon c-comment__avatar-icon--service"><i class="bi bi-gear-fill"></i></span>
+              <% else %>
+                <span class="c-comment__avatar-icon"><i class="bi bi-person"></i></span>
+              <% end %>
+            </div>
+
+            <div class="c-comment__main">
+              <div class="c-comment__bubble rounded-3 px-3 py-2">
+                <div class="c-comment__header d-flex align-items-center mb-1">
+                  <span class="c-comment__author fw-semibold small text-truncate">
+                    <% if preview %>
+                      <%= preview[:complete_name] %>
+                    <% elsif is_service %>
+                      <%= comment.service %>
+                    <% else %>
+                      Sconosciuto
+                    <% end %>
+                  </span>
+                  <small
+                    class="text-muted ms-2 flex-shrink-0"
                     data-controller="tooltip"
-                    data-tooltip="Elimina commento"
-                    aria-label="Elimina commento"
-                  ><i class="bi bi-trash"></i></a>
+                    data-tooltip="<%= comment.created_at.strftime('%d/%m/%Y %H:%M') %>"
+                  ><%= time_ago_in_words(comment.created_at) %> fa</small>
+                  <% if @session_user&.policy?('tasks_comment') %>
+                    <a
+                      href="<%= tasks_destroy_comment_action_path(task, comment) %>"
+                      data-turbo-frame="_self"
+                      data-turbo-method="post"
+                      class="c-comment__delete btn btn-sm btn-link text-danger p-0 ms-auto ps-2"
+                      data-controller="tooltip"
+                      data-tooltip="Elimina commento"
+                      aria-label="Elimina commento"
+                    ><i class="bi bi-trash"></i></a>
+                  <% end %>
+                </div>
+                <div
+                  class="c-comment__body small <%= 'c-comment__body--clamped' if long %>"
+                  data-comments-target="body"
+                >
+                  <%= render_markdown(comment.content) %>
+                </div>
+                <% if long %>
+                  <button
+                    type="button"
+                    class="c-comment__more btn btn-link btn-sm p-0 mt-1 d-none"
+                    data-comments-toggle
+                    data-action="comments#toggleBody"
+                  >Mostra tutto</button>
                 <% end %>
-              </div>
-              <div class="c-comment__body small">
-                <%= render_markdown(comment.content) %>
               </div>
             </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
+
+      <%# Compare solo quando l'ultimo commento è fuori schermo %>
+      <button
+        type="button"
+        class="c-comment-thread__jump btn btn-primary btn-sm rounded-pill shadow d-none"
+        data-comments-target="jump"
+        data-action="comments#scrollToLatest"
+      ><i class="bi bi-arrow-down me-1"></i>Ultimo commento</button>
     </div>
   <% end %>
 

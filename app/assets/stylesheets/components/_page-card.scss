@@ -52,12 +52,33 @@
 .c-page-card__body--auto {
   height: auto;
 }
+
+// Il modulo interno scrolla al posto del body: evita il doppio scrollbar e
+// tiene ancorati gli elementi fissi (es. composer dei commenti).
+.c-page-card__body--no-scroll {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  // turbo-frame è un custom element inline: senza questo la catena flex si
+  // interrompe e il modulo interno non riceve l'altezza del body.
+  > turbo-frame {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .c-page-card__body {
     height: auto;
     overflow-y: initial;
   }
   .c-page-card__body--full {
+    height: auto;
+  }
+  .c-page-card__body--no-scroll {
     height: auto;
   }
 }
