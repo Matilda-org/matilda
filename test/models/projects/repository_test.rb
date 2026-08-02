@@ -1,36 +1,41 @@
 require "test_helper"
 
 class Projects::RepositoryTest < ActiveSupport::TestCase
-  test "normalizes the url and detects provider and name" do
+  test "normalizes the url and detects the name" do
     project = projects(:one)
 
-    repository = project.projects_repositories.create!(url: "git@gitlab.com:group/subgroup/repo.git")
+    repository = project.projects_repositories.create!(url: "git@gitlab.com:group/subgroup/repo.git", provider: :gitlab)
     assert_equal "https://gitlab.com/group/subgroup/repo", repository.url
-    assert_equal "gitlab", repository.provider
     assert_equal "group/subgroup/repo", repository.name
 
-    repository = project.projects_repositories.create!(url: "github.com/owner/repo/", provider: :gitlab)
+    repository = project.projects_repositories.create!(url: "github.com/owner/repo/", provider: :github)
     assert_equal "https://github.com/owner/repo", repository.url
-    assert_equal "github", repository.provider
     assert_equal "owner/repo", repository.name
   end
 
-  test "keeps the given provider for self hosted instances" do
-    repository = projects(:one).projects_repositories.create!(url: "https://git.example.com/owner/repo", provider: :gitlab)
+  # The provider is chosen in the form (autofilled from the url by the Stimulus controller), never inferred here.
+  test "keeps the given provider whatever the host is" do
+    repository = projects(:one).projects_repositories.create!(url: "https://github.com/owner/repo", provider: :gitlab)
     assert_equal "gitlab", repository.provider
   end
 
+  test "rejects a missing provider" do
+    repository = projects(:one).projects_repositories.new(url: "https://github.com/owner/repo")
+    assert_not repository.valid?
+    assert repository.errors[:provider].any?
+  end
+
   test "rejects urls without a repository path" do
-    repository = projects(:one).projects_repositories.new(url: "https://github.com")
+    repository = projects(:one).projects_repositories.new(url: "https://github.com", provider: :github)
     assert_not repository.valid?
     assert repository.errors[:url].any?
   end
 
   test "rejects the same repository twice on the same project" do
     project = projects(:one)
-    project.projects_repositories.create!(url: "https://github.com/owner/repo")
+    project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
 
-    duplicate = project.projects_repositories.new(url: "git@github.com:owner/repo.git")
+    duplicate = project.projects_repositories.new(url: "git@github.com:owner/repo.git", provider: :github)
     assert_not duplicate.valid?
     assert duplicate.errors[:url].any?
   end
@@ -39,7 +44,7 @@ class Projects::RepositoryTest < ActiveSupport::TestCase
     project = projects(:one)
 
     assert_difference -> { project.projects_events.count }, 1 do
-      project.projects_repositories.create!(url: "https://github.com/owner/repo")
+      project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
     end
   end
 end

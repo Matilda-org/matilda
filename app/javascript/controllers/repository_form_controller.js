@@ -1,17 +1,13 @@
 import { Controller } from '@hotwired/stimulus'
 
-// Mirrors the provider detection done server side (Projects::Repository#detect_provider),
-// so the select reflects the choice while typing instead of only after the save.
+// Provider detection lives here only: the model just validates its presence,
+// so the select is filled from the url while typing and stays editable for self hosted instances.
 export default class extends Controller {
   static targets = ['urlInput', 'providerInput']
 
+  // A prefilled url (form re-rendered after an error) still gets its provider, unless one is already picked.
   connect () {
-    this._detectProvider = this.detectProvider.bind(this)
-    this.urlInputTarget.addEventListener('input', this._detectProvider)
-  }
-
-  disconnect () {
-    this.urlInputTarget.removeEventListener('input', this._detectProvider)
+    if (!this.providerInputTarget.value) this.detectProvider()
   }
 
   detectProvider () {

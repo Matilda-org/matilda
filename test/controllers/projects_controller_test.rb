@@ -14,7 +14,7 @@ class ProjectsControllerTest < ActionController::TestCase
     member = project.projects_members.create!(user: @user, role: "member")
     log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)
     attachment = project.projects_attachments.create!(title: "Test Attachment", date: Date.today)
-    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
 
     matilda_controller_action("create", "Nuovo progetto")
     matilda_controller_action("edit", "Modifica progetto", project.id)
@@ -379,7 +379,7 @@ class ProjectsControllerTest < ActionController::TestCase
     project = projects(:one)
 
     matilda_controller_endpoint(:post, :add_repository_action,
-      params: { id: project.id, url: "https://github.com/owner/repo" },
+      params: { id: project.id, url: "https://github.com/owner/repo", provider: "github" },
       policy: "projects_manage_repositories",
       title: "Collega repository",
       feedback: "Repository collegata"
@@ -391,7 +391,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   test "edit_repository_action" do
     project = projects(:one)
-    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
 
     matilda_controller_endpoint(:post, :edit_repository_action,
       params: { id: project.id, repository_id: repository.id, url: repository.url, default_branch: "main" },
@@ -406,7 +406,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   test "remove_repository_action" do
     project = projects(:one)
-    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo")
+    repository = project.projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
 
     matilda_controller_endpoint(:post, :remove_repository_action,
       params: { id: project.id, repository_id: repository.id },

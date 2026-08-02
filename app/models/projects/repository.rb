@@ -9,6 +9,7 @@ class Projects::Repository < ApplicationRecord
 
   validates :url, presence: true, length: { maximum: 255 }
   validates :url, uniqueness: { scope: :project_id, case_sensitive: false }
+  validates :provider, presence: true
   validates :default_branch, length: { maximum: 100 }
   validate :url_validation
 
@@ -21,7 +22,6 @@ class Projects::Repository < ApplicationRecord
   ############################################################
 
   before_validation :normalize_url
-  before_validation :detect_provider
   before_validation :detect_name
 
   after_create :save_event_creation_on_project
@@ -63,15 +63,6 @@ class Projects::Repository < ApplicationRecord
     value = "https://#{value}" unless value.match?(%r{\Ahttps?://}i)
 
     self.url = value
-  end
-
-  # The provider is inferred from the host, so it only has to be picked manually for self hosted instances.
-  def detect_provider
-    host = url_host
-    return if host.blank?
-
-    self.provider = :github if host == "github.com" || host.end_with?(".github.com")
-    self.provider = :gitlab if host == "gitlab.com" || host.end_with?(".gitlab.com")
   end
 
   # The name is the repository path (owner/repo, or group/subgroup/repo on GitLab).
