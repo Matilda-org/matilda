@@ -19,8 +19,11 @@ class Tasks::Comment < ApplicationRecord
   # HOOKS
   ############################################################
 
-  after_create_commit :sync_task_comment_state
-  after_destroy_commit :sync_task_comment_state
+  # Non-commit hooks on purpose: they run inside the surrounding transaction,
+  # so the denormalized task columns roll back with the comment and the sync
+  # also works under transactional test fixtures (commit hooks never fire there).
+  after_create :sync_task_comment_state
+  after_destroy :sync_task_comment_state
 
   private
 
