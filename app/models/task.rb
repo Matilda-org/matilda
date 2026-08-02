@@ -261,6 +261,23 @@ class Task < ApplicationRecord
     type
   end
 
+  # Label shown on the task card: how many comments the task has and who wrote
+  # the last one. Reads denormalized columns only, so it costs no query.
+  def comments_label
+    count = tasks_comments_count.to_i
+    return nil if count.zero?
+
+    label = count == 1 ? "1 commento" : "#{count} commenti"
+    author = last_comment_author_name
+    author ? "#{label} · ultimo di #{author}" : label
+  end
+
+  def last_comment_author_name
+    return nil unless last_comment_user_id
+
+    User.cached_preview_data(last_comment_user_id)[:complete_name]
+  end
+
   def cached_project_name(reset = false)
     Rails.cache.delete("Task/#{id}/cached_project_name") if reset
 

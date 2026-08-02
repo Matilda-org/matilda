@@ -84,4 +84,23 @@ class TaskTest < ActiveSupport::TestCase
     task = tasks(:one)
     assert_raises(ArgumentError) { task.add_manual_track!(user: users(:one), date: Date.today, duration: 0) }
   end
+
+  test "comments_label è nulla senza commenti" do
+    assert_nil Task.create!(title: "Task").comments_label
+  end
+
+  test "comments_label mostra il totale dei commenti e l'autore dell'ultimo" do
+    task = Task.create!(title: "Task", user_id: users(:one).id)
+    task.tasks_comments.create!(content: "Primo", user_id: users(:one).id, created_at: 1.hour.ago)
+    task.tasks_comments.create!(content: "Secondo", user_id: users(:two).id)
+
+    assert_equal "2 commenti · ultimo di #{users(:two).complete_name}", task.reload.comments_label
+  end
+
+  test "comments_label usa il singolare con un solo commento" do
+    task = Task.create!(title: "Task", user_id: users(:one).id)
+    task.tasks_comments.create!(content: "Solo uno", user_id: users(:one).id)
+
+    assert_equal "1 commento · ultimo di #{users(:one).complete_name}", task.reload.comments_label
+  end
 end

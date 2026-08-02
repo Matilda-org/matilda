@@ -174,13 +174,15 @@ class User < ApplicationRecord
       user = User.find_by(id: user_id)
 
       image_profile_url = "/statics/placeholder-profile.jpg"
-      if user.image_profile.attached?
+      if user&.image_profile&.attached?
         image_profile_url = Rails.application.routes.url_helpers.url_for(user.image_profile_thumb)
       end
 
       {
         image_profile_url: image_profile_url,
-        complete_name: user.complete_name
+        # the user may have been deleted while references to it survive
+        # (comments and tracks are nullified, denormalized ids are not)
+        complete_name: user&.complete_name || "Utente rimosso"
       }
     end
   end

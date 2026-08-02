@@ -22,6 +22,7 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - `crew/` is a standalone Node.js CLI package (`matilda-crew`) that runs Claude-powered pseudo-employees against the API v1: each employee is a real Matilda user polled for assigned tasks. See `crew/README.md`.
 - `rake crew:pack` builds the npm tarball + `manifest.json` into `public/crew/` (gitignored); the web page at `/crew` (tools section) shows install instructions and `crew update` uses the manifest for self-updates.
 - Comment activity does NOT touch a task's `updated_at`; the crew loop relies on the task `unresolved` flag (true when the last comment is not the assignee's).
+- `unresolved`, `tasks_comments_count` and `last_comment_user_id` on `tasks` are denormalized by `Tasks::Comment` (see `sync_task_comment_state`), so task cards render comment info without a query per card. `unresolved` is API/crew-only: the card shows the comment count and the last author instead.
 
 ## Conventions
 
