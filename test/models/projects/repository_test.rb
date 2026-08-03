@@ -52,7 +52,7 @@ class Projects::RepositoryTest < ActiveSupport::TestCase
   # and the repository looks missing even if it is stored.
   test "clears the views cache on create and destroy" do
     Rails.cache.write("views/some-fragment", "cached")
-    repository = projects(:one).projects_repositories.create!(url: "https://github.com/owner/repo")
+    repository = projects(:one).projects_repositories.create!(url: "https://github.com/owner/repo", provider: :github)
     assert_nil Rails.cache.read("views/some-fragment")
 
     Rails.cache.write("views/some-fragment", "cached")
