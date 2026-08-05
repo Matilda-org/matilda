@@ -52,13 +52,6 @@ RUN SECRET_KEY_BASE_DUMMY=1 \
     ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
     ./bin/rails assets:precompile
 
-# Build the downloadable matilda-crew package (served from public/crew)
-RUN SECRET_KEY_BASE_DUMMY=1 \
-    ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-    ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-    ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-    ./bin/rails crew:pack
-
 # Final stage for app image
 FROM base
 

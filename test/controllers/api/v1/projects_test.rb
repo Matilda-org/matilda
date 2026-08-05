@@ -36,11 +36,11 @@ class Api::V1::ProjectsTest < ApiIntegrationTest
 
   test "create requires projects_create policy and creates the project" do
     assert_requires_policy :post, "/api/v1/projects", "projects_create",
-      params: { code: "crew-prj", name: "Crew project" },
+      params: { code: "api-prj", name: "API project" },
       success_status: :created
 
-    project = Project.find_by(code: "CREW-PRJ") # code is upcased on create
-    assert_equal "Crew project", project.name
+    project = Project.find_by(code: "API-PRJ") # code is upcased on create
+    assert_equal "API project", project.name
     assert_equal Date.today.year, project.year
   end
 

@@ -27,26 +27,6 @@ class ToolsControllerTest < ActionController::TestCase
     )
   end
 
-  test "crew" do
-    matilda_controller_endpoint(:get, :crew,
-      policy: "tools"
-    )
-  end
-
-  test "crew shows the published version when a manifest exists" do
-    @user.users_policies.create!(policy: "tools")
-    manifest_dir = Rails.public_path.join("crew")
-    FileUtils.mkdir_p(manifest_dir)
-    File.write(manifest_dir.join("manifest.json"), { version: "9.9.9", url: "/crew/matilda-crew-9.9.9.tgz" }.to_json)
-
-    get :crew
-
-    assert_response :success
-    assert @response.body.include?("9.9.9")
-  ensure
-    FileUtils.rm_f(manifest_dir.join("manifest.json"))
-  end
-
   test "projects_tasks_tracking" do
     matilda_controller_endpoint(:get, :projects_tasks_tracking,
       policy: "tools"

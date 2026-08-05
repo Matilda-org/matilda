@@ -29,7 +29,7 @@ class Tasks::Comment < ApplicationRecord
 
   # Keeps the task denormalized comment data aligned with the last comment:
   # who wrote it (shown on the task card) and whether it still awaits a reply
-  # from the assignee (used by the crew loop).
+  # from the assignee (exposed on the API).
   def sync_task_comment_state
     return if task.nil? || task.destroyed?
 
