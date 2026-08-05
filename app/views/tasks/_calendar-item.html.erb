@@ -16,6 +16,8 @@ turbo_frame_key = dom_id(task, 'tasks-calendar-item')
         data-user-policies-target="item" data-policy="tasks_edit"
         aria-label="Sposta il task <%= task.title %>. Usa le frecce sinistra/destra per cambiare giorno."
         aria-keyshortcuts="ArrowLeft ArrowRight"
+        data-controller="tooltip"
+        data-tooltip="Sposta con le frecce <kbd class='c-kbd'>←</kbd> <kbd class='c-kbd'>→</kbd>"
       >
         <i class="bi bi-arrows-move kanban_controller-move-button"></i>
       </button>

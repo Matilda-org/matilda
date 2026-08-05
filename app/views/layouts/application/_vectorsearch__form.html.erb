@@ -8,6 +8,10 @@
         placeholder="Scrivi un messaggio..."
         data-vectorsearch-target="textarea"
       ></textarea>
+      <%# Hint tastiera: solo desktop, su mobile si tocca il bottone %>
+      <small class="text-muted d-none d-md-block mt-1">
+        <kbd class="c-kbd">Invio</kbd> invia &middot; <kbd class="c-kbd">Maiusc + Invio</kbd> a capo
+      </small>
     </div>
 
     <button type="submit" class="btn btn-primary" data-vectorsearch-target="submit" aria-label="Invia messaggio">

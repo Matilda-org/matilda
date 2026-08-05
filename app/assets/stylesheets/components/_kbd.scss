@@ -1,0 +1,21 @@
+// Subtle keyboard-shortcut hints (e.g. "esc" next to a modal's close button).
+// Bootstrap's default kbd is a dark solid block, too heavy for these
+// secondary affordances: restyled as a quiet outlined key cap.
+.c-kbd {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--bs-gray-600);
+  background-color: transparent;
+  border: 1px solid var(--bs-gray-400);
+  border-bottom-width: 2px;
+  border-radius: 0.35rem;
+  white-space: nowrap;
+}
+
+// Inside tooltips (dark background) the muted grays would disappear.
+.tooltip .c-kbd {
+  color: var(--bs-white);
+  border-color: rgba(255, 255, 255, 0.5);
+}

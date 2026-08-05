@@ -14,20 +14,27 @@ feedback ||= false
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title fs-5"><%= title %></h3>
-        <% if feedback %>
-          <a
-            type="button"
-            href=""
-            data-turbo-frame="<%= turbo_frame %>"
-            <% if turbo_frame != '_top' %>
-              data-action="click->action#closeModal"
-            <% end %>
-            class="btn-close h-cursor-pointer"
-            aria-label="Chiudi"
-          ></a>
-        <% else %>
-          <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal" aria-label="Chiudi"></a>
-        <% end %>
+        <%# Wrapper unico per hint + X: il btn-close di Bootstrap ha già ms-auto,
+            due margini auto separati spartirebbero lo spazio centrando il kbd %>
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <%# Esc chiude già il modale (Bootstrap): lo segnaliamo solo su desktop,
+              dove una tastiera c'è davvero %>
+          <kbd class="c-kbd d-none d-md-inline-block" aria-hidden="true">esc</kbd>
+          <% if feedback %>
+            <a
+              type="button"
+              href=""
+              data-turbo-frame="<%= turbo_frame %>"
+              <% if turbo_frame != '_top' %>
+                data-action="click->action#closeModal"
+              <% end %>
+              class="btn-close h-cursor-pointer"
+              aria-label="Chiudi"
+            ></a>
+          <% else %>
+            <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal" aria-label="Chiudi"></a>
+          <% end %>
+        </div>
       </div>
       <div class="modal-body <%= body_classes %>">
         <%= yield %>

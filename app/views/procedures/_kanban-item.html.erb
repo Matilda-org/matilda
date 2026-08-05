@@ -33,6 +33,8 @@ turbo_frame_key = dom_id(item, 'kanban-item')
           type="button"
           aria-label="Sposta elemento <%= item.secure_title %>. Usa le frecce per spostarlo tra le colonne o nella colonna."
           aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown"
+          data-controller="tooltip"
+          data-tooltip="Sposta con le frecce <kbd class='c-kbd'>←</kbd> <kbd class='c-kbd'>→</kbd> <kbd class='c-kbd'>↑</kbd> <kbd class='c-kbd'>↓</kbd>"
         >
           <i class="bi bi-arrows-move kanban_controller-move-button"></i>
         </button>

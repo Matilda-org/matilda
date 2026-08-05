@@ -130,8 +130,10 @@ long_comment_chars = 700
           data-action="input->comment-form#grow keydown->comment-form#keydown"
         ></textarea>
         <div class="c-comment-form__footer d-flex align-items-center justify-content-between gap-2 mt-2">
-          <small class="text-muted">Ctrl/⌘ + Invio per inviare</small>
-          <button type="submit" class="btn btn-primary btn-sm px-3 d-inline-flex align-items-center gap-1">
+          <%# Hint tastiera: inutile su mobile, dove si tocca il bottone %>
+          <small class="text-muted d-none d-md-inline"><kbd class="c-kbd">Ctrl/⌘ + Invio</kbd> per inviare</small>
+          <%# ms-auto: tiene il bottone a destra anche quando l'hint è nascosto %>
+          <button type="submit" class="btn btn-primary btn-sm px-3 ms-auto d-inline-flex align-items-center gap-1">
             <i class="bi bi-send-fill"></i> Invia
           </button>
         </div>
