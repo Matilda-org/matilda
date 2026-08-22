@@ -1,0 +1,50 @@
+<%= render 'shared/action-container', title: 'Note comunicazione', turbo_frame: 'campaign-kanban' do %>
+  <div class="mb-3">
+    <h2 class="fs-4 mb-1"><%= @communication.contact.name %></h2>
+    <span class="badge rounded-pill bg-<%= @communication.status_color %>"><i class="bi <%= @communication.status_icon %> me-1"></i><%= @communication.status_string %></span>
+    <% if @communication.sent_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-send me-1"></i>Inviata il <%= @communication.sent_date.strftime('%d/%m/%Y') %></span><% end %>
+    <% if @communication.closed_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-flag me-1"></i>Chiusa il <%= @communication.closed_date.strftime('%d/%m/%Y') %></span><% end %>
+    <% if @communication.follow_ups_count.positive? %><span class="badge rounded-pill bg-info bg-opacity-75"><i class="bi bi-arrow-repeat me-1"></i><%= @communication.follow_ups_count %> follow-up</span><% end %>
+  </div>
+
+  <%= render 'shared/form-errors', item: @log if @log %>
+
+  <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: @communication.id), class: 'row mb-3', data: { controller: 'form-loading' } do %>
+    <div class="col col-12 mb-2">
+      <textarea class="form-control" rows="2" name="content" placeholder="Aggiungi una nota..." required><%= @log&.content %></textarea>
+    </div>
+    <div class="d-flex justify-content-end align-items-center">
+      <button type="submit" class="btn btn-primary btn-sm" data-form-loading-target="submit">Aggiungi nota</button>
+    </div>
+  <% end %>
+
+  <% logs = @communication.communications_logs.recent_first %>
+  <% if logs.any? %>
+    <ol class="list-group">
+      <% logs.each do |log| %>
+        <li class="list-group-item">
+          <div class="c-list-item">
+            <div class="c-list-item__body">
+              <div><%= log.content %></div>
+              <div class="c-list-item__meta">
+                <span><i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %></span>
+                <% if log.user %><span><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
+              </div>
+            </div>
+            <div class="c-list-item__actions">
+              <a
+                href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: @communication.id, log_id: log.id) %>"
+                data-turbo-method="post"
+                data-turbo-frame="action"
+                class="btn btn-sm btn-outline text-danger"
+                aria-label="Elimina nota"
+              ><i class="bi bi-trash"></i></a>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <p class="text-muted text-center mb-0">Nessuna nota per questa comunicazione.</p>
+  <% end %>
+<% end %>

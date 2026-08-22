@@ -601,7 +601,7 @@ class ProjectsController < ApplicationController
   private
 
   def project_params
-    params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time)
+    params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time, :contact_id)
   end
 
   def project_finder

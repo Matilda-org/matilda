@@ -1,0 +1,49 @@
+<div class="d-flex">
+  <div class="btn-group me-2" role="group">
+    <a
+      class="btn btn-outline-primary"
+      href="<%= contacts_path %>"
+      data-turbo-frame="_top"
+      aria-label="Vai ai contatti"
+    >
+      <i class="bi bi-person-lines-fill me-1"></i><span class="d-none d-md-inline">Contatti</span>
+    </a>
+    <a
+      class="btn btn-outline-primary"
+      href="<%= campaigns_path %>"
+      data-turbo-frame="_top"
+      aria-label="Vai alle campagne"
+    >
+      <i class="bi bi-megaphone-fill me-1"></i><span class="d-none d-md-inline">Campagne</span>
+    </a>
+  </div>
+
+  <div class="btn-group" role="group">
+    <a
+      type="button"
+      class="btn btn-primary"
+      href="<%= contacts_actions_path(type: 'create') %>"
+      data-turbo-frame="action"
+      data-user-policies-target="item"
+      data-policy="crm"
+      data-controller="tooltip"
+      data-tooltip="Crea nuovo contatto"
+      aria-label="Crea nuovo contatto"
+    >
+      <i class="bi bi-person-plus"></i>
+    </a>
+    <a
+      type="button"
+      class="btn btn-primary"
+      href="<%= campaigns_actions_path(type: 'create') %>"
+      data-turbo-frame="action"
+      data-user-policies-target="item"
+      data-policy="crm"
+      data-controller="tooltip"
+      data-tooltip="Crea nuova campagna"
+      aria-label="Crea nuova campagna"
+    >
+      <i class="bi bi-megaphone"></i>
+    </a>
+  </div>
+</div>

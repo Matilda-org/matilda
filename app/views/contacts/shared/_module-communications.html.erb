@@ -1,0 +1,35 @@
+<%
+
+contact ||= Contact.new
+
+%>
+
+<% if contact.communications.length.positive? %>
+<ol class="list-group">
+  <% contact.communications.includes(:campaign).order(created_at: :desc).each do |communication| %>
+    <li class="list-group-item list-group-item-action position-relative">
+      <div class="c-list-item">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate">
+            <%# stretched-link makes the whole row open the campaign board %>
+            <a href="<%= campaigns_show_path(id: communication.campaign_id) %>" data-turbo-frame="_top" class="text-decoration-none stretched-link"><%= communication.campaign.name %></a>
+          </div>
+          <div class="c-list-item__meta">
+            <span class="badge rounded-pill bg-<%= communication.status_color %>"><i class="bi <%= communication.status_icon %> me-1"></i><%= communication.status_string %></span>
+            <% if communication.sent_date %><span><i class="bi bi-send me-1"></i><%= communication.sent_date.strftime('%d/%m/%Y') %></span><% end %>
+            <% if communication.sent? && communication.follow_ups_count.positive? %><span><i class="bi bi-arrow-repeat me-1"></i><%= communication.follow_ups_count %> follow-up</span><% end %>
+            <% if communication.closed_date %><span><i class="bi bi-flag me-1"></i><%= communication.closed_date.strftime('%d/%m/%Y') %></span><% end %>
+          </div>
+        </div>
+        <div class="c-list-item__actions text-primary">
+          <i class="bi bi-kanban me-1"></i><i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder',
+    message: 'Nessuna comunicazione: aggiungi il contatto ad una campagna',
+    icon: 'megaphone' %>
+<% end %>

@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Scollega progetto', turbo_frame: 'module-projects' do %>
+  <%= render 'shared/confirmer', path: contacts_unlink_project_action_path(id: @contact.id, project_id: @project.id) %>
+<% end %>

@@ -1,0 +1,54 @@
+<%= render 'shared/page-header',
+  title: @contact.name,
+  render_actions: 'contacts/show-actions',
+  back: true
+%>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+
+    <%= render 'shared/page-card',
+      title: "Dettagli",
+      always_open: true,
+      render_content: 'contacts/shared/module-infos',
+      render_content_args: {
+        contact: @contact
+      }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'crm' do %>
+
+    <%= render 'shared/page-card',
+      title: "Comunicazioni",
+      counter: @contact.communications.size,
+      render_content: 'contacts/shared/module-communications',
+      render_content_args: {
+        contact: @contact
+      }
+    %>
+
+  <% end %>
+
+  <%= render 'shared/page-grid-item', policy: 'crm' do %>
+
+    <%= turbo_frame_tag 'module-projects', class: 'w-100' do %>
+      <%= render 'shared/page-card',
+        title: "Progetti",
+        counter: @contact.projects.size,
+        render_content: 'contacts/shared/module-projects',
+        render_content_args: {
+          contact: @contact
+        },
+        render_footer: 'contacts/shared/module-projects-actions',
+        render_footer_args: {
+          contact: @contact
+        }
+      %>
+    <% end %>
+
+  <% end %>
+
+<% end %>

@@ -30,6 +30,11 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
       <textarea class="form-control" rows="5" id="description" name="description"><%= project.description %></textarea>
     </div>
 
+    <div class="col col-12 mb-3">
+      <label for="contact_id" class="form-label">Contatto CRM</label>
+      <%= select_tag 'contact_id', options_for_select([['Nessun contatto', '']] + Contact.order(name: :asc).map { |c| [c.name, c.id] }, project.contact_id), class: 'form-control' %>
+    </div>
+
     <div class="accordion mb-3" id="formProjectAccordion">
       <div class="accordion-item">
         <h2 class="accordion-header">

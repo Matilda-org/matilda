@@ -1,0 +1,21 @@
+<%= render 'shared/page-header', title: 'Contatti', render_actions: 'contacts/index-actions' %>
+
+<%= render 'shared/page-index',
+  query: @contacts,
+  render_item: 'contacts/shared/card',
+  render_item_param: :contact,
+  search: true,
+  filters: [
+    { label: 'Attivi', value: 'not-archived', default: true },
+    { label: 'Archiviati', value: 'archived' }
+  ],
+  sorts: [
+    { label: 'Nome ASC', value: 'name_asc', default: true },
+    { label: 'Nome DESC', value: 'name_desc' }
+  ],
+  empty_message: 'Nessun contatto qui',
+  empty_icon: 'person-lines-fill',
+  empty_cta_label: 'Crea il primo contatto',
+  empty_cta_href: contacts_actions_path(type: 'create'),
+  empty_cta_policy: 'crm'
+%>

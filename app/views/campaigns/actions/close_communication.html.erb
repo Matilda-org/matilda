@@ -1,0 +1,33 @@
+<%= render 'shared/action-container', title: 'Registra esito', turbo_frame: 'campaign-kanban' do %>
+  <%= render 'shared/form-errors', item: @communication %>
+
+  <%= form_tag campaigns_close_communication_action_path(id: @campaign.id, communication_id: @communication.id), class: 'row', data: { controller: 'form-loading' } do %>
+
+    <p>Registra l'esito della comunicazione con <b><%= @communication.contact.name %></b>. Lo stato è definitivo: per correggere dovrai eliminare e ricreare la comunicazione.</p>
+
+    <div class="col col-12 mb-3">
+      <div class="c-status-picker">
+        <% [ 'won', 'lost' ].each do |status| %>
+          <input type="radio" class="c-status-picker__input" id="final_status_<%= status %>" name="final_status" value="<%= status %>" <%= status == 'won' ? 'checked' : '' %>>
+          <label class="c-status-picker__option" for="final_status_<%= status %>">
+            <span class="c-status-picker__icon bg-<%= Communication.status_color(status) %>"><i class="bi <%= Communication.status_icon(status) %>"></i></span>
+            <span class="c-status-picker__body">
+              <span class="c-status-picker__title"><%= Communication.status_string(status) %></span>
+              <span class="c-status-picker__description"><%= status == 'won' ? 'Il contatto ha accettato / risposto positivamente' : 'Nessuna risposta o risposta negativa' %></span>
+            </span>
+            <i class="bi bi-check-circle-fill c-status-picker__check"></i>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="closed_date" class="form-label">Data esito</label>
+      <input type="date" class="form-control" id="closed_date" name="closed_date" value="<%= Date.today %>" required>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center">
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Registra esito</button>
+    </div>
+  <% end %>
+<% end %>

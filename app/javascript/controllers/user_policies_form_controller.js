@@ -39,6 +39,7 @@ const INCLUSIONS = {
     'projects_manage_procedures',
     'projects_manage_procedures_items',
     'procedures_destroy',
+    'crm',
   ],
   production_external: [
     'only_data_projects_as_member',

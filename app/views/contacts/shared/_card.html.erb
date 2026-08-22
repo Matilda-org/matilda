@@ -1,0 +1,26 @@
+<%
+
+contact ||= Contact.new
+badge_type = contact.color_type
+badge_type = 'primary' if badge_type.blank?
+
+%>
+
+<%= render 'shared/card',
+  nav_icon_key: 'contacts',
+  title: contact.name,
+  subtitle: contact.email,
+  description: contact.description,
+  type: contact.color_type,
+  render_actions: 'contacts/shared/card-actions',
+  render_actions_args: { contact: contact } do
+%>
+  <% if contact.projects.size.positive? %>
+    <span class="badge bg-<%= badge_type %>"><i class="bi bi-file-earmark-text"></i> <%= contact.projects.size %> progetti</span>
+  <% end %>
+
+  <%# only the communications still waiting for an outcome %>
+  <% contact.communications.ongoing.includes(:campaign).each do |communication| %>
+    <span class="badge bg-<%= communication.status_color %>"><i class="bi <%= communication.status_icon %>"></i> <%= communication.campaign.name.truncate(25) %></span>
+  <% end %>
+<% end %>

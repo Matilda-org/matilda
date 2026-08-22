@@ -6,7 +6,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   def create
     return unless require_policy!("projects_create")
 
-    project = Project.new(params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time))
+    project = Project.new(params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time, :contact_id))
     project.year ||= Date.today.year
     return render_record_errors(project) unless project.save
 

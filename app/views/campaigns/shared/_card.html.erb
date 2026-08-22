@@ -1,0 +1,21 @@
+<%
+
+campaign ||= Campaign.new
+counts = campaign.communications_counts
+
+%>
+
+<%= render 'shared/card',
+  nav_icon_key: 'campaigns',
+  title: campaign.name,
+  subtitle: "#{campaign.communications.size} comunicazioni",
+  description: campaign.description,
+  type: campaign.color_type,
+  render_actions: 'campaigns/shared/card-actions',
+  render_actions_args: { campaign: campaign } do
+%>
+  <% Communication.statuses.keys.each do |status| %>
+    <% next unless (counts[status] || 0).positive? %>
+    <span class="badge bg-<%= Communication.status_color(status) %>"><i class="bi <%= Communication.status_icon(status) %>"></i> <%= counts[status] %> <%= Communication.status_string(status).downcase %></span>
+  <% end %>
+<% end %>

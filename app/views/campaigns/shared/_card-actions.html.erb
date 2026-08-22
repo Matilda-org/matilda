@@ -1,0 +1,7 @@
+<%
+
+campaign ||= Campaign.new
+
+%>
+
+<a class="card-link stretched-link" href="<%= campaigns_show_path(id: campaign.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="crm">Visualizza</a>

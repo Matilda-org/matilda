@@ -28,6 +28,8 @@ module ApplicationHelper
     return raw "<i class=\"bi bi-tools #{classes}\"></i>" if key == "tools"
     return raw "<i class=\"bi bi-gear-fill #{classes}\"></i>" if key == "settings"
     return raw "<i class=\"bi bi-newspaper #{classes}\"></i>" if key == "posts"
+    return raw "<i class=\"bi bi-person-lines-fill #{classes}\"></i>" if key == "crm" || key == "contacts"
+    return raw "<i class=\"bi bi-megaphone-fill #{classes}\"></i>" if key == "campaigns"
 
     ""
   end
@@ -41,6 +43,9 @@ module ApplicationHelper
     return "Task - Matilda" if key == "tasks"
     return "Processi - Matilda" if key == "procedures"
     return "Credenziali - Matilda" if key == "credentials"
+    return "Crm - Matilda" if key == "crm"
+    return "Contatti - Matilda" if key == "contacts"
+    return "Campagne - Matilda" if key == "campaigns"
     return "Dashboard - Matilda" if key == "dashboard"
     return "Impostazioni - Matilda" if key == "settings"
     return "Strumenti - Matilda" if key == "tools"

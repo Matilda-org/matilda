@@ -1,0 +1,26 @@
+<%
+
+campaign ||= Campaign.new
+
+path ||= campaign.persisted? ? campaigns_edit_action_path(campaign) : campaigns_create_action_path
+
+%>
+
+<%= render 'shared/form-errors', item: campaign %>
+
+<%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
+
+  <div class="col col-12 mb-3">
+    <label for="name" class="form-label">Nome</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= campaign.name %>" required>
+  </div>
+
+  <div class="col col-12 mb-3">
+    <label for="description" class="form-label">Breve descrizione</label>
+    <textarea class="form-control" rows="3" id="description" name="description"><%= campaign.description %></textarea>
+  </div>
+
+  <div class="d-flex justify-content-end align-items-center">
+    <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

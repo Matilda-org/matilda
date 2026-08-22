@@ -1,0 +1,22 @@
+<%= render 'shared/page-header', title: 'Campagne', render_actions: 'campaigns/index-actions' %>
+
+<%= render 'shared/page-index',
+  query: @campaigns,
+  render_item: 'campaigns/shared/card',
+  render_item_param: :campaign,
+  search: true,
+  filters: [
+    { label: 'Attive', value: 'not-archived', default: true },
+    { label: 'Archiviate', value: 'archived' }
+  ],
+  sorts: [
+    { label: 'Nome ASC', value: 'name_asc', default: true },
+    { label: 'Nome DESC', value: 'name_desc' },
+    { label: 'Più recenti', value: 'created_desc' }
+  ],
+  empty_message: 'Nessuna campagna qui',
+  empty_icon: 'megaphone',
+  empty_cta_label: 'Crea la prima campagna',
+  empty_cta_href: campaigns_actions_path(type: 'create'),
+  empty_cta_policy: 'crm'
+%>

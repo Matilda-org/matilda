@@ -348,6 +348,89 @@ end
   )
 end
 
+# CRM (contacts / campaigns / communications)
+##
+
+contacts_data = [
+  { name: "Hotel Bescolo", description: "Hotel 4 stelle sulla riviera, cliente storico per sito e booking." },
+  { name: "Hotel Marittima", description: "Struttura ricettiva con booking engine gestito da noi." },
+  { name: "Antony Boss", description: "Brand moda con e-commerce in gestione continuativa." },
+  { name: "Arcori", description: "Azienda B2B componentistica, piattaforma ordini rivenditori." },
+  { name: "Macox", description: "Corporate manifatturiero, sito istituzionale multilingua." },
+  { name: "Inoxbiella", description: "Produzione acciaio inox, catalogo prodotti online." },
+  { name: "Sammontana", description: "Campagne digital stagionali per il brand gelati." },
+  { name: "Libri Free", description: "Libreria online, attività di digital marketing mensile." },
+  { name: "BuyMyDay", description: "Startup piattaforma esperienze regalo." },
+  { name: "Cagliari Calcio", description: "Società sportiva, sito ufficiale e area news." },
+  { name: "Ristorante Da Remo", description: "Interessati a sito con prenotazione tavoli." },
+  { name: "Clinica San Marco", description: "Richiesta per portale prenotazioni visite, primo contatto da referral." },
+  { name: "GreenBike Rental", description: "Noleggio bici turistico, valutano e-commerce per tour prenotabili." },
+  { name: "Pastificio Gallo", description: "Pastificio artigianale, possibile e-commerce." },
+  { name: "Studio Legale Ferraris", description: "Studio legale, sito vetrina gestito in passato." }
+]
+
+contacts_data.each do |data|
+  Contact.create!(
+    name: data[:name],
+    description: data[:description],
+    email: "info@#{data[:name].parameterize(separator: '')}.it",
+    phone: "0#{rand(2..9)} #{rand(1000000..9999999)}",
+    website: "https://www.#{data[:name].parameterize(separator: '')}.it",
+    vat_number: "IT #{rand(10000000000..99999999999)}"
+  )
+end
+
+# link demo projects to their contact (project names are "<contact> - <subject>")
+Contact.find_each do |contact|
+  Project.where("name LIKE ?", "#{contact.name} - %").update_all(contact_id: contact.id)
+end
+
+# campaigns with communications spread across the kanban states
+communication_note_texts = [
+  "Inviata mail con presentazione e listino.",
+  "Richiamare la prossima settimana, referente in ferie.",
+  "Interessati ma vogliono confrontare altri preventivi.",
+  "Chiesto materiale aggiuntivo sul portfolio.",
+  "Contatto molto reattivo, buone possibilità."
+]
+
+campaigns_data = [
+  { name: "Preventivi siti #{Date.today.year}", description: "Proposte di restyling e nuovi siti per contatti caldi." },
+  { name: "Upsell manutenzione", description: "Offerta piano manutenzione annuale ai clienti storici." },
+  { name: "Lancio servizio SEO", description: "Presentazione del nuovo pacchetto SEO trimestrale." }
+]
+
+campaigns_data.each_with_index do |data, campaign_index|
+  campaign = Campaign.create!(name: data[:name], description: data[:description])
+
+  Contact.order(:id).offset(campaign_index * 3).limit(8).each_with_index do |contact, index|
+    communication = campaign.communications.create!(contact: contact)
+
+    # spread across states: 2 to_send, then sent / lost / won
+    case index % 4
+    when 1
+      communication.mark_sent(Date.today - rand(2..15).days)
+      rand(0..3).times { communication.register_follow_up }
+    when 2
+      communication.mark_sent(Date.today - rand(10..30).days)
+      communication.register_follow_up
+      communication.mark_closed("lost", Date.today - rand(1..5).days)
+    when 3
+      communication.mark_sent(Date.today - rand(10..30).days)
+      communication.mark_closed("won", Date.today - rand(1..5).days)
+    end
+
+    # some text notes
+    rand(0..2).times do
+      communication.communications_logs.create!(
+        content: communication_note_texts.sample,
+        user_id: users.sample.id
+      )
+    end
+  end
+end
+
+
 # Project risks demo data
 ##
 
