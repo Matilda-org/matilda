@@ -1,6 +1,7 @@
+<%# description as a compact info tooltip instead of inline text next to the name %>
 <%= render 'shared/page-header',
   title: @campaign.name,
-  subtitle: @campaign.description,
+  subtitle: @campaign.description.present? ? "<i class='bi bi-info-circle' data-controller='tooltip' data-tooltip='#{ERB::Util.html_escape(@campaign.description)}' aria-label='#{ERB::Util.html_escape(@campaign.description)}' tabindex='0'></i>" : nil,
   render_actions: 'campaigns/show-actions',
   back: true
 %>
