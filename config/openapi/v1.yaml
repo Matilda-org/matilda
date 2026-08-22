@@ -19,6 +19,8 @@ tags:
   - name: procedures
   - name: posts
   - name: folders
+  - name: contacts
+  - name: campaigns
 
 paths:
   /me:
@@ -106,6 +108,7 @@ paths:
                 budget_management: { type: boolean }
                 budget_money: { type: number }
                 budget_time: { type: number }
+                contact_id: { type: integer, description: "Contatto CRM collegato" }
       responses:
         "201":
           description: Progetto creato
@@ -442,6 +445,139 @@ paths:
               schema: { type: object }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
+
+  /contacts:
+    get:
+      tags: [contacts]
+      summary: Lista contatti
+      description: Richiede la policy `crm`. Di default esclude gli archiviati.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: archived
+          in: query
+          description: Se presente, restituisce solo i contatti archiviati
+          schema: { type: boolean }
+        - name: search
+          in: query
+          description: Ricerca su nome ed email
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [contacts]
+      summary: Crea contatto
+      description: Richiede la policy `crm`. Pensata per tool esterni (es. import da campagne).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 100 }
+                vat_number: { type: string, maxLength: 50 }
+                email: { type: string, maxLength: 100 }
+                phone: { type: string, maxLength: 50 }
+                website: { type: string, maxLength: 255 }
+                address: { type: string, maxLength: 255 }
+                description: { type: string, maxLength: 255 }
+      responses:
+        "201":
+          description: Contatto creato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /contacts/{id}:
+    get:
+      tags: [contacts]
+      summary: Dettaglio contatto (con comunicazioni e progetti)
+      description: Richiede la policy `crm`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Contatto
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /campaigns:
+    get:
+      tags: [campaigns]
+      summary: Lista campagne
+      description: Richiede la policy `crm`. Di default esclude le archiviate.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: archived
+          in: query
+          description: Se presente, restituisce solo le campagne archiviate
+          schema: { type: boolean }
+        - name: search
+          in: query
+          description: Ricerca sul nome
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /campaigns/{id}:
+    get:
+      tags: [campaigns]
+      summary: Dettaglio campagna (con comunicazioni e contatti)
+      description: Richiede la policy `crm`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Campagna
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /campaigns/{id}/communications:
+    post:
+      tags: [campaigns]
+      summary: Aggiungi un contatto alla campagna
+      description: |
+        Richiede la policy `crm`. Crea la comunicazione nello stato `to_send`
+        (un contatto può avere una sola comunicazione per campagna).
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contact_id]
+              properties:
+                contact_id: { type: integer }
+      responses:
+        "201":
+          description: Comunicazione creata
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
 
 components:
   securitySchemes:

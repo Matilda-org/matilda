@@ -1,0 +1,46 @@
+<%
+
+contact ||= Contact.new
+
+%>
+
+<% if contact.projects.length.positive? %>
+<ol class="list-group">
+  <% contact.projects.order(year: :desc, name: :asc).each do |project| %>
+    <li class="list-group-item list-group-item-action position-relative">
+      <div class="c-list-item">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate">
+            <%# stretched-link makes the whole row open the project %>
+            <a href="<%= projects_show_path(id: project.id) %>" data-turbo-frame="_top" class="text-decoration-none stretched-link" data-user-policies-target="item" data-policy="projects_show"><%= project.name %></a>
+          </div>
+          <div class="c-list-item__meta">
+            <span><i class="bi bi-file-earmark-text me-1"></i><%= project.complete_code %></span>
+            <% if project.archived %>
+              <span class="badge rounded-pill bg-dark bg-opacity-75"><i class="bi bi-archive-fill me-1"></i>Archiviato</span>
+            <% end %>
+          </div>
+        </div>
+        <%# above the stretched-link so the dropdown stays clickable %>
+        <div class="c-list-item__actions position-relative" style="z-index: 2">
+          <div class="dropdown me-1">
+            <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu progetto <%= project.name %>">
+              <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item text-danger" href="<%= contacts_actions_path(id: contact.id, type: 'unlink-project', project_id: project.id) %>" data-turbo-frame="action">Scollega</a></li>
+            </ul>
+          </div>
+          <span class="text-primary"><i class="bi bi-chevron-right"></i></span>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder',
+    message: 'Nessun progetto collegato',
+    icon: 'file-earmark-text',
+    cta_label: 'Collega progetto',
+    cta_href: contacts_actions_path(type: 'link-project', id: contact.id) %>
+<% end %>

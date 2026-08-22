@@ -1,0 +1,79 @@
+// Radio picker used to change a customer status:
+// one selectable card per status with colored icon, description and check mark
+.c-status-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// real radio input, visually hidden but still focusable for keyboard users
+.c-status-picker__input {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+.c-status-picker__option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 2px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--bs-primary);
+  }
+}
+
+.c-status-picker__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--bs-white);
+  font-size: 1.25rem;
+}
+
+.c-status-picker__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.c-status-picker__title {
+  display: block;
+  font-weight: 700;
+}
+
+.c-status-picker__description {
+  display: block;
+  font-size: 12px;
+  color: var(--bs-secondary-color);
+}
+
+.c-status-picker__check {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--bs-primary);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.c-status-picker__input:checked + .c-status-picker__option {
+  border-color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.06);
+
+  .c-status-picker__check {
+    opacity: 1;
+  }
+}
+
+.c-status-picker__input:focus-visible + .c-status-picker__option {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}

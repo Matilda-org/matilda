@@ -1,0 +1,36 @@
+<% if @campaigns.any? %>
+<ol class="list-group">
+  <% @campaigns.each do |campaign| %>
+    <% counts = campaign.communications_counts %>
+    <li class="list-group-item list-group-item-action position-relative">
+      <div class="c-list-item">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate">
+            <%# stretched-link makes the whole row clickable %>
+            <a href="<%= campaigns_show_path(id: campaign.id) %>" data-turbo-frame="_top" class="text-decoration-none stretched-link"><%= campaign.name %></a>
+          </div>
+          <div class="c-list-item__meta">
+            <% if campaign.communications.size.zero? %>
+              <span>Nessuna comunicazione</span>
+            <% end %>
+            <% Communication.statuses.keys.each do |status| %>
+              <% next unless (counts[status] || 0).positive? %>
+              <span class="badge rounded-pill bg-<%= Communication.status_color(status) %> bg-opacity-75"><i class="bi <%= Communication.status_icon(status) %> me-1"></i><%= counts[status] %></span>
+            <% end %>
+          </div>
+        </div>
+        <div class="c-list-item__actions text-primary">
+          <i class="bi bi-kanban me-1"></i><i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder',
+    message: 'Nessuna campagna attiva',
+    icon: 'megaphone',
+    cta_label: 'Crea la prima campagna',
+    cta_href: campaigns_actions_path(type: 'create'),
+    cta_policy: 'crm' %>
+<% end %>

@@ -1,0 +1,31 @@
+<%
+
+contact ||= Contact.new
+
+%>
+
+<h3 class="fs-5"><%= contact.name %></h3>
+<% if contact.description.present? %>
+  <div class="mb-3 text-muted">
+    <%= simple_format contact.description %>
+  </div>
+<% end %>
+<hr />
+
+<ul class="list-unstyled mb-0">
+  <% if contact.email.present? %>
+    <li><i class="bi bi-envelope me-2"></i><a href="mailto:<%= contact.email %>"><%= contact.email %></a></li>
+  <% end %>
+  <% if contact.phone.present? %>
+    <li><i class="bi bi-telephone me-2"></i><a href="tel:<%= contact.phone %>"><%= contact.phone %></a></li>
+  <% end %>
+  <% if contact.website.present? %>
+    <li><i class="bi bi-globe me-2"></i><a href="<%= contact.website %>" target="_blank"><%= contact.website %></a></li>
+  <% end %>
+  <% if contact.vat_number.present? %>
+    <li><i class="bi bi-building me-2"></i>P.IVA <%= contact.vat_number %></li>
+  <% end %>
+  <% if contact.address.present? %>
+    <li><i class="bi bi-geo-alt me-2"></i><%= contact.address %></li>
+  <% end %>
+</ul>

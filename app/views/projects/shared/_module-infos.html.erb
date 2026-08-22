@@ -6,6 +6,11 @@ description = project.description_with_budget
 
 <h3 class="fs-5"><%= project.name %></h3>
 <h4 class="fs-6 text-muted"><%= project.complete_code %></h4>
+<% if project.contact %>
+  <a href="<%= contacts_show_path(id: project.contact_id) %>" data-turbo-frame="_top" class="text-decoration-none" data-user-policies-target="item" data-policy="crm">
+    <i class="bi bi-person-lines-fill me-1"></i><%= project.contact.name %>
+  </a>
+<% end %>
 <hr />
 <% if description.blank? %>
 <p class="text-muted">

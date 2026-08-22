@@ -1,0 +1,34 @@
+<div class="d-flex justify-content-center align-items-center">
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu contatto">
+      <i class="bi bi-three-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <li data-user-policies-target="item" data-policy="crm">
+        <a class="dropdown-item" href="<%= contacts_actions_path(type: 'edit', id: @contact.id) %>" data-turbo-frame="action">
+          Modifica contatto
+        </a>
+      </li>
+
+      <% if @contact.archived %>
+        <li data-user-policies-target="item" data-policy="crm">
+          <a class="dropdown-item" href="<%= contacts_actions_path(type: 'unarchive', id: @contact.id) %>" data-turbo-frame="action">
+            Ri-attiva contatto
+          </a>
+        </li>
+      <% else %>
+        <li data-user-policies-target="item" data-policy="crm">
+          <a class="dropdown-item" href="<%= contacts_actions_path(type: 'archive', id: @contact.id) %>" data-turbo-frame="action">
+            Archivia contatto
+          </a>
+        </li>
+      <% end %>
+
+      <li data-user-policies-target="item" data-policy="crm">
+        <a class="dropdown-item text-danger" href="<%= contacts_actions_path(type: 'destroy', id: @contact.id) %>" data-turbo-frame="action">
+          Elimina contatto
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

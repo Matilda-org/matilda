@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_02_150000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_22_220000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -47,6 +47,51 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_02_150000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "campaigns", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "archived", default: false, null: false
+  end
+
+  create_table "communications", force: :cascade do |t|
+    t.integer "contact_id", null: false
+    t.integer "campaign_id", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "follow_ups_count", default: 0, null: false
+    t.date "sent_date"
+    t.date "closed_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id", "contact_id"], name: "index_communications_on_campaign_id_and_contact_id", unique: true
+    t.index ["campaign_id"], name: "index_communications_on_campaign_id"
+    t.index ["contact_id"], name: "index_communications_on_contact_id"
+  end
+
+  create_table "communications_logs", force: :cascade do |t|
+    t.integer "communication_id", null: false
+    t.integer "user_id"
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["communication_id"], name: "index_communications_logs_on_communication_id"
+    t.index ["user_id"], name: "index_communications_logs_on_user_id"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "vat_number"
+    t.string "email"
+    t.string "phone"
+    t.string "website"
+    t.string "address"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "archived", default: false, null: false
   end
 
   create_table "credentials", force: :cascade do |t|
@@ -164,7 +209,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_02_150000) do
     t.integer "budget_money", default: 0
     t.integer "budget_time", default: 0
     t.integer "alghoritmic_order", default: 1
+    t.integer "contact_id"
     t.index ["code"], name: "index_projects_on_code", unique: true
+    t.index ["contact_id"], name: "index_projects_on_contact_id"
   end
 
   create_table "projects_attachments", force: :cascade do |t|
@@ -343,6 +390,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_02_150000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "communications", "campaigns"
+  add_foreign_key "communications", "contacts"
+  add_foreign_key "communications_logs", "communications"
+  add_foreign_key "communications_logs", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "posts", "users"
   add_foreign_key "procedures", "projects"
@@ -350,6 +401,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_02_150000) do
   add_foreign_key "procedures_items", "procedures_statuses"
   add_foreign_key "procedures_status_automations", "procedures_statuses"
   add_foreign_key "procedures_statuses", "procedures"
+  add_foreign_key "projects", "contacts"
   add_foreign_key "projects_attachments", "projects"
   add_foreign_key "projects_events", "projects"
   add_foreign_key "projects_logs", "projects"

@@ -1,0 +1,27 @@
+<%= render 'shared/action-container', title: 'Aggiungi comunicazione', turbo_frame: 'campaign-kanban' do %>
+  <% available_contacts = @campaign.contacts_available %>
+
+  <% if available_contacts.any? %>
+    <%= render 'shared/form-errors', item: @communication if @communication %>
+
+    <%= form_tag campaigns_add_communication_action_path(@campaign), class: 'row', data: { controller: 'form-loading' } do %>
+      <div class="col col-12 mb-3">
+        <label for="contact_id" class="form-label">Contatto</label>
+        <%= select_tag 'contact_id', options_for_select(available_contacts.map { |c| [c.name, c.id] }), class: 'form-control', required: true %>
+      </div>
+
+      <p class="text-muted" style="font-size: 12px">La comunicazione viene creata nello stato <b>Da inviare</b>.</p>
+
+      <div class="d-flex justify-content-end align-items-center">
+        <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+      </div>
+    <% end %>
+  <% else %>
+    <%= render 'shared/placeholder',
+      message: 'Tutti i contatti sono già in questa campagna',
+      icon: 'person-lines-fill',
+      cta_label: 'Crea nuovo contatto',
+      cta_href: contacts_actions_path(type: 'create'),
+      cta_policy: 'crm' %>
+  <% end %>
+<% end %>

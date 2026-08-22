@@ -1,0 +1,8 @@
+<%= render 'shared/page-header',
+  title: @campaign.name,
+  subtitle: @campaign.description,
+  render_actions: 'campaigns/show-actions',
+  back: true
+%>
+
+<%= render 'campaigns/kanban', campaign: @campaign %>

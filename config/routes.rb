@@ -86,6 +86,40 @@ Rails.application.routes.draw do
   post "procedures/remove-item-action/:id/:item_id", to: "procedures#remove_item_action", as: "procedures_remove_item_action"
   post "procedures/move-item-action/:id/:item_id", to: "procedures#move_item_action", as: "procedures_move_item_action"
 
+  # CRM dashboard
+  get "crm", to: "crm#index", as: "crm"
+
+  # Contacts (CRM)
+  get "contacts", to: "contacts#index", as: "contacts"
+  get "contacts/show/:id", to: "contacts#show", as: "contacts_show"
+  get "contacts/actions/:type", to: "contacts#actions", as: "contacts_actions"
+  get "contacts/actions/:type/:id", to: "contacts#actions", as: "contacts_actions_id"
+  post "contacts/create-action", to: "contacts#create_action", as: "contacts_create_action"
+  post "contacts/edit-action/:id", to: "contacts#edit_action", as: "contacts_edit_action"
+  post "contacts/destroy-action/:id", to: "contacts#destroy_action", as: "contacts_destroy_action"
+  post "contacts/archive-action/:id", to: "contacts#archive_action", as: "contacts_archive_action"
+  post "contacts/unarchive-action/:id", to: "contacts#unarchive_action", as: "contacts_unarchive_action"
+  post "contacts/link-project-action/:id", to: "contacts#link_project_action", as: "contacts_link_project_action"
+  post "contacts/unlink-project-action/:id/:project_id", to: "contacts#unlink_project_action", as: "contacts_unlink_project_action"
+
+  # Campaigns (CRM)
+  get "campaigns", to: "campaigns#index", as: "campaigns"
+  get "campaigns/show/:id", to: "campaigns#show", as: "campaigns_show"
+  get "campaigns/actions/:type", to: "campaigns#actions", as: "campaigns_actions"
+  get "campaigns/actions/:type/:id", to: "campaigns#actions", as: "campaigns_actions_id"
+  post "campaigns/create-action", to: "campaigns#create_action", as: "campaigns_create_action"
+  post "campaigns/edit-action/:id", to: "campaigns#edit_action", as: "campaigns_edit_action"
+  post "campaigns/destroy-action/:id", to: "campaigns#destroy_action", as: "campaigns_destroy_action"
+  post "campaigns/archive-action/:id", to: "campaigns#archive_action", as: "campaigns_archive_action"
+  post "campaigns/unarchive-action/:id", to: "campaigns#unarchive_action", as: "campaigns_unarchive_action"
+  post "campaigns/add-communication-action/:id", to: "campaigns#add_communication_action", as: "campaigns_add_communication_action"
+  post "campaigns/send-communication-action/:id/:communication_id", to: "campaigns#send_communication_action", as: "campaigns_send_communication_action"
+  post "campaigns/close-communication-action/:id/:communication_id", to: "campaigns#close_communication_action", as: "campaigns_close_communication_action"
+  post "campaigns/follow-up-communication-action/:id/:communication_id", to: "campaigns#follow_up_communication_action", as: "campaigns_follow_up_communication_action"
+  post "campaigns/remove-communication-action/:id/:communication_id", to: "campaigns#remove_communication_action", as: "campaigns_remove_communication_action"
+  post "campaigns/add-communication-log-action/:id/:communication_id", to: "campaigns#add_communication_log_action", as: "campaigns_add_communication_log_action"
+  post "campaigns/remove-communication-log-action/:id/:communication_id/:log_id", to: "campaigns#remove_communication_log_action", as: "campaigns_remove_communication_log_action"
+
   # Posts
   get "posts", to: "posts#index", as: "posts"
   get "posts/actions/:type", to: "posts#actions", as: "posts_actions"
@@ -187,6 +221,12 @@ Rails.application.routes.draw do
       resources :tracks, only: [ :index ]
       resources :procedures, only: [ :index, :show ]
       resources :posts, only: [ :index, :create ]
+      resources :contacts, only: [ :index, :show, :create ]
+      resources :campaigns, only: [ :index, :show ] do
+        member do
+          post :communications, action: :create_communication
+        end
+      end
       resources :folders, only: [ :index, :show ]
     end
   end

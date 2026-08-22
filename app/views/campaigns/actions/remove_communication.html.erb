@@ -1,0 +1,3 @@
+<%= render 'shared/action-container', title: 'Elimina comunicazione', turbo_frame: 'campaign-kanban' do %>
+  <%= render 'shared/confirmer', path: campaigns_remove_communication_action_path(id: @campaign.id, communication_id: @communication.id) %>
+<% end %>

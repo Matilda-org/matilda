@@ -69,6 +69,9 @@ class Users::Policy < ApplicationRecord
     posts_edit: 57,
     posts_destroy: 58,
 
+    # CRM (single policy for the whole section, like settings/tools)
+    crm: 64,
+
     # Settings
     settings: 22,
 

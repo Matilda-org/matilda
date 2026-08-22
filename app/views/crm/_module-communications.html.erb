@@ -1,0 +1,41 @@
+<%
+
+communications ||= []
+empty_message ||= 'Nessuna comunicazione'
+date_label ||= :created
+
+%>
+
+<% if communications.any? %>
+<ol class="list-group">
+  <% communications.each do |communication| %>
+    <li class="list-group-item">
+      <div class="c-list-item">
+        <div class="c-list-item__body">
+          <div class="c-list-item__title text-truncate">
+            <a href="<%= contacts_show_path(id: communication.contact_id) %>" data-turbo-frame="_top" class="text-decoration-none"><%= communication.contact.name %></a>
+          </div>
+          <div class="c-list-item__meta">
+            <span class="text-truncate"><i class="bi bi-megaphone me-1"></i><%= communication.campaign.name %></span>
+            <% if date_label == :sent %>
+              <span><i class="bi bi-send me-1"></i><%= communication.sent_date.strftime('%d/%m/%Y') %></span>
+              <% if communication.follow_ups_count.positive? %>
+                <span class="badge rounded-pill bg-info bg-opacity-75"><i class="bi bi-arrow-repeat me-1"></i><%= communication.follow_ups_count %></span>
+              <% end %>
+            <% else %>
+              <span><i class="bi bi-calendar3 me-1"></i><%= communication.created_at.strftime('%d/%m/%Y') %></span>
+            <% end %>
+          </div>
+        </div>
+        <div class="c-list-item__actions">
+          <a href="<%= campaigns_show_path(id: communication.campaign_id) %>" data-turbo-frame="_top" class="btn btn-sm btn-outline-primary" aria-label="Apri board della campagna <%= communication.campaign.name %>"><i class="bi bi-kanban"></i></a>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ol>
+<% else %>
+  <%= render 'shared/placeholder',
+    message: empty_message,
+    icon: 'send' %>
+<% end %>

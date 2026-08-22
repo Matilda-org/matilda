@@ -1,0 +1,17 @@
+<%= render 'shared/action-container', title: 'Conferma invio', turbo_frame: 'campaign-kanban' do %>
+  <%= render 'shared/form-errors', item: @communication %>
+
+  <%= form_tag campaigns_send_communication_action_path(id: @campaign.id, communication_id: @communication.id), class: 'row', data: { controller: 'form-loading' } do %>
+
+    <p>Confermi l'invio della comunicazione a <b><%= @communication.contact.name %></b>? Lo stato passerà a <b>Inviata</b> e non potrà tornare indietro.</p>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="sent_date" class="form-label">Data di invio</label>
+      <input type="date" class="form-control" id="sent_date" name="sent_date" value="<%= Date.today %>" required>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center">
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma invio</button>
+    </div>
+  <% end %>
+<% end %>

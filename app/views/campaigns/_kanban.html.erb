@@ -1,0 +1,90 @@
+<%
+
+campaign ||= Campaign.new
+communications = campaign.communications.includes(:contact, :communications_logs).order(updated_at: :desc).group_by(&:status)
+
+total = communications.values.sum(&:size)
+won_count = (communications['won'] || []).size
+lost_count = (communications['lost'] || []).size
+closed_count = won_count + lost_count
+conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).round : nil
+
+%>
+
+<%= turbo_frame_tag 'campaign-kanban' do %>
+
+  <div class="row g-2 mb-3">
+    <div class="col-6 col-lg-3">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><i class="bi bi-megaphone-fill"></i></div>
+        <div>
+          <div class="c-stat__value"><%= total %></div>
+          <div class="c-stat__label">Comunicazioni</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-envelope"></i></div>
+        <div>
+          <div class="c-stat__value"><%= (communications['to_send'] || []).size %></div>
+          <div class="c-stat__label">Da inviare</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-info bg-opacity-10 text-info"><i class="bi bi-send-fill"></i></div>
+        <div>
+          <div class="c-stat__value"><%= (communications['sent'] || []).size %></div>
+          <div class="c-stat__label">In attesa di esito</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-success bg-opacity-10 text-success"><i class="bi bi-trophy"></i></div>
+        <div>
+          <div class="c-stat__value"><%= conversion ? "#{conversion}%" : "—" %></div>
+          <div class="c-stat__label"><%= conversion ? "Conversione (#{won_count}/#{closed_count} chiuse)" : "Nessun esito registrato" %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="c-comm-board">
+    <% Communication.statuses.keys.each do |status| %>
+      <% status_communications = communications[status] || [] %>
+      <div class="c-comm-board__column" style="--comm-rgb: var(--bs-<%= Communication.status_color(status) %>-rgb)">
+        <div class="c-comm-board__header">
+          <div class="c-comm-board__header-title">
+            <i class="bi <%= Communication.status_icon(status) %>"></i>
+            <span><%= Communication.status_string(status) %></span>
+          </div>
+          <span class="c-comm-board__counter"><%= status_communications.size %></span>
+        </div>
+
+        <div class="c-comm-board__cards">
+          <% if status_communications.any? %>
+            <% status_communications.each do |communication| %>
+              <%= render 'campaigns/kanban-communication', campaign: campaign, communication: communication %>
+            <% end %>
+          <% else %>
+            <div class="c-comm-board__empty">
+              <i class="bi <%= Communication.status_icon(status) %>"></i>
+              Nessuna comunicazione
+            </div>
+          <% end %>
+        </div>
+
+        <% if status == 'to_send' %>
+          <div class="c-comm-board__footer">
+            <a href="<%= campaigns_actions_path(type: 'add-communication', id: campaign.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="crm">
+              <i class="bi bi-plus-circle me-1"></i>Aggiungi
+            </a>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -30,6 +30,15 @@ operative ||= false
     <a class="nav-link w-100 <%= @_navbar == 'users' ? 'active' : '' %>" href="<%= users_path %>" data-turbo-frame="_top"><%= nav_icon('users') %> <span class="ms-2">Utenti</span></a>
   </li>
 
+  <li class="nav-item dropdown" data-user-policies-target="item" data-policy="crm" data-policy-hide>
+    <a class="nav-link w-100 <%= [ 'crm', 'contacts', 'campaigns' ].include?(@_navbar) ? 'active' : '' %>" href="#" data-bs-toggle="dropdown"><%= nav_icon('crm') %> <span class="ms-2">Crm</span></a>
+    <ul class="dropdown-menu mt-2 mt-md-0">
+      <li><a class="dropdown-item <%= @_navbar == 'crm' ? 'active' : '' %>" href="<%= crm_path %>" data-turbo-frame="_top">Dashboard</a></li>
+      <li><a class="dropdown-item <%= @_navbar == 'contacts' ? 'active' : '' %>" href="<%= contacts_path %>" data-turbo-frame="_top">Contatti</a></li>
+      <li><a class="dropdown-item <%= @_navbar == 'campaigns' ? 'active' : '' %>" href="<%= campaigns_path %>" data-turbo-frame="_top">Campagne</a></li>
+    </ul>
+  </li>
+
   <li class="nav-item" data-user-policies-target="item" data-policy="procedures_index" data-policy-hide>
     <a class="nav-link w-100 <%= @_navbar == 'procedures' ? 'active' : '' %>" href="<%= procedures_path %>" data-turbo-frame="_top"><%= nav_icon('procedures') %> <span class="ms-2">Board</span></a>
   </li>

@@ -1,0 +1,89 @@
+<%= render 'shared/page-header', title: 'Crm', render_actions: 'crm/index-actions' %>
+
+<%
+
+won_count = Communication.won.count
+closed_count = won_count + Communication.lost.count
+conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).round : nil
+
+%>
+
+<div class="row g-2 mb-4">
+  <div class="col-6 col-lg-3">
+    <a href="<%= contacts_path %>" class="text-decoration-none text-reset" data-turbo-frame="_top">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><i class="bi bi-person-lines-fill"></i></div>
+        <div>
+          <div class="c-stat__value"><%= Contact.not_archived.count %></div>
+          <div class="c-stat__label">Contatti attivi</div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <a href="<%= campaigns_path %>" class="text-decoration-none text-reset" data-turbo-frame="_top">
+      <div class="c-stat">
+        <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><i class="bi bi-megaphone-fill"></i></div>
+        <div>
+          <div class="c-stat__value"><%= @campaigns.size %></div>
+          <div class="c-stat__label">Campagne attive</div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-info bg-opacity-10 text-info"><i class="bi bi-send-fill"></i></div>
+      <div>
+        <div class="c-stat__value"><%= @to_send.size + @waiting.size %></div>
+        <div class="c-stat__label"><%= @to_send.size %> da inviare · <%= @waiting.size %> in attesa</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="c-stat">
+      <div class="c-stat__icon rounded-circle bg-success bg-opacity-10 text-success"><i class="bi bi-trophy"></i></div>
+      <div>
+        <div class="c-stat__value"><%= conversion ? "#{conversion}%" : "—" %></div>
+        <div class="c-stat__label"><%= conversion ? "Conversione (#{won_count}/#{closed_count} chiuse)" : "Nessun esito registrato" %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'shared/page-grid' do %>
+
+  <%= render 'shared/page-grid-item' do %>
+    <%= render 'shared/page-card',
+      title: "Campagne in corso",
+      always_open: true,
+      counter: @campaigns.size,
+      render_content: 'crm/module-campaigns',
+      render_footer: 'crm/module-campaigns-actions'
+    %>
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+    <%= render 'shared/page-card',
+      title: "Da inviare",
+      always_open: true,
+      counter: @to_send.size,
+      render_content: 'crm/module-communications',
+      render_content_args: { communications: @to_send, empty_message: 'Niente da inviare', date_label: :created }
+    %>
+  <% end %>
+
+  <%= render 'shared/page-grid-item' do %>
+    <%= render 'shared/page-card',
+      title: "In attesa di esito",
+      always_open: true,
+      counter: @waiting.size,
+      render_content: 'crm/module-communications',
+      render_content_args: { communications: @waiting, empty_message: 'Nessuna comunicazione in attesa', date_label: :sent }
+    %>
+  <% end %>
+
+<% end %>

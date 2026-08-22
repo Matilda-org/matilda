@@ -1,0 +1,7 @@
+<%
+
+contact ||= Contact.new
+
+%>
+
+<a href="<%= contacts_actions_path(type: 'link-project', id: contact.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" >Collega progetto</a>

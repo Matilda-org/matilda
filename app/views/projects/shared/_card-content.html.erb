@@ -23,6 +23,10 @@ badge_type = 'primary' if badge_type.blank?
 </div>
 <% end %>
 
+<% if project.cached_contact_name.present? %>
+  <span class="badge bg-<%= badge_type %>"><i class="bi bi-person-lines-fill"></i> <%= project.cached_contact_name %></span>
+<% end %>
+
 <% if project.cached_projects_members_count.positive? %>
   <span class="badge bg-<%= badge_type %>"><i class="bi bi-people-fill"></i> <%= project.cached_projects_members_count %> persone coinvolte</span>
 <% end %>

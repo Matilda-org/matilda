@@ -28,6 +28,8 @@ class Project < ApplicationRecord
   has_many :procedures, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
+  belongs_to :contact, optional: true
+
   # VALIDATIONS
   ############################################################
 
@@ -93,6 +95,7 @@ class Project < ApplicationRecord
       procedure.cached_project_items(true)
     end
     cached_percentage_budget_used(true)
+    cached_contact_name(true) if saved_change_to_contact_id?
   end
   after_destroy_commit do
     procedures.each do |procedure|
@@ -167,6 +170,14 @@ class Project < ApplicationRecord
     type = "dark" if archived
 
     type
+  end
+
+  def cached_contact_name(reset = false)
+    Rails.cache.delete("Project/cached_contact_name/#{id}") if reset
+
+    @cached_contact_name ||= Rails.cache.fetch("Project/cached_contact_name/#{id}", expires_in: 7.days) do
+      contact&.name || ""
+    end
   end
 
   def cached_projects_members_count(reset = false)

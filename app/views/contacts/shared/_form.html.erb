@@ -1,0 +1,57 @@
+<%
+
+contact ||= Contact.new
+turbo_frame_key ||= nil
+
+path ||= contact.persisted? ? contacts_edit_action_path(contact) : contacts_create_action_path
+
+%>
+
+<%= render 'shared/form-errors', item: contact %>
+
+<%= form_tag path, class: 'c-modal-form', data: { controller: 'form-loading' } do %>
+  <div class="c-modal-form__fields row">
+    <% if turbo_frame_key %>
+      <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
+    <% end %>
+
+    <div class="col col-12 mb-3">
+      <label for="name" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="name" name="name" value="<%= contact.name %>" required>
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="description" class="form-label">Breve descrizione</label>
+      <textarea class="form-control" rows="3" id="description" name="description"><%= contact.description %></textarea>
+    </div>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" value="<%= contact.email %>">
+    </div>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="phone" class="form-label">Telefono</label>
+      <input type="text" class="form-control" id="phone" name="phone" value="<%= contact.phone %>">
+    </div>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="vat_number" class="form-label">Partita IVA</label>
+      <input type="text" class="form-control" id="vat_number" name="vat_number" value="<%= contact.vat_number %>">
+    </div>
+
+    <div class="col col-12 col-md-6 mb-3">
+      <label for="website" class="form-label">Sito web</label>
+      <input type="text" class="form-control" id="website" name="website" value="<%= contact.website %>">
+    </div>
+
+    <div class="col col-12 mb-3">
+      <label for="address" class="form-label">Indirizzo</label>
+      <input type="text" class="form-control" id="address" name="address" value="<%= contact.address %>">
+    </div>
+  </div>
+
+  <div class="c-modal-form__submit">
+    <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+  </div>
+<% end %>

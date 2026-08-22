@@ -1,0 +1,7 @@
+<%
+
+contact ||= Contact.new
+
+%>
+
+<a class="card-link stretched-link" href="<%= contacts_show_path(id: contact.id) %>" data-turbo-frame="_top" data-user-policies-target="item" data-policy="crm">Visualizza</a>
