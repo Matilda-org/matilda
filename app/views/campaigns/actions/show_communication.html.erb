@@ -1,4 +1,4 @@
-<%= render 'shared/action-container', title: 'Note comunicazione', turbo_frame: 'campaign-kanban' do %>
+<%= render 'shared/action-container', title: 'Note comunicazione', turbo_frame: 'campaign-kanban', size: 'xl' do %>
   <div class="mb-3">
     <h2 class="fs-4 mb-1"><%= @communication.contact.name %></h2>
     <span class="badge rounded-pill bg-<%= @communication.status_color %>"><i class="bi <%= @communication.status_icon %> me-1"></i><%= @communication.status_string %></span>
@@ -7,44 +7,49 @@
     <% if @communication.follow_ups_count.positive? %><span class="badge rounded-pill bg-info bg-opacity-75"><i class="bi bi-arrow-repeat me-1"></i><%= @communication.follow_ups_count %> follow-up</span><% end %>
   </div>
 
+  <hr />
+
   <%= render 'shared/form-errors', item: @log if @log %>
 
-  <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: @communication.id), class: 'row mb-3', data: { controller: 'form-loading' } do %>
-    <div class="col col-12 mb-2">
-      <textarea class="form-control" rows="2" name="content" placeholder="Aggiungi una nota..." required><%= @log&.content %></textarea>
+  <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: @communication.id), class: 'mb-4', data: { controller: 'form-loading' } do %>
+    <%# standard height: it still grows with the content, but keeps the
+        existing notes visible below the editor %>
+    <div class="mb-2">
+      <%= rich_text_area_tag :content, @log&.content, class: 'trix-content' %>
     </div>
     <div class="d-flex justify-content-end align-items-center">
-      <button type="submit" class="btn btn-primary btn-sm" data-form-loading-target="submit">Aggiungi nota</button>
+      <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Aggiungi nota</button>
     </div>
   <% end %>
 
   <% logs = @communication.communications_logs.recent_first %>
   <% if logs.any? %>
-    <ol class="list-group">
-      <% logs.each do |log| %>
-        <li class="list-group-item">
-          <div class="c-list-item">
-            <div class="c-list-item__body">
-              <div><%= log.content %></div>
-              <div class="c-list-item__meta">
-                <span><i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %></span>
-                <% if log.user %><span><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
-              </div>
-            </div>
-            <div class="c-list-item__actions">
-              <a
-                href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: @communication.id, log_id: log.id) %>"
-                data-turbo-method="post"
-                data-turbo-frame="action"
-                class="btn btn-sm btn-outline text-danger"
-                aria-label="Elimina nota"
-              ><i class="bi bi-trash"></i></a>
-            </div>
-          </div>
-        </li>
-      <% end %>
-    </ol>
+    <h3 class="fs-6 text-muted mb-2"><i class="bi bi-journal-text me-1"></i>Note (<%= logs.size %>)</h3>
+    <% logs.each do |log| %>
+      <div class="c-comm-note">
+        <div class="c-comm-note__header">
+          <span>
+            <i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %>
+            <% if log.user %><span class="ms-2"><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
+          </span>
+          <a
+            href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: @communication.id, log_id: log.id) %>"
+            data-turbo-method="post"
+            data-turbo-frame="action"
+            class="btn btn-sm btn-outline text-danger"
+            data-controller="tooltip"
+            data-tooltip="Elimina nota"
+            aria-label="Elimina nota"
+          ><i class="bi bi-trash"></i></a>
+        </div>
+        <div class="c-comm-note__body trix-content">
+          <%= log.content %>
+        </div>
+      </div>
+    <% end %>
   <% else %>
-    <p class="text-muted text-center mb-0">Nessuna nota per questa comunicazione.</p>
+    <%= render 'shared/placeholder',
+      message: 'Nessuna nota per questa comunicazione',
+      icon: 'journal-text' %>
   <% end %>
 <% end %>

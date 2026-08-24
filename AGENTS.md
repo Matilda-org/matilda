@@ -24,7 +24,7 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 
 ## CRM (contacts / campaigns / communications)
 
-- Three models: `Contact` (anagrafica), `Campaign`, `Communication` (the contact↔campaign relation, unique per pair) + `Communications::Log` (plain text notes on a communication). Sections mirror the Projects structure (explicit routes, `actions` modal dispatcher).
+- Three models: `Contact` (anagrafica), `Campaign`, `Communication` (the contact↔campaign relation, unique per pair) + `Communications::Log` (rich text notes on a communication, `has_rich_text :content`). Sections mirror the Projects structure (explicit routes, `actions` modal dispatcher).
 - The whole section is gated by the single `crm` policy (like `settings`/`tools`). One "Crm" nav dropdown (Dashboard `/crm` + Contatti + Campagne); `CrmController#index` is the summary dashboard (stats, active campaigns, to-send / waiting lists).
 - Contacts and campaigns are archivable like projects (`archived` boolean, archive/unarchive policies and actions, index filter defaults to non-archived, dark card when archived). Contact cards only show `Communication.ongoing` badges (to_send/sent).
 - `Communication` states are forward-only (`Communication::TRANSITIONS`): `to_send → sent → lost|won`. Moving to `sent` confirms and stores `sent_date`; closing stores `closed_date`. No going back — delete and recreate instead. `follow_ups_count` increments only while `sent` (`register_follow_up`).

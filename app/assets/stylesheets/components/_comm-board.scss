@@ -9,22 +9,16 @@
 }
 
 .c-comm-board__column {
-  // 4 equal columns filling the row (25% each)
+  // 4 equal columns filling the row, never narrower than a task kanban column
   flex: 1 1 0;
-  min-width: 0;
+  min-width: 360px;
   background: var(--bs-body-bg);
   border: 1px solid var(--bs-border-color);
   border-top: 4px solid rgba(var(--comm-rgb), 1);
   border-radius: var(--bs-border-radius-lg);
 
-  // small screens: fixed width + horizontal scroll of the board
-  @media screen and (max-width: 992px) {
-    flex: 0 0 300px;
-    max-width: 300px;
-  }
-
   @media screen and (max-width: 390px) {
-    flex-basis: calc(100vw - 60px);
+    min-width: calc(100vw - 60px);
   }
 }
 
@@ -147,4 +141,43 @@
 .c-comm-board__footer {
   padding: 0.75rem;
   border-top: 1px solid var(--bs-border-color);
+}
+
+// Notes of a communication: long rich-text entries, one card each
+.c-comm-note {
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  background: var(--bs-body-bg);
+
+  & + & {
+    margin-top: 0.75rem;
+  }
+}
+
+.c-comm-note__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  background-color: rgba(var(--bs-dark-rgb), 0.02);
+  border-radius: var(--bs-border-radius-lg) var(--bs-border-radius-lg) 0 0;
+  font-size: 12px;
+  color: var(--bs-secondary-color);
+}
+
+.c-comm-note__body {
+  padding: 0.85rem;
+
+  // rich text can hold headings, lists and attachments: keep them in flow
+  img,
+  figure {
+    max-width: 100%;
+    height: auto;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
 }

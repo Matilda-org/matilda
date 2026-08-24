@@ -20,6 +20,7 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_action("destroy", "Elimina campagna", campaign.id)
     matilda_controller_action("add-communication", "Aggiungi comunicazione", campaign.id)
     matilda_controller_action("send-communication", "Conferma invio", campaign.id, { communication_id: communication.id })
+    communication.communications_logs.create!(content: "Una nota lunga di esempio")
     matilda_controller_action("show-communication", "Note comunicazione", campaign.id, { communication_id: communication.id })
     matilda_controller_action("remove-communication", "Elimina comunicazione", campaign.id, { communication_id: communication.id })
 
@@ -185,8 +186,9 @@ class CampaignsControllerTest < ActionController::TestCase
       feedback: "Nota aggiunta"
     )
 
-    log = communication.communications_logs.find_by(content: "Nota di test")
+    log = communication.communications_logs.last
     assert_not_nil log
+    assert_equal "Nota di test", log.content.to_plain_text
     assert_equal @user.id, log.user_id
 
     matilda_controller_endpoint(:post, :remove_communication_log_action,
