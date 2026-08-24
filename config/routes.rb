@@ -227,6 +227,13 @@ Rails.application.routes.draw do
           post :communications, action: :create_communication
         end
       end
+      resources :communications, only: [ :show ] do
+        member do
+          get :logs
+          post :logs, action: :create_log
+          delete "logs/:log_id", action: :destroy_log, as: "log"
+        end
+      end
       resources :folders, only: [ :index, :show ]
     end
   end

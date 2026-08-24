@@ -19,6 +19,16 @@ class Communications::Log < ApplicationRecord
 
   scope :recent_first, -> { order(created_at: :desc) }
 
+  # AS JSON
+  ############################################################
+
+  # rich text is not serialized by default: the API opts in with with_content
+  def as_json(options = {})
+    base = super(options)
+    base[:content] = content.to_s if options[:with_content]
+    base
+  end
+
   private
 
   def validate_content_presence

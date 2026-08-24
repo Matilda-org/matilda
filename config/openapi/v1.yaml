@@ -21,6 +21,7 @@ tags:
   - name: folders
   - name: contacts
   - name: campaigns
+  - name: communications
 
 paths:
   /me:
@@ -578,6 +579,83 @@ paths:
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /communications/{id}:
+    get:
+      tags: [communications]
+      summary: Dettaglio comunicazione (con contatto e campagna)
+      description: Richiede la policy `crm`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Comunicazione
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /communications/{id}/logs:
+    get:
+      tags: [communications]
+      summary: Note della comunicazione
+      description: Richiede la policy `crm`. Le note sono restituite dalla più recente, con il contenuto HTML.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+      responses:
+        "200": { $ref: "#/components/responses/PaginatedList" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    post:
+      tags: [communications]
+      summary: Aggiungi una nota alla comunicazione
+      description: |
+        Richiede la policy `crm`. La nota è attribuita all'utente della API key.
+        `content` è rich text: accetta HTML (paragrafi, liste, grassetto).
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, description: "Contenuto (HTML rich text)" }
+      responses:
+        "201":
+          description: Nota creata
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /communications/{id}/logs/{log_id}:
+    delete:
+      tags: [communications]
+      summary: Elimina una nota della comunicazione
+      description: Richiede la policy `crm`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: log_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Nota eliminata
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
 
 components:
   securitySchemes:
