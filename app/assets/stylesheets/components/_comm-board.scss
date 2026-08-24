@@ -9,13 +9,19 @@
 }
 
 .c-comm-board__column {
-  // 4 equal columns filling the row, never narrower than a task kanban column
   flex: 1 1 0;
+  // below desktop the row cannot hold four readable columns: keep them as wide
+  // as the task kanban ones and let the board scroll horizontally
   min-width: 360px;
   background: var(--bs-body-bg);
   border: 1px solid var(--bs-border-color);
   border-top: 4px solid rgba(var(--comm-rgb), 1);
   border-radius: var(--bs-border-radius-lg);
+
+  // desktop: the four columns just share the row (25% each)
+  @media screen and (min-width: 992px) {
+    min-width: 0;
+  }
 
   @media screen and (max-width: 390px) {
     min-width: calc(100vw - 60px);
