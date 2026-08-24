@@ -597,6 +597,83 @@ paths:
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
 
+  /communications/{id}/send:
+    post:
+      tags: [communications]
+      summary: Conferma l'invio della comunicazione
+      description: |
+        Richiede la policy `crm`. Porta la comunicazione da `to_send` a `sent` e salva la data di invio
+        (`sent_date`, default oggi). Gli stati vanno solo in avanti: su una comunicazione già inviata o
+        chiusa restituisce 422.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sent_date: { type: string, format: date }
+      responses:
+        "200":
+          description: Comunicazione inviata
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /communications/{id}/close:
+    post:
+      tags: [communications]
+      summary: Registra l'esito della comunicazione
+      description: |
+        Richiede la policy `crm`. Porta la comunicazione da `sent` a `won` o `lost` e salva la data
+        di chiusura (`closed_date`, default oggi). Gli stati vanno solo in avanti: su una comunicazione
+        non ancora inviata o già chiusa restituisce 422.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [won, lost] }
+                closed_date: { type: string, format: date }
+      responses:
+        "200":
+          description: Esito registrato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /communications/{id}/follow_up:
+    post:
+      tags: [communications]
+      summary: Registra un follow-up sulla comunicazione
+      description: Richiede la policy `crm`. Incrementa `follow_ups_count`; ammesso solo sulle comunicazioni `sent`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Follow-up registrato
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
+
   /communications/{id}/logs:
     get:
       tags: [communications]

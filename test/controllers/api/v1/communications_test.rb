@@ -16,6 +16,76 @@ class Api::V1::CommunicationsTest < ApiIntegrationTest
     assert_equal campaigns(:one).id, body["campaign"]["id"]
   end
 
+  test "send moves the communication to sent and stores the date" do
+    assert_requires_policy :post, "/api/v1/communications/#{communication.id}/send", "crm",
+      params: { sent_date: Date.today - 2.days }
+
+    communication.reload
+    assert communication.sent?
+    assert_equal Date.today - 2.days, communication.sent_date
+    assert_equal "sent", json_response["status"]
+  end
+
+  test "send defaults to today and refuses to run twice" do
+    give_policy "crm"
+
+    post "/api/v1/communications/#{communication.id}/send", headers: api_headers, as: :json
+    assert_response :success
+    assert_equal Date.today, communication.reload.sent_date
+
+    post "/api/v1/communications/#{communication.id}/send", headers: api_headers, as: :json
+    assert_response :unprocessable_content
+    assert json_response["errors"].any?
+  end
+
+  test "close stores the outcome and its date" do
+    communication.mark_sent(Date.today - 5.days)
+    assert_requires_policy :post, "/api/v1/communications/#{communication.id}/close", "crm",
+      params: { status: "won", closed_date: Date.today - 1.day }
+
+    communication.reload
+    assert communication.won?
+    assert_equal Date.today - 1.day, communication.closed_date
+  end
+
+  test "close validates the outcome and never goes backwards" do
+    give_policy "crm"
+
+    # not sent yet
+    post "/api/v1/communications/#{communication.id}/close", params: { status: "won" }, headers: api_headers, as: :json
+    assert_response :unprocessable_content
+
+    communication.mark_sent(Date.today)
+    post "/api/v1/communications/#{communication.id}/close", params: { status: "bogus" }, headers: api_headers, as: :json
+    assert_response :unprocessable_content
+    assert json_response["errors"].any?
+
+    post "/api/v1/communications/#{communication.id}/close", params: { status: "lost" }, headers: api_headers, as: :json
+    assert_response :success
+
+    # already closed: no second outcome
+    post "/api/v1/communications/#{communication.id}/close", params: { status: "won" }, headers: api_headers, as: :json
+    assert_response :unprocessable_content
+    assert communication.reload.lost?
+  end
+
+  test "follow_up increments the counter only while sent" do
+    give_policy "crm"
+
+    post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
+    assert_response :unprocessable_content
+
+    communication.mark_sent(Date.today)
+    post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
+    assert_response :success
+    assert_equal 1, communication.reload.follow_ups_count
+    assert_equal 1, json_response["follow_ups_count"]
+
+    communication.mark_closed("won", Date.today)
+    post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
+    assert_response :unprocessable_content
+  end
+
   test "logs returns the notes with their html content, most recent first" do
     old = communication.communications_logs.create!(content: "<div>Prima nota</div>")
     recent = communication.communications_logs.create!(content: "<div>Seconda <strong>nota</strong></div>")

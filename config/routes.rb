@@ -229,6 +229,9 @@ Rails.application.routes.draw do
       end
       resources :communications, only: [ :show ] do
         member do
+          post :send, action: :mark_sent
+          post :close, action: :mark_closed
+          post :follow_up
           get :logs
           post :logs, action: :create_log
           delete "logs/:log_id", action: :destroy_log, as: "log"

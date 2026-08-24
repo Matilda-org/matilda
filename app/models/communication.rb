@@ -62,19 +62,35 @@ class Communication < ApplicationRecord
   # OPERATIONS
   ############################################################
 
+  # confirmed dates are never rewritten: each step runs once, from its own state
   def mark_sent(date)
+    unless to_send?
+      errors.add(:status, "la comunicazione è già stata inviata")
+      return false
+    end
+
     update(status: :sent, sent_date: date)
   end
 
   def mark_closed(final_status, date)
-    return false unless [ "lost", "won" ].include?(final_status)
+    unless [ "lost", "won" ].include?(final_status)
+      errors.add(:status, "esito non valido: usa perso o preso")
+      return false
+    end
+    unless sent?
+      errors.add(:status, "l'esito si registra solo su comunicazioni inviate")
+      return false
+    end
 
     update(status: final_status, closed_date: date)
   end
 
   # follow-ups only make sense while waiting for an outcome
   def register_follow_up
-    return false unless sent?
+    unless sent?
+      errors.add(:base, "i follow-up si registrano solo su comunicazioni inviate")
+      return false
+    end
 
     increment!(:follow_ups_count)
   end

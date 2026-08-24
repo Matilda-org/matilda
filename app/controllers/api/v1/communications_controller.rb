@@ -11,6 +11,38 @@ class Api::V1::CommunicationsController < Api::V1::BaseController
     render json: communication.as_json(include: [ :contact, :campaign ])
   end
 
+  # POST /api/v1/communications/:id/send
+  def mark_sent
+    return unless require_policy!("crm")
+
+    communication = Communication.find(params[:id])
+    date = params[:sent_date].presence || Date.today
+    return render_record_errors(communication) unless communication.mark_sent(date)
+
+    render json: communication.as_json
+  end
+
+  # POST /api/v1/communications/:id/close
+  def mark_closed
+    return unless require_policy!("crm")
+
+    communication = Communication.find(params[:id])
+    date = params[:closed_date].presence || Date.today
+    return render_record_errors(communication) unless communication.mark_closed(params[:status], date)
+
+    render json: communication.as_json
+  end
+
+  # POST /api/v1/communications/:id/follow_up
+  def follow_up
+    return unless require_policy!("crm")
+
+    communication = Communication.find(params[:id])
+    return render_record_errors(communication) unless communication.register_follow_up
+
+    render json: communication.as_json
+  end
+
   # GET /api/v1/communications/:id/logs
   def logs
     return unless require_policy!("crm")

@@ -38,6 +38,18 @@ class CommunicationTest < ActiveSupport::TestCase
     assert_equal Date.today, communication.closed_date
   end
 
+  test "confirmed dates are never rewritten by running a step twice" do
+    communication = build_communication
+    communication.mark_sent(Date.today - 5.days)
+
+    assert_not communication.mark_sent(Date.today)
+    assert_equal Date.today - 5.days, communication.reload.sent_date
+
+    communication.mark_closed("won", Date.today - 2.days)
+    assert_not communication.mark_closed("won", Date.today)
+    assert_equal Date.today - 2.days, communication.reload.closed_date
+  end
+
   test "states can never go back" do
     communication = build_communication
 
