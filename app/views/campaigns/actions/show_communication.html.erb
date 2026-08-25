@@ -170,51 +170,57 @@ notes_tab_active = @active_tab == "notes"
       id="communication-tab-notes-<%= tabs_id %>"
       role="tabpanel"
     >
-      <%# l'editor resta ancorato in cima (fuori dallo scroller): Trix dentro un
-          contenitore che scrolla fa saltare lo scroll durante la scrittura %>
+      <%# le note come timeline (dalla più recente), il composer ancorato in
+          fondo: così si legge la storia dall'alto e si scrive sempre nello
+          stesso punto %>
+      <div class="c-comm-overlay__notes">
+        <% if logs.any? %>
+          <ul class="c-timeline">
+            <% logs.each do |log| %>
+              <li class="c-timeline__item">
+                <span class="c-timeline__marker"></span>
+                <div class="c-timeline__content">
+                  <div class="c-comm-timeline__header">
+                    <span>
+                      <i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %>
+                      <% if log.user %><span class="ms-2"><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
+                    </span>
+                    <a
+                      href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: communication.id, log_id: log.id) %>"
+                      data-turbo-method="post"
+                      data-turbo-frame="action"
+                      class="btn btn-sm btn-outline text-danger"
+                      data-controller="tooltip"
+                      data-tooltip="Elimina nota"
+                      aria-label="Elimina nota"
+                      data-user-policies-target="item"
+                      data-policy="crm"
+                    ><i class="bi bi-trash"></i></a>
+                  </div>
+                  <div class="c-comm-timeline__body trix-content">
+                    <%= log.content %>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <%= render 'shared/placeholder',
+            message: 'Nessuna nota per questa comunicazione',
+            icon: 'journal-text' %>
+        <% end %>
+      </div>
+
       <div class="c-comm-overlay__composer">
         <%= render 'shared/form-errors', item: @log if @log %>
 
         <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: communication.id), data: { controller: 'form-loading' } do %>
           <div class="mb-2">
-            <%= rich_text_area_tag :content, @log&.content, class: 'trix-content' %>
+            <%= rich_text_area_tag :content, @log&.content, class: 'trix-content trix-content--sm' %>
           </div>
           <div class="d-flex justify-content-end align-items-center">
-            <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Aggiungi nota</button>
+            <button type="submit" class="btn btn-primary" data-form-loading-target="submit"><i class="bi bi-plus-circle me-1"></i>Aggiungi nota</button>
           </div>
-        <% end %>
-      </div>
-
-      <div class="c-comm-overlay__notes">
-        <% if logs.any? %>
-          <% logs.each do |log| %>
-            <div class="c-comm-note">
-              <div class="c-comm-note__header">
-                <span>
-                  <i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %>
-                  <% if log.user %><span class="ms-2"><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
-                </span>
-                <a
-                  href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: communication.id, log_id: log.id) %>"
-                  data-turbo-method="post"
-                  data-turbo-frame="action"
-                  class="btn btn-sm btn-outline text-danger"
-                  data-controller="tooltip"
-                  data-tooltip="Elimina nota"
-                  aria-label="Elimina nota"
-                  data-user-policies-target="item"
-                  data-policy="crm"
-                ><i class="bi bi-trash"></i></a>
-              </div>
-              <div class="c-comm-note__body trix-content">
-                <%= log.content %>
-              </div>
-            </div>
-          <% end %>
-        <% else %>
-          <%= render 'shared/placeholder',
-            message: 'Nessuna nota per questa comunicazione',
-            icon: 'journal-text' %>
         <% end %>
       </div>
     </div>

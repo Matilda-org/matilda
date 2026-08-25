@@ -18,6 +18,11 @@ trix-editor.trix-content--lg {
   min-height: 500px;
 }
 
+// composer ancorato (es. note di una comunicazione): basso, cresce col contenuto
+trix-editor.trix-content--sm {
+  min-height: 90px;
+}
+
 trix-toolbar .trix-button-group {
   border: solid 1px var(--bs-gray-300);
   border-top-color: var(--bs-gray-300);
