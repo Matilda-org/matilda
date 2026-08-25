@@ -197,7 +197,7 @@ class CampaignsController < ApplicationController
       return
     end
 
-    render_communication_feedback("Registra follow-up", "Follow-up registrato", "Follow-up del #{follow_up.date.strftime('%d/%m/%Y')} con #{@communication.contact.name} registrato.")
+    render_communication_overlay("follow-ups")
   end
 
   def remove_communication_follow_up_action
@@ -214,7 +214,7 @@ class CampaignsController < ApplicationController
 
     follow_up.destroy
 
-    render_communication_feedback("Annulla follow-up", "Follow-up annullato", "Il follow-up del #{follow_up.date.strftime('%d/%m/%Y')} è stato annullato.")
+    render_communication_overlay("follow-ups")
   end
 
   def remove_communication_action
@@ -232,10 +232,12 @@ class CampaignsController < ApplicationController
     return unless campaign_finder
     return unless communication_finder
 
+    @active_tab = "notes"
     @log = @communication.communications_logs.new(content: params[:content], user_id: @session_user_id)
     return render "campaigns/actions/show_communication" unless @log.save
 
-    render_communication_feedback("Aggiungi nota", "Nota aggiunta", "La nota è stata aggiunta alla comunicazione con #{@communication.contact.name}.")
+    @log = nil # the editor starts empty again
+    render_communication_overlay("notes")
   end
 
   def remove_communication_log_action
@@ -246,7 +248,7 @@ class CampaignsController < ApplicationController
     log = @communication.communications_logs.find_by(id: params[:log_id])
     log&.destroy
 
-    render_communication_feedback("Rimuovi nota", "Nota rimossa", "La nota è stata rimossa.")
+    render_communication_overlay("notes")
   end
 
   private
@@ -275,6 +277,18 @@ class CampaignsController < ApplicationController
     end
 
     true
+  end
+
+  # Follow-ups and notes are edited from inside the overlay: instead of closing
+  # it with a feedback, replace the overlay with its updated version and refresh
+  # the board underneath (counters and card badges).
+  def render_communication_overlay(active_tab)
+    @active_tab = active_tab
+
+    render turbo_stream: [
+      turbo_stream.replace("action", template: "campaigns/actions/show_communication"),
+      turbo_stream.replace("campaign-kanban", partial: "campaigns/kanban", locals: { campaign: @campaign })
+    ]
   end
 
   def render_communication_feedback(title, feedback_title, subtitle)

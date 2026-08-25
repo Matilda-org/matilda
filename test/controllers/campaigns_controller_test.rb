@@ -154,14 +154,33 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:post, :follow_up_communication_action,
       params: { id: campaign.id, communication_id: communication.id },
       policy: "crm",
-      title: "Registra follow-up",
-      feedback: "Follow-up registrato"
+      title: "Dettaglio comunicazione" # the overlay stays open, refreshed
     )
 
     follow_up = communication.communications_follow_ups.first
     assert_equal Date.today, follow_up.date
     assert_equal @user.id, follow_up.user_id
     assert_equal 1, communication.reload.follow_ups_count
+  end
+
+  test "editing follow-ups and notes refreshes the overlay and the board" do
+    campaign = campaigns(:one)
+    communication = campaign.communications.create!(contact: contacts(:one))
+    communication.mark_sent(Date.today - 5.days)
+    @user.users_policies.create!(policy: "crm")
+
+    post :follow_up_communication_action, params: { id: campaign.id, communication_id: communication.id }
+
+    assert_response :success
+    # both frames are replaced, so the overlay stays open and the board updates
+    assert @response.body.include?("<turbo-stream action=\"replace\" target=\"action\">")
+    assert @response.body.include?("<turbo-stream action=\"replace\" target=\"campaign-kanban\">")
+
+    post :add_communication_log_action, params: { id: campaign.id, communication_id: communication.id, content: "Nota" }
+
+    assert_response :success
+    # the note action comes back on the notes tab, not on the first one
+    assert_match(/fade show active"\s+id="communication-tab-notes/, @response.body)
   end
 
   test "remove_communication_follow_up_action undoes it" do
@@ -173,8 +192,7 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:post, :remove_communication_follow_up_action,
       params: { id: campaign.id, communication_id: communication.id, follow_up_id: follow_up.id },
       policy: "crm",
-      title: "Annulla follow-up",
-      feedback: "Follow-up annullato"
+      title: "Dettaglio comunicazione"
     )
 
     assert_equal 0, communication.reload.follow_ups_count
@@ -201,8 +219,7 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:post, :add_communication_log_action,
       params: { id: campaign.id, communication_id: communication.id, content: "Nota di test" },
       policy: "crm",
-      title: "Aggiungi nota",
-      feedback: "Nota aggiunta"
+      title: "Dettaglio comunicazione"
     )
 
     log = communication.communications_logs.last
@@ -213,8 +230,7 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:post, :remove_communication_log_action,
       params: { id: campaign.id, communication_id: communication.id, log_id: log.id },
       policy: "crm",
-      title: "Rimuovi nota",
-      feedback: "Nota rimossa"
+      title: "Dettaglio comunicazione"
     )
 
     assert_not communication.communications_logs.exists?(log.id)

@@ -5,6 +5,9 @@ follow_ups = @communication.communications_follow_ups.recent_first
 logs = @communication.communications_logs.recent_first
 # Il modale può convivere con altri contenuti in pagina: id univoci per i tab.
 tabs_id = SecureRandom.hex(3)
+# le azioni su follow-up e note ri-renderizzano l'overlay: torna sul tab da cui
+# è partita l'azione invece di ripartire dal primo
+notes_tab_active = @active_tab == "notes"
 %>
 
 <div class="c-comm-overlay">
@@ -38,13 +41,13 @@ tabs_id = SecureRandom.hex(3)
   <ul class="nav nav-tabs mt-3 flex-shrink-0" role="tablist">
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link active"
+        class="nav-link <%= 'active' unless notes_tab_active %>"
         type="button"
         role="tab"
         data-bs-toggle="tab"
         data-bs-target="#communication-tab-follow-ups-<%= tabs_id %>"
         aria-controls="communication-tab-follow-ups-<%= tabs_id %>"
-        aria-selected="true"
+        aria-selected="<%= !notes_tab_active %>"
       >
         Follow-up
         <span class="badge rounded-pill bg-secondary ms-1 <%= 'd-none' unless follow_ups.size.positive? %>"><%= follow_ups.size %></span>
@@ -52,13 +55,13 @@ tabs_id = SecureRandom.hex(3)
     </li>
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link"
+        class="nav-link <%= 'active' if notes_tab_active %>"
         type="button"
         role="tab"
         data-bs-toggle="tab"
         data-bs-target="#communication-tab-notes-<%= tabs_id %>"
         aria-controls="communication-tab-notes-<%= tabs_id %>"
-        aria-selected="false"
+        aria-selected="<%= notes_tab_active %>"
       >
         Note
         <span class="badge rounded-pill bg-secondary ms-1 <%= 'd-none' unless logs.size.positive? %>"><%= logs.size %></span>
@@ -68,7 +71,7 @@ tabs_id = SecureRandom.hex(3)
 
   <div class="tab-content c-comm-overlay__panes">
     <div
-      class="tab-pane c-comm-overlay__pane fade show active"
+      class="tab-pane c-comm-overlay__pane fade <%= 'show active' unless notes_tab_active %>"
       id="communication-tab-follow-ups-<%= tabs_id %>"
       role="tabpanel"
     >
@@ -117,7 +120,7 @@ tabs_id = SecureRandom.hex(3)
     </div>
 
     <div
-      class="tab-pane c-comm-overlay__pane fade"
+      class="tab-pane c-comm-overlay__pane fade <%= 'show active' if notes_tab_active %>"
       id="communication-tab-notes-<%= tabs_id %>"
       role="tabpanel"
     >
