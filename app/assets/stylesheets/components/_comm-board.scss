@@ -187,3 +187,40 @@
     margin-bottom: 0;
   }
 }
+
+// Overlay "Dettaglio comunicazione": intestazione + due tab (Follow-up / Note).
+// Come per l'overlay task: un solo scroller. Il body del modale non scrolla,
+// l'altezza scende lungo la catena flex fino al pane attivo, che è l'unico a
+// scorrere. Ogni anello ha min-height:0, altrimenti il default min-height:auto
+// dei flex item blocca lo shrink e il contenuto sfonda.
+.c-comm-overlay__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.c-comm-overlay {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  // min-width:0 sblocca lo shrink orizzontale di note larghe non spezzabili
+  min-width: 0;
+  min-height: 0;
+}
+
+.c-comm-overlay__panes {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 1rem;
+}
+
+// Il pane inattivo è display:none, quindi non partecipa al flex.
+.c-comm-overlay__panes > .c-comm-overlay__pane.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
