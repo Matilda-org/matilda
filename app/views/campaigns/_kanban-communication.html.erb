@@ -4,6 +4,7 @@ campaign ||= Campaign.new
 communication ||= Communication.new
 contact = communication.contact
 logs_count = communication.communications_logs.size
+last_follow_up = communication.communications_follow_ups.recent_first.first
 
 %>
 
@@ -20,6 +21,9 @@ logs_count = communication.communications_logs.size
           <i class="bi bi-calendar3 me-1"></i>Creata il <%= communication.created_at.strftime('%d/%m/%Y') %>
         <% elsif communication.sent? %>
           <i class="bi bi-send me-1"></i>Inviata il <%= communication.sent_date.strftime('%d/%m/%Y') %>
+          <% if last_follow_up %>
+            · <i class="bi bi-arrow-repeat me-1"></i>Follow-up il <%= last_follow_up.date.strftime('%d/%m') %>
+          <% end %>
         <% else %>
           <i class="bi bi-flag me-1"></i>Chiusa il <%= communication.closed_date.strftime('%d/%m/%Y') %>
         <% end %>
@@ -31,7 +35,7 @@ logs_count = communication.communications_logs.size
         <i class="bi bi-three-dots-vertical"></i>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" data-user-policies-target="item" data-policy="crm">
-        <li><a class="dropdown-item" href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Note</a></li>
+        <li><a class="dropdown-item" href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Dettaglio</a></li>
         <li><a class="dropdown-item text-danger" href="<%= campaigns_actions_path(type: 'remove-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Elimina</a></li>
       </ul>
     </div>
@@ -40,7 +44,15 @@ logs_count = communication.communications_logs.size
   <div class="c-comm-board__card-footer">
     <div class="d-flex align-items-center gap-1">
       <% if communication.follow_ups_count.positive? %>
-        <span class="badge rounded-pill bg-<%= communication.sent? ? 'info' : 'secondary' %> bg-opacity-75" data-controller="tooltip" data-tooltip="<%= communication.follow_ups_count %> follow-up registrati"><i class="bi bi-arrow-repeat me-1"></i><%= communication.follow_ups_count %></span>
+        <%# clickable: the modal lists every follow-up and lets you undo one %>
+        <a
+          class="badge rounded-pill bg-<%= communication.sent? ? 'info' : 'secondary' %> bg-opacity-75 text-decoration-none"
+          href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>"
+          data-turbo-frame="action"
+          data-controller="tooltip"
+          data-tooltip="<%= communication.follow_ups_count %> follow-up, ultimo il <%= last_follow_up&.date&.strftime('%d/%m/%Y') %>"
+          aria-label="Follow-up della comunicazione con <%= contact.name %>"
+        ><i class="bi bi-arrow-repeat me-1"></i><%= communication.follow_ups_count %></a>
       <% end %>
       <a
         class="badge rounded-pill bg-secondary <%= logs_count.positive? ? 'bg-opacity-75' : 'bg-opacity-25' %> text-decoration-none"

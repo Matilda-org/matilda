@@ -8,7 +8,7 @@ class Api::V1::CommunicationsController < Api::V1::BaseController
     return unless require_policy!("crm")
 
     communication = Communication.find(params[:id])
-    render json: communication.as_json(include: [ :contact, :campaign ])
+    render json: communication.as_json(include: [ :contact, :campaign, :communications_follow_ups ])
   end
 
   # POST /api/v1/communications/:id/send
@@ -38,9 +38,20 @@ class Api::V1::CommunicationsController < Api::V1::BaseController
     return unless require_policy!("crm")
 
     communication = Communication.find(params[:id])
-    return render_record_errors(communication) unless communication.register_follow_up
+    follow_up = communication.register_follow_up(params[:date], @current_user)
+    return render_record_errors(communication) unless follow_up
 
-    render json: communication.as_json
+    render json: follow_up.as_json, status: :created
+  end
+
+  # DELETE /api/v1/communications/:id/follow_ups/:follow_up_id
+  def destroy_follow_up
+    return unless require_policy!("crm")
+
+    communication = Communication.find(params[:id])
+    communication.communications_follow_ups.find(params[:follow_up_id]).destroy
+
+    head :no_content
   end
 
   # GET /api/v1/communications/:id/logs

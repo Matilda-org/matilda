@@ -190,13 +190,31 @@ class CampaignsController < ApplicationController
     return unless campaign_finder
     return unless communication_finder
 
-    unless @communication.register_follow_up
-      flash[:danger] = "I follow-up si registrano solo su comunicazioni inviate"
+    follow_up = @communication.register_follow_up(params[:date], @session_user)
+    unless follow_up
+      flash[:danger] = @communication.errors.full_messages.to_sentence
       redirect_to campaigns_show_path(@campaign)
       return
     end
 
-    render_communication_feedback("Registra follow-up", "Follow-up registrato", "Follow-up ##{@communication.follow_ups_count} con #{@communication.contact.name} registrato.")
+    render_communication_feedback("Registra follow-up", "Follow-up registrato", "Follow-up del #{follow_up.date.strftime('%d/%m/%Y')} con #{@communication.contact.name} registrato.")
+  end
+
+  def remove_communication_follow_up_action
+    return unless validate_policy!("crm")
+    return unless campaign_finder
+    return unless communication_finder
+
+    follow_up = @communication.communications_follow_ups.find_by(id: params[:follow_up_id])
+    unless follow_up
+      flash[:danger] = "Follow-up non trovato"
+      redirect_to campaigns_show_path(@campaign)
+      return
+    end
+
+    follow_up.destroy
+
+    render_communication_feedback("Annulla follow-up", "Follow-up annullato", "Il follow-up del #{follow_up.date.strftime('%d/%m/%Y')} è stato annullato.")
   end
 
   def remove_communication_action

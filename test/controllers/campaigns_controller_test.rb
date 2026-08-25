@@ -21,7 +21,7 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_action("add-communication", "Aggiungi comunicazione", campaign.id)
     matilda_controller_action("send-communication", "Conferma invio", campaign.id, { communication_id: communication.id })
     communication.communications_logs.create!(content: "Una nota lunga di esempio")
-    matilda_controller_action("show-communication", "Note comunicazione", campaign.id, { communication_id: communication.id })
+    matilda_controller_action("show-communication", "Dettaglio comunicazione", campaign.id, { communication_id: communication.id })
     matilda_controller_action("remove-communication", "Elimina comunicazione", campaign.id, { communication_id: communication.id })
 
     communication.mark_sent(Date.today)
@@ -146,7 +146,7 @@ class CampaignsControllerTest < ActionController::TestCase
     assert_equal Date.today, communication.closed_date
   end
 
-  test "follow_up_communication_action increments the counter" do
+  test "follow_up_communication_action registers a dated follow-up" do
     campaign = campaigns(:one)
     communication = campaign.communications.create!(contact: contacts(:one))
     communication.mark_sent(Date.today - 5.days)
@@ -158,7 +158,26 @@ class CampaignsControllerTest < ActionController::TestCase
       feedback: "Follow-up registrato"
     )
 
+    follow_up = communication.communications_follow_ups.first
+    assert_equal Date.today, follow_up.date
+    assert_equal @user.id, follow_up.user_id
     assert_equal 1, communication.reload.follow_ups_count
+  end
+
+  test "remove_communication_follow_up_action undoes it" do
+    campaign = campaigns(:one)
+    communication = campaign.communications.create!(contact: contacts(:one))
+    communication.mark_sent(Date.today - 5.days)
+    follow_up = communication.register_follow_up
+
+    matilda_controller_endpoint(:post, :remove_communication_follow_up_action,
+      params: { id: campaign.id, communication_id: communication.id, follow_up_id: follow_up.id },
+      policy: "crm",
+      title: "Annulla follow-up",
+      feedback: "Follow-up annullato"
+    )
+
+    assert_equal 0, communication.reload.follow_ups_count
   end
 
   test "remove_communication_action" do

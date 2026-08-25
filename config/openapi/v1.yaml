@@ -660,11 +660,21 @@ paths:
     post:
       tags: [communications]
       summary: Registra un follow-up sulla comunicazione
-      description: Richiede la policy `crm`. Incrementa `follow_ups_count`; ammesso solo sulle comunicazioni `sent`.
+      description: |
+        Richiede la policy `crm`. Crea un follow-up datato (`date`, default oggi) e attribuito
+        all'utente della API key; ammesso solo sulle comunicazioni `sent`. I follow-up sono
+        elencati nel dettaglio della comunicazione e si annullano singolarmente.
       parameters:
         - $ref: "#/components/parameters/Id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date: { type: string, format: date }
       responses:
-        "200":
+        "201":
           description: Follow-up registrato
           content:
             application/json:
@@ -673,6 +683,24 @@ paths:
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "422": { $ref: "#/components/responses/UnprocessableContent" }
+
+  /communications/{id}/follow_ups/{follow_up_id}:
+    delete:
+      tags: [communications]
+      summary: Annulla un follow-up della comunicazione
+      description: Richiede la policy `crm`.
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: follow_up_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Follow-up annullato
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
 
   /communications/{id}/logs:
     get:

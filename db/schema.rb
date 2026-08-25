@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_22_230000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_24_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -69,6 +69,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_22_230000) do
     t.index ["campaign_id", "contact_id"], name: "index_communications_on_campaign_id_and_contact_id", unique: true
     t.index ["campaign_id"], name: "index_communications_on_campaign_id"
     t.index ["contact_id"], name: "index_communications_on_contact_id"
+  end
+
+  create_table "communications_follow_ups", force: :cascade do |t|
+    t.integer "communication_id", null: false
+    t.integer "user_id"
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["communication_id"], name: "index_communications_follow_ups_on_communication_id"
+    t.index ["user_id"], name: "index_communications_follow_ups_on_user_id"
   end
 
   create_table "communications_logs", force: :cascade do |t|
@@ -391,6 +401,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_22_230000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "communications", "campaigns"
   add_foreign_key "communications", "contacts"
+  add_foreign_key "communications_follow_ups", "communications"
+  add_foreign_key "communications_follow_ups", "users"
   add_foreign_key "communications_logs", "communications"
   add_foreign_key "communications_logs", "users"
   add_foreign_key "notifications", "users"

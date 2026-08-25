@@ -69,21 +69,44 @@ class Api::V1::CommunicationsTest < ApiIntegrationTest
     assert communication.reload.lost?
   end
 
-  test "follow_up increments the counter only while sent" do
+  test "follow_up creates a dated record only while sent" do
     give_policy "crm"
 
     post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
     assert_response :unprocessable_content
 
-    communication.mark_sent(Date.today)
-    post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
-    assert_response :success
+    communication.mark_sent(Date.today - 5.days)
+    post "/api/v1/communications/#{communication.id}/follow_up", params: { date: Date.today - 1.day }, headers: api_headers, as: :json
+    assert_response :created
+    assert_equal (Date.today - 1.day).to_s, json_response["date"]
+    assert_equal @user.id, json_response["user_id"]
     assert_equal 1, communication.reload.follow_ups_count
-    assert_equal 1, json_response["follow_ups_count"]
 
     communication.mark_closed("won", Date.today)
     post "/api/v1/communications/#{communication.id}/follow_up", headers: api_headers, as: :json
     assert_response :unprocessable_content
+  end
+
+  test "destroy_follow_up undoes it and keeps the counter in sync" do
+    communication.mark_sent(Date.today - 5.days)
+    follow_up = communication.register_follow_up
+    give_policy "crm"
+
+    delete "/api/v1/communications/#{communication.id}/follow_ups/#{follow_up.id}", headers: api_headers
+    assert_response :no_content
+    assert_equal 0, communication.reload.follow_ups_count
+
+    delete "/api/v1/communications/#{communication.id}/follow_ups/#{follow_up.id}", headers: api_headers
+    assert_response :not_found
+  end
+
+  test "show lists the follow-ups of the communication" do
+    communication.mark_sent(Date.today - 5.days)
+    communication.register_follow_up(Date.today - 2.days)
+    give_policy "crm"
+
+    get "/api/v1/communications/#{communication.id}", headers: api_headers
+    assert_equal [ (Date.today - 2.days).to_s ], json_response["communications_follow_ups"].map { |f| f["date"] }
   end
 
   test "logs returns the notes with their html content, most recent first" do

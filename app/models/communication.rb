@@ -21,6 +21,7 @@ class Communication < ApplicationRecord
   belongs_to :campaign
 
   has_many :communications_logs, dependent: :destroy, class_name: "Communications::Log"
+  has_many :communications_follow_ups, dependent: :destroy, class_name: "Communications::FollowUp"
 
   # SCOPES
   ############################################################
@@ -85,14 +86,19 @@ class Communication < ApplicationRecord
     update(status: final_status, closed_date: date)
   end
 
-  # follow-ups only make sense while waiting for an outcome
-  def register_follow_up
+  # follow-ups only make sense while waiting for an outcome; each one is a dated
+  # record, so it can be listed and undone (follow_ups_count is its counter cache)
+  def register_follow_up(date = Date.today, user = nil)
     unless sent?
       errors.add(:base, "i follow-up si registrano solo su comunicazioni inviate")
       return false
     end
 
-    increment!(:follow_ups_count)
+    follow_up = communications_follow_ups.new(date: date.presence || Date.today, user: user)
+    return follow_up if follow_up.save
+
+    errors.add(:base, follow_up.errors.full_messages.to_sentence)
+    false
   end
 
   # CLASS

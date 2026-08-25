@@ -116,6 +116,7 @@ Rails.application.routes.draw do
   post "campaigns/send-communication-action/:id/:communication_id", to: "campaigns#send_communication_action", as: "campaigns_send_communication_action"
   post "campaigns/close-communication-action/:id/:communication_id", to: "campaigns#close_communication_action", as: "campaigns_close_communication_action"
   post "campaigns/follow-up-communication-action/:id/:communication_id", to: "campaigns#follow_up_communication_action", as: "campaigns_follow_up_communication_action"
+  post "campaigns/remove-communication-follow-up-action/:id/:communication_id/:follow_up_id", to: "campaigns#remove_communication_follow_up_action", as: "campaigns_remove_communication_follow_up_action"
   post "campaigns/remove-communication-action/:id/:communication_id", to: "campaigns#remove_communication_action", as: "campaigns_remove_communication_action"
   post "campaigns/add-communication-log-action/:id/:communication_id", to: "campaigns#add_communication_log_action", as: "campaigns_add_communication_log_action"
   post "campaigns/remove-communication-log-action/:id/:communication_id/:log_id", to: "campaigns#remove_communication_log_action", as: "campaigns_remove_communication_log_action"
@@ -232,6 +233,7 @@ Rails.application.routes.draw do
           post :send, action: :mark_sent
           post :close, action: :mark_closed
           post :follow_up
+          delete "follow_ups/:follow_up_id", action: :destroy_follow_up, as: "remove_follow_up"
           get :logs
           post :logs, action: :create_log
           delete "logs/:log_id", action: :destroy_log, as: "log"

@@ -1,10 +1,57 @@
-<%= render 'shared/action-container', title: 'Note comunicazione', turbo_frame: 'campaign-kanban', size: 'xl' do %>
+<%= render 'shared/action-container', title: 'Dettaglio comunicazione', turbo_frame: 'campaign-kanban', size: 'xl' do %>
   <div class="mb-3">
     <h2 class="fs-4 mb-1"><%= @communication.contact.name %></h2>
     <span class="badge rounded-pill bg-<%= @communication.status_color %>"><i class="bi <%= @communication.status_icon %> me-1"></i><%= @communication.status_string %></span>
     <% if @communication.sent_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-send me-1"></i>Inviata il <%= @communication.sent_date.strftime('%d/%m/%Y') %></span><% end %>
     <% if @communication.closed_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-flag me-1"></i>Chiusa il <%= @communication.closed_date.strftime('%d/%m/%Y') %></span><% end %>
     <% if @communication.follow_ups_count.positive? %><span class="badge rounded-pill bg-info bg-opacity-75"><i class="bi bi-arrow-repeat me-1"></i><%= @communication.follow_ups_count %> follow-up</span><% end %>
+  </div>
+
+  <hr />
+
+  <% follow_ups = @communication.communications_follow_ups.recent_first %>
+  <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="fs-6 text-muted mb-0"><i class="bi bi-arrow-repeat me-1"></i>Follow-up (<%= follow_ups.size %>)</h3>
+      <% if @communication.sent? %>
+        <a
+          href="<%= campaigns_follow_up_communication_action_path(id: @campaign.id, communication_id: @communication.id) %>"
+          data-turbo-method="post"
+          data-turbo-frame="action"
+          class="btn btn-sm btn-outline-primary"
+        ><i class="bi bi-plus-circle me-1"></i>Registra follow-up</a>
+      <% end %>
+    </div>
+
+    <% if follow_ups.any? %>
+      <ol class="list-group">
+        <% follow_ups.each do |follow_up| %>
+          <li class="list-group-item">
+            <div class="c-list-item">
+              <div class="c-list-item__body">
+                <div class="c-list-item__meta mt-0">
+                  <span><i class="bi bi-calendar3 me-1"></i><%= follow_up.date.strftime('%d/%m/%Y') %></span>
+                  <% if follow_up.user %><span><i class="bi bi-person me-1"></i><%= follow_up.user.complete_name %></span><% end %>
+                </div>
+              </div>
+              <div class="c-list-item__actions">
+                <a
+                  href="<%= campaigns_remove_communication_follow_up_action_path(id: @campaign.id, communication_id: @communication.id, follow_up_id: follow_up.id) %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="action"
+                  class="btn btn-sm btn-outline text-danger"
+                  data-controller="tooltip"
+                  data-tooltip="Annulla follow-up"
+                  aria-label="Annulla follow-up del <%= follow_up.date.strftime('%d/%m/%Y') %>"
+                ><i class="bi bi-x-circle"></i></a>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ol>
+    <% else %>
+      <p class="text-muted mb-0" style="font-size: 12px">Nessun follow-up registrato.</p>
+    <% end %>
   </div>
 
   <hr />
