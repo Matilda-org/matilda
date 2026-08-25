@@ -15,67 +15,49 @@ cold_count = campaign.communications.sent.where(sent_date: ..(Date.today - 7)).c
 <%= turbo_frame_tag 'campaign-kanban' do %>
 
   <div class="row g-2 mb-3">
-    <div class="col-6 col-lg-3">
+    <div class="col-12 col-lg-4">
       <div class="c-stat">
         <div class="c-stat__icon rounded-circle bg-primary bg-opacity-10 text-primary"><i class="bi bi-megaphone-fill"></i></div>
         <div>
           <div class="c-stat__value"><%= total %></div>
-          <div class="c-stat__label">Comunicazioni</div>
+          <div class="c-stat__label"><%= total == 1 ? 'comunicazione' : 'comunicazioni' %> in campagna</div>
         </div>
       </div>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="c-stat">
-        <div class="c-stat__icon rounded-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-envelope"></i></div>
-        <div>
-          <div class="c-stat__value"><%= counts['to_send'] || 0 %></div>
-          <div class="c-stat__label">Da inviare</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-lg-4">
       <div class="c-stat">
         <div class="c-stat__icon rounded-circle bg-<%= cold_count.positive? ? 'warning' : 'info' %> bg-opacity-10 text-<%= cold_count.positive? ? 'warning' : 'info' %>"><i class="bi bi-hourglass-split"></i></div>
         <div>
-          <div class="c-stat__value"><%= counts['sent'] || 0 %></div>
-          <div class="c-stat__label"><%= cold_count.positive? ? "#{cold_count} da oltre 7 giorni" : 'In attesa di esito' %></div>
+          <div class="c-stat__value"><%= cold_count %></div>
+          <div class="c-stat__label">in attesa da oltre 7 giorni</div>
         </div>
       </div>
     </div>
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-lg-4">
       <div class="c-stat">
         <div class="c-stat__icon rounded-circle bg-success bg-opacity-10 text-success"><i class="bi bi-trophy"></i></div>
         <div>
           <div class="c-stat__value"><%= conversion ? "#{conversion}%" : "—" %></div>
-          <div class="c-stat__label"><%= conversion ? "Conversione (#{won_count}/#{closed_count} chiuse)" : "Nessun esito registrato" %></div>
+          <div class="c-stat__label"><%= conversion ? "conversione su #{closed_count} chiuse" : "nessun esito registrato" %></div>
         </div>
       </div>
     </div>
   </div>
 
+  <%# barra di avanzamento: le quantità per stato le dicono già le colonne,
+      qui conta la proporzione (il dettaglio numerico è nel tooltip) %>
   <% if total.positive? %>
-    <div class="mb-4">
-      <div class="c-comm-progress">
-        <% Communication.statuses.keys.each do |status| %>
-          <% count = counts[status] || 0 %>
-          <% next unless count.positive? %>
-          <div
-            class="c-comm-progress__segment bg-<%= Communication.status_color(status) %>"
-            style="width: <%= (count.to_f / total * 100).round(2) %>%"
-            data-controller="tooltip"
-            data-tooltip="<%= count %> <%= Communication.status_string(status).downcase %>"
-          ></div>
-        <% end %>
-      </div>
-      <div class="c-comm-progress__legend">
-        <% Communication.statuses.keys.each do |status| %>
-          <% count = counts[status] || 0 %>
-          <span class="c-comm-progress__legend-item">
-            <span class="c-comm-progress__dot bg-<%= Communication.status_color(status) %>"></span>
-            <%= Communication.status_string(status) %> <b><%= count %></b>
-          </span>
-        <% end %>
-      </div>
+    <div class="c-comm-progress mb-4">
+      <% Communication.statuses.keys.each do |status| %>
+        <% count = counts[status] || 0 %>
+        <% next unless count.positive? %>
+        <div
+          class="c-comm-progress__segment bg-<%= Communication.status_color(status) %>"
+          style="width: <%= (count.to_f / total * 100).round(2) %>%"
+          data-controller="tooltip"
+          data-tooltip="<%= count %> <%= Communication.status_string(status).downcase %>"
+        ></div>
+      <% end %>
     </div>
   <% end %>
 

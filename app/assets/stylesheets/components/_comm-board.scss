@@ -19,6 +19,9 @@
   border: 1px solid var(--bs-border-color);
   border-top: 4px solid rgba(var(--comm-rgb), 1);
   border-radius: var(--bs-border-radius-lg);
+  // i figli (header, corsia) vengono ritagliati dall'arrotondamento, altrimenti
+  // il loro sfondo squadrato spunta fuori agli angoli
+  overflow: hidden;
 
   // desktop: le quattro colonne si dividono la riga (25% ciascuna)
   @media screen and (min-width: 992px) {
@@ -37,7 +40,6 @@
   padding: 0.75rem 1rem;
   background-color: rgba(var(--comm-rgb), 0.14);
   border-bottom: 1px solid rgba(var(--comm-rgb), 0.2);
-  border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
 }
 
 .c-comm-board__header-title {
@@ -187,27 +189,6 @@
 
 .c-comm-progress__segment {
   height: 100%;
-}
-
-.c-comm-progress__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1rem;
-  margin-top: 0.5rem;
-  font-size: 12px;
-  color: var(--bs-secondary-color);
-}
-
-.c-comm-progress__legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.c-comm-progress__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
 }
 
 // Overlay "Dettaglio comunicazione": intestazione, timeline di stato e due tab.
