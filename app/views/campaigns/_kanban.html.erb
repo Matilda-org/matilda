@@ -7,8 +7,9 @@ total = counts.values.sum
 won_count = counts['won'] || 0
 closed_count = won_count + (counts['lost'] || 0)
 conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).round : nil
-# le inviate da più di una settimana: quelle che stanno raffreddandosi
-cold_count = campaign.communications.sent.where(sent_date: ..(Date.today - 7)).count
+# quelle in silenzio da oltre la soglia: da sollecitare o da chiudere
+# (il conteggio tiene conto dei follow-up già fatti)
+cold_count = campaign.communications.sent.includes(:communications_follow_ups).count(&:needs_attention?)
 
 %>
 
@@ -29,7 +30,7 @@ cold_count = campaign.communications.sent.where(sent_date: ..(Date.today - 7)).c
         <div class="c-stat__icon rounded-circle bg-<%= cold_count.positive? ? 'warning' : 'info' %> bg-opacity-10 text-<%= cold_count.positive? ? 'warning' : 'info' %>"><i class="bi bi-hourglass-split"></i></div>
         <div>
           <div class="c-stat__value"><%= cold_count %></div>
-          <div class="c-stat__label">in attesa da oltre 7 giorni</div>
+          <div class="c-stat__label">da sollecitare o chiudere</div>
         </div>
       </div>
     </div>

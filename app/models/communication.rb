@@ -8,6 +8,10 @@ class Communication < ApplicationRecord
     won: 3
   }
 
+  # giorni di silenzio dopo i quali la comunicazione va sollecitata o chiusa
+  SILENCE_WARNING_DAYS = 7
+  SILENCE_URGENT_DAYS = 21
+
   # states can only move forward; to undo, delete and recreate the communication
   TRANSITIONS = {
     "to_send" => [ "sent" ],
@@ -61,20 +65,44 @@ class Communication < ApplicationRecord
     @status_string ||= Communication.status_string(status)
   end
 
-  # days spent waiting for an outcome, to spot the ones going cold
+  # giorni di attesa dell'esito: contano dall'invio
   def days_waiting
     return nil unless sent? && sent_date
 
     (Date.today - sent_date).to_i
   end
 
+  # ultima volta che ci si è mossi: l'invio, oppure il follow-up più recente
+  def last_activity_date
+    return nil unless sent? && sent_date
+
+    [ sent_date, communications_follow_ups.maximum(:date) ].compact.max
+  end
+
+  # silenzio dall'ultima mossa: è questo, non la data d'invio, che dice se è
+  # il momento di sollecitare (un follow-up di ieri azzera l'urgenza)
+  def days_since_last_activity
+    date = last_activity_date
+    return nil unless date
+
+    # un follow-up datato nel futuro non produce silenzio negativo
+    [ (Date.today - date).to_i, 0 ].max
+  end
+
   def days_waiting_color
-    days = days_waiting
+    days = days_since_last_activity
     return "secondary" if days.nil?
-    return "danger" if days >= 21
-    return "warning" if days >= 7
+    return "danger" if days >= SILENCE_URGENT_DAYS
+    return "warning" if days >= SILENCE_WARNING_DAYS
 
     "info"
+  end
+
+  # da sollecitare o da chiudere: silenzio oltre la soglia
+  def needs_attention?
+    days = days_since_last_activity
+
+    days.present? && days >= SILENCE_WARNING_DAYS
   end
 
   def status_color

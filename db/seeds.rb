@@ -410,10 +410,12 @@ campaigns_data.each_with_index do |data, campaign_index|
     case index % 4
     when 1
       communication.mark_sent(Date.today - rand(2..15).days)
-      rand(0..3).times { |i| communication.register_follow_up(communication.sent_date + (i + 1) * 3, users.sample) }
+      # follow-up sparsi tra l'invio e oggi, mai nel futuro
+      elapsed = (Date.today - communication.sent_date).to_i
+      rand(0..3).times { communication.register_follow_up(communication.sent_date + rand(0..elapsed), users.sample) }
     when 2
       communication.mark_sent(Date.today - rand(10..30).days)
-      communication.register_follow_up(communication.sent_date + 5, users.sample)
+      communication.register_follow_up(communication.sent_date + rand(1..5), users.sample)
       communication.mark_closed("lost", Date.today - rand(1..5).days)
     when 3
       communication.mark_sent(Date.today - rand(10..30).days)

@@ -5,7 +5,7 @@ communication ||= Communication.new
 contact = communication.contact
 logs_count = communication.communications_logs.size
 follow_ups_count = communication.follow_ups_count
-days_waiting = communication.days_waiting
+silence = communication.days_since_last_activity
 
 %>
 
@@ -38,10 +38,15 @@ days_waiting = communication.days_waiting
 
   <div class="c-comm-board__card-meta">
     <% if communication.sent? %>
-      <%# quanto sta aspettando: giallo dopo una settimana, rosso dopo tre %>
+      <%# giorni di silenzio dall'ultima mossa (invio o follow-up): giallo dopo
+          una settimana, rosso dopo tre, con l'invito ad agire %>
       <span class="badge rounded-pill bg-<%= communication.days_waiting_color %>">
-        <i class="bi bi-hourglass-split me-1"></i>
-        <% if days_waiting.zero? %>In attesa da oggi<% else %>In attesa da <%= days_waiting %> <%= days_waiting == 1 ? 'giorno' : 'giorni' %><% end %>
+        <i class="bi bi-<%= communication.needs_attention? ? 'exclamation-triangle-fill' : 'hourglass-split' %> me-1"></i>
+        <% if silence.zero? %>
+          Aggiornata oggi
+        <% else %>
+          <%= communication.needs_attention? ? 'Da sollecitare' : 'In attesa' %> · <%= silence %>g
+        <% end %>
       </span>
     <% end %>
 

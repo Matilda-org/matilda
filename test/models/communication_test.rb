@@ -65,6 +65,44 @@ class CommunicationTest < ActiveSupport::TestCase
     assert communication.reload.lost?
   end
 
+  test "silence counts from the last move, so a follow-up resets it" do
+    communication = build_communication
+    communication.mark_sent(Date.today - 10.days)
+
+    # nothing done since the send: silence equals the waiting time
+    assert_equal 10, communication.days_waiting
+    assert_equal 10, communication.days_since_last_activity
+    assert communication.needs_attention?
+    assert_equal "warning", communication.days_waiting_color
+
+    # a recent follow-up clears the urgency but not the waiting time
+    communication.register_follow_up(Date.today - 1.day)
+    assert_equal 10, communication.days_waiting
+    assert_equal 1, communication.days_since_last_activity
+    assert_not communication.needs_attention?
+    assert_equal "info", communication.days_waiting_color
+  end
+
+  test "long silence turns urgent" do
+    communication = build_communication
+    communication.mark_sent(Date.today - 30.days)
+
+    assert communication.needs_attention?
+    assert_equal "danger", communication.days_waiting_color
+    assert_equal Communication::SILENCE_URGENT_DAYS, 21
+  end
+
+  test "only sent communications ask for attention" do
+    communication = build_communication
+    assert_nil communication.days_since_last_activity
+    assert_not communication.needs_attention?
+
+    communication.mark_sent(Date.today - 30.days)
+    communication.mark_closed("lost", Date.today)
+    assert_nil communication.days_since_last_activity
+    assert_not communication.needs_attention?
+  end
+
   test "follow-ups count only while sent" do
     communication = build_communication
 
