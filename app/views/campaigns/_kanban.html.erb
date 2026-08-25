@@ -1,13 +1,14 @@
 <%
 
 campaign ||= Campaign.new
-communications = campaign.communications.includes(:contact, :communications_logs).order(updated_at: :desc).group_by(&:status)
+counts = campaign.communications_counts
 
-total = communications.values.sum(&:size)
-won_count = (communications['won'] || []).size
-lost_count = (communications['lost'] || []).size
-closed_count = won_count + lost_count
+total = counts.values.sum
+won_count = counts['won'] || 0
+closed_count = won_count + (counts['lost'] || 0)
 conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).round : nil
+# le inviate da più di una settimana: quelle che stanno raffreddandosi
+cold_count = campaign.communications.sent.where(sent_date: ..(Date.today - 7)).count
 
 %>
 
@@ -27,17 +28,17 @@ conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).roun
       <div class="c-stat">
         <div class="c-stat__icon rounded-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-envelope"></i></div>
         <div>
-          <div class="c-stat__value"><%= (communications['to_send'] || []).size %></div>
+          <div class="c-stat__value"><%= counts['to_send'] || 0 %></div>
           <div class="c-stat__label">Da inviare</div>
         </div>
       </div>
     </div>
     <div class="col-6 col-lg-3">
       <div class="c-stat">
-        <div class="c-stat__icon rounded-circle bg-info bg-opacity-10 text-info"><i class="bi bi-send-fill"></i></div>
+        <div class="c-stat__icon rounded-circle bg-<%= cold_count.positive? ? 'warning' : 'info' %> bg-opacity-10 text-<%= cold_count.positive? ? 'warning' : 'info' %>"><i class="bi bi-hourglass-split"></i></div>
         <div>
-          <div class="c-stat__value"><%= (communications['sent'] || []).size %></div>
-          <div class="c-stat__label">In attesa di esito</div>
+          <div class="c-stat__value"><%= counts['sent'] || 0 %></div>
+          <div class="c-stat__label"><%= cold_count.positive? ? "#{cold_count} da oltre 7 giorni" : 'In attesa di esito' %></div>
         </div>
       </div>
     </div>
@@ -52,9 +53,39 @@ conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).roun
     </div>
   </div>
 
+  <% if total.positive? %>
+    <div class="mb-4">
+      <div class="c-comm-progress">
+        <% Communication.statuses.keys.each do |status| %>
+          <% count = counts[status] || 0 %>
+          <% next unless count.positive? %>
+          <div
+            class="c-comm-progress__segment bg-<%= Communication.status_color(status) %>"
+            style="width: <%= (count.to_f / total * 100).round(2) %>%"
+            data-controller="tooltip"
+            data-tooltip="<%= count %> <%= Communication.status_string(status).downcase %>"
+          ></div>
+        <% end %>
+      </div>
+      <div class="c-comm-progress__legend">
+        <% Communication.statuses.keys.each do |status| %>
+          <% count = counts[status] || 0 %>
+          <span class="c-comm-progress__legend-item">
+            <span class="c-comm-progress__dot bg-<%= Communication.status_color(status) %>"></span>
+            <%= Communication.status_string(status) %> <b><%= count %></b>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="c-comm-board">
     <% Communication.statuses.keys.each do |status| %>
-      <% status_communications = communications[status] || [] %>
+      <%
+        status_communications = campaign.communications.where(status: status)
+          .board_order(status)
+          .includes(:contact, :communications_logs, :communications_follow_ups)
+      %>
       <div class="c-comm-board__column" style="--comm-rgb: var(--bs-<%= Communication.status_color(status) %>-rgb)">
         <div class="c-comm-board__header">
           <div class="c-comm-board__header-title">
@@ -72,7 +103,13 @@ conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).roun
           <% else %>
             <div class="c-comm-board__empty">
               <i class="bi <%= Communication.status_icon(status) %>"></i>
-              Nessuna comunicazione
+              <% if status == 'to_send' %>
+                Aggiungi un contatto per iniziare
+              <% elsif status == 'sent' %>
+                Nessuna comunicazione in attesa
+              <% else %>
+                Nessun esito <%= Communication.status_string(status).downcase %>
+              <% end %>
             </div>
           <% end %>
         </div>
@@ -80,7 +117,7 @@ conversion = closed_count.positive? ? (won_count.to_f / closed_count * 100).roun
         <% if status == 'to_send' %>
           <div class="c-comm-board__footer">
             <a href="<%= campaigns_actions_path(type: 'add-communication', id: campaign.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="crm">
-              <i class="bi bi-plus-circle me-1"></i>Aggiungi
+              <i class="bi bi-plus-circle me-1"></i>Aggiungi contatto
             </a>
           </div>
         <% end %>

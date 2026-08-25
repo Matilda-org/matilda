@@ -29,6 +29,15 @@ class Communication < ApplicationRecord
   # still waiting for an outcome (not lost/won)
   scope :ongoing, -> { where(status: [ :to_send, :sent ]) }
 
+  # each column of the board reads in the order that matters for it: the oldest
+  # queued or waiting first (they need attention), the latest outcomes on top
+  scope :board_order, ->(status) {
+    return order(created_at: :asc) if status == "to_send"
+    return order(sent_date: :asc, created_at: :asc) if status == "sent"
+
+    order(closed_date: :desc, updated_at: :desc)
+  }
+
   # VALIDATIONS
   ############################################################
 
@@ -50,6 +59,22 @@ class Communication < ApplicationRecord
 
   def status_string
     @status_string ||= Communication.status_string(status)
+  end
+
+  # days spent waiting for an outcome, to spot the ones going cold
+  def days_waiting
+    return nil unless sent? && sent_date
+
+    (Date.today - sent_date).to_i
+  end
+
+  def days_waiting_color
+    days = days_waiting
+    return "secondary" if days.nil?
+    return "danger" if days >= 21
+    return "warning" if days >= 7
+
+    "info"
   end
 
   def status_color

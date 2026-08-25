@@ -1,8 +1,10 @@
 <%= render 'shared/action-container', title: 'Dettaglio comunicazione', turbo_frame: 'campaign-kanban', size: 'lg', body_classes: 'c-comm-overlay__body' do %>
 
 <%
-follow_ups = @communication.communications_follow_ups.recent_first
-logs = @communication.communications_logs.recent_first
+communication = @communication
+contact = communication.contact
+follow_ups = communication.communications_follow_ups.recent_first
+logs = communication.communications_logs.recent_first
 # Il modale può convivere con altri contenuti in pagina: id univoci per i tab.
 tabs_id = SecureRandom.hex(3)
 # le azioni su follow-up e note ri-renderizzano l'overlay: torna sul tab da cui
@@ -11,30 +13,84 @@ notes_tab_active = @active_tab == "notes"
 %>
 
 <div class="c-comm-overlay">
-  <div class="d-flex justify-content-between align-items-start gap-2">
-    <div style="min-width: 0">
-      <h3 class="fs-5 mb-1 text-truncate"><%= @communication.contact.name %></h3>
-      <h4 class="fs-6 text-muted mb-0"><%= @communication.campaign.name %></h4>
+  <div class="d-flex align-items-start gap-3">
+    <span class="c-comm-board__avatar" style="--comm-rgb: var(--bs-<%= communication.status_color %>-rgb); width: 44px; height: 44px; font-size: 14px"><%= contact.name_2chars %></span>
+
+    <div class="flex-grow-1" style="min-width: 0">
+      <h3 class="fs-5 mb-0 text-truncate">
+        <a href="<%= contacts_show_path(id: contact.id) %>" data-turbo-frame="_top" class="text-decoration-none text-reset"><%= contact.name %></a>
+      </h3>
+      <div class="text-muted" style="font-size: 12px">
+        <i class="bi bi-megaphone me-1"></i><%= communication.campaign.name %>
+        <% if contact.email.present? %>
+          <span class="ms-2"><i class="bi bi-envelope me-1"></i><%= contact.email %></span>
+        <% end %>
+      </div>
     </div>
 
-    <%# le azioni che fanno avanzare lo stato, le stesse della card sul board %>
-    <div class="flex-shrink-0" data-user-policies-target="item" data-policy="crm">
-      <% if @communication.to_send? %>
-        <a href="<%= campaigns_actions_path(type: 'send-communication', id: @campaign.id, communication_id: @communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
-          <i class="bi bi-send me-1"></i>Invia
+    <%# azioni della comunicazione: prima quelle di stato, poi le secondarie %>
+    <div class="d-flex align-items-center gap-1 flex-shrink-0" data-user-policies-target="item" data-policy="crm">
+      <% if communication.to_send? %>
+        <a href="<%= campaigns_actions_path(type: 'send-communication', id: @campaign.id, communication_id: communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
+          <i class="bi bi-send me-1"></i>Conferma invio
         </a>
-      <% elsif @communication.sent? %>
-        <a href="<%= campaigns_actions_path(type: 'close-communication', id: @campaign.id, communication_id: @communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
+      <% elsif communication.sent? %>
+        <a
+          href="<%= campaigns_follow_up_communication_action_path(id: @campaign.id, communication_id: communication.id) %>"
+          data-turbo-method="post"
+          data-turbo-frame="action"
+          class="btn btn-sm btn-outline-primary"
+          data-controller="tooltip"
+          data-tooltip="Registra un follow-up di oggi"
+          aria-label="Registra follow-up"
+        ><i class="bi bi-arrow-repeat"></i></a>
+        <a href="<%= campaigns_actions_path(type: 'close-communication', id: @campaign.id, communication_id: communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
           <i class="bi bi-flag me-1"></i>Esito
         </a>
       <% end %>
+
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Altre azioni sulla comunicazione">
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="<%= contacts_show_path(id: contact.id) %>" data-turbo-frame="_top">Apri contatto</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="<%= campaigns_actions_path(type: 'remove-communication', id: @campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Elimina comunicazione</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="mt-2">
-    <span class="badge rounded-pill bg-<%= @communication.status_color %>"><i class="bi <%= @communication.status_icon %> me-1"></i><%= @communication.status_string %></span>
-    <% if @communication.sent_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-send me-1"></i>Inviata il <%= @communication.sent_date.strftime('%d/%m/%Y') %></span><% end %>
-    <% if @communication.closed_date %><span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-flag me-1"></i>Chiusa il <%= @communication.closed_date.strftime('%d/%m/%Y') %></span><% end %>
+  <%# dove è arrivata e cosa resta da fare: gli stati vanno solo in avanti %>
+  <div class="c-comm-steps">
+    <%
+      steps = [
+        { label: "Da inviare", icon: "bi-envelope", done: true, date: communication.created_at.to_date },
+        { label: "Inviata", icon: "bi-send-fill", done: !communication.to_send?, date: communication.sent_date },
+        {
+          label: communication.closed? ? communication.status_string : "Esito",
+          icon: communication.closed? ? communication.status_icon : "bi-flag",
+          done: communication.closed?,
+          date: communication.closed_date,
+          color: communication.closed? ? communication.status_color : nil
+        }
+      ]
+    %>
+    <% steps.each_with_index do |step, index| %>
+      <% if index.positive? %>
+        <span class="c-comm-steps__line <%= 'c-comm-steps__line--done' if step[:done] %>"></span>
+      <% end %>
+      <span
+        class="c-comm-steps__step <%= 'c-comm-steps__step--done' if step[:done] %>"
+        <% if step[:date] %>data-controller="tooltip" data-tooltip="<%= step[:date].strftime('%d/%m/%Y') %>"<% end %>
+      >
+        <span class="c-comm-steps__dot <%= "c-comm-steps__dot--done bg-#{step[:color] || 'primary'}" if step[:done] %>">
+          <i class="bi <%= step[:icon] %>"></i>
+        </span>
+        <span><%= step[:label] %></span>
+      </span>
+    <% end %>
   </div>
 
   <%# follow-up e note competevano per lo stesso spazio: separati in due tab %>
@@ -71,35 +127,25 @@ notes_tab_active = @active_tab == "notes"
 
   <div class="tab-content c-comm-overlay__panes">
     <div
-      class="tab-pane c-comm-overlay__pane fade <%= 'show active' unless notes_tab_active %>"
+      class="tab-pane c-comm-overlay__pane c-comm-overlay__pane--follow-ups fade <%= 'show active' unless notes_tab_active %>"
       id="communication-tab-follow-ups-<%= tabs_id %>"
       role="tabpanel"
     >
-      <% if @communication.sent? %>
-        <a
-          href="<%= campaigns_follow_up_communication_action_path(id: @campaign.id, communication_id: @communication.id) %>"
-          data-turbo-method="post"
-          data-turbo-frame="action"
-          class="btn btn-outline-primary w-100 mb-3"
-          data-user-policies-target="item"
-          data-policy="crm"
-        ><i class="bi bi-arrow-repeat me-1"></i>Registra follow-up di oggi</a>
-      <% end %>
-
       <% if follow_ups.any? %>
         <ol class="list-group">
           <% follow_ups.each do |follow_up| %>
             <li class="list-group-item">
               <div class="c-list-item">
+                <div class="c-list-item__icon rounded-circle bg-info bg-opacity-10 text-info"><i class="bi bi-arrow-repeat"></i></div>
                 <div class="c-list-item__body">
                   <div class="c-list-item__title"><%= follow_up.date.strftime('%d/%m/%Y') %></div>
-                  <% if follow_up.user %>
-                    <div class="c-list-item__meta"><span><i class="bi bi-person me-1"></i><%= follow_up.user.complete_name %></span></div>
-                  <% end %>
+                  <div class="c-list-item__meta">
+                    <% if follow_up.user %><span><i class="bi bi-person me-1"></i><%= follow_up.user.complete_name %></span><% end %>
+                  </div>
                 </div>
-                <div class="c-list-item__actions">
+                <div class="c-list-item__actions" data-user-policies-target="item" data-policy="crm">
                   <a
-                    href="<%= campaigns_remove_communication_follow_up_action_path(id: @campaign.id, communication_id: @communication.id, follow_up_id: follow_up.id) %>"
+                    href="<%= campaigns_remove_communication_follow_up_action_path(id: @campaign.id, communication_id: communication.id, follow_up_id: follow_up.id) %>"
                     data-turbo-method="post"
                     data-turbo-frame="action"
                     class="btn btn-sm btn-outline text-danger"
@@ -114,56 +160,63 @@ notes_tab_active = @active_tab == "notes"
         </ol>
       <% else %>
         <%= render 'shared/placeholder',
-          message: @communication.to_send? ? 'I follow-up si registrano dopo l\'invio' : 'Nessun follow-up registrato',
+          message: communication.to_send? ? 'I follow-up si registrano dopo l\'invio' : 'Nessun follow-up registrato',
           icon: 'arrow-repeat' %>
       <% end %>
     </div>
 
     <div
-      class="tab-pane c-comm-overlay__pane fade <%= 'show active' if notes_tab_active %>"
+      class="tab-pane c-comm-overlay__pane c-comm-overlay__pane--notes fade <%= 'show active' if notes_tab_active %>"
       id="communication-tab-notes-<%= tabs_id %>"
       role="tabpanel"
     >
-      <%= render 'shared/form-errors', item: @log if @log %>
+      <%# l'editor resta ancorato in cima (fuori dallo scroller): Trix dentro un
+          contenitore che scrolla fa saltare lo scroll durante la scrittura %>
+      <div class="c-comm-overlay__composer">
+        <%= render 'shared/form-errors', item: @log if @log %>
 
-      <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: @communication.id), class: 'mb-4', data: { controller: 'form-loading' } do %>
-        <%# altezza standard: cresce col contenuto, ma lascia visibili le note sotto %>
-        <div class="mb-2">
-          <%= rich_text_area_tag :content, @log&.content, class: 'trix-content' %>
-        </div>
-        <div class="d-flex justify-content-end align-items-center">
-          <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Aggiungi nota</button>
-        </div>
-      <% end %>
-
-      <% if logs.any? %>
-        <% logs.each do |log| %>
-          <div class="c-comm-note">
-            <div class="c-comm-note__header">
-              <span>
-                <i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %>
-                <% if log.user %><span class="ms-2"><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
-              </span>
-              <a
-                href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: @communication.id, log_id: log.id) %>"
-                data-turbo-method="post"
-                data-turbo-frame="action"
-                class="btn btn-sm btn-outline text-danger"
-                data-controller="tooltip"
-                data-tooltip="Elimina nota"
-                aria-label="Elimina nota"
-              ><i class="bi bi-trash"></i></a>
-            </div>
-            <div class="c-comm-note__body trix-content">
-              <%= log.content %>
-            </div>
+        <%= form_tag campaigns_add_communication_log_action_path(id: @campaign.id, communication_id: communication.id), data: { controller: 'form-loading' } do %>
+          <div class="mb-2">
+            <%= rich_text_area_tag :content, @log&.content, class: 'trix-content' %>
+          </div>
+          <div class="d-flex justify-content-end align-items-center">
+            <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Aggiungi nota</button>
           </div>
         <% end %>
-      <% else %>
-        <%= render 'shared/placeholder',
-          message: 'Nessuna nota per questa comunicazione',
-          icon: 'journal-text' %>
-      <% end %>
+      </div>
+
+      <div class="c-comm-overlay__notes">
+        <% if logs.any? %>
+          <% logs.each do |log| %>
+            <div class="c-comm-note">
+              <div class="c-comm-note__header">
+                <span>
+                  <i class="bi bi-calendar3 me-1"></i><%= log.created_at.strftime('%d/%m/%Y %H:%M') %>
+                  <% if log.user %><span class="ms-2"><i class="bi bi-person me-1"></i><%= log.user.complete_name %></span><% end %>
+                </span>
+                <a
+                  href="<%= campaigns_remove_communication_log_action_path(id: @campaign.id, communication_id: communication.id, log_id: log.id) %>"
+                  data-turbo-method="post"
+                  data-turbo-frame="action"
+                  class="btn btn-sm btn-outline text-danger"
+                  data-controller="tooltip"
+                  data-tooltip="Elimina nota"
+                  aria-label="Elimina nota"
+                  data-user-policies-target="item"
+                  data-policy="crm"
+                ><i class="bi bi-trash"></i></a>
+              </div>
+              <div class="c-comm-note__body trix-content">
+                <%= log.content %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <%= render 'shared/placeholder',
+            message: 'Nessuna nota per questa comunicazione',
+            icon: 'journal-text' %>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

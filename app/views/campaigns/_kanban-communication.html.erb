@@ -4,87 +4,57 @@ campaign ||= Campaign.new
 communication ||= Communication.new
 contact = communication.contact
 logs_count = communication.communications_logs.size
-last_follow_up = communication.communications_follow_ups.recent_first.first
+follow_ups_count = communication.follow_ups_count
+days_waiting = communication.days_waiting
 
 %>
 
-<div class="c-comm-board__card">
-  <div class="c-comm-board__card-body">
-    <div class="c-comm-board__avatar"><%= contact.name_2chars %></div>
+<%# tutta la card apre il dettaglio: le azioni vivono nell'overlay, così non ci
+    sono menu e bottoni che competono con il click sulla card %>
+<a
+  class="c-comm-board__card"
+  href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>"
+  data-turbo-frame="action"
+  aria-label="Apri la comunicazione con <%= contact.name %>"
+>
+  <div class="c-comm-board__card-head">
+    <span class="c-comm-board__avatar"><%= contact.name_2chars %></span>
 
-    <div class="c-comm-board__card-infos">
-      <div class="c-comm-board__card-title text-truncate">
-        <a href="<%= contacts_show_path(id: contact.id) %>" data-turbo-frame="_top" class="text-decoration-none text-reset" data-user-policies-target="item" data-policy="crm"><%= contact.name %></a>
-      </div>
-      <div class="c-comm-board__card-meta text-truncate">
+    <span class="c-comm-board__card-infos">
+      <span class="c-comm-board__card-title d-block text-truncate"><%= contact.name %></span>
+      <span class="c-comm-board__card-subtitle d-block text-truncate">
         <% if communication.to_send? %>
-          <i class="bi bi-calendar3 me-1"></i>Creata il <%= communication.created_at.strftime('%d/%m/%Y') %>
+          In coda dal <%= communication.created_at.strftime('%d/%m/%Y') %>
         <% elsif communication.sent? %>
-          <i class="bi bi-send me-1"></i>Inviata il <%= communication.sent_date.strftime('%d/%m/%Y') %>
-          <% if last_follow_up %>
-            · <i class="bi bi-arrow-repeat me-1"></i>Follow-up il <%= last_follow_up.date.strftime('%d/%m') %>
-          <% end %>
+          Inviata il <%= communication.sent_date.strftime('%d/%m/%Y') %>
         <% else %>
-          <i class="bi bi-flag me-1"></i>Chiusa il <%= communication.closed_date.strftime('%d/%m/%Y') %>
+          <%= communication.status_string %> il <%= communication.closed_date.strftime('%d/%m/%Y') %>
         <% end %>
-      </div>
-    </div>
+      </span>
+    </span>
 
-    <div class="dropdown">
-      <button class="btn btn-sm btn-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Apri menu comunicazione con <%= contact.name %>">
-        <i class="bi bi-three-dots-vertical"></i>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" data-user-policies-target="item" data-policy="crm">
-        <li><a class="dropdown-item" href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Dettaglio</a></li>
-        <li><a class="dropdown-item text-danger" href="<%= campaigns_actions_path(type: 'remove-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action">Elimina</a></li>
-      </ul>
-    </div>
+    <span class="c-comm-board__card-go"><i class="bi bi-chevron-right"></i></span>
   </div>
 
-  <div class="c-comm-board__card-footer">
-    <div class="d-flex align-items-center gap-1">
-      <% if communication.follow_ups_count.positive? %>
-        <%# clickable: the modal lists every follow-up and lets you undo one %>
-        <a
-          class="badge rounded-pill bg-<%= communication.sent? ? 'info' : 'secondary' %> bg-opacity-75 text-decoration-none"
-          href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>"
-          data-turbo-frame="action"
-          data-controller="tooltip"
-          data-tooltip="<%= communication.follow_ups_count %> follow-up, ultimo il <%= last_follow_up&.date&.strftime('%d/%m/%Y') %>"
-          aria-label="Follow-up della comunicazione con <%= contact.name %>"
-        ><i class="bi bi-arrow-repeat me-1"></i><%= communication.follow_ups_count %></a>
-      <% end %>
-      <a
-        class="badge rounded-pill bg-secondary <%= logs_count.positive? ? 'bg-opacity-75' : 'bg-opacity-25' %> text-decoration-none"
-        href="<%= campaigns_actions_path(type: 'show-communication', id: campaign.id, communication_id: communication.id) %>"
-        data-turbo-frame="action"
-        data-controller="tooltip"
-        data-tooltip="Note della comunicazione"
-        aria-label="Note della comunicazione con <%= contact.name %>"
-      ><i class="bi bi-journal-text me-1"></i><%= logs_count %></a>
-    </div>
+  <div class="c-comm-board__card-meta">
+    <% if communication.sent? %>
+      <%# quanto sta aspettando: giallo dopo una settimana, rosso dopo tre %>
+      <span class="badge rounded-pill bg-<%= communication.days_waiting_color %>">
+        <i class="bi bi-hourglass-split me-1"></i>
+        <% if days_waiting.zero? %>In attesa da oggi<% else %>In attesa da <%= days_waiting %> <%= days_waiting == 1 ? 'giorno' : 'giorni' %><% end %>
+      </span>
+    <% end %>
 
-    <div data-user-policies-target="item" data-policy="crm">
-      <% if communication.to_send? %>
-        <a href="<%= campaigns_actions_path(type: 'send-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
-          <i class="bi bi-send me-1"></i>Invia
-        </a>
-      <% elsif communication.sent? %>
-        <a
-          href="<%= campaigns_follow_up_communication_action_path(id: campaign.id, communication_id: communication.id) %>"
-          data-turbo-method="post"
-          data-turbo-frame="action"
-          class="btn btn-sm btn-outline-primary"
-          data-controller="tooltip"
-          data-tooltip="Registra follow-up"
-          aria-label="Registra follow-up con <%= contact.name %>"
-        ><i class="bi bi-arrow-repeat"></i></a>
-        <a href="<%= campaigns_actions_path(type: 'close-communication', id: campaign.id, communication_id: communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
-          <i class="bi bi-flag me-1"></i>Esito
-        </a>
-      <% else %>
-        <span class="badge bg-<%= communication.status_color %>"><i class="bi <%= communication.status_icon %> me-1"></i><%= communication.status_string %></span>
-      <% end %>
-    </div>
+    <% if follow_ups_count.positive? %>
+      <span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-arrow-repeat me-1"></i><%= follow_ups_count %></span>
+    <% end %>
+
+    <% if logs_count.positive? %>
+      <span class="badge rounded-pill bg-secondary bg-opacity-75"><i class="bi bi-journal-text me-1"></i><%= logs_count %></span>
+    <% end %>
+
+    <% if follow_ups_count.zero? && logs_count.zero? && !communication.sent? %>
+      <span class="text-muted">Nessuna attività</span>
+    <% end %>
   </div>
-</div>
+</a>

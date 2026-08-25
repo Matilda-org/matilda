@@ -3,24 +3,42 @@
 contact ||= Contact.new
 badge_type = contact.color_type
 badge_type = 'primary' if badge_type.blank?
+ongoing = contact.communications.ongoing.includes(:campaign)
+projects_count = contact.projects.size
 
 %>
 
 <%= render 'shared/card',
   nav_icon_key: 'contacts',
   title: contact.name,
-  subtitle: contact.email,
+  subtitle: contact.archived ? 'Archiviato' : contact.email,
   description: contact.description,
   type: contact.color_type,
   render_actions: 'contacts/shared/card-actions',
   render_actions_args: { contact: contact } do
 %>
-  <% if contact.projects.size.positive? %>
-    <span class="badge bg-<%= badge_type %>"><i class="bi bi-file-earmark-text"></i> <%= contact.projects.size %> progetti</span>
+  <%# recapiti: quello che serve per contattarlo davvero, senza aprire la scheda %>
+  <div class="mb-2" style="font-size: 12px">
+    <% if contact.phone.present? %>
+      <span class="me-2"><i class="bi bi-telephone me-1"></i><%= contact.phone %></span>
+    <% end %>
+    <% if contact.website.present? %>
+      <span><i class="bi bi-globe me-1"></i><%= contact.website.sub(%r{\Ahttps?://(www\.)?}, '').truncate(28) %></span>
+    <% end %>
+  </div>
+
+  <% if projects_count.positive? %>
+    <span class="badge bg-<%= badge_type %>"><i class="bi bi-file-earmark-text"></i> <%= projects_count %> <%= projects_count == 1 ? 'progetto' : 'progetti' %></span>
   <% end %>
 
-  <%# only the communications still waiting for an outcome %>
-  <% contact.communications.ongoing.includes(:campaign).each do |communication| %>
-    <span class="badge bg-<%= communication.status_color %>"><i class="bi <%= communication.status_icon %>"></i> <%= communication.campaign.name.truncate(25) %></span>
+  <%# solo le comunicazioni ancora in corso: le chiuse stanno nella scheda %>
+  <% ongoing.each do |communication| %>
+    <span class="badge bg-<%= communication.status_color %>" data-controller="tooltip" data-tooltip="<%= communication.status_string %> · <%= communication.campaign.name %>">
+      <i class="bi <%= communication.status_icon %>"></i> <%= communication.campaign.name.truncate(22) %>
+    </span>
+  <% end %>
+
+  <% if projects_count.zero? && ongoing.empty? %>
+    <span class="badge bg-secondary bg-opacity-50"><i class="bi bi-dash-circle"></i> Nessuna attività</span>
   <% end %>
 <% end %>
