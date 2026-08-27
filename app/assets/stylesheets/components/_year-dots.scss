@@ -1,5 +1,6 @@
 // Avanzamento anno: un puntino per mese al posto della barra piena.
-// I mesi passati sono pieni, quello corrente ha l'alone, i futuri restano spenti.
+// Il mese corrente si distingue per pieno e dimensione, non con un alone:
+// l'alone mangiava il gap con i puntini vicini.
 .c-year-dots {
   display: flex;
   align-items: center;
@@ -11,15 +12,14 @@
   height: 6px;
   border-radius: 50%;
   background-color: rgba(var(--bs-dark-rgb), 0.18);
-  transition: transform .15s ease;
 
   &.is-past {
-    background-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.45);
   }
 
   &.is-current {
+    width: 8px;
+    height: 8px;
     background-color: var(--bs-primary);
-    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.25);
-    transform: scale(1.15);
   }
 }
