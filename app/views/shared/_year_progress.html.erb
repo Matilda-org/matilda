@@ -1,13 +1,16 @@
 <%
 # Year progress: elapsed days over total days (366 on leap years).
+# Dots = months: filled for the ones already gone, current one highlighted.
 now = Time.now
 days_in_year = Date.new(now.year).leap? ? 366 : 365
 percent = ((now.yday.to_f / days_in_year) * 100).round(1)
 %>
 
 <div class="d-none d-lg-flex align-items-center gap-2" style="font-size: .85rem;" data-controller="tooltip" data-tooltip="<%= t('users.year_progress.tooltip', percent: percent, year: now.year) %>">
-  <div class="progress flex-grow-1" style="height: 6px; width: 120px;" role="progressbar" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso anno <%= now.year %>">
-    <div class="progress-bar bg-primary" style="width: <%= percent %>%"></div>
+  <div class="c-year-dots" role="progressbar" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso anno <%= now.year %>">
+    <% (1..12).each do |month| %>
+      <span class="c-year-dots__dot <%= month < now.month ? 'is-past' : month == now.month ? 'is-current' : '' %>"></span>
+    <% end %>
   </div>
   <span class="fw-bold text-nowrap"><%= percent %>%</span>
 </div>
