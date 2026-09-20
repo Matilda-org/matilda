@@ -16,6 +16,9 @@ class CredentialsControllerTest < ActionController::TestCase
     matilda_controller_action("destroy", "Elimina credenziale", credential.id)
     matilda_controller_action("show", "Visualizza credenziale", credential.id)
     matilda_controller_action_invalid
+
+    # la visualizzazione registra l'ultimo accesso alla credenziale
+    assert_not_nil credential.reload.last_viewed_at
   end
 
   test "index" do

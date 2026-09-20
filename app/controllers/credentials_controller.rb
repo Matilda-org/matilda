@@ -29,19 +29,23 @@ class CredentialsController < ApplicationController
     query = query.without_folder if params[:without_folder].present?
 
     query = query.where("LOWER(name) LIKE :search", search: "%#{params[:search].downcase}%") unless params[:search].blank?
-    query = query.order(name: :asc)
+    if params[:sort] == "last_viewed_asc"
+      query = query.least_recently_viewed
+    elsif params[:sort] == "name_desc"
+      query = query.order(name: :desc)
+    else
+      query = query.order(name: :asc)
+    end
     @credentials = paginate_query(query.where.not(id: @credentials_preferred.pluck(:id)))
   end
+
+  # prima di caches_action: la vista va tracciata anche quando la risposta arriva dalla cache
+  before_action :log_credential_view, only: :actions
 
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
     @credential = params[:id].present? ? Credential.find(params[:id]) : Credential.new
-
-    # log credential show
-    if @type == "show" && @credential.persisted?
-      @session_user.log_credential(@credential.id)
-    end
 
     return render "credentials/actions/create" if @type == "create"
     return render "credentials/actions/edit" if @type == "edit"
@@ -122,6 +126,17 @@ class CredentialsController < ApplicationController
   end
 
   private
+
+  # traccia l'apertura di una credenziale: log per utente + ultimo accesso sulla credenziale
+  def log_credential_view
+    return unless params[:type] == "show" && params[:id].present?
+
+    credential = Credential.find_by(id: params[:id])
+    return unless credential
+
+    @session_user.log_credential(credential.id)
+    credential.log_view!
+  end
 
   def credential_params
     params.permit(:name, :secure_username, :secure_password, :secure_content)

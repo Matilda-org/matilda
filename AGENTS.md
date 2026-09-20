@@ -22,6 +22,13 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - Comment activity does NOT touch a task's `updated_at`; the `unresolved` flag tracks it instead (true when the last comment is not the assignee's).
 - `unresolved`, `tasks_comments_count` and `last_comment_user_id` on `tasks` are denormalized by `Tasks::Comment` (see `sync_task_comment_state`), so task cards render comment info without a query per card. `unresolved` is API-only: the card shows the comment count and the last author instead.
 
+## Credentials
+
+- `credentials.last_viewed_at` tracks the last time anyone opened a credential ("Visualizza"). Written by `Credential#log_view!` via `update_column`, so it never touches `updated_at` (which means "last edit") and never purges the views cache.
+- Logging runs in a `before_action` on `CredentialsController#actions`, *before* `caches_action`, otherwise a cached response would skip it.
+- Cards show a colored badge (`stale_view_color` / `last_view_label`: never seen or older than `STALE_URGENT_DAYS` = danger, older than `STALE_WARNING_DAYS` = warning) and the index has a "Meno usate" sort (`least_recently_viewed`, never-seen first). Badge staleness is bounded by the hourly action-cache key.
+- Per-user view history stays separate (`User#log_credential` → `users_logs`).
+
 ## CRM (contacts / campaigns / communications)
 
 - Three models: `Contact` (anagrafica), `Campaign`, `Communication` (the contact↔campaign relation, unique per pair) + `Communications::Log` (rich text notes on a communication, `has_rich_text :content`). Sections mirror the Projects structure (explicit routes, `actions` modal dispatcher).
