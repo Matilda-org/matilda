@@ -10,36 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_20_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
-    t.string "name", null: false
     t.text "body"
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.datetime "updated_at", null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
+    t.string "content_type"
     t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -50,21 +50,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_20_100000) do
   end
 
   create_table "campaigns", force: :cascade do |t|
-    t.string "name", null: false
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.boolean "archived", default: false, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "communications", force: :cascade do |t|
-    t.integer "contact_id", null: false
     t.integer "campaign_id", null: false
-    t.integer "status", default: 0, null: false
+    t.date "closed_date"
+    t.integer "contact_id", null: false
+    t.datetime "created_at", null: false
     t.integer "follow_ups_count", default: 0, null: false
     t.date "sent_date"
-    t.date "closed_date"
-    t.datetime "created_at", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id", "contact_id"], name: "index_communications_on_campaign_id_and_contact_id", unique: true
     t.index ["campaign_id"], name: "index_communications_on_campaign_id"
@@ -73,327 +73,327 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_20_100000) do
 
   create_table "communications_follow_ups", force: :cascade do |t|
     t.integer "communication_id", null: false
-    t.integer "user_id"
-    t.date "date", null: false
     t.datetime "created_at", null: false
+    t.date "date", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["communication_id"], name: "index_communications_follow_ups_on_communication_id"
     t.index ["user_id"], name: "index_communications_follow_ups_on_user_id"
   end
 
   create_table "communications_logs", force: :cascade do |t|
     t.integer "communication_id", null: false
-    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["communication_id"], name: "index_communications_logs_on_communication_id"
     t.index ["user_id"], name: "index_communications_logs_on_user_id"
   end
 
   create_table "contacts", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "vat_number"
-    t.string "email"
-    t.string "phone"
-    t.string "website"
     t.string "address"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.boolean "archived", default: false, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "email"
+    t.string "name", null: false
+    t.string "phone"
+    t.datetime "updated_at", null: false
+    t.string "vat_number"
+    t.string "website"
   end
 
   create_table "credentials", force: :cascade do |t|
-    t.string "name"
-    t.string "secure_username"
-    t.string "secure_password"
-    t.string "secure_content"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.datetime "last_viewed_at"
+    t.string "name"
+    t.string "secure_content"
+    t.string "secure_password"
+    t.string "secure_username"
+    t.datetime "updated_at", null: false
   end
 
   create_table "folders", force: :cascade do |t|
-    t.string "name"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "items_projects_count", default: 0, null: false
     t.integer "items_credentials_count", default: 0, null: false
+    t.integer "items_projects_count", default: 0, null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
   end
 
   create_table "folders_items", force: :cascade do |t|
-    t.string "resource_type"
-    t.integer "resource_id"
-    t.integer "folder_id", null: false
     t.datetime "created_at", null: false
+    t.integer "folder_id", null: false
+    t.integer "resource_id"
+    t.string "resource_type"
     t.datetime "updated_at", null: false
     t.index ["folder_id"], name: "index_folders_items_on_folder_id"
     t.index ["resource_type", "resource_id"], name: "index_folders_items_on_resource"
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "typology", default: 0
+    t.datetime "created_at", null: false
     t.json "data"
     t.boolean "managed", default: false
-    t.datetime "created_at", null: false
+    t.integer "typology", default: 0
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
-    t.integer "user_id"
     t.string "content"
-    t.string "tags"
-    t.string "source_url"
     t.datetime "created_at", null: false
+    t.string "source_url"
+    t.string "tags"
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "procedures", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.integer "resources_type", default: 0
     t.boolean "archived", default: false
-    t.boolean "model", default: false
-    t.integer "items_count", default: 0
-    t.integer "statuses_count", default: 0
-    t.integer "project_id"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "show_archived_projects", default: false
+    t.string "description"
+    t.integer "items_count", default: 0
+    t.boolean "model", default: false
+    t.string "name"
+    t.integer "project_id"
     t.boolean "project_primary", default: false
+    t.integer "resources_type", default: 0
+    t.boolean "show_archived_projects", default: false
+    t.integer "statuses_count", default: 0
+    t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_procedures_on_project_id"
   end
 
   create_table "procedures_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "model_data"
+    t.integer "order", default: 1
     t.integer "procedure_id", null: false
     t.integer "procedures_status_id", null: false
-    t.string "title"
-    t.integer "order", default: 1
-    t.string "resource_type"
     t.integer "resource_id"
-    t.datetime "created_at", null: false
+    t.string "resource_type"
+    t.string "title"
     t.datetime "updated_at", null: false
-    t.json "model_data"
     t.index ["procedure_id"], name: "index_procedures_items_on_procedure_id"
     t.index ["procedures_status_id"], name: "index_procedures_items_on_procedures_status_id"
     t.index ["resource_type", "resource_id"], name: "index_procedures_items_on_resource"
   end
 
   create_table "procedures_status_automations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "data"
     t.integer "procedures_status_id", null: false
     t.integer "typology", default: 0
-    t.json "data"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["procedures_status_id"], name: "index_procedures_status_automations_on_procedures_status_id"
   end
 
   create_table "procedures_statuses", force: :cascade do |t|
+    t.integer "assignment_user_id"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.integer "follow_user_id"
+    t.integer "items_count", default: 0
+    t.integer "order", default: 1
     t.integer "procedure_id", null: false
     t.string "title"
-    t.integer "order", default: 1
-    t.integer "items_count", default: 0
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "description"
-    t.integer "assignment_user_id"
-    t.integer "follow_user_id"
-    t.string "color"
     t.index ["procedure_id"], name: "index_procedures_statuses_on_procedure_id"
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string "code", null: false
-    t.string "name"
-    t.string "description"
+    t.integer "alghoritmic_order", default: 1
     t.boolean "archived", default: false
     t.integer "archived_reason", default: 0
-    t.integer "year", limit: 4
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "slack_channel_id"
     t.boolean "budget_management", default: false
     t.integer "budget_money", default: 0
     t.integer "budget_time", default: 0
-    t.integer "alghoritmic_order", default: 1
+    t.string "code", null: false
     t.integer "contact_id"
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name"
+    t.string "slack_channel_id"
+    t.datetime "updated_at", null: false
+    t.integer "year", limit: 4
     t.index ["code"], name: "index_projects_on_code", unique: true
     t.index ["contact_id"], name: "index_projects_on_contact_id"
   end
 
   create_table "projects_attachments", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "typology", default: 0
-    t.string "title"
-    t.string "description"
-    t.integer "version"
-    t.date "date"
     t.datetime "created_at", null: false
+    t.date "date"
+    t.string "description"
+    t.integer "project_id", null: false
+    t.string "title"
+    t.integer "typology", default: 0
     t.datetime "updated_at", null: false
+    t.integer "version"
     t.index ["project_id"], name: "index_projects_attachments_on_project_id"
   end
 
   create_table "projects_events", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.string "message"
-    t.json "data"
     t.datetime "created_at", null: false
+    t.json "data"
+    t.string "message"
+    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_projects_events_on_project_id"
   end
 
   create_table "projects_logs", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
-    t.string "title"
-    t.date "date"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "share_code"
+    t.date "date"
     t.boolean "pinned", default: false
+    t.integer "project_id", null: false
+    t.string "share_code"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["project_id"], name: "index_projects_logs_on_project_id"
     t.index ["user_id"], name: "index_projects_logs_on_user_id"
   end
 
   create_table "projects_members", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
-    t.string "role"
     t.datetime "created_at", null: false
+    t.integer "project_id", null: false
+    t.string "role"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["project_id"], name: "index_projects_members_on_project_id"
     t.index ["user_id"], name: "index_projects_members_on_user_id"
   end
 
   create_table "projects_repositories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "default_branch"
+    t.string "name"
     t.integer "project_id", null: false
     t.integer "provider"
-    t.string "url", null: false
-    t.string "name"
-    t.string "default_branch"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "url", null: false
     t.index ["project_id", "url"], name: "index_projects_repositories_on_project_id_and_url", unique: true
     t.index ["project_id"], name: "index_projects_repositories_on_project_id"
   end
 
   create_table "settings", force: :cascade do |t|
-    t.string "key"
-    t.json "data"
     t.datetime "created_at", null: false
+    t.json "data"
+    t.string "key"
     t.datetime "updated_at", null: false
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.integer "user_id"
-    t.string "title"
-    t.date "deadline"
-    t.integer "time_estimate"
-    t.integer "time_spent", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "accepted", default: true
+    t.integer "alghoritmic_order", default: 1
     t.boolean "completed", default: false
     t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.date "deadline"
+    t.integer "last_comment_user_id"
     t.integer "project_id"
     t.boolean "repeat", default: false
     t.date "repeat_from"
-    t.date "repeat_to"
-    t.json "repeat_weekdays", default: []
-    t.integer "repeat_original_task_id"
-    t.integer "alghoritmic_order", default: 1
-    t.integer "repeat_type", default: 0, null: false
     t.integer "repeat_monthday", default: 0, null: false
-    t.boolean "accepted", default: true
-    t.boolean "unresolved", default: false
+    t.integer "repeat_original_task_id"
+    t.date "repeat_to"
+    t.integer "repeat_type", default: 0, null: false
+    t.json "repeat_weekdays", default: []
     t.integer "tasks_comments_count", default: 0, null: false
-    t.integer "last_comment_user_id"
+    t.integer "time_estimate"
+    t.integer "time_spent", default: 0
+    t.string "title"
+    t.boolean "unresolved", default: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "tasks_checks", force: :cascade do |t|
+    t.boolean "checked", default: false
+    t.datetime "created_at", null: false
+    t.integer "order", default: 1
     t.integer "task_id", null: false
     t.string "text"
-    t.boolean "checked", default: false
-    t.integer "order", default: 1
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["task_id"], name: "index_tasks_checks_on_task_id"
   end
 
   create_table "tasks_comments", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
-    t.string "service"
     t.text "content"
     t.datetime "created_at", null: false
+    t.string "service"
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["task_id"], name: "index_tasks_comments_on_task_id"
     t.index ["user_id"], name: "index_tasks_comments_on_user_id"
   end
 
   create_table "tasks_followers", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "task_id", null: false
     t.datetime "created_at", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["task_id"], name: "index_tasks_followers_on_task_id"
     t.index ["user_id"], name: "index_tasks_followers_on_user_id"
   end
 
   create_table "tasks_tracks", force: :cascade do |t|
-    t.integer "task_id", null: false
-    t.integer "user_id"
-    t.datetime "start_at"
-    t.datetime "end_at"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "end_at"
     t.datetime "ping_at"
+    t.datetime "start_at"
+    t.integer "task_id", null: false
     t.integer "time_spent", default: 0
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["task_id"], name: "index_tasks_tracks_on_task_id"
     t.index ["user_id"], name: "index_tasks_tracks_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "surname"
-    t.string "email", null: false
-    t.string "password_digest"
     t.boolean "admin", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "api_key"
+    t.datetime "created_at", null: false
     t.text "description"
+    t.string "email", null: false
+    t.string "name"
+    t.string "password_digest"
+    t.string "surname"
+    t.datetime "updated_at", null: false
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "users_logs", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "typology", default: 0, null: false
-    t.string "value"
     t.datetime "created_at", null: false
+    t.integer "typology", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.string "value"
     t.index ["user_id"], name: "index_users_logs_on_user_id"
   end
 
   create_table "users_policies", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "policy"
     t.datetime "created_at", null: false
+    t.integer "policy"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["user_id"], name: "index_users_policies_on_user_id"
   end
 
   create_table "users_prefers", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "resource_type"
-    t.integer "resource_id"
     t.datetime "created_at", null: false
+    t.integer "resource_id"
+    t.string "resource_type"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["resource_type", "resource_id"], name: "index_users_prefers_on_resource"
     t.index ["user_id"], name: "index_users_prefers_on_user_id"
   end
