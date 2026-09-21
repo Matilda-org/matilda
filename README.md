@@ -227,3 +227,4 @@ rails test
 ```
 
 Il comando genererà un report di copertura del codice nella cartella `coverage`.
+
