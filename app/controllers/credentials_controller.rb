@@ -130,6 +130,8 @@ class CredentialsController < ApplicationController
   # traccia l'apertura di una credenziale: log per utente + ultimo accesso sulla credenziale
   def log_credential_view
     return unless params[:type] == "show" && params[:id].present?
+    # il prefetch di Turbo (hover sul link) non e' una visualizzazione
+    return if request.headers["X-Sec-Purpose"] == "prefetch"
 
     credential = Credential.find_by(id: params[:id])
     return unless credential

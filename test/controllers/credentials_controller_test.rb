@@ -21,6 +21,20 @@ class CredentialsControllerTest < ActionController::TestCase
     assert_not_nil credential.reload.last_viewed_at
   end
 
+  test "actions show should not track a turbo prefetch" do
+    credential = credentials(:one)
+    assert_nil credential.last_viewed_at
+
+    @request.headers["X-Sec-Purpose"] = "prefetch"
+    get :actions, params: { type: "show", id: credential.id }
+    assert_response :success
+    assert_nil credential.reload.last_viewed_at
+
+    @request.headers["X-Sec-Purpose"] = nil
+    get :actions, params: { type: "show", id: credential.id }
+    assert_not_nil credential.reload.last_viewed_at
+  end
+
   test "index" do
     matilda_controller_endpoint(:get, :index,
       policy: "credentials_index"

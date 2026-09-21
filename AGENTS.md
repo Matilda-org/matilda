@@ -25,7 +25,7 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 ## Credentials
 
 - `credentials.last_viewed_at` tracks the last time anyone opened a credential ("Visualizza"). Written by `Credential#log_view!` via `update_column`, so it never touches `updated_at` (which means "last edit") and never purges the views cache.
-- Logging runs in a `before_action` on `CredentialsController#actions`, *before* `caches_action`, otherwise a cached response would skip it.
+- Logging runs in a `before_action` on `CredentialsController#actions`, *before* `caches_action`, otherwise a cached response would skip it. It ignores requests carrying `X-Sec-Purpose: prefetch`, and the "Visualizza" link sets `data-turbo-prefetch="false"` so hovering it neither tracks a view nor serves the next click from Turbo's prefetch cache (which would skip the request, and the tracking with it).
 - Cards show a colored badge (`stale_view_color` / `last_view_label`: never seen or older than `STALE_URGENT_DAYS` = danger, older than `STALE_WARNING_DAYS` = warning) and the index has a "Meno usate" sort (`least_recently_viewed`, never-seen first). Badge staleness is bounded by the hourly action-cache key.
 - Per-user view history stays separate (`User#log_credential` → `users_logs`).
 
