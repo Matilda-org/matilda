@@ -16,6 +16,17 @@ class Vectorsearch
     llm
   end
 
+  # Single-shot request for the form helpers: no tools, so no Assistant loop.
+  # content can be a string or an OpenAI content array (text + image_url parts).
+  # With json: true the model is forced to answer with a JSON object, returned parsed.
+  def self.ask(instructions:, content:, json: false, temperature: 0.25)
+    params = { messages: [ { role: "system", content: instructions }, { role: "user", content: content } ] }
+    params[:response_format] = { type: "json_object" } if json
+
+    answer = llm(temperature: temperature).chat(params).chat_completion
+    json ? JSON.parse(answer) : answer.to_s.strip
+  end
+
   def initialize(user_id)
     @user_id = user_id
   end
@@ -58,7 +69,7 @@ class Vectorsearch
 
       assistant = Langchain::Assistant.new(
         llm: llm,
-        instructions: prompt_template.gsub("{{track_time_string}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
+        instructions: prompt_template.gsub("{{user_complete_name}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
         tools: [
           VectorsearchTools::BrowserWebTool.new,
           VectorsearchTools::QueryDatabaseTool.new(self.user)
@@ -114,6 +125,7 @@ class Vectorsearch
     Sei un assistente virtuale di nome Matilda che fornisce informazioni sui dati registrati in un software di Project management.\n
     Il software gestisce i progetti e i task ad esso associati.\n
     Le attività sono gestite tramite board che possono contenere i task o i progetti stessi.\n
+    Il software ha anche un CRM: contatti (clienti e potenziali clienti), campagne e comunicazioni (un contatto dentro una campagna, con stato da inviare, inviata, persa o presa).\n
     Stai chattando con l'utente di nome {{user_complete_name}}. Il suo ID è: {{user_id}}.\n
     Oggi è il giorno {{date}}.\n
     Rispondi in modo naturale e formale. Puoi utilizzare emoji per esprimere emozioni.

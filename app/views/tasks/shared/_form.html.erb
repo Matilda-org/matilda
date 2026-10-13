@@ -31,6 +31,9 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
             <div class="btn btn-secondary">
               <i class="bi bi-robot"></i>
             </div>
+            <button type="button" class="btn btn-outline-primary" data-action="click->tasks-form#onClickFillFromContent">
+              Compila dal testo
+            </button>
             <button type="button" class="btn btn-outline-primary" data-action="click->tasks-form#onClickConvertContentToChecklist">
               Converti in checklist
             </button>

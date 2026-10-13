@@ -30,6 +30,17 @@ class CampaignsControllerTest < ActionController::TestCase
     matilda_controller_action_invalid
   end
 
+  test "show-communication offers an AI draft when the assistant is configured" do
+    Setting.set("vectorsearch_openai_key", "sk-test")
+    campaign = campaigns(:one)
+    communication = campaign.communications.create!(contact: contacts(:one))
+
+    get :actions, params: { type: "show-communication", id: campaign.id, communication_id: communication.id }
+
+    assert_response :success
+    assert_includes @response.body, "Bozza messaggio"
+  end
+
   test "index" do
     matilda_controller_endpoint(:get, :index,
       policy: "crm"

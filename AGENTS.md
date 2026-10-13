@@ -41,6 +41,13 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - Editing follow-ups or notes answers with turbo streams replacing both the `action` frame (the overlay stays open on the tab the action came from, via `@active_tab`) and the `campaign-kanban` frame.
 - `Project belongs_to :contact` (optional, `dependent: :nullify` on the contact side). Contact select in the project form, "Progetti" module with link/unlink on the contact page (policy `contacts_edit`). Project cards show the contact via `Project#cached_contact_name` (Rails-cache, invalidated on contact rename/destroy and on `contact_id` change).
 
+## AI assistant
+
+- OpenAI via langchainrb. Model and client live in `Vectorsearch` (`CHAT_MODEL`, `Vectorsearch.llm`): always build the client there. `reasoning_effort: "none"` is injected into langchainrb's param schema because the model only does function calling on Chat Completions with reasoning off.
+- Chat assistant: `Vectorsearch#send_message` + `VectorsearchTools::QueryDatabaseTool`. Each tool enforces the same policies as the controllers (`only_data_projects_as_member`, `credentials_index`, `crm`).
+- Form helpers (`VectorsearchController`: checklist, url → post, CRM communication draft, text → task, text/image → contact) use `Vectorsearch.ask` (single call, `json: true` for structured output) and answer JSON to small Stimulus controllers. UI shows them only when `Setting.get("vectorsearch_openai_key")` is set.
+- Tests stub `Vectorsearch.ask` (see `test/controllers/vectorsearch_controller_test.rb`): no network calls.
+
 ## Conventions
 
 - Ruby strings use double quotes.

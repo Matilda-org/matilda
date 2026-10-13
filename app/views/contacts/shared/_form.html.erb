@@ -9,45 +9,60 @@ path ||= contact.persisted? ? contacts_edit_action_path(contact) : contacts_crea
 
 <%= render 'shared/form-errors', item: contact %>
 
-<%= form_tag path, class: 'c-modal-form', data: { controller: 'form-loading' } do %>
+<%= form_tag path, class: 'c-modal-form', data: { controller: 'contacts-form form-loading' } do %>
   <div class="c-modal-form__fields row">
     <% if turbo_frame_key %>
       <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
     <% end %>
 
+    <%# compilazione AI da firma email o foto del biglietto da visita: i campi
+        non sono inviati col form (niente name), servono solo all'assistente %>
+    <% if Setting.get('vectorsearch_openai_key') %>
+      <div class="col col-12 mb-3">
+        <div class="border rounded p-3">
+          <label for="contact_ai_text" class="form-label"><i class="bi bi-robot me-1"></i>Compila con l'assistente</label>
+          <textarea class="form-control mb-2" rows="3" id="contact_ai_text" placeholder="Incolla una firma email o i dati del contatto" data-contacts-form-target="aiText"></textarea>
+          <div class="d-flex flex-column flex-md-row gap-2">
+            <input type="file" class="form-control form-control-sm" accept="image/*" aria-label="Foto del biglietto da visita" data-contacts-form-target="aiImage">
+            <button type="button" class="btn btn-sm btn-outline-primary flex-shrink-0" data-action="click->contacts-form#onClickFill">Compila campi</button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
     <div class="col col-12 mb-3">
       <label for="name" class="form-label">Nome</label>
-      <input type="text" class="form-control" id="name" name="name" value="<%= contact.name %>" required>
+      <input type="text" class="form-control" id="name" name="name" value="<%= contact.name %>" required data-contacts-form-target="field">
     </div>
 
     <div class="col col-12 mb-3">
       <label for="description" class="form-label">Breve descrizione</label>
-      <textarea class="form-control" rows="3" id="description" name="description"><%= contact.description %></textarea>
+      <textarea class="form-control" rows="3" id="description" name="description" data-contacts-form-target="field"><%= contact.description %></textarea>
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" name="email" value="<%= contact.email %>">
+      <input type="email" class="form-control" id="email" name="email" value="<%= contact.email %>" data-contacts-form-target="field">
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="phone" class="form-label">Telefono</label>
-      <input type="text" class="form-control" id="phone" name="phone" value="<%= contact.phone %>">
+      <input type="text" class="form-control" id="phone" name="phone" value="<%= contact.phone %>" data-contacts-form-target="field">
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="vat_number" class="form-label">Partita IVA</label>
-      <input type="text" class="form-control" id="vat_number" name="vat_number" value="<%= contact.vat_number %>">
+      <input type="text" class="form-control" id="vat_number" name="vat_number" value="<%= contact.vat_number %>" data-contacts-form-target="field">
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="website" class="form-label">Sito web</label>
-      <input type="text" class="form-control" id="website" name="website" value="<%= contact.website %>">
+      <input type="text" class="form-control" id="website" name="website" value="<%= contact.website %>" data-contacts-form-target="field">
     </div>
 
     <div class="col col-12 mb-3">
       <label for="address" class="form-label">Indirizzo</label>
-      <input type="text" class="form-control" id="address" name="address" value="<%= contact.address %>">
+      <input type="text" class="form-control" id="address" name="address" value="<%= contact.address %>" data-contacts-form-target="field">
     </div>
   </div>
 

@@ -243,6 +243,85 @@ export default class extends Controller {
     })
   }
 
+  // Reads the content (an email, a message...) and lets the assistant fill
+  // title, deadline, estimate, assignee and checklist. The content is kept as is.
+  onClickFillFromContent(e) {
+    e.preventDefault()
+
+    const contentValue = this.element.querySelector('input[name="content"]').value
+    if (!contentValue) {
+      alert('Scrivi o incolla un testo nel contenuto del task prima di compilare i campi.')
+      return
+    }
+
+    const button = e.currentTarget
+    const originalButtonText = button.innerText
+    button.setAttribute('disabled', true)
+    button.innerText = 'Compilazione...'
+
+    fetch('/vectorsearch/text-to-task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: JSON.stringify({ text: contentValue })
+    }).then((response) => {
+      return response.json()
+    }).then((response) => {
+      if (response.error) throw new Error(response.error)
+
+      if (response.title) this.element.querySelector('input[name="title"]').value = response.title
+      if (response.deadline) {
+        this.deadlineInputTarget.value = response.deadline
+        this.updateDeadlineInfo()
+      }
+      if (response.time_estimate_minutes) {
+        this.timeEstimateInputTarget.value = this._closestTimeEstimateOption(response.time_estimate_minutes * 60)
+        this.updateTimeEstimateButtons()
+      }
+      this._selectUser(response.user_id)
+      this._appendChecks(response.checklist || [])
+    }).catch((error) => {
+      console.error(error)
+      alert(error.message || 'Si è verificato un errore durante la compilazione dei campi.')
+    }).finally(() => {
+      button.innerText = originalButtonText
+      button.removeAttribute('disabled')
+    })
+  }
+
+  // the select only accepts fixed estimates: pick the nearest one
+  _closestTimeEstimateOption(seconds) {
+    const values = Array.from(this.timeEstimateInputTarget.options).map((option) => parseInt(option.value))
+    return values.reduce((closest, value) => Math.abs(value - seconds) < Math.abs(closest - seconds) ? value : closest)
+  }
+
+  // ignore ids the select does not offer (the model may hallucinate one)
+  _selectUser(userId) {
+    const select = this.element.querySelector('select[name="user_id"]')
+    if (!select || !userId) return
+    if (!select.querySelector(`option[value="${userId}"]`)) return
+
+    select.value = userId
+  }
+
+  _appendChecks(items) {
+    if (!this.hasChecksListTarget || items.length === 0) return
+
+    const checklistAccordion = this.element.querySelector('#formTaskAccordionChecks')
+    if (!checklistAccordion.classList.contains('show')) {
+      this.element.querySelector('button[data-bs-target="#formTaskAccordionChecks"]').click()
+    }
+
+    items.forEach((item) => {
+      if (this.checksAddButtonTarget.hasAttribute('disabled')) return
+
+      this.checksAddButtonTarget.click()
+      this.checksListTarget.querySelector('li:last-child input').value = item
+    })
+  }
+
   activeRepeatFields() {
     this.repeatFieldsTarget.classList.remove('d-none')
 

@@ -22,6 +22,15 @@ class TasksControllerTest < ActionController::TestCase
     matilda_controller_action_invalid
   end
 
+  test "create form offers AI filling when the assistant is configured" do
+    Setting.set("vectorsearch_openai_key", "sk-test")
+
+    get :actions, params: { type: "create" }
+
+    assert_response :success
+    assert_includes @response.body, "Compila dal testo"
+  end
+
   test "index" do
     matilda_controller_endpoint(:get, :index,
       policy: "tasks_index"

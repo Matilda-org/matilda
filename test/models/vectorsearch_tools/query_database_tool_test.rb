@@ -62,4 +62,36 @@ class VectorsearchTools::QueryDatabaseToolTest < ActiveSupport::TestCase
 
     assert_includes result, "GitHub"
   end
+
+  test "crm tools are blocked without the crm policy" do
+    tool = VectorsearchTools::QueryDatabaseTool.new(users(:two))
+
+    assert_match "Non hai i permessi", tool.crm_contacts({})
+    assert_match "Non hai i permessi", tool.crm_campaigns({})
+    assert_match "Non hai i permessi", tool.crm_communications({})
+  end
+
+  test "crm tools list contacts, campaigns and their communications" do
+    user = users(:one)
+    user.update_policies([ "crm" ])
+    Communication.create!(contact: contacts(:one), campaign: campaigns(:one))
+    tool = VectorsearchTools::QueryDatabaseTool.new(user)
+
+    assert_includes tool.crm_contacts({}), "Campaign One (Da inviare)"
+    assert_includes tool.crm_campaigns({}), "1 da inviare"
+    assert_includes tool.crm_communications({ status: "to_send" }), "Contact One"
+  end
+
+  test "crm communications filter keeps only the silent ones when asked" do
+    user = users(:one)
+    user.update_policies([ "crm" ])
+    silent_contact = Contact.create!(name: "Silent")
+    Communication.create!(contact: silent_contact, campaign: campaigns(:one), status: :sent, sent_date: 30.days.ago.to_date)
+    Communication.create!(contact: contacts(:one), campaign: campaigns(:one), status: :sent, sent_date: Date.today)
+
+    result = VectorsearchTools::QueryDatabaseTool.new(user).crm_communications({ needs_attention: true })
+
+    assert_includes result, "Silent"
+    assert_not_includes result, "Contact One"
+  end
 end

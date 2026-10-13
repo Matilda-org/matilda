@@ -158,6 +158,57 @@ class VectorsearchTools::QueryDatabaseTool
     credentials.map { |c| credential_to_string(c) }.join("\n")
   end
 
+  # CRM
+  ##
+
+  define_function :crm_contacts, description: "Query CRM contacts (customers and leads)" do
+    property :archived, type: "boolean", description: "Filter archived contacts", required: false
+    property :search, type: "string", description: "Search contacts by name or email", required: false
+  end
+
+  def crm_contacts(data)
+    return crm_forbidden_message unless can_access_crm?
+
+    contacts = Contact.where(archived: !!data[:archived]).includes(communications: :campaign).order(name: :asc)
+    contacts = contacts.search(data[:search]) if data[:search].present?
+
+    contacts.map { |c| contact_to_string(c) }.join("\n")
+  end
+
+  define_function :crm_campaigns, description: "Query CRM campaigns with how many communications are in each status" do
+    property :archived, type: "boolean", description: "Filter archived campaigns", required: false
+    property :search, type: "string", description: "Search campaigns by name", required: false
+  end
+
+  def crm_campaigns(data)
+    return crm_forbidden_message unless can_access_crm?
+
+    campaigns = Campaign.where(archived: !!data[:archived]).order(name: :asc)
+    campaigns = campaigns.search(data[:search]) if data[:search].present?
+
+    campaigns.map { |c| campaign_to_string(c) }.join("\n")
+  end
+
+  define_function :crm_communications, description: "Query CRM communications (a contact inside a campaign), use needs_attention to find the ones to follow up" do
+    property :campaign_id, type: "integer", description: "Campaign ID", required: false
+    property :contact_id, type: "integer", description: "Contact ID", required: false
+    property :status, type: "string", description: "Communication status", enum: Communication.statuses.keys, required: false
+    property :needs_attention, type: "boolean", description: "Only sent communications silent for too long (to follow up or close)", required: false
+  end
+
+  def crm_communications(data)
+    return crm_forbidden_message unless can_access_crm?
+
+    communications = Communication.includes(:contact, :campaign).order(created_at: :asc)
+    communications = communications.where(campaign_id: data[:campaign_id]) if data[:campaign_id].present?
+    communications = communications.where(contact_id: data[:contact_id]) if data[:contact_id].present?
+    communications = communications.where(status: data[:status]) if Communication.statuses.key?(data[:status])
+    # silence is computed from the follow-ups, so it can only be filtered in Ruby
+    communications = communications.sent.select(&:needs_attention?) if data[:needs_attention]
+
+    communications.map { |c| communication_to_string(c) }.join("\n")
+  end
+
   private
 
   # Authorization scopes
@@ -179,6 +230,15 @@ class VectorsearchTools::QueryDatabaseTool
 
   def can_access_credentials?
     @user&.policy?("credentials_index")
+  end
+
+  # same single policy that gates the whole CRM section
+  def can_access_crm?
+    @user&.policy?("crm")
+  end
+
+  def crm_forbidden_message
+    "Non hai i permessi per consultare il CRM"
   end
 
   # To string methods
@@ -244,6 +304,43 @@ class VectorsearchTools::QueryDatabaseTool
     #{"Le credenziali hanno una password" unless credential.secure_password.blank?}.
     #{"Le credenziali hanno un contenuto" unless credential.secure_content.blank?}.
     #{"Le credenziali si trovano nella cartella #{credential.folder.name}." if credential.folder}
+    ".squish
+  end
+
+  def contact_to_string(contact)
+    campaigns_infos = contact.communications.map { |c| "#{c.campaign.name} (#{c.status_string})" }.join(", ")
+
+    "
+    Il contatto #{contact.name} ha ID #{contact.id}.
+    #{"Email: #{contact.email}." if contact.email.present?}
+    #{"Telefono: #{contact.phone}." if contact.phone.present?}
+    #{"Sito web: #{contact.website}." if contact.website.present?}
+    #{"Questa è la descrizione del contatto: #{contact.description}." if contact.description.present?}
+    #{"Il contatto è presente nelle campagne: #{campaigns_infos}." if campaigns_infos.present?}
+    ".squish
+  end
+
+  def campaign_to_string(campaign)
+    counts = campaign.communications_counts
+
+    "
+    La campagna #{campaign.name} ha ID #{campaign.id}.
+    #{"Questa è la descrizione della campagna: #{campaign.description}." if campaign.description.present?}
+    Comunicazioni: #{Communication.statuses.keys.map { |s| "#{counts[s] || 0} #{Communication.status_string(s).downcase}" }.join(', ')}.
+    ".squish
+  end
+
+  def communication_to_string(communication)
+    silence = communication.days_since_last_activity
+
+    "
+    La comunicazione con ID #{communication.id} è verso il contatto #{communication.contact.name} (ID: #{communication.contact_id}) per la campagna #{communication.campaign.name} (ID: #{communication.campaign_id}).
+    Lo stato è: #{communication.status_string}.
+    #{"È stata inviata il #{communication.sent_date.strftime('%d/%m/%Y')}." if communication.sent_date}
+    #{"Ha #{communication.follow_ups_count} follow-up registrati." if communication.follow_ups_count.positive?}
+    #{"Nessuna risposta da #{silence} giorni dall'ultima azione." if silence}
+    #{"Va sollecitata o chiusa." if communication.needs_attention?}
+    #{"È stata chiusa il #{communication.closed_date.strftime('%d/%m/%Y')}." if communication.closed_date}
     ".squish
   end
 
