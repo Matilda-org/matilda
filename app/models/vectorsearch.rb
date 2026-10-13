@@ -1,5 +1,20 @@
 class Vectorsearch
+  # Cheapest current OpenAI tier: newer and cheaper than gpt-5.4-nano, still good at tool calling.
+  CHAT_MODEL = "gpt-6-luna"
+
   attr_reader :user_id
+
+  # Shared OpenAI client for the assistant and the extraction helpers.
+  # On Chat Completions this model runs function calling only with reasoning off,
+  # and langchainrb drops params missing from its schema, so reasoning_effort is added there.
+  def self.llm(temperature:)
+    llm = Langchain::LLM::OpenAI.new(
+      api_key: Setting.get("vectorsearch_openai_key"),
+      default_options: { temperature: temperature, chat_model: CHAT_MODEL }
+    )
+    llm.chat_parameters.update(reasoning_effort: { default: "none" })
+    llm
+  end
 
   def initialize(user_id)
     @user_id = user_id
@@ -39,10 +54,7 @@ class Vectorsearch
     # get response message from bot response
     response_content = nil
     begin
-      llm = Langchain::LLM::OpenAI.new(
-        api_key: Setting.get("vectorsearch_openai_key"),
-        default_options: { temperature: 0.7, chat_model: "gpt-5.4-nano-2026-03-17" }
-      )
+      llm = Vectorsearch.llm(temperature: 0.7)
 
       assistant = Langchain::Assistant.new(
         llm: llm,

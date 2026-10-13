@@ -24,10 +24,7 @@ class VectorsearchController < ApplicationController
   end
 
   def text_to_checklist
-    llm = Langchain::LLM::OpenAI.new(
-      api_key: Setting.get("vectorsearch_openai_key"),
-      default_options: { temperature: 0.25, chat_model: "gpt-5.4-nano-2026-03-17" }
-    )
+    llm = Vectorsearch.llm(temperature: 0.25)
 
     assistant = Langchain::Assistant.new(
       llm: llm,
@@ -42,10 +39,7 @@ class VectorsearchController < ApplicationController
   end
 
   def url_to_data
-    llm = Langchain::LLM::OpenAI.new(
-      api_key: Setting.get("vectorsearch_openai_key"),
-      default_options: { temperature: 0.25, chat_model: "gpt-5.4-nano-2026-03-17" }
-    )
+    llm = Vectorsearch.llm(temperature: 0.25)
 
     assistant = Langchain::Assistant.new(
       llm: llm,
