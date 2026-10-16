@@ -27,6 +27,24 @@ class VectorsearchControllerTest < ActionController::TestCase
     matilda_controller_endpoint(:get, :chat)
   end
 
+  test "chat shows a confirm button for each pending proposal and confirm_action runs it" do
+    @user.users_policies.create!(policy: "tasks_create")
+    tool = VectorsearchTools::ActionsTool.new(@user)
+    tool.tasks_create({ user_id: @user.id, title: "From chat" })
+    # stands in for Vectorsearch#send_message saving the answer with its proposals
+    Vectorsearch.new(@user.id).send(:save_message_in_memory, "assistant", "Ti propongo di creare il task.", tool.proposals)
+
+    get :chat
+    assert_includes @response.body, "Conferma: crea il task «From chat»"
+
+    assert_difference "Task.count", 1 do
+      post :confirm_action, params: { action_id: tool.proposals.last[:id] }
+    end
+    assert_response :success
+    assert_not_includes @response.body, "Conferma:"
+    assert_includes @response.body, "Task «From chat» creato"
+  end
+
   test "communication_draft requires the crm policy" do
     communication = Communication.create!(contact: contacts(:one), campaign: campaigns(:one))
 

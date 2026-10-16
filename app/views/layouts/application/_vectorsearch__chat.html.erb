@@ -10,7 +10,15 @@ user_id = vectorsearch&.user_id || @session_user_id
     <% if vectorsearch.messages.length.positive? %>
       <% vectorsearch.messages.each do |message| %>
         <div class="vectorsearch__chat-message vectorsearch__chat-message--<%= message[:role] %>">
-          <%= raw message[:content].gsub("\n", "<br />") %>
+          <%# sanitize, not raw: the answer can echo text from fetched web pages %>
+          <%= sanitize message[:content].to_s.gsub("\n", "<br />") %>
+
+          <%# proposals of the assistant: nothing is written until the user confirms %>
+          <% Array(message[:actions]).select { |action| vectorsearch.pending_action?(action[:id]) }.each do |action| %>
+            <%= button_to vectorsearch_confirm_action_path, params: { action_id: action[:id] }, class: "btn btn-sm btn-primary mt-2 text-start", form_class: "d-block" do %>
+              <i class="bi bi-check2"></i> Conferma: <%= action[:label] %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
 

@@ -26,6 +26,14 @@ class VectorsearchController < ApplicationController
     render partial: "layouts/application/vectorsearch__chat", locals: { vectorsearch: @vectorsearch }
   end
 
+  # Runs an action the assistant proposed (button under its answer).
+  def confirm_action
+    @vectorsearch = Vectorsearch.new(@session_user_id)
+    @vectorsearch.confirm_action(params[:action_id])
+
+    render partial: "layouts/application/vectorsearch__chat", locals: { vectorsearch: @vectorsearch }
+  end
+
   def text_to_checklist
     llm = Vectorsearch.llm(temperature: 0.25)
 

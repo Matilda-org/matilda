@@ -193,6 +193,7 @@ Rails.application.routes.draw do
   get "vectorsearch/chat", to: "vectorsearch#chat", as: "vectorsearch_chat"
   post "vectorsearch/send-message", to: "vectorsearch#send_message", as: "vectorsearch_send_message"
   post "vectorsearch/clear-messages", to: "vectorsearch#clear_messages", as: "vectorsearch_clear_messages"
+  post "vectorsearch/confirm-action", to: "vectorsearch#confirm_action", as: "vectorsearch_confirm_action"
   post "vectorsearch/text-to-checklist", to: "vectorsearch#text_to_checklist", as: "vectorsearch_text_to_checklist"
   post "vectorsearch/url-to-data", to: "vectorsearch#url_to_data", as: "vectorsearch_url_to_data"
   post "vectorsearch/communication-draft", to: "vectorsearch#communication_draft", as: "vectorsearch_communication_draft"

@@ -27,6 +27,12 @@ class Vectorsearch
     json ? JSON.parse(answer) : answer.to_s.strip
   end
 
+  # Inside the user's namespace, so clear_messages drops pending proposals too
+  # and a user can never confirm someone else's proposal.
+  def self.action_cache_key(user_id, action_id)
+    "Vectorsearch/#{user_id}/action_#{action_id}"
+  end
+
   def initialize(user_id)
     @user_id = user_id
   end
@@ -64,6 +70,7 @@ class Vectorsearch
 
     # get response message from bot response
     response_content = nil
+    actions_tool = VectorsearchTools::ActionsTool.new(user)
     begin
       llm = Vectorsearch.llm(temperature: 0.7)
 
@@ -72,7 +79,8 @@ class Vectorsearch
         instructions: prompt_template.gsub("{{user_complete_name}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
         tools: [
           VectorsearchTools::BrowserWebTool.new,
-          VectorsearchTools::QueryDatabaseTool.new(self.user)
+          VectorsearchTools::QueryDatabaseTool.new(self.user),
+          actions_tool
         ]
       )
 
@@ -86,8 +94,27 @@ class Vectorsearch
       response_content = "Mi dispiace, non sono riuscito a trovare una risposta a causa di un errore interno."
     end
 
-    # save assistant message in memory
-    save_message_in_memory("assistant", response_content)
+    # save assistant message in memory, with the proposals to confirm
+    save_message_in_memory("assistant", response_content, actions_tool.proposals)
+    send_ui_update
+
+    true
+  end
+
+  def pending_action?(action_id)
+    Rails.cache.exist?(Vectorsearch.action_cache_key(@user_id, action_id))
+  end
+
+  # Runs an action proposed by the assistant. No AI call: the click is the trigger.
+  def confirm_action(action_id)
+    key = Vectorsearch.action_cache_key(@user_id, action_id)
+    action = Rails.cache.read(key)
+    # only the request that deletes the entry runs it, so a double click runs it once
+    return false unless action && Rails.cache.delete(key)
+
+    result = VectorsearchTools::ActionsTool.new(user).execute(action[:type], action[:data])
+    # in the history so the assistant knows the outcome in the next messages
+    save_message_in_memory("assistant", result)
     send_ui_update
 
     true
@@ -105,8 +132,8 @@ class Vectorsearch
 
   private
 
-  def save_message_in_memory(role, content)
-    Rails.cache.write("Vectorsearch/#{@user_id}/message_#{last_message_index + 1}", { role: role, content: content }, expires_in: 7.days)
+  def save_message_in_memory(role, content, actions = [])
+    Rails.cache.write("Vectorsearch/#{@user_id}/message_#{last_message_index + 1}", { role: role, content: content, actions: actions }, expires_in: 7.days)
     Rails.cache.write("Vectorsearch/#{@user_id}/last_message_index", last_message_index + 1)
     @last_message_index = nil
     @messages = nil
@@ -128,6 +155,7 @@ class Vectorsearch
     Il software ha anche un CRM: contatti (clienti e potenziali clienti), campagne e comunicazioni (un contatto dentro una campagna, con stato da inviare, inviata, persa o presa).\n
     Stai chattando con l'utente di nome {{user_complete_name}}. Il suo ID è: {{user_id}}.\n
     Oggi è il giorno {{date}}.\n
+    Le azioni che modificano i dati vengono solo proposte: l'utente le esegue con il pulsante Conferma. Non dire mai che un'azione è stata eseguita finché l'utente non la conferma.\n
     Rispondi in modo naturale e formale. Puoi utilizzare emoji per esprimere emozioni.
     Non utilizzare markdown o inviare codice.\n
     ".strip

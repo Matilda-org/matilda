@@ -43,8 +43,10 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 
 ## AI assistant
 
+- Every AI call must be started explicitly by a user (button click, chat message): never from page load, callbacks, jobs, crons or webhooks, so no token is spent unless someone asks for it. AI endpoints are POST only, so Turbo prefetch (GET on hover) can never trigger them.
 - OpenAI via langchainrb. Model and client live in `Vectorsearch` (`CHAT_MODEL`, `Vectorsearch.llm`): always build the client there. `reasoning_effort: "none"` is injected into langchainrb's param schema because the model only does function calling on Chat Completions with reasoning off.
-- Chat assistant: `Vectorsearch#send_message` + `VectorsearchTools::QueryDatabaseTool`. Each tool enforces the same policies as the controllers (`only_data_projects_as_member`, `credentials_index`, `crm`).
+- Chat assistant: `Vectorsearch#send_message` + `VectorsearchTools::QueryDatabaseTool` (reads) + `VectorsearchTools::ActionsTool` (writes). Each tool enforces the same policies as the controllers; shared project/task/crm scopes live in `VectorsearchTools::Access`. Read results are capped at `RESULTS_LIMIT` rows (tool results are re-sent on every step of the loop); prefer a new filter on an existing tool over a new tool, since every tool schema is sent with every request.
+- Writes are never run by the model: `ActionsTool` checks the request and stores a proposal in the user's cache namespace (`Vectorsearch.action_cache_key`), the chat shows it as a "Conferma" button and `Vectorsearch#confirm_action` runs it without AI, re-running the checks. Labels are built from the stored data, so the button shows exactly what will run. This is the guard against prompt injection from pages fetched by `BrowserWebTool`.
 - Form helpers (`VectorsearchController`: checklist, url → post, CRM communication draft, text → task, text/image → contact) use `Vectorsearch.ask` (single call, `json: true` for structured output) and answer JSON to small Stimulus controllers. UI shows them only when `Setting.get("vectorsearch_openai_key")` is set.
 - Tests stub `Vectorsearch.ask` (see `test/controllers/vectorsearch_controller_test.rb`): no network calls.
 

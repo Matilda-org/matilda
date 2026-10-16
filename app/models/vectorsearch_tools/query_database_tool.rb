@@ -1,5 +1,10 @@
 class VectorsearchTools::QueryDatabaseTool
   extend Langchain::ToolDefinition
+  include VectorsearchTools::Access
+
+  # Max rows per tool result: results are re-sent to the model on every step of
+  # the assistant loop, so an unfiltered query would burn tokens and context.
+  RESULTS_LIMIT = 30
 
   # The querying user, used to enforce the same row/feature level
   # authorization the controllers apply (see #accessible_projects etc).
@@ -29,7 +34,7 @@ class VectorsearchTools::QueryDatabaseTool
     projects = projects.joins(:projects_members).where(projects_members: { user_id: user_id }) if user_id.present?
     projects = projects.search(search) if search.present?
 
-    projects.map { |p| project_to_string(p) }.join("\n")
+    list(projects) { |p| project_to_string(p) }
   end
 
   # Projects Logs
@@ -43,7 +48,7 @@ class VectorsearchTools::QueryDatabaseTool
     project = accessible_projects.find_by_id(data[:project_id])
     return "Progetto non trovato" unless project
 
-    project.projects_logs.map { |log| project_log_to_string(log) }.join("\n")
+    list(project.projects_logs.order(date: :desc)) { |log| project_log_to_string(log) }
   end
 
   define_function :prjs_log_content, description: "Get the content of a project note" do
@@ -68,7 +73,7 @@ class VectorsearchTools::QueryDatabaseTool
     project = accessible_projects.find_by_id(data[:project_id])
     return "Progetto non trovato" unless project
 
-    project.attachments.map { |a| project_attachment_to_string(a) }.join("\n")
+    list(project.attachments) { |a| project_attachment_to_string(a) }
   end
 
   # Tasks
@@ -78,66 +83,86 @@ class VectorsearchTools::QueryDatabaseTool
     property :project_id, type: "integer", description: "Project ID", required: false
     property :user_id, type: "integer", description: "Filter tasks by user assignment", required: false
     property :completed, type: "boolean", description: "Filter completed tasks", required: false
-    property :deadline, type: "string", description: "Filter tasks by deadline (YYYY-MM-DD)", required: false
+    property :deadline_from, type: "string", description: "Deadline on or after this date (YYYY-MM-DD)", required: false
+    property :deadline_to, type: "string", description: "Deadline on or before this date (YYYY-MM-DD)", required: false
+    property :overdue, type: "boolean", description: "Only not completed tasks past their deadline", required: false
+    property :unresolved, type: "boolean", description: "Only tasks whose last comment still waits for an answer from the assignee", required: false
     property :search, type: "string", description: "Search tasks by title", required: false
   end
 
   def tasks(data)
-    project_id = data[:project_id]
-    user_id = data[:user_id]
-    completed = data[:completed]
-    deadline = data[:deadline]
-    search = data[:search]
+    tasks = accessible_tasks.includes(:project, :user, :tasks_checks).order(deadline: :asc)
+    tasks = tasks.where(project_id: data[:project_id]) if data[:project_id].present?
+    tasks = tasks.where(user_id: data[:user_id]) if data[:user_id].present?
+    tasks = tasks.where(completed: !!data[:completed]) unless data[:overdue]
+    tasks = tasks.not_completed.expired if data[:overdue]
+    tasks = tasks.where(deadline: data[:deadline_from]..) if data[:deadline_from].present?
+    tasks = tasks.where(deadline: ..data[:deadline_to]) if data[:deadline_to].present?
+    tasks = tasks.where(unresolved: true) if data[:unresolved]
+    tasks = tasks.search(data[:search]) if data[:search].present?
 
-    tasks = accessible_tasks
-    tasks = tasks.where(project_id: project_id) if project_id.present?
-    tasks = tasks.where(user_id: user_id) if user_id.present?
-    tasks = tasks.where(completed: !!completed)
-    tasks = tasks.where(deadline: deadline) if deadline.present?
-    tasks = tasks.search(search) if search.present?
-
-    tasks.map { |t| task_to_string(t) }.join("\n")
+    list(tasks) { |t| task_to_string(t) }
   end
 
-  define_function :tasks_create, description: "Create a new task (use task also for reminder, to-dos ecc.)" do
-    property :user_id, type: "integer", description: "User ID", required: true
-    property :title, type: "string", description: "Task title", required: true
-    property :description, type: "string", description: "Task description", required: false
-    property :deadline, type: "string", description: "Task deadline (YYYY-MM-DD)", required: false
-    property :checklist, type: "string", description: "Task checklist items (JSON array of strings)", required: false
-    property :procedure_id, type: "integer", description: "Board ID where the task should be created (require also procedure_status_id)", required: false
-    property :procedure_status_id, type: "integer", description: "Board status ID where the task should be created", required: false
+  define_function :task_comments, description: "Read the latest comments of a task" do
+    property :task_id, type: "integer", description: "Task ID", required: true
   end
 
-  def tasks_create(data)
-    user_id = data[:user_id]
-    title = data[:title]
-    description = data[:description]
-    deadline = data[:deadline]
-    checklist = data[:checklist].blank? ? [] : JSON.parse(data[:checklist])
-    procedure_id = data[:procedure_id]
-    procedure_status_id = data[:procedure_status_id]
+  def task_comments(data)
+    task = accessible_tasks.find_by(id: data[:task_id])
+    return "Task non trovato" unless task
 
-    # a member-restricted user can only file tasks on boards of projects they can access
-    if restricted_to_member_projects? && procedure_id.present?
-      procedure = Procedure.find_by_id(procedure_id)
-      return "Non hai i permessi per creare task su questa board" unless procedure && accessible_projects.exists?(procedure.project_id)
-    end
+    # latest first so the limit keeps the recent discussion
+    comments = task.tasks_comments.includes(:user).order(created_at: :desc)
+    list(comments) { |c| task_comment_to_string(c) }
+  end
 
-    task = Task.create!(
-      user_id: user_id,
-      title: title,
-      description: description,
-      deadline: deadline,
-      tasks_checks_texts: checklist
-    )
+  # Time tracking
+  ##
 
-    if procedure_id.present? && procedure_status_id.present?
-      task.procedures_items.create!(
-        procedure_id: procedure_id,
-        procedures_status_id: procedure_status_id
-      )
-    end
+  define_function :time_tracks, description: "Sum the tracked working time, split by user and by task" do
+    property :user_id, type: "integer", description: "Only time tracked by this user", required: false
+    property :project_id, type: "integer", description: "Only time tracked on this project", required: false
+    property :date_from, type: "string", description: "Tracks started on or after this date (YYYY-MM-DD)", required: false
+    property :date_to, type: "string", description: "Tracks started on or before this date (YYYY-MM-DD)", required: false
+  end
+
+  def time_tracks(data)
+    # same visibility as TasksController#tracks: only tracks of accessible tasks
+    tracks = Tasks::Track.where(task_id: accessible_tasks.select(:id))
+    tracks = tracks.where(user_id: data[:user_id]) if data[:user_id].present?
+    tracks = tracks.where(task_id: Task.where(project_id: data[:project_id]).select(:id)) if data[:project_id].present?
+    tracks = tracks.where(start_at: Date.parse(data[:date_from]).beginning_of_day..) if data[:date_from].present?
+    tracks = tracks.where(start_at: ..Date.parse(data[:date_to]).end_of_day) if data[:date_to].present?
+
+    # aggregated in SQL: the model needs totals, not one row per tracking session
+    per_user = tracks.group(:user_id).sum(:time_spent)
+    per_task = tracks.group(:task_id).order(Arel.sql("SUM(time_spent) DESC")).limit(RESULTS_LIMIT).sum(:time_spent)
+    users = User.where(id: per_user.keys).index_by(&:id)
+    tasks = Task.where(id: per_task.keys).index_by(&:id)
+
+    [
+      "Tempo totale tracciato: #{duration_string(per_user.values.sum)}.",
+      "Per utente: #{per_user.map { |id, time| "#{users[id]&.complete_name || 'Utente sconosciuto'} #{duration_string(time)}" }.join(', ')}.",
+      "Per task (i #{RESULTS_LIMIT} con più tempo): #{per_task.map { |id, time| "#{tasks[id]&.title} (ID: #{id}) #{duration_string(time)}" }.join(', ')}."
+    ].join("\n")
+  rescue Date::Error
+    "Data non valida, usa il formato YYYY-MM-DD"
+  end
+
+  # Users
+  ##
+
+  define_function :users, description: "List the users (ID and name), needed to resolve a person's name to its user ID" do
+    property :search, type: "string", description: "Search users by name or surname", required: false
+  end
+
+  def users(data)
+    users = User.order(:name, :surname)
+    # COALESCE: a NULL surname would turn the whole concatenation into NULL
+    users = users.where("LOWER(COALESCE(name, '') || ' ' || COALESCE(surname, '')) LIKE ?", "%#{data[:search].downcase}%") if data[:search].present?
+
+    list(users) { |u| "#{u.complete_name} (ID: #{u.id})" }
   end
 
   # Credentials
@@ -155,7 +180,7 @@ class VectorsearchTools::QueryDatabaseTool
     credentials = Credential.all
     credentials = credentials.search(search) if search.present?
 
-    credentials.map { |c| credential_to_string(c) }.join("\n")
+    list(credentials) { |c| credential_to_string(c) }
   end
 
   # CRM
@@ -172,7 +197,7 @@ class VectorsearchTools::QueryDatabaseTool
     contacts = Contact.where(archived: !!data[:archived]).includes(communications: :campaign).order(name: :asc)
     contacts = contacts.search(data[:search]) if data[:search].present?
 
-    contacts.map { |c| contact_to_string(c) }.join("\n")
+    list(contacts) { |c| contact_to_string(c) }
   end
 
   define_function :crm_campaigns, description: "Query CRM campaigns with how many communications are in each status" do
@@ -186,7 +211,7 @@ class VectorsearchTools::QueryDatabaseTool
     campaigns = Campaign.where(archived: !!data[:archived]).order(name: :asc)
     campaigns = campaigns.search(data[:search]) if data[:search].present?
 
-    campaigns.map { |c| campaign_to_string(c) }.join("\n")
+    list(campaigns) { |c| campaign_to_string(c) }
   end
 
   define_function :crm_communications, description: "Query CRM communications (a contact inside a campaign), use needs_attention to find the ones to follow up" do
@@ -206,35 +231,48 @@ class VectorsearchTools::QueryDatabaseTool
     # silence is computed from the follow-ups, so it can only be filtered in Ruby
     communications = communications.sent.select(&:needs_attention?) if data[:needs_attention]
 
-    communications.map { |c| communication_to_string(c) }.join("\n")
+    list(communications) { |c| communication_to_string(c) }
+  end
+
+  define_function :crm_communication_logs, description: "Read the latest notes of a CRM communication" do
+    property :communication_id, type: "integer", description: "Communication ID", required: true
+  end
+
+  def crm_communication_logs(data)
+    return crm_forbidden_message unless can_access_crm?
+
+    communication = Communication.find_by(id: data[:communication_id])
+    return "Comunicazione non trovata" unless communication
+
+    logs = communication.communications_logs.includes(:user, :rich_text_content).recent_first
+    list(logs) { |l| communication_log_to_string(l) }
   end
 
   private
 
-  # Authorization scopes
+  # Joins the rows for the model, capped at RESULTS_LIMIT. Works on relations
+  # and on arrays (take is defined on both), and tells the model when rows were
+  # cut so it narrows the filters instead of answering on partial data.
+  def list(records, &to_string)
+    rows = records.take(RESULTS_LIMIT + 1)
+    return "Nessun risultato" if rows.empty?
+
+    lines = rows.first(RESULTS_LIMIT).map(&to_string)
+    lines << "Ci sono altri risultati non mostrati: restringi i filtri." if rows.size > RESULTS_LIMIT
+    lines.join("\n")
+  end
+
+  # Seconds as "02h 05m", same format as Task#time_spent_as_string
+  def duration_string(seconds)
+    hours, remainder = seconds.to_i.divmod(3600)
+    "#{hours.to_s.rjust(2, '0')}h #{(remainder / 60).to_s.rjust(2, '0')}m"
+  end
+
+  # Authorization (project/task/crm scopes live in VectorsearchTools::Access)
   ##
-
-  # Mirrors ApplicationController#query_projects_for_policy: users flagged
-  # only_data_projects_as_member can only see projects they belong to.
-  def restricted_to_member_projects?
-    @user&.policy?("only_data_projects_as_member")
-  end
-
-  def accessible_projects
-    restricted_to_member_projects? ? Project.where(id: @user.projects_as_member_ids) : Project.all
-  end
-
-  def accessible_tasks
-    restricted_to_member_projects? ? Task.where(project_id: @user.projects_as_member_ids) : Task.all
-  end
 
   def can_access_credentials?
     @user&.policy?("credentials_index")
-  end
-
-  # same single policy that gates the whole CRM section
-  def can_access_crm?
-    @user&.policy?("crm")
   end
 
   def crm_forbidden_message
@@ -293,8 +331,18 @@ class VectorsearchTools::QueryDatabaseTool
     #{"Il task è stato stimato #{task.time_estimate_as_string} di lavoro." if task.time_estimate}
     #{"Il task ha richiesto #{task.time_spent_as_string} di lavoro." if task.time_spent}
     #{"Questa è la descrizione del task: #{task.description}." unless task.description.blank?}
-    ##{"Qesta è la lista delle board in cui si trova il task:\n#{procedures_as_item_infos}" unless procedures_as_item_infos.blank?}
+    #{"Checklist: #{task.tasks_checks.sort_by(&:order).map { |c| "#{c.text} (#{c.checked ? 'fatto' : 'da fare'})" }.join(', ')}." if task.tasks_checks.any?}
+    #{"Il task ha #{task.tasks_comments_count} commenti#{", l'ultimo attende una risposta dall'assegnatario" if task.unresolved}." if task.tasks_comments_count.positive?}
+    #{"Questa è la lista delle board in cui si trova il task:\n#{procedures_as_item_infos}" unless procedures_as_item_infos.blank?}
     ".squish
+  end
+
+  def task_comment_to_string(comment)
+    "Il #{comment.created_at.strftime('%d/%m/%Y %H:%M')} #{comment.user&.complete_name || 'un utente'} ha scritto: #{comment.content.to_s.truncate(1000)}"
+  end
+
+  def communication_log_to_string(log)
+    "Il #{log.created_at.strftime('%d/%m/%Y')} #{log.user&.complete_name || 'un utente'} ha scritto: #{log.content.to_plain_text.squish.truncate(1000)}"
   end
 
   def credential_to_string(credential)
