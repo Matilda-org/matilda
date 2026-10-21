@@ -23,6 +23,9 @@ module Matilda
     # Load libs
     config.autoload_paths << Rails.root.join("lib")
 
+    # Private app: keep every response (HTML, JSON, files, redirects) out of search engines.
+    config.action_dispatch.default_headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+
     # Setup active record encryption
     config.active_record.encryption.primary_key = ENV["ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :primary_key)
     config.active_record.encryption.deterministic_key = ENV["ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :deterministic_key)

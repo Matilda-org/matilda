@@ -25,6 +25,8 @@ Rails.application.configure do
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  # Static files skip default_headers: set noindex explicitly when Rails serves them.
+  config.public_file_server.headers = { "x-robots-tag" => "noindex, nofollow, noarchive" }
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
