@@ -189,6 +189,17 @@ class ProceduresControllerTest < ActionController::TestCase
     )
   end
 
+  test "duplicate_status_action" do
+    procedure = procedures(:one)
+    status = procedure.procedures_statuses.first
+    assert_difference -> { procedure.procedures_statuses.count }, 1 do
+      matilda_controller_endpoint(:post, :duplicate_status_action,
+        params: { id: procedure.id, status_id: status.id },
+        policy: "procedures_edit"
+      )
+    end
+  end
+
   test "add_item_action" do
     procedure = procedures(:one)
     matilda_controller_endpoint(:post, :add_item_action,

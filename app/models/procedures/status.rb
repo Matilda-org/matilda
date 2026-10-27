@@ -118,6 +118,31 @@ class Procedures::Status < ApplicationRecord
     false
   end
 
+  # Copies settings and automations (not items, which are real tasks/projects)
+  # into a new status placed right after this one.
+  def duplicate
+    ActiveRecord::Base.transaction do
+      procedure.procedures_statuses.where(order: (order + 1)..).update_all("\"order\" = \"order\" + 1")
+
+      new_status = dup
+      new_status.title = "#{title.truncate(42)} (copia)"
+      new_status.items_count = 0
+      new_status.save!
+      # before_create appends the status at the end, put it next to the original
+      new_status.update_column(:order, order + 1)
+
+      procedures_status_automations.each do |automation|
+        new_status.procedures_status_automations.create!(typology: automation.typology, data: automation.data)
+      end
+
+      new_status
+    end
+  rescue StandardError => e
+    Rails.logger.error e
+    errors.add(:base, e.message)
+    nil
+  end
+
   def add_automation(automation)
     if automation?(automation)
       errors.add(:direction, "Automazione già attiva")

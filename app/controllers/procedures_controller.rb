@@ -291,6 +291,16 @@ class ProceduresController < ApplicationController
     render partial: "procedures/kanban", locals: { procedure: @procedure }
   end
 
+  def duplicate_status_action
+    return unless validate_policy!("procedures_edit")
+    return unless procedure_finder
+    return unless procedures_status_finder
+
+    @status.duplicate
+
+    render partial: "procedures/kanban", locals: { procedure: @procedure }
+  end
+
   def toggle_status_automation_action
     return unless validate_policy!("procedures_edit")
     return unless procedure_finder

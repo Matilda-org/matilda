@@ -39,6 +39,7 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
               <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'show-status-assignments', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Assegnazioni</a></li>
             <% end %>
             <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-status', id: procedure.id, status_id: status.id) %>" data-turbo-frame="action">Modifica</a></li>
+            <li><a class="dropdown-item" href="<%= procedures_duplicate_status_action_path(id: procedure.id, status_id: status.id) %>" data-turbo-method="post" data-turbo-frame="<%= dom_id(procedure, 'kanban') %>">Duplica</a></li>
             <% if status.can_move?('left-full') %>
               <li><a class="dropdown-item" href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left-full') %>" data-turbo-method="post" data-turbo-frame="<%= dom_id(procedure, 'kanban') %>">Sposta all'inizio</a></li>
             <% else %>
