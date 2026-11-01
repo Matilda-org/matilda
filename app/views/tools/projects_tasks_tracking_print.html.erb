@@ -27,34 +27,34 @@
             <br><small><%= simple_format item.resource.description %></small>
             <% end %>
           </td>
-          <td style="min-width: 125px;"><%= track_time item.time_spent %></td>
+          <td class="h-min-w-125"><%= track_time item.time_spent %></td>
         </tr>
       <% end %>
     <% elsif @project && @procedure %>
       <% @procedure_statuses.each do |status| %>
         <tr>
           <td><%= status.title %></td>
-          <td style="min-width: 125px;"><%= track_time status.time_spent %></td>
+          <td class="h-min-w-125"><%= track_time status.time_spent %></td>
         </tr>
       <% end %>
     <% elsif @project %>
       <% @project_procedures.each do |procedure| %>
         <tr>
           <td><%= procedure.name %></td>
-          <td style="min-width: 125px;"><%= track_time procedure.time_spent %></td>
+          <td class="h-min-w-125"><%= track_time procedure.time_spent %></td>
         </tr>
       <% end %>
     <% else %>
       <% @projects.each do |project| %>
         <tr>
           <td><%= project.name %></td>
-          <td style="min-width: 125px;"><%= track_time project.time_spent %></td>
+          <td class="h-min-w-125"><%= track_time project.time_spent %></td>
         </tr>
       <% end %>
     <% end %>
     <tr>
       <th>TOTALE</th>
-      <th style="min-width: 125px;"><%= track_time @total %></th>
+      <th class="h-min-w-125"><%= track_time @total %></th>
     </tr>
     <% if @user %>
       <tr>

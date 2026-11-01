@@ -1,10 +1,17 @@
 import { Controller } from '@hotwired/stimulus'
 
+const STORAGE_PREFIX = 'page-card:'
+
+// On mobile the page cards are collapsible; each card remembers whether it was
+// left open (per page and title), so users don't reopen the same sections at
+// every visit. On desktop they are always open.
 export default class extends Controller {
   static targets = [
     'header',
     'content'
   ]
+
+  static values = { key: String }
 
   connect() {
     this.isMobile = window.matchMedia('(max-width: 768px)').matches
@@ -13,18 +20,19 @@ export default class extends Controller {
 
     if (!this.isMobile) return
     if (this.contentTarget.hasAttribute('always-open')) return
-    
-    this.close(true)
+
+    if (this.storedOpen()) {
+      this.open()
+    } else {
+      this.close(true)
+    }
 
     this.contentObserver = new MutationObserver(() => this.manageContentChange())
     this.contentObserver.observe(this.contentTarget, { childList: true, subtree: true })
   }
 
   disconnect() {
-    if (!this.isMobile) return
-    if (this.contentTarget.hasAttribute('always-open')) return
-
-    this.contentObserver.disconnect()
+    this.contentObserver?.disconnect()
   }
 
   manageHeaderClick(e = null) {
@@ -34,8 +42,10 @@ export default class extends Controller {
 
     if (this.contentTarget.hasAttribute('closed')) {
       this.open()
+      this.storeOpen(true)
     } else {
       this.close()
+      this.storeOpen(false)
     }
   }
 
@@ -54,6 +64,7 @@ export default class extends Controller {
     const height = this.getHeight()
     this.contentTarget.style.height = `${height}px`
     this.contentTarget.removeAttribute('closed')
+    this.headerTarget.classList.remove('rounded-bottom')
     this.setExpanded(true)
   }
 
@@ -76,6 +87,30 @@ export default class extends Controller {
   getHeight() {
     const cardBody = this.contentTarget.querySelector('.card-body')
     const cardFooter = this.contentTarget.querySelector('.card-footer')
-    return cardBody.offsetHeight + (cardFooter?.offsetHeight || 0)
+    return (cardBody?.offsetHeight || 0) + (cardFooter?.offsetHeight || 0)
+  }
+
+  // Storage can be unavailable (private mode, blocked site data): the card
+  // simply falls back to closed.
+  storedOpen() {
+    try {
+      return window.localStorage.getItem(this.storageKey) === 'open'
+    } catch {
+      return false
+    }
+  }
+
+  storeOpen(open) {
+    try {
+      if (open) {
+        window.localStorage.setItem(this.storageKey, 'open')
+      } else {
+        window.localStorage.removeItem(this.storageKey)
+      }
+    } catch {}
+  }
+
+  get storageKey() {
+    return `${STORAGE_PREFIX}${window.location.pathname}:${this.keyValue}`
   }
 }

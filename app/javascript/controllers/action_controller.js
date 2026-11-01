@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static values = { url: String }
+
   connect() {
     this.modalDOM = document.getElementById('actionModal')
     this.modal = bootstrap.Modal.getOrCreateInstance(this.modalDOM)
@@ -8,7 +10,17 @@ export default class extends Controller {
     if (this.detectActionInsideModalDOM()) {
       this.modal.show()
       this.focusFirstField()
+      if (this.urlValue) this.mirrorUrl()
     }
+  }
+
+  // Detail modals put their url in the page url (?modal=), so reloading or sharing
+  // the link reopens them (see action-loader). replaceState keeps Turbo's history
+  // entries untouched.
+  mirrorUrl() {
+    const url = new URL(window.location)
+    url.searchParams.set('modal', this.urlValue)
+    window.history.replaceState(window.history.state, '', url)
   }
 
   // Sposta il focus sul primo campo del contenuto caricato in async nella modale.
@@ -31,6 +43,7 @@ export default class extends Controller {
   closeModal(e) {
     if (e?.currentTarget?.getAttribute('data-turbo-frame') == '_top') {
       this.modal.hide()
+      // hide.bs.modal already dropped ?modal= from the url (action-loader)
       Turbo.visit(window.location.href, { action: "replace" })
       e.preventDefault()
     } else {

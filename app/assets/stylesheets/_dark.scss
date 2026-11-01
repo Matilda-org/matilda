@@ -1,0 +1,128 @@
+/**
+ * Dark theme
+ *
+ * Bootstrap 5.3 switches its own components through [data-bs-theme="dark"]
+ * (set on <html> by the theme script in the layout). This file covers what
+ * Bootstrap can't know: surfaces painted with fixed light utilities
+ * (bg-white, bg-light, text-dark), the brand navy used as text, and the
+ * app's own components.
+ */
+
+$dark-body-bg: #12152b;
+$dark-surface: #1b1f3a;
+$dark-surface-raised: #252a4a;
+$dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #{$dark-body-bg};
+  --bs-body-bg-rgb: #{red($dark-body-bg)}, #{green($dark-body-bg)}, #{blue($dark-body-bg)};
+  --bs-body-color: #dfe3f3;
+  --bs-secondary-bg: #{$dark-surface};
+  --bs-tertiary-bg: #{$dark-surface-raised};
+  --bs-border-color: rgba(255, 255, 255, 0.12);
+  --bs-link-color: #{$dark-primary-ink};
+  --bs-link-color-rgb: #{red($dark-primary-ink)}, #{green($dark-primary-ink)}, #{blue($dark-primary-ink)};
+  --bs-link-hover-color: #{lighten($dark-primary-ink, 8%)};
+  --bs-card-bg: #{$dark-surface};
+  --bs-modal-bg: #{$dark-surface};
+  --bs-dropdown-bg: #{$dark-surface};
+
+  color-scheme: dark;
+
+  // The light theme paints the page with a time-of-day gradient (layout <style>)
+  &, & body {
+    background: $dark-body-bg !important;
+  }
+
+  .bg-white {
+    background-color: rgba($dark-surface, var(--bs-bg-opacity, 1)) !important;
+  }
+
+  .bg-light {
+    background-color: rgba($dark-surface-raised, var(--bs-bg-opacity, 1)) !important;
+  }
+
+  .text-dark {
+    color: var(--bs-body-color) !important;
+  }
+
+  .text-primary,
+  .link-primary {
+    color: $dark-primary-ink !important;
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: #{$dark-primary-ink};
+    --bs-btn-border-color: #{$dark-primary-ink};
+    --bs-btn-hover-bg: #{$dark-primary-ink};
+    --bs-btn-hover-border-color: #{$dark-primary-ink};
+    --bs-btn-hover-color: #{$dark-body-bg};
+    --bs-btn-active-bg: #{$dark-primary-ink};
+    --bs-btn-active-color: #{$dark-body-bg};
+  }
+
+  .form-control,
+  .form-select,
+  .input-group-text {
+    background-color: $dark-surface-raised;
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+  }
+
+  .card,
+  .modal-content,
+  .dropdown-menu,
+  .list-group-item,
+  .accordion-item,
+  .accordion-button:not(.collapsed) {
+    background-color: $dark-surface;
+    color: var(--bs-body-color);
+  }
+
+  .sidebar .nav-item {
+    background-color: $dark-surface;
+  }
+
+  .sidebar .nav-link,
+  .sidebar .nav-link:hover {
+    color: var(--bs-body-color);
+  }
+
+  .sidebar .nav-link:hover {
+    background-color: $dark-surface-raised;
+  }
+
+  .sidebar .nav-item .dropdown-item {
+    background-color: $dark-surface-raised;
+    color: var(--bs-body-color);
+  }
+
+  .nav-pills .nav-link {
+    background-color: $dark-surface-raised;
+    color: var(--bs-body-color);
+  }
+
+  .card .c-card.bg-white,
+  .modal .c-card.bg-white {
+    background-color: $dark-surface-raised !important;
+
+    .card-header {
+      background-color: lighten($dark-surface-raised, 4%) !important;
+    }
+  }
+
+  .c-card__action:hover,
+  .c-card__action:focus-visible {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .c-kbd {
+    color: var(--bs-gray-400);
+    border-color: var(--bs-gray-600);
+  }
+
+  // Avoid the dark navy page-card headers blending into the dark page
+  .c-page-card__header {
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  }
+}

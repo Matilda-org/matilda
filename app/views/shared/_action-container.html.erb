@@ -6,11 +6,13 @@ turbo_frame ||= nil
 classes ||= ''
 body_classes ||= '' # per chi deve gestire da sé lo scroll del body (es. overlay task)
 feedback ||= false
+# Detail modals mirror their url in the page (?modal=), so the link can be shared or reloaded
+addressable ||= false
 
 %>
 
 <%= turbo_frame_tag 'action' do %>
-  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-<%= size %> <%= classes %>" id="action-controller" data-controller="action">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-<%= size %> <%= classes %>" id="action-controller" data-controller="action"<% if addressable %> data-action-url-value="<%= request.fullpath %>"<% end %>>
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title fs-5"><%= title %></h3>

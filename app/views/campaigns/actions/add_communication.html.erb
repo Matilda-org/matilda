@@ -10,7 +10,7 @@
         <%= select_tag 'contact_id', options_for_select(available_contacts.map { |c| [c.name, c.id] }), class: 'form-select', required: true %>
       </div>
 
-      <p class="text-muted" style="font-size: 12px">La comunicazione viene creata nello stato <b>Da inviare</b>.</p>
+      <p class="text-muted h-fs-xs">La comunicazione viene creata nello stato <b>Da inviare</b>.</p>
 
       <div class="d-flex justify-content-end align-items-center">
         <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>

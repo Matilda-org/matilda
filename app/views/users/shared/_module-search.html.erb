@@ -9,7 +9,7 @@ search_has_results = false
 
 <%= turbo_frame_tag 'module-search' do %>
 
-  <div class="pt-1 pb-2 border-bottom" style="position: sticky; top: -16px; z-index: 1; background-color: rgba(255,255,255,0.95);">
+  <div class="pt-1 pb-2 border-bottom c-sticky-toolbar">
     <%= form_tag '', method: :get, class: 'd-flex', data: { turbo_frame: 'module-search-results', controller: 'filters' } do %>
       <div class="input-group">
         <input type="text" name="search" list="moduleSearchSuggestions" class="form-control" placeholder="Ricerca" value="<%= search %>" aria-label="Ricerca" data-filters-target="inputToClear" data-action="keyup->filters#submitDebounced" autofocus>

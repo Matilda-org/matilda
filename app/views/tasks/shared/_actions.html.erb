@@ -91,7 +91,8 @@ wrapper_class = context == 'overlay' ?
   <% elsif task.accepted %>
     <a
       class="btn btn-success"
-      href="<%= tasks_actions_path(type: 'complete', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+      href="<%= tasks_complete_action_path(task, turbo_frame_key: turbo_frame_key) %>"
+      data-turbo-method="post"
       data-turbo-frame="action"
       data-controller="tooltip"
       data-tooltip="Completa"

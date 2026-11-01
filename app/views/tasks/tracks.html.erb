@@ -16,8 +16,8 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
           <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-primary me-3 flex-shrink-0" style="width: 40px; height: 40px; background-color: rgba(var(--bs-primary-rgb), .1);">
             <%= nav_icon('projects', 'fs-5') %>
           </span>
-          <div class="flex-grow-1" style="min-width: 0;">
-            <div class="text-uppercase text-muted fw-semibold" style="font-size: .7rem; letter-spacing: .05em;">Progetto</div>
+          <div class="flex-grow-1 min-w-0">
+            <div class="text-uppercase text-muted fw-semibold h-eyebrow">Progetto</div>
             <div class="fw-semibold text-break lh-sm"><%= @project.name %></div>
           </div>
           <% unless @task %>
@@ -32,8 +32,8 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
           <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-primary me-3 flex-shrink-0" style="width: 40px; height: 40px; background-color: rgba(var(--bs-primary-rgb), .1);">
             <%= nav_icon('tasks', 'fs-5') %>
           </span>
-          <div class="flex-grow-1" style="min-width: 0;">
-            <div class="text-uppercase text-muted fw-semibold" style="font-size: .7rem; letter-spacing: .05em;">Task</div>
+          <div class="flex-grow-1 min-w-0">
+            <div class="text-uppercase text-muted fw-semibold h-eyebrow">Task</div>
             <div class="fw-semibold text-break lh-sm"><%= @task.title %></div>
           </div>
           <a href="<%= tasks_tracks_path(project_id: @project_id, date: @date&.iso8601) %>" data-turbo-frame="tracks-list" class="btn btn-sm btn-link text-secondary ms-2 flex-shrink-0" aria-label="Rimuovi filtro task">
@@ -84,13 +84,13 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
                 <th scope="col">Progetto</th>
                 <th scope="col">Utente</th>
                 <th scope="col">Durata</th>
-                <th scope="col" class="text-end" style="width: 1px; white-space: nowrap;"><span class="visually-hidden">Azioni</span></th>
+                <th scope="col" class="text-end h-col-shrink"><span class="visually-hidden">Azioni</span></th>
               </tr>
             </thead>
             <tbody>
               <% @tracks.each do |track| %>
                 <tr>
-                  <td style="width: 1px; white-space: nowrap;">
+                  <td class="h-col-shrink">
                     <% if can_edit_tracks %>
                       <%= form_tag tasks_update_track_date_action_path(track_id: track.id),
                             data: { controller: 'auto-submit', turbo_frame: 'tracks-list' } do %>
@@ -133,7 +133,7 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
                       <span class="badge bg-info text-white">in corso</span>
                     <% end %>
                   </td>
-                  <td class="text-end" style="width: 1px; white-space: nowrap;">
+                  <td class="text-end h-col-shrink">
                     <a
                       href="<%= tasks_destroy_track_action_path(track_id: track.id, project_id: @project_id, task_id: @task&.id, filter_date: @date&.iso8601, page: params[:page]) %>"
                       data-turbo-method="post"

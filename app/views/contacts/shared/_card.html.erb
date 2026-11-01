@@ -18,7 +18,7 @@ projects_count = contact.projects.size
   render_actions_args: { contact: contact } do
 %>
   <%# recapiti: quello che serve per contattarlo davvero, senza aprire la scheda %>
-  <div class="mb-2" style="font-size: 12px">
+  <div class="mb-2 h-fs-xs">
     <% if contact.phone.present? %>
       <span class="me-2"><i class="bi bi-telephone me-1"></i><%= contact.phone %></span>
     <% end %>

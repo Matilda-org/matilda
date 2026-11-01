@@ -3,7 +3,7 @@
   "short_name": "Matilda",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "theme_color": "#181d45",
   "background_color": "#181d45",
   "icons": [

@@ -138,3 +138,41 @@
   height: 35px;
   object-fit: cover;
 }
+
+.c-card__header {
+  border-bottom: solid 1px rgba(var(--bs-dark-rgb), 0.1) !important;
+}
+
+// Favourites stand out with an accent edge instead of a full colored background,
+// which turned a grid of favourites into a wall of color and hurt readability
+.c-card--preferred {
+  box-shadow: inset 4px 0 0 var(--bs-warning), 0 2px 6px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+// Icon-only actions: at least 44x44px touch targets (WCAG 2.5.5), visually still an icon
+.c-card__actions {
+  margin-top: -10px;
+  margin-right: -10px;
+}
+
+.c-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--bs-border-radius);
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+  }
+}
+
+// Truncate by lines, not by characters: the text adapts to the card width
+.c-card__description--clamp > div {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

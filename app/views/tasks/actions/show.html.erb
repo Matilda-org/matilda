@@ -1,4 +1,4 @@
-<%= render 'shared/action-container', title: 'Dettagli task', size: 'lg', body_classes: 'c-task-overlay__body' do %>
+<%= render 'shared/action-container', title: 'Dettagli task', size: 'lg', addressable: true, body_classes: 'c-task-overlay__body' do %>
 
 <%
 comments_count = @task.tasks_comments.size

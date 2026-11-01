@@ -15,6 +15,11 @@ import { Controller } from '@hotwired/stimulus'
  *
  * Submits that happen while the modal is already open are left untouched, so the
  * existing form-loading button spinner keeps handling that case.
+ *
+ * It also owns the modal lifecycle shared by every action:
+ * - a page opened with ?modal=<path> (see action_controller#mirrorUrl) reopens it;
+ * - clicking the backdrop closes the modal until a form inside it is edited,
+ *   then the backdrop turns static so typed data is never lost by a stray click.
  */
 export default class extends Controller {
   connect() {
@@ -22,11 +27,27 @@ export default class extends Controller {
     if (!this.frame) return
 
     this.onFetchStart = this.onFetchStart.bind(this)
+    this.onFormEdit = this.onFormEdit.bind(this)
+    this.onHide = this.onHide.bind(this)
+    this.onHidden = this.onHidden.bind(this)
+
     this.frame.addEventListener('turbo:before-fetch-request', this.onFetchStart)
+    this.element.addEventListener('input', this.onFormEdit)
+    this.element.addEventListener('trix-change', this.onFormEdit)
+    this.element.addEventListener('hide.bs.modal', this.onHide)
+    this.element.addEventListener('hidden.bs.modal', this.onHidden)
+
+    this.openFromUrl()
   }
 
   disconnect() {
-    if (this.frame) this.frame.removeEventListener('turbo:before-fetch-request', this.onFetchStart)
+    if (!this.frame) return
+
+    this.frame.removeEventListener('turbo:before-fetch-request', this.onFetchStart)
+    this.element.removeEventListener('input', this.onFormEdit)
+    this.element.removeEventListener('trix-change', this.onFormEdit)
+    this.element.removeEventListener('hide.bs.modal', this.onHide)
+    this.element.removeEventListener('hidden.bs.modal', this.onHidden)
   }
 
   onFetchStart() {
@@ -45,6 +66,40 @@ export default class extends Controller {
         </div>
       </div>`
 
-    bootstrap.Modal.getOrCreateInstance(this.element).show()
+    this.modal.show()
+  }
+
+  // Only same-origin action endpoints: the param must never point the frame elsewhere
+  openFromUrl() {
+    const path = new URL(window.location).searchParams.get('modal')
+    if (!path) return
+
+    const target = new URL(path, window.location.origin)
+    if (target.origin !== window.location.origin || !/^\/[a-z-]+\/actions\//.test(target.pathname)) return
+
+    this.frame.src = target.pathname + target.search
+  }
+
+  onFormEdit(event) {
+    if (!event.target.closest('form')) return
+
+    // Bootstrap reads the config on every backdrop click, so switching it live works
+    this.modal._config.backdrop = 'static'
+  }
+
+  onHide() {
+    const url = new URL(window.location)
+    if (!url.searchParams.has('modal')) return
+
+    url.searchParams.delete('modal')
+    window.history.replaceState(window.history.state, '', url)
+  }
+
+  onHidden() {
+    this.modal._config.backdrop = true
+  }
+
+  get modal() {
+    return bootstrap.Modal.getOrCreateInstance(this.element)
   }
 }

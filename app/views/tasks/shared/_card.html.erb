@@ -27,7 +27,8 @@ turbo_frame_key ||= '_top'
         <% if task.persisted? && !task.completed && task.accepted %>
           <a
             type="button"
-            href="<%= tasks_actions_path(type: 'complete', id: task.id, turbo_frame_key: turbo_frame_key) %>"
+            href="<%= tasks_complete_action_path(task, turbo_frame_key: turbo_frame_key) %>"
+            data-turbo-method="post"
             data-turbo-frame="action"
             class="btn btn-success btn-sm border-2"
             data-controller="tooltip"

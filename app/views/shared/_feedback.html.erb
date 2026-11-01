@@ -6,12 +6,14 @@ subtitle ||= nil
 turbo_frame ||= '_top'
 render_content ||= nil
 render_content_args ||= {}
+# Reversible actions skip the confirm step and offer an undo here instead: { label:, href: }
+undo ||= nil
 
 %>
 
 <div class="text-center">
   <% if type == 'success' %>
-    <div class="text-success mb-3" style="font-size: 50px">
+    <div class="text-success mb-3 h-fs-icon-xl">
       <i class="bi bi-check-circle"></i>
     </div>
   <% end %>
@@ -26,6 +28,9 @@ render_content_args ||= {}
     <% end %>
     class="btn btn-primary"
   >Va bene</a>
+  <% if undo %>
+    <%= button_to undo[:label] || "Annulla", undo[:href], method: :post, form: { class: "d-inline-block ms-2", data: { turbo_frame: "action" } }, class: "btn btn-outline-secondary" %>
+  <% end %>
 </div>
 
 <% if render_content %>

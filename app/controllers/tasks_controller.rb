@@ -180,6 +180,7 @@ class TasksController < ApplicationController
       feedback_args: {
         title: "Task completato",
         subtitle: "Il task è stato completato.",
+        undo: { label: "Annulla", href: tasks_uncomplete_action_path(@task, turbo_frame_key: params[:turbo_frame_key]) },
         render_content: "tasks/shared/card",
         render_content_args: { task: @task },
         type: "success"

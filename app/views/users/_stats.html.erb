@@ -12,7 +12,7 @@ user ||= User.new
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div>
-              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.today.count %></span><br>
+              <span class="fw-bold h-fs-xl"><%= user.tasks.not_completed.today.count %></span><br>
               Task<br class="d-md-none">
               per oggi
             </div>
@@ -26,7 +26,7 @@ user ||= User.new
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div>
-              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.expired.count %></span><br>
+              <span class="fw-bold h-fs-xl"><%= user.tasks.not_completed.expired.count %></span><br>
               Task<br class="d-md-none">
               scaduti
             </div>
@@ -40,7 +40,7 @@ user ||= User.new
         <div class="card-body">
           <div class="d-flex align-items-center">
             <div>
-              <span class="fw-bold" style="font-size: 28px;"><%= user.tasks.not_completed.count %></span><br>
+              <span class="fw-bold h-fs-xl"><%= user.tasks.not_completed.count %></span><br>
               Task<br class="d-md-none">
               totali
             </div>

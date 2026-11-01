@@ -17,7 +17,7 @@ collapsed = !always_open
 
 %>
 
-<div class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card">
+<div class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card" data-page-card-key-value="<%= strip_tags(title.to_s) %>">
   <button
     type="button"
     data-page-card-target="header"

@@ -36,3 +36,37 @@
     border-right-width: 0 !important;
   }
 }
+
+// Lets flex children shrink below their content width (needed for text truncation)
+.min-w-0 {
+  min-width: 0;
+}
+
+// Recurring one-off sizes, formerly inline styles
+.h-fs-xxs { font-size: 10px; }
+.h-fs-xs { font-size: 12px; }
+.h-fs-xl { font-size: 28px; }
+.h-eyebrow { font-size: 0.7rem; letter-spacing: 0.05em; }
+.h-max-w-400 { max-width: 400px; }
+.h-min-w-125 { min-width: 125px; }
+.h-min-vh-content { min-height: calc(100svh - 100px); }
+
+// Table column as narrow as its content
+.h-col-shrink {
+  width: 1px;
+  white-space: nowrap;
+}
+
+// Toolbar pinned to the top of a scrolling card body
+.c-sticky-toolbar {
+  position: sticky;
+  top: -16px;
+  z-index: 1;
+  background-color: rgba(var(--bs-body-bg-rgb), 0.95);
+
+  &--bleed {
+    width: calc(100% + 2px);
+    margin-left: -1px;
+  }
+}
+.h-fs-icon-xl { font-size: 50px; }

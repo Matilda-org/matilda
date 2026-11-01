@@ -80,8 +80,6 @@ GEM
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
-    autoprefixer-rails (10.4.21.0)
-      execjs (~> 2)
     aws-eventstream (1.4.0)
     aws-partitions (1.1261.0)
     aws-sdk-core (3.252.0)
@@ -108,10 +106,8 @@ GEM
     bindex (0.8.1)
     bootsnap (1.24.6)
       msgpack (~> 1.2)
-    bootstrap (5.2.3)
-      autoprefixer-rails (>= 9.1.0)
-      popper_js (>= 2.11.6, < 3)
-      sassc-rails (>= 2.0.0)
+    bootstrap (5.3.8)
+      popper_js (>= 2.11.8, < 3)
     bootstrap5-kaminari-views (0.0.1)
       kaminari (>= 0.13)
       rails (>= 3.1)
@@ -142,7 +138,6 @@ GEM
     erb (6.0.7)
     erubi (1.13.1)
     event_stream_parser (1.0.0)
-    execjs (2.10.1)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
     faraday (2.14.3)
@@ -472,7 +467,7 @@ DEPENDENCIES
   aws-sdk-s3
   bcrypt (~> 3.1.7)
   bootsnap
-  bootstrap (~> 5.2.3)
+  bootstrap (~> 5.3.8)
   bootstrap5-kaminari-views
   brakeman
   capybara

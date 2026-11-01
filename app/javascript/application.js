@@ -61,21 +61,17 @@ document.addEventListener('turbo:before-cache', (e) => {
 })
 
 /**
- * Reload page on resize
+ * Reload page when crossing the mobile breakpoint
+ *
+ * Some controllers (page cards, protector) pick their mobile or desktop behavior
+ * on connect. A plain resize (eg. the on-screen keyboard, a rotated tablet that
+ * stays on the same side) must not reload: it would drop whatever the user typed.
  */
 
-let resizeTimeout
-let resizeLastWidth = window.innerWidth
-window.addEventListener('resize', function(event) {
-  clearTimeout(resizeTimeout)
-  resizeTimeout = setTimeout(function(){
-    const currentWidth = window.innerWidth
-    const diffWidth = Math.abs(resizeLastWidth - currentWidth)
-    resizeLastWidth = currentWidth
-    if (diffWidth > 100) {
-      window.location.reload()
-    }
-  }, 500)
+const mobileQuery = window.matchMedia('(max-width: 768px)')
+mobileQuery.addEventListener('change', () => {
+  const busy = document.querySelector('.modal.show') || document.activeElement?.matches('input, textarea, select, trix-editor')
+  if (!busy) Turbo.visit(window.location.href, { action: 'replace' })
 })
 
 /**

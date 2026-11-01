@@ -23,7 +23,7 @@ empty_cta_policy ||= nil
       <% if tags.length.positive? %>
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
-            <div class="col-auto d-none">
+            <div class="col-auto visually-hidden">
               <label for="tags" class="col-form-label">Tag</label>
             </div>
             <div class="col">
@@ -41,7 +41,7 @@ empty_cta_policy ||= nil
       <% if search %>
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
-            <div class="col-auto d-none">
+            <div class="col-auto visually-hidden">
               <label for="search" class="col-form-label">Ricerca</label>
             </div>
             <div class="col">
@@ -68,7 +68,7 @@ empty_cta_policy ||= nil
       <% if sorts.any? %>
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
-            <div class="col-auto d-none">
+            <div class="col-auto visually-hidden">
               <label for="sort" class="col-form-label">Ordina per</label>
             </div>
             <div class="col">
@@ -88,11 +88,8 @@ empty_cta_policy ||= nil
       <% if filters.any? %>
         <div class="col col-12 mb-3 col-xl-auto">
           <div class="row align-items-center">
-            <div class="col-auto d-none">
-              <label for="filters" class="col-form-label">Filtri</label>
-            </div>
             <div class="col d-flex justify-content-end">
-              <div class="btn-group" role="group">
+              <div class="btn-group" role="group" aria-label="Filtri">
                 <% filters.each do |filter| %>
                   <input
                     type="radio"
