@@ -23,6 +23,8 @@ class SettingTest < ActiveSupport::TestCase
     Setting.set("chiave_file", Rack::Test::UploadedFile.new(file_path, "text/plain"), "file")
     url = Setting.get("chiave_file")
     assert_not_nil url
+    # relative, so the CSP (img-src 'self') accepts it on any host or port
+    assert url.start_with?("/rails/active_storage/")
   end
 
   test "reset elimina le impostazioni" do

@@ -2,27 +2,77 @@
  * Dark theme
  *
  * Bootstrap 5.3 switches its own components through [data-bs-theme="dark"]
- * (set on <html> by the theme script in the layout). This file covers what
- * Bootstrap can't know: surfaces painted with fixed light utilities
- * (bg-white, bg-light, text-dark), the brand navy used as text, and the
- * app's own components.
+ * (set on <html> by the theme script in the layout), but the app paints with
+ * the theme tokens directly: --bs-dark as ink and hairlines, --bs-light and
+ * --bs-white as surfaces, --bs-primary/--bs-secondary (deep navy) both as fills
+ * and as text. Those keep their light values in Bootstrap's dark mode, so here
+ * they are remapped:
+ * - "dark" becomes the light ink, so rgba(var(--bs-dark-rgb), .x) overlays,
+ *   borders, dots and watermarks turn into light-on-dark automatically;
+ * - "light" becomes a raised dark surface;
+ * - primary/secondary/info fills get lighter, so they still stand out from the
+ *   page while keeping white text readable;
+ * - brand colors used as *text* get a light tint (fills are too dark to read on
+ *   dark surfaces).
+ * Fixed white surfaces (var(--bs-white) backgrounds) are overridden one by one.
  */
 
 $dark-body-bg: #12152b;
 $dark-surface: #1b1f3a;
-$dark-surface-raised: #252a4a;
-$dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
+$dark-surface-raised: #262b4d;
+$dark-ink: #dfe3f3;
+$dark-muted-ink: #a3a9c6;
+
+// Fills: white text on them stays above 7:1
+$dark-primary-fill: #3d4594;
+$dark-secondary-fill: #1f5a82;
+$dark-info-fill: #4b4ba3;
+$dark-black-fill: #0b0d1c; // what .bg-dark (archived cards) becomes
+
+// Inks: brand hues as text on dark surfaces, above 4.5:1
+$dark-inks: (
+  "primary": #aab3f5,
+  "secondary": #8cc3ea,
+  "info": #b7b7f2,
+  "danger": #f08a7e,
+  "success": #63d391,
+  "warning": #f5b94f
+);
+$dark-primary-ink: map-get($dark-inks, "primary");
+
+@function rgb-list($color) {
+  @return red($color), green($color), blue($color);
+}
 
 [data-bs-theme="dark"] {
   --bs-body-bg: #{$dark-body-bg};
-  --bs-body-bg-rgb: #{red($dark-body-bg)}, #{green($dark-body-bg)}, #{blue($dark-body-bg)};
-  --bs-body-color: #dfe3f3;
+  --bs-body-bg-rgb: #{rgb-list($dark-body-bg)};
+  --bs-body-color: #{$dark-ink};
+  --bs-body-color-rgb: #{rgb-list($dark-ink)};
+  --bs-secondary-color: #{$dark-muted-ink};
   --bs-secondary-bg: #{$dark-surface};
   --bs-tertiary-bg: #{$dark-surface-raised};
   --bs-border-color: rgba(255, 255, 255, 0.12);
+  --bs-heading-color: #{$dark-ink};
+  --bs-emphasis-color: #fff;
   --bs-link-color: #{$dark-primary-ink};
-  --bs-link-color-rgb: #{red($dark-primary-ink)}, #{green($dark-primary-ink)}, #{blue($dark-primary-ink)};
+  --bs-link-color-rgb: #{rgb-list($dark-primary-ink)};
   --bs-link-hover-color: #{lighten($dark-primary-ink, 8%)};
+  --bs-link-hover-color-rgb: #{rgb-list(lighten($dark-primary-ink, 8%))};
+
+  // Theme tokens, see the header comment
+  --bs-dark: #{$dark-ink};
+  --bs-dark-rgb: #{rgb-list($dark-ink)};
+  --bs-light: #{$dark-surface-raised};
+  --bs-light-rgb: #{rgb-list($dark-surface-raised)};
+  --bs-primary: #{$dark-primary-fill};
+  --bs-primary-rgb: #{rgb-list($dark-primary-fill)};
+  --bs-secondary: #{$dark-secondary-fill};
+  --bs-secondary-rgb: #{rgb-list($dark-secondary-fill)};
+  --bs-info: #{$dark-info-fill};
+  --bs-info-rgb: #{rgb-list($dark-info-fill)};
+  --bs-gray-600: #{$dark-muted-ink};
+
   --bs-card-bg: #{$dark-surface};
   --bs-modal-bg: #{$dark-surface};
   --bs-dropdown-bg: #{$dark-surface};
@@ -34,31 +84,90 @@ $dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
     background: $dark-body-bg !important;
   }
 
+  .text-muted {
+    color: $dark-muted-ink !important;
+  }
+
+  // Brand colors used as text or outlines
+  @each $name, $ink in $dark-inks {
+    .text-#{$name},
+    .link-#{$name} {
+      color: $ink !important;
+    }
+
+    .btn-outline-#{$name} {
+      --bs-btn-color: #{$ink};
+      --bs-btn-border-color: #{rgba($ink, 0.6)};
+      --bs-btn-hover-bg: #{$ink};
+      --bs-btn-hover-border-color: #{$ink};
+      --bs-btn-hover-color: #{$dark-body-bg};
+      --bs-btn-active-bg: #{$ink};
+      --bs-btn-active-border-color: #{$ink};
+      --bs-btn-active-color: #{$dark-body-bg};
+      --bs-btn-disabled-color: #{rgba($ink, 0.6)};
+      --bs-btn-disabled-border-color: #{rgba($ink, 0.3)};
+    }
+  }
+
+  // Solid buttons are compiled from the light palette
+  .btn-primary {
+    --bs-btn-bg: #{$dark-primary-fill};
+    --bs-btn-border-color: #{$dark-primary-fill};
+    --bs-btn-hover-bg: #{lighten($dark-primary-fill, 6%)};
+    --bs-btn-hover-border-color: #{lighten($dark-primary-fill, 6%)};
+    --bs-btn-active-bg: #{lighten($dark-primary-fill, 10%)};
+    --bs-btn-active-border-color: #{lighten($dark-primary-fill, 10%)};
+    --bs-btn-disabled-bg: #{$dark-primary-fill};
+    --bs-btn-disabled-border-color: #{$dark-primary-fill};
+  }
+
+  .btn-secondary {
+    --bs-btn-bg: #{$dark-secondary-fill};
+    --bs-btn-border-color: #{$dark-secondary-fill};
+    --bs-btn-hover-bg: #{lighten($dark-secondary-fill, 6%)};
+    --bs-btn-hover-border-color: #{lighten($dark-secondary-fill, 6%)};
+  }
+
+  .btn-light {
+    --bs-btn-bg: #{$dark-surface-raised};
+    --bs-btn-border-color: var(--bs-border-color);
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-hover-bg: #{lighten($dark-surface-raised, 6%)};
+    --bs-btn-hover-color: var(--bs-body-color);
+    --bs-btn-active-bg: #{lighten($dark-surface-raised, 8%)};
+    --bs-btn-active-color: var(--bs-body-color);
+  }
+
+  .btn-dark {
+    --bs-btn-bg: #{$dark-black-fill};
+    --bs-btn-border-color: var(--bs-border-color);
+    --bs-btn-color: #{$dark-ink};
+  }
+
+  // Fixed light surfaces
   .bg-white {
     background-color: rgba($dark-surface, var(--bs-bg-opacity, 1)) !important;
   }
 
-  .bg-light {
-    background-color: rgba($dark-surface-raised, var(--bs-bg-opacity, 1)) !important;
+  // "dark" is now the light ink: archived (dark) cards keep a dark fill
+  .bg-dark {
+    background-color: rgba($dark-black-fill, var(--bs-bg-opacity, 1)) !important;
   }
 
-  .text-dark {
-    color: var(--bs-body-color) !important;
+  .badge.bg-dark {
+    background-color: rgba($dark-ink, 0.9) !important;
+    color: $dark-body-bg !important;
   }
 
-  .text-primary,
-  .link-primary {
-    color: $dark-primary-ink !important;
+  .text-bg-dark {
+    background-color: $dark-black-fill !important;
+    color: $dark-ink !important;
   }
 
-  .btn-outline-primary {
-    --bs-btn-color: #{$dark-primary-ink};
-    --bs-btn-border-color: #{$dark-primary-ink};
-    --bs-btn-hover-bg: #{$dark-primary-ink};
-    --bs-btn-hover-border-color: #{$dark-primary-ink};
-    --bs-btn-hover-color: #{$dark-body-bg};
-    --bs-btn-active-bg: #{$dark-primary-ink};
-    --bs-btn-active-color: #{$dark-body-bg};
+  // Brand success is too light for white badge text (3.3:1)
+  .badge.bg-success,
+  .badge.text-bg-success {
+    background-color: #1e8449 !important;
   }
 
   .form-control,
@@ -67,6 +176,10 @@ $dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
     background-color: $dark-surface-raised;
     color: var(--bs-body-color);
     border-color: var(--bs-border-color);
+
+    &::placeholder {
+      color: $dark-muted-ink;
+    }
   }
 
   .card,
@@ -79,29 +192,6 @@ $dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
     color: var(--bs-body-color);
   }
 
-  .sidebar .nav-item {
-    background-color: $dark-surface;
-  }
-
-  .sidebar .nav-link,
-  .sidebar .nav-link:hover {
-    color: var(--bs-body-color);
-  }
-
-  .sidebar .nav-link:hover {
-    background-color: $dark-surface-raised;
-  }
-
-  .sidebar .nav-item .dropdown-item {
-    background-color: $dark-surface-raised;
-    color: var(--bs-body-color);
-  }
-
-  .nav-pills .nav-link {
-    background-color: $dark-surface-raised;
-    color: var(--bs-body-color);
-  }
-
   .card .c-card.bg-white,
   .modal .c-card.bg-white {
     background-color: $dark-surface-raised !important;
@@ -111,26 +201,108 @@ $dark-primary-ink: #aab3f5; // brand navy is unreadable as text on dark surfaces
     }
   }
 
+  .sidebar .nav-item {
+    background-color: $dark-surface;
+  }
+
+  .sidebar .nav-link,
+  .sidebar .nav-link:hover,
+  .sidebar .nav-item .dropdown-item {
+    color: var(--bs-body-color);
+  }
+
+  .sidebar .nav-link:hover {
+    background-color: $dark-surface-raised;
+  }
+
   .c-card__action:hover,
   .c-card__action:focus-visible {
     background-color: rgba(255, 255, 255, 0.08);
   }
 
-  .c-kbd {
-    color: var(--bs-gray-400);
-    border-color: var(--bs-gray-600);
+  // Decorative watermark: "dark" is now light ink, keep it as faint as in the light theme
+  .c-card__nav-icon {
+    opacity: 0.035;
   }
 
-  // Avoid the dark navy page-card headers blending into the dark page
+  .c-kbd {
+    color: $dark-muted-ink;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
   .c-page-card__header {
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
   }
-}
 
-[data-bs-theme="dark"] .btn-light {
-  --bs-btn-bg: #{$dark-surface-raised};
-  --bs-btn-border-color: var(--bs-border-color);
-  --bs-btn-color: var(--bs-body-color);
-  --bs-btn-hover-bg: #{lighten($dark-surface-raised, 6%)};
-  --bs-btn-hover-color: var(--bs-body-color);
+  // Components with a fixed white surface
+  .c-comment-form,
+  .c-comm-board__card,
+  .c-kanban__item,
+  .c-kanban__item--drag {
+    background-color: $dark-surface-raised;
+  }
+
+  .c-modal-form__submit {
+    background-color: $dark-surface;
+  }
+
+  // Brand success is too light for white text (2.9:1)
+  .btn-success {
+    --bs-btn-bg: #1e8449;
+    --bs-btn-border-color: #1e8449;
+    --bs-btn-hover-bg: #239a55;
+    --bs-btn-hover-border-color: #239a55;
+  }
+
+  // CRM board columns take their hue inline (--comm-rgb): light ink for the
+  // header icon, deeper fill under the white counter and avatar text
+  .c-comm-board__header-title i {
+    color: color-mix(in srgb, rgba(var(--comm-rgb), 1) 50%, white);
+  }
+
+  .c-comm-board__counter,
+  .c-comm-board__avatar {
+    background-color: color-mix(in srgb, rgba(var(--comm-rgb), 1) 70%, black);
+  }
+
+  // Primary used as icon color
+  .c-comm-board__card-go,
+  .c-status-picker__check {
+    color: $dark-primary-ink;
+  }
+
+  // "light" is now a surface: ink on the primary fill stays light
+  .vectorsearch__opener,
+  .vectorsearch__chat-message--user {
+    color: $dark-ink;
+  }
+
+  .flatpickr-calendar {
+    background: $dark-surface;
+    color: var(--bs-body-color);
+
+    .flatpickr-day,
+    .flatpickr-weekday,
+    .flatpickr-month,
+    .flatpickr-current-month,
+    .flatpickr-monthDropdown-months,
+    .numInputWrapper input {
+      color: var(--bs-body-color);
+    }
+
+    .flatpickr-prev-month svg,
+    .flatpickr-next-month svg {
+      fill: var(--bs-body-color);
+    }
+
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay,
+    .flatpickr-day.flatpickr-disabled {
+      color: rgba($dark-ink, 0.35);
+    }
+
+    .flatpickr-day:hover {
+      background: $dark-surface-raised;
+    }
+  }
 }

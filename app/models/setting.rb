@@ -22,7 +22,8 @@ class Setting < ApplicationRecord
     return data["value"] if data["type"] == "json"
     return data["value"]&.to_s if data["type"] == "string"
     return data["value"]&.to_i&.positive? if data["type"] == "boolean"
-    return Rails.application.routes.url_helpers.url_for(file) if data["type"] == "file" && file.attached?
+    # Relative path: same origin whatever host or port serves the page, so the CSP (img-src 'self') never blocks it
+    return Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true) if data["type"] == "file" && file.attached?
 
     nil
   end

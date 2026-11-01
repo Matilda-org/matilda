@@ -97,10 +97,11 @@ class User < ApplicationRecord
   end
 
   # Thumb url with placeholder fallback, safe to use in any view
+  # Relative path, like Setting files: same origin for the CSP whatever host serves the page
   def image_profile_url
     return "/statics/placeholder-profile.jpg" unless image_profile.attached?
 
-    Rails.application.routes.url_helpers.url_for(image_profile_thumb)
+    Rails.application.routes.url_helpers.rails_representation_path(image_profile_thumb, only_path: true)
   end
 
   def policies
@@ -186,7 +187,7 @@ class User < ApplicationRecord
 
       image_profile_url = "/statics/placeholder-profile.jpg"
       if user&.image_profile&.attached?
-        image_profile_url = Rails.application.routes.url_helpers.url_for(user.image_profile_thumb)
+        image_profile_url = Rails.application.routes.url_helpers.rails_representation_path(user.image_profile_thumb, only_path: true)
       end
 
       {
