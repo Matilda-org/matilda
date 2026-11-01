@@ -53,7 +53,7 @@ gem "rest-client"
 gem "sassc-rails"
 
 # Use bootstrap 5
-gem "bootstrap", "~> 5.3.8"
+gem "bootstrap", "~> 5.2.3"
 
 # Cache controller actions
 gem "actionpack-action_caching"

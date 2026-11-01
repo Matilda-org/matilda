@@ -78,8 +78,7 @@ export default class extends Controller {
     const target = new URL(path, window.location.origin)
     if (target.origin !== window.location.origin || !/^\/[a-z-]+\/actions\//.test(target.pathname)) return
 
-    // Wait for Turbo to boot the frame element, or it would fetch the src twice
-    document.addEventListener('turbo:load', () => { this.frame.src = target.pathname + target.search }, { once: true })
+    this.frame.src = target.pathname + target.search
   }
 
   onFormEdit(event) {
