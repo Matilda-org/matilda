@@ -10,6 +10,7 @@ class ContactsControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("crm")
     contact = contacts(:one)
     project = projects(:one).tap { |p| p.update!(contact: contact) }
 
@@ -25,6 +26,7 @@ class ContactsControllerTest < ActionController::TestCase
   end
 
   test "create form offers AI filling when the assistant is configured" do
+    grant_policy("crm")
     Setting.set("vectorsearch_openai_key", "sk-test")
 
     get :actions, params: { type: "create" }

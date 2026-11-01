@@ -10,6 +10,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("users_show", "users_create")
     user = users(:one)
 
     matilda_controller_action("create", "Nuovo utente")

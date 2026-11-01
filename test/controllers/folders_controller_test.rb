@@ -10,6 +10,7 @@ class FoldersControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("folders_create", "folders_edit", "folders_destroy", "folders_manage_resources")
     folder = folders(:one)
     matilda_controller_action("create", "Nuova cartella")
     matilda_controller_action("edit", "Modifica cartella", folder.id)

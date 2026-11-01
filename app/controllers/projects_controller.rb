@@ -68,16 +68,10 @@ class ProjectsController < ApplicationController
     send_data @attachment.file.download, filename: @attachment.file.filename.to_s, type: @attachment.file.content_type.to_s, disposition: "attachment"
   end
 
+  # Access check runs before caches_action: a cached response must never skip it
+  before_action :authorize_show_log, only: :show_log
   caches_action :show_log, cache_path: -> { current_cache_action_path }, layout: false
   def show_log
-    @log = Projects::Log.find(params[:id])
-
-    if !@session_user_id && !session["projects_show_log_#{@log.id}"]
-      return redirect_to authentication_login_path unless @log.shareable? && params[:share_code] == @log.share_code
-
-      session["projects_show_log_#{@log.id}"] = true
-    end
-
     unless params[:print].blank?
       @_nav_title = @log.title
       @_print_title = @log.title
@@ -85,10 +79,12 @@ class ProjectsController < ApplicationController
     end
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action -> { validate_policy!("projects_show") }, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
-    @project = params[:id].present? ? Project.find(params[:id]) : Project.new
+    @project = params[:id].present? ? query_projects_for_policy.find(params[:id]) : Project.new
 
     return render "projects/actions/create" if @type == "create"
     return render "projects/actions/edit" if @type == "edit"
@@ -177,7 +173,7 @@ class ProjectsController < ApplicationController
       turbo_frame: params[:turbo_frame_key] || "_top",
       feedback_args: {
         title: "Progetto creato",
-        subtitle: "Il progetto #{@project.name} è stato creato con successo. Il suo codice temporaneo è <b>#{@project.code}</b>.",
+        subtitle: "Il progetto #{ERB::Util.h(@project.name)} è stato creato con successo. Il suo codice temporaneo è <b>#{ERB::Util.h(@project.code)}</b>.".html_safe,
         render_content: "projects/shared/card",
         render_content_args: { project: @project, interactive: true },
         type: "success"
@@ -602,6 +598,23 @@ class ProjectsController < ApplicationController
 
   def project_params
     params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time, :contact_id)
+  end
+
+  # Members see the logs of the projects they can access; anyone else needs the
+  # share link of a log that is still shared
+  def authorize_show_log
+    if @session_user_id
+      return unless validate_session_user!
+      return unless validate_policy!("projects_show")
+
+      @log = Projects::Log.where(project_id: query_projects_for_policy.select(:id)).find(params[:id])
+    else
+      @log = Projects::Log.find(params[:id])
+      shared_access = @log.shareable? && (session["projects_show_log_#{@log.id}"] || ActiveSupport::SecurityUtils.secure_compare(params[:share_code].to_s, @log.share_code.to_s))
+      return redirect_to authentication_login_path unless shared_access
+
+      session["projects_show_log_#{@log.id}"] = true
+    end
   end
 
   def project_finder

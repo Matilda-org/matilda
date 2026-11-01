@@ -29,6 +29,8 @@ class PostsController < ApplicationController
     @tags = @tags.uniq.sample(50).sort
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action -> { validate_policy!("posts_index") }, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]

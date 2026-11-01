@@ -9,11 +9,11 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
 
 <%= render 'shared/form-errors', item: attachment %>
 
-<%= form_tag path, class: 'row', multipart: true, id: 'projectAttachmentForm', data: { controller: 'form-loading' } do %>
+<%= form_tag path, class: 'row', multipart: true, id: 'projectAttachmentForm', data: { controller: 'form-loading option-text' } do %>
 
   <div class="col col-6 mb-3">
     <label for="typology" class="form-label">Tipologia</label>
-    <%= select_tag :typology, options_for_select(Projects::Attachment.typologies.map {|key, value| [Projects::Attachment.typology_string(key.to_s), Projects::Attachment.typologies.key(value)]}, attachment.typology), class: 'form-select', required: true, onchange: 'projectAttachmentFormTypologyChange()' %>
+    <%= select_tag :typology, options_for_select(Projects::Attachment.typologies.map {|key, value| [Projects::Attachment.typology_string(key.to_s), Projects::Attachment.typologies.key(value)]}, attachment.typology), class: 'form-select', required: true, data: { option_text_target: "select", action: "option-text#copy" } %>
   </div>
 
   <div class="col col-6 mb-3">
@@ -44,7 +44,7 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
 
   <div class="col col-12 mb-3">
     <label for="title" class="form-label">Titolo</label>
-    <input type="text" class="form-control" id="title" name="title" value="<%= attachment.title %>" required>
+    <input type="text" class="form-control" id="title" name="title" value="<%= attachment.title %>" data-option-text-target="output" required>
   </div>
 
   <div class="col col-12 mb-3">
@@ -61,17 +61,3 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
     <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
   </div>
 <% end %>
-
-<script>
-function projectAttachmentFormTypologyChange() {
-  const form = document.querySelector('#projectAttachmentForm')
-  const typologyInput = form.querySelector('#typology')
-  const titleInput = form.querySelector('#title')
-
-  if (typologyInput.value == '') {
-    titleInput.value = ''
-  } else {
-    titleInput.value = typologyInput.options[typologyInput.selectedIndex].text
-  }
-}
-</script>

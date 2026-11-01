@@ -80,6 +80,10 @@ class ApiIntegrationTest < ActionDispatch::IntegrationTest
 end
 
 class ActionController::TestCase
+  def grant_policy(*policies)
+    policies.each { |policy| @user.users_policies.create!(policy: policy) }
+  end
+
   def matilda_controller_action(type, title = nil, id = nil, other_params = {})
     # test valid request
     get :actions, params: { type: type, id: id }.merge(other_params)

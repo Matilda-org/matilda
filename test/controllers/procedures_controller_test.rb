@@ -10,6 +10,7 @@ class ProceduresControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("procedures_show")
     procedure = procedures(:one)
     status = procedure.procedures_statuses.first
     item = procedure.procedures_items.first

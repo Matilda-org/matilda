@@ -28,7 +28,7 @@ collapsed = !always_open
     aria-label="<%= collapsed ? 'Apri sezione' : 'Sezione sempre aperta' %>: <%= strip_tags(title.to_s) %>"
     <%= always_open ? 'disabled' : '' %>
   >
-    <span class="fs-4 mb-0 h-text-oneline text-white fw-semibold"><%= raw title %></span>
+    <span class="fs-4 mb-0 h-text-oneline text-white fw-semibold"><%= title %></span>
 
     <div class="d-flex align-items-center gap-2">
       <% if nav_icon_key.present? && !counter.present? %>

@@ -10,6 +10,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("projects_show")
     project = projects(:one)
     member = project.projects_members.create!(user: @user, role: "member")
     log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)
@@ -84,6 +85,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   test "show_log" do
+    grant_policy("projects_show")
     project = projects(:one)
     log = project.projects_logs.create!(title: "Test Log", date: Date.today, content: "Log content", user_id: users(:one).id)
     matilda_controller_endpoint(:get, :show_log,

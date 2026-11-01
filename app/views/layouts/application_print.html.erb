@@ -67,8 +67,8 @@
       <%= yield %>
     </main>
 
-    <script>
+    <%= javascript_tag nonce: true do %>
       window.addEventListener('DOMContentLoaded', () => window.print())
-    </script>
+    <% end %>
   </body>
 </html>

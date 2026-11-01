@@ -2,9 +2,10 @@
 
 user ||= User.new
 
-title = ""
-title += "<img src=\"#{user.image_profile_url}\" style=\"width: 35px; height: 35px;\" class=\"rounded-circle border border-primary border-2 me-1\">"
-title += "<span class=\"align-middle\"> #{user.complete_name} </span>"
+title = safe_join([
+  image_tag(user.image_profile_url, alt: "", class: "c-avatar-sm rounded-circle border border-primary border-2 me-1"),
+  tag.span(" #{user.complete_name} ", class: "align-middle")
+])
 
 %>
 

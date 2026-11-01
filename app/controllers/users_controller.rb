@@ -33,11 +33,11 @@ class UsersController < ApplicationController
     if params[:search] && params[:search].length >= 3
       @search = params[:search]
       @search_results = {}
-      @search_results[:projects] = Project.not_archived.search(params[:search]).order(name: :asc).limit(25).load_async
-      @search_results[:credentials] = Credential.search(params[:search]).order(name: :asc).limit(25).load_async
-      @search_results[:tasks] = Task.not_completed.search(params[:search]).order(deadline: :asc, alghoritmic_order: :asc, title: :asc).limit(25).load_async
-      @search_results[:procedures] = Procedure.not_as_model.not_archived.search(params[:search]).where(projects: { archived: [ nil, false ] }).order(name: :asc).limit(25).load_async
-      @search_results[:projects_archived] = Project.archived.search(params[:search]).order(name: :asc).limit(25).load_async
+      @search_results[:projects] = query_projects_for_policy.not_archived.search(params[:search]).order(name: :asc).limit(25).load_async
+      @search_results[:credentials] = (@session_user.policy?("credentials_index") ? Credential.all : Credential.none).search(params[:search]).order(name: :asc).limit(25).load_async
+      @search_results[:tasks] = query_tasks_for_policy.not_completed.search(params[:search]).order(deadline: :asc, alghoritmic_order: :asc, title: :asc).limit(25).load_async
+      @search_results[:procedures] = query_procedures_for_policy.not_as_model.not_archived.search(params[:search]).where(projects: { archived: [ nil, false ] }).order(name: :asc).limit(25).load_async
+      @search_results[:projects_archived] = query_projects_for_policy.archived.search(params[:search]).order(name: :asc).limit(25).load_async
 
       if @search_results[:projects].count.positive? || @search_results[:credentials].count.positive? || @search_results[:tasks].count.positive? || @search_results[:procedures].count.positive?
         @session_user.log_search(@search)
@@ -45,6 +45,8 @@ class UsersController < ApplicationController
     end
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action :authorize_actions, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
@@ -72,7 +74,7 @@ class UsersController < ApplicationController
       turbo_frame: "page-index",
       feedback_args: {
         title: "Utente creato",
-        subtitle: "L'utente #{@user.complete_name} è stato creato con successo. La sua password di accesso è <b>#{password}</b>.",
+        subtitle: "L'utente #{ERB::Util.h(@user.complete_name)} è stato creato con successo. La sua password di accesso è <b>#{ERB::Util.h(password)}</b>.".html_safe,
         render_content: "users/shared/card",
         render_content_args: { user: @user },
         type: "success"
@@ -145,7 +147,7 @@ class UsersController < ApplicationController
       turbo_frame: "_top",
       feedback_args: {
         title: "Password rigenerata",
-        subtitle: "La password di #{@user.complete_name} è stata rigenerata con successo. La nuova password è <b>#{password}</b>.",
+        subtitle: "La password di #{ERB::Util.h(@user.complete_name)} è stata rigenerata con successo. La nuova password è <b>#{ERB::Util.h(password)}</b>.".html_safe,
         type: "success"
       }
     }
@@ -165,7 +167,7 @@ class UsersController < ApplicationController
       turbo_frame: "_top",
       feedback_args: {
         title: "API Key rigenerata",
-        subtitle: "La nuova API Key di #{@user.complete_name} è <b>#{@user.api_key}</b>. Salvala ora: non sarà più visibile.",
+        subtitle: "La nuova API Key di #{ERB::Util.h(@user.complete_name)} è <b>#{ERB::Util.h(@user.api_key)}</b>. Salvala ora: non sarà più visibile.".html_safe,
         type: "success"
       }
     }
@@ -204,6 +206,14 @@ class UsersController < ApplicationController
   end
 
   private
+
+  # Own profile actions (edit, password, API key) need no policy; anything else
+  # on another user needs users_show, creating one needs users_create
+  def authorize_actions
+    return if params[:id].present? && params[:id].to_s == @session_user_id.to_s
+
+    validate_policy!(params[:id].present? ? "users_show" : "users_create")
+  end
 
   def user_params
     params.permit(:name, :surname, :email, :description, :image_profile)

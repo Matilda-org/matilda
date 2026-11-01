@@ -10,6 +10,7 @@ class TasksControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("tasks_show")
     task = tasks(:one)
 
     matilda_controller_action("create", "Nuovo task")
@@ -23,6 +24,7 @@ class TasksControllerTest < ActionController::TestCase
   end
 
   test "create form offers AI filling when the assistant is configured" do
+    grant_policy("tasks_show")
     Setting.set("vectorsearch_openai_key", "sk-test")
 
     get :actions, params: { type: "create" }

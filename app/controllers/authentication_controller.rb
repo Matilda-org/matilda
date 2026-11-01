@@ -23,51 +23,55 @@ class AuthenticationController < ApplicationController
     end
 
     ApplicationMailer.login_success_mail(@user.email, request.remote_ip).deliver_now
-    cookies.encrypted[:user_id] = { value: @user.id, expires: 1.month.from_now }
-    redirect_to params[:redirect] || root_path
+    sign_in(@user)
+    # url_from drops anything pointing to another host
+    redirect_to url_from(params[:redirect]) || root_path
   end
 
   def recover_password; end
 
+  # The reset page is addressed by an opaque token, never by the user id, and
+  # unknown emails get the same answer: nobody can probe which accounts exist.
   def recover_password_action
-    @user = User.find_by(params.permit(:email))
+    token = SecureRandom.urlsafe_base64(24)
+    user = User.find_by(params.permit(:email))
 
-    unless @user
-      flash[:danger] = "Email non trovata"
-      return redirect_to authentication_recover_password_path
+    if user
+      code = SecureRandom.hex(4).upcase
+      Rails.cache.write(recover_password_cache_key(token), { user_id: user.id, code: code }, expires_in: 30.minutes)
+      ApplicationMailer.recover_password_mail(user.email, code).deliver_now
     end
 
-    code = SecureRandom.hex(4).upcase
-    Rails.cache.write("AuthenticationController/recover_password/#{@user.id}", code, expires_in: 30.minutes)
-    ApplicationMailer.recover_password_mail(@user.email, code).deliver_now
-
-    redirect_to authentication_update_password_path(@user)
+    flash[:success] = "Se l'email è registrata riceverai un codice per aggiornare la password"
+    redirect_to authentication_update_password_path(token)
   end
 
   def update_password
-    @user = User.find(params[:id])
+    @token = params[:id]
   end
 
   def update_password_action
-    @user = User.find(params[:id])
-    code = Rails.cache.read("AuthenticationController/recover_password/#{@user.id}")
+    @token = params[:id]
+    recovery = Rails.cache.read(recover_password_cache_key(@token))
+    @user = User.find_by(id: recovery[:user_id]) if recovery
 
-    unless code && params[:code] && code.upcase == params[:code].upcase
+    unless @user && ActiveSupport::SecurityUtils.secure_compare(recovery[:code], params[:code].to_s.upcase)
       flash[:danger] = "Codice non corretto"
-      return redirect_to authentication_update_password_path(@user)
+      return redirect_to authentication_update_password_path(@token)
     end
 
     unless @user.update(params.permit(:password, :password_confirmation))
       flash[:danger] = @user.errors.full_messages.join(", ")
-      return redirect_to authentication_update_password_path(@user)
+      return redirect_to authentication_update_password_path(@token)
     end
 
+    # single use: the code dies with the first successful reset
+    Rails.cache.delete(recover_password_cache_key(@token))
     flash[:success] = "Password aggiornata"
     redirect_to authentication_login_path
   end
-
   def logout
-    cookies.encrypted[:user_id] = nil
+    sign_out
     redirect_to root_path
   end
 
@@ -87,7 +91,7 @@ class AuthenticationController < ApplicationController
     end
 
     @user.update_policies(Users::Policy.policies.keys.reject { |key| key == "only_data_projects_as_member" })
-    cookies.encrypted[:user_id] = { value: @user.id, expires: 1.month.from_now }
+    sign_in(@user)
 
     begin
       require "rake"
@@ -102,6 +106,10 @@ class AuthenticationController < ApplicationController
   end
 
   private
+
+  def recover_password_cache_key(token)
+    "AuthenticationController/recover_password/#{token}"
+  end
 
   def user_first_run_params
     params.permit(:name, :surname, :email, :password, :password_confirmation)

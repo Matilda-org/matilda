@@ -33,6 +33,8 @@ class CampaignsController < ApplicationController
     nil unless campaign_finder
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action -> { validate_policy!("crm") }, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]

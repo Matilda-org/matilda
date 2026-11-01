@@ -33,9 +33,18 @@ class ApplicationController < ActionController::Base
     render plain: "Cache cleared"
   end
 
+  # Called by an external scheduler. With JOBS_TOKEN set the caller must send it
+  # (X-Jobs-Token header or token param); the semaphore is taken atomically
+  # before running, so concurrent calls never run the jobs twice.
   def jobsrun
+    jobs_token = ENV["JOBS_TOKEN"].to_s
+    if jobs_token.present?
+      given_token = (request.headers["X-Jobs-Token"] || params[:token]).to_s
+      return head(:unauthorized) unless ActiveSupport::SecurityUtils.secure_compare(given_token, jobs_token)
+    end
+
     jobs_semaphore_key = "ApplicationController/jobs_semaphore"
-    unless Rails.cache.read(jobs_semaphore_key)
+    if Rails.cache.write(jobs_semaphore_key, true, expires_in: 30.minutes, unless_exist: true)
       begin
         ActiveStorageCleanerJob.perform_now
       rescue StandardError => e
@@ -51,7 +60,6 @@ class ApplicationController < ActionController::Base
       rescue StandardError => e
         Rails.logger.error e
       end
-      Rails.cache.write(jobs_semaphore_key, true, expires_in: 30.minutes)
     end
 
     render plain: "Jobs runned"
@@ -73,15 +81,18 @@ class ApplicationController < ActionController::Base
   def validate_session_user_id!
     return true if @session_user_id
 
-    cookies.encrypted[:user_id] = nil
+    sign_out
     redirect_to authentication_login_path(redirect: request.path)
     false
   end
 
   def validate_session_user!
-    return true if @session_user_id && @session_user = User.find_by(id: @session_user_id)
+    @session_user = User.find_by(id: @session_user_id) if @session_user_id
+    # Cookies issued before a password change carry an old version: reject them
+    return true if @session_user && @session_user.session_version == cookies.encrypted[:session_version].to_i
 
-    cookies.encrypted[:user_id] = nil
+    @session_user = nil
+    sign_out
     redirect_to authentication_login_path(redirect: request.path)
     false
   end
@@ -114,8 +125,35 @@ class ApplicationController < ActionController::Base
     @session_user_id = cookies.encrypted[:user_id]
   end
 
+  # httponly: scripts never read it; secure whenever the request came over HTTPS
+  def sign_in(user)
+    options = { expires: 1.month.from_now, httponly: true, secure: request.ssl? }
+    cookies.encrypted[:user_id] = options.merge(value: user.id)
+    cookies.encrypted[:session_version] = options.merge(value: user.session_version)
+  end
+
+  def sign_out
+    cookies.delete(:user_id)
+    cookies.delete(:session_version)
+  end
+
   def query_projects_for_policy
     @query_projects_for_policy ||= @session_user.policy?("only_data_projects_as_member") ? Project.where(id: @session_user.projects_as_member_ids) : Project.all
+  end
+
+  # Tasks visibility for the web app, same rule as the API: with the membership
+  # limit a user sees tasks of their projects plus tasks assigned to them
+  def query_tasks_for_policy
+    return Task.all unless @session_user.policy?("only_data_projects_as_member")
+
+    Task.where(project_id: @session_user.projects_as_member_ids).or(Task.where(user_id: @session_user.id))
+  end
+
+  # Procedures visibility follows their project (global procedures stay visible)
+  def query_procedures_for_policy
+    return Procedure.all unless @session_user.policy?("only_data_projects_as_member")
+
+    Procedure.where(project_id: @session_user.projects_as_member_ids).or(Procedure.where(project_id: nil))
   end
 
   def paginate_query(query)

@@ -39,6 +39,8 @@ class CredentialsController < ApplicationController
     @credentials = paginate_query(query.where.not(id: @credentials_preferred.pluck(:id)))
   end
 
+  # Gate the modal dispatcher (credential secrets) before view logging and caches_action
+  before_action -> { validate_policy!("credentials_index") }, only: :actions
   # prima di caches_action: la vista va tracciata anche quando la risposta arriva dalla cache
   before_action :log_credential_view, only: :actions
 

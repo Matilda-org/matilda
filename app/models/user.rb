@@ -36,6 +36,10 @@ class User < ApplicationRecord
   validate :image_profile_validation
   has_secure_password
 
+  # A new password signs out every session opened with the old one: the session
+  # cookie carries the version it was issued with (see ApplicationController#sign_in)
+  before_save -> { self.session_version += 1 }, if: -> { persisted? && will_save_change_to_password_digest? }
+
   # Per-user API key: authenticates API requests as this user so data access
   # policies apply to the API too. Regenerate with #regenerate_api_key.
   has_secure_token :api_key, length: 36

@@ -7,10 +7,19 @@ class ActiveStorageCleanerJobTest < ActiveSupport::TestCase
       filename: "orphan.txt",
       content_type: "text/plain"
     )
+    unattached.update_column(:created_at, 2.days.ago)
 
     ActiveStorageCleanerJob.perform_now
 
     assert_not ActiveStorage::Blob.exists?(unattached.id)
+  end
+
+  test "keeps recent unattached blobs, they may be uploads not attached yet" do
+    pending_upload = ActiveStorage::Blob.create_and_upload!(io: StringIO.new("draft"), filename: "draft.txt", content_type: "text/plain")
+
+    ActiveStorageCleanerJob.perform_now
+
+    assert ActiveStorage::Blob.exists?(pending_upload.id)
   end
 
   test "keeps attached blobs" do

@@ -12,6 +12,8 @@ class FoldersController < ApplicationController
     @credentials = @folder.credentials.order(name: :asc)
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action :authorize_actions, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
@@ -103,6 +105,18 @@ class FoldersController < ApplicationController
   end
 
   private
+
+  ACTIONS_POLICIES = {
+    "create" => "folders_create",
+    "edit" => "folders_edit",
+    "destroy" => "folders_destroy",
+    "manage-resource" => "folders_manage_resources"
+  }.freeze
+
+  def authorize_actions
+    policy = ACTIONS_POLICIES[params[:type]]
+    validate_policy!(policy) if policy
+  end
 
   def folder_params
     params.permit(:name)

@@ -30,10 +30,12 @@ class ProceduresController < ApplicationController
     render :show
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action -> { validate_policy!("procedures_show") }, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
-    @procedure = params[:id].present? ? Procedure.find(params[:id]) : Procedure.new
+    @procedure = params[:id].present? ? query_procedures_for_policy.find(params[:id]) : Procedure.new
 
     return render "procedures/actions/create" if @type == "create"
     return render "procedures/actions/edit" if @type == "edit"
@@ -443,7 +445,7 @@ class ProceduresController < ApplicationController
   end
 
   def procedure_finder
-    @procedure = Procedure.find_by(id: params[:id])
+    @procedure = query_procedures_for_policy.find_by(id: params[:id])
     unless @procedure
       flash[:danger] = "Board non trovata"
       redirect_to procedures_path

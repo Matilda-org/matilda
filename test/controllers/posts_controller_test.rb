@@ -10,6 +10,7 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("posts_index")
     post = posts(:one)
     matilda_controller_action("create", "Nuovo articolo")
     matilda_controller_action("edit", "Modifica articolo", post.id)

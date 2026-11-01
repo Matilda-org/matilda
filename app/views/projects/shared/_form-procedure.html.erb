@@ -7,16 +7,16 @@ procedure ||= Procedure.new
 
 <%= render 'shared/form-errors', item: procedure %>
 
-<%= form_tag projects_add_procedure_action_path(project), class: 'row', id: 'projectProceduresForm', data: { controller: 'form-loading' } do %>
+<%= form_tag projects_add_procedure_action_path(project), class: 'row', id: 'projectProceduresForm', data: { controller: 'form-loading option-text' } do %>
 
   <div class="col col-12 mb-3">
     <label for="procedure_id" class="form-label">Modello di partenza</label>
-    <%= select_tag 'procedure_id', options_for_select([''] + project.procedures_valid.map { |u| [u.name, u.id] }, ''), class: 'form-select', onchange: 'projectProcedureFormProcedureCloneChange()', required: true %>
+    <%= select_tag 'procedure_id', options_for_select([''] + project.procedures_valid.map { |u| [u.name, u.id] }, ''), class: 'form-select', data: { option_text_target: "select", action: "option-text#copy" }, required: true %>
   </div>
 
   <div class="col col-12 mb-3">
     <label for="name" class="form-label">Nome della board</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" required>
+    <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" data-option-text-target="output" required>
   </div>
 
   <hr>
@@ -35,18 +35,4 @@ procedure ||= Procedure.new
     <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
   </div>
 <% end %>
-
-<script>
-function projectProcedureFormProcedureCloneChange() {
-  const form = document.querySelector('#projectProceduresForm')
-  const procedureCloneInput = form.querySelector('#procedure_id')
-  const nameInput = form.querySelector('#name')
-
-  if (procedureCloneInput.value == '') {
-    nameInput.value = ''
-  } else {
-    nameInput.value = procedureCloneInput.options[procedureCloneInput.selectedIndex].text
-  }
-}
-</script>
 

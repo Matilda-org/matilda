@@ -10,6 +10,7 @@ class CampaignsControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("crm")
     campaign = campaigns(:one)
     communication = campaign.communications.create!(contact: contacts(:one))
 
@@ -31,6 +32,7 @@ class CampaignsControllerTest < ActionController::TestCase
   end
 
   test "show-communication offers an AI draft when the assistant is configured" do
+    grant_policy("crm")
     Setting.set("vectorsearch_openai_key", "sk-test")
     campaign = campaigns(:one)
     communication = campaign.communications.create!(contact: contacts(:one))

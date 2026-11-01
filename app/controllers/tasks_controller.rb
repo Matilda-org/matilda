@@ -87,10 +87,12 @@ class TasksController < ApplicationController
     nil unless task_finder
   end
 
+  # Gate the modal dispatcher before caches_action, so cached responses are gated too
+  before_action -> { validate_policy!("tasks_show") }, only: :actions
   caches_action :actions, cache_path: -> { current_cache_action_path }, layout: false
   def actions
     @type = params[:type]
-    @task = params[:id].present? ? Task.find(params[:id]) : Task.new
+    @task = params[:id].present? ? query_tasks_for_policy.find(params[:id]) : Task.new
     @task = build_duplicated_task(params[:duplicate_id]) if @type == "create" && params[:duplicate_id].present?
 
     @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
@@ -303,7 +305,7 @@ class TasksController < ApplicationController
     project_param = params[:project_id].presence
     task_param = params[:task_id].presence
 
-    @task = Task.find_by(id: task_param) if task_param
+    @task = query_tasks_for_policy.find_by(id: task_param) if task_param
     # if a project is explicitly chosen and the task is not in it, drop the task filter
     @task = nil if @task && project_param && @task.project_id.to_s != project_param
 
@@ -419,7 +421,7 @@ class TasksController < ApplicationController
   # build an unsaved task pre-filled with the data of an existing one, so the
   # create form can be opened as a "duplicate"
   def build_duplicated_task(source_id)
-    source = Task.find(source_id)
+    source = query_tasks_for_policy.find(source_id)
     task = Task.new(
       title: source.title,
       deadline: source.deadline,
@@ -497,7 +499,7 @@ class TasksController < ApplicationController
   end
 
   def task_finder
-    @task = Task.find_by(id: params[:id])
+    @task = query_tasks_for_policy.find_by(id: params[:id])
     unless @task
       flash[:danger] = "Task non trovato"
       redirect_to tasks_path

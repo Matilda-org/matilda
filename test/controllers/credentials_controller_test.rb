@@ -10,6 +10,7 @@ class CredentialsControllerTest < ActionController::TestCase
   end
 
   test "actions" do
+    grant_policy("credentials_index")
     credential = credentials(:one)
     matilda_controller_action("create", "Nuova credenziale")
     matilda_controller_action("edit", "Modifica credenziale", credential.id)
@@ -22,6 +23,7 @@ class CredentialsControllerTest < ActionController::TestCase
   end
 
   test "actions show should not track a turbo prefetch" do
+    grant_policy("credentials_index")
     credential = credentials(:one)
     assert_nil credential.last_viewed_at
 
