@@ -208,6 +208,11 @@ body {
   padding-bottom: 15px;
 }
 
+// Scrolling column: items keep their height instead of shrinking to fit
+.sidebar .nav > * {
+  flex-shrink: 0;
+}
+
 .sidebar__group {
   margin: 10px 0 6px;
   font-size: 0.7rem;

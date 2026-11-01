@@ -10,16 +10,24 @@ export default class extends Controller {
     if (this.detectActionInsideModalDOM()) {
       this.modal.show()
       this.focusFirstField()
-      if (this.urlValue) this.mirrorUrl()
+      this.mirrorUrl()
     }
   }
 
   // Detail modals put their url in the page url (?modal=), so reloading or sharing
   // the link reopens them (see action-loader). replaceState keeps Turbo's history
   // entries untouched.
+  // A non-addressable step (eg. the feedback after an action) drops the param.
   mirrorUrl() {
     const url = new URL(window.location)
-    url.searchParams.set('modal', this.urlValue)
+    if (this.urlValue) {
+      url.searchParams.set('modal', this.urlValue)
+    } else if (url.searchParams.has('modal')) {
+      url.searchParams.delete('modal')
+    } else {
+      return
+    }
+
     window.history.replaceState(window.history.state, '', url)
   }
 

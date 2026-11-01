@@ -49,8 +49,8 @@ document.addEventListener('turbo:before-cache', (e) => {
   })
 
   // close mobile menu
-  document.querySelector('.navbar-toggler').classList.add('collapsed')
-  document.querySelector('.navbar-collapse').classList.remove('show')
+  document.querySelector('.navbar-toggler')?.classList.add('collapsed')
+  document.querySelector('.navbar-collapse')?.classList.remove('show')
 
   // remove all .turbo-before-cache-clean
   document.querySelectorAll('.turbo-before-cache-clean').forEach((el) => {

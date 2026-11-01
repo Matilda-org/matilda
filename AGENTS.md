@@ -56,3 +56,19 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 - Prefer Bootstrap utility classes and existing shared partials.
 - Keep accessibility attributes on icon-only controls.
 - JavaScript follows Standard Style: no semicolons, single quotes, 2-space indent.
+
+## Security and access
+
+- Policy-gated markup uses `policy_guard('policy')` (renders `hidden` when the session user lacks the policy). Broadcast renders have no session user: the helper falls back to the client-side `user-policies` controller. The controllers still enforce every policy.
+- Each `actions` modal dispatcher is gated by a `before_action` declared *before* `caches_action`, so cached responses are gated too. Records are looked up through `query_projects_for_policy` / `query_tasks_for_policy` / `query_procedures_for_policy` (membership limit).
+- `caches_action` keys include a digest of the user's policies (`current_cache_action_path`).
+- Shared partials (`shared/card`, `shared/page-header`, `shared/page-card`, `shared/feedback`) escape `title`/`subtitle`: pass `link_to`/`safe_join` output for HTML, never interpolated strings.
+- CSP is enforced (`config/initializers/content_security_policy.rb`): no inline scripts or `on*=` handlers; use Stimulus, or `javascript_tag nonce: true` when unavoidable.
+- Sessions: `sign_in`/`sign_out` in `ApplicationController`; the cookie carries `users.session_version`, bumped on every password change so old sessions die.
+- `GET /jobsrun` requires `JOBS_TOKEN` (header `X-Jobs-Token` or `token` param) when that env var is set.
+
+## UI conventions
+
+- Detail modals pass `addressable: true` to `shared/action-container`: their url is mirrored in `?modal=` and reopened on load.
+- Reversible actions skip the confirm modal and offer an undo in `shared/feedback` (`undo: { label:, href: }`); `shared/confirmer` takes `danger: true` for destructive ones; `shared/destroyer` (type "ELIMINA") is reserved for records with cascades.
+- Theme: Bootstrap 5.3 color modes (`data-bs-theme` on `<html>`), dark overrides in `_dark.scss`. Prefer `--bs-*` variables over fixed white/light colors.

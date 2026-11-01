@@ -15,7 +15,7 @@ filters_count = [ user_id, project_id ].count(&:present?)
   <div class="d-flex justify-content-between align-items-center gap-2">
     <h2 class="fs-4 mb-0"><%= date_start.strftime('%d/%m') %> - <%= date_end.strftime('%d/%m') %></h2>
     <div class="d-flex gap-1">
-      <button class="btn btn-outline-primary d-lg-none position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#tasks-calendar-filters" aria-expanded="false" aria-controls="tasks-calendar-filters">
+      <button class="btn btn-outline-primary d-xl-none position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#tasks-calendar-filters" aria-expanded="false" aria-controls="tasks-calendar-filters">
         <i class="bi bi-funnel"></i> Filtri
         <% if filters_count.positive? %>
           <span class="badge rounded-pill bg-primary ms-1"><%= filters_count %></span>
@@ -31,21 +31,21 @@ filters_count = [ user_id, project_id ].count(&:present?)
     </div>
   </div>
 
-  <form id="tasks-calendar-filters" class="collapse d-lg-block mt-3" method="GET" data-controller="auto-submit" data-action="change->auto-submit#submit">
-    <div class="row g-2 justify-content-lg-end">
-      <div class="col-12 col-sm-6 col-lg-auto c-filter-select">
+  <form id="tasks-calendar-filters" class="collapse d-xl-block mt-3" method="GET" data-controller="auto-submit" data-action="change->auto-submit#submit">
+    <div class="row g-2 justify-content-xl-end">
+      <div class="col-12 col-sm-6 col-xl-auto c-filter-select">
         <label for="project_id" class="visually-hidden">Progetto</label>
         <%= select_tag 'project_id', options_for_select([['Tutti i progetti', '']] + @filter_projects, project_id), class: 'form-select' %>
       </div>
-      <div class="col-12 col-sm-6 col-lg-auto c-filter-select">
+      <div class="col-12 col-sm-6 col-xl-auto c-filter-select">
         <label for="user_id" class="visually-hidden">Assegnati a</label>
         <%= select_tag 'user_id', options_for_select([['Tutti gli assegnatari', '']] + @filter_users, user_id), class: 'form-select' %>
       </div>
-      <div class="col-6 col-lg-auto">
+      <div class="col-6 col-xl-auto">
         <label for="date_start" class="visually-hidden">Dal</label>
         <input type="date" class="form-control" id="date_start" name="date_start" value="<%= date_start %>" required data-controller="tasks-inputdate">
       </div>
-      <div class="col-6 col-lg-auto">
+      <div class="col-6 col-xl-auto">
         <label for="date_end" class="visually-hidden">Al</label>
         <input type="date" class="form-control" id="date_end" name="date_end" value="<%= date_end %>" required data-controller="tasks-inputdate">
       </div>

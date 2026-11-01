@@ -53,7 +53,8 @@ export default class extends Controller {
   onFetchStart() {
     // Modal already open => navigation/submit inside the modal; let the form
     // button spinner handle feedback and keep the current content visible.
-    if (this.element.classList.contains('show')) return
+    // Same when a dialog is already rendered (the open animation is still running).
+    if (this.element.classList.contains('show') || this.frame.querySelector('#action-controller')) return
 
     this.frame.innerHTML = `
       <div class="modal-dialog modal-dialog-centered">
@@ -77,7 +78,8 @@ export default class extends Controller {
     const target = new URL(path, window.location.origin)
     if (target.origin !== window.location.origin || !/^\/[a-z-]+\/actions\//.test(target.pathname)) return
 
-    this.frame.src = target.pathname + target.search
+    // Wait for Turbo to boot the frame element, or it would fetch the src twice
+    document.addEventListener('turbo:load', () => { this.frame.src = target.pathname + target.search }, { once: true })
   }
 
   onFormEdit(event) {
