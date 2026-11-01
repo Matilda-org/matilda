@@ -25,6 +25,10 @@ class ApplicationController < ActionController::Base
   end
 
   def cacheclear
+    # Clearing the cache also resets the login rate limit counters: admins only
+    return unless validate_session_user!
+    return unless validate_policy!("settings")
+
     Rails.cache.clear
     render plain: "Cache cleared"
   end
