@@ -71,4 +71,3 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 
 - Detail modals pass `addressable: true` to `shared/action-container`: their url is mirrored in `?modal=` and reopened on load.
 - Reversible actions skip the confirm modal and offer an undo in `shared/feedback` (`undo: { label:, href: }`); `shared/confirmer` takes `danger: true` for destructive ones; `shared/destroyer` (type "ELIMINA") is reserved for records with cascades.
-- Theme: Bootstrap 5.3 color modes (`data-bs-theme` on `<html>`), dark overrides in `_dark.scss`. Prefer `--bs-*` variables over fixed white/light colors.

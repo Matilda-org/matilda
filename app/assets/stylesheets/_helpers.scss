@@ -62,7 +62,7 @@
   position: sticky;
   top: -16px;
   z-index: 1;
-  background-color: rgba(var(--bs-body-bg-rgb), 0.95);
+  background-color: rgba(var(--bs-white-rgb), 0.95);
 
   &--bleed {
     width: calc(100% + 2px);

@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
   <head>
-    <%# Resolve the theme before any CSS paints, so dark mode never flashes light (see theme_controller) %>
-    <%= javascript_tag nonce: true do %>
-      (() => {
-        let theme = "auto"
-        try { theme = localStorage.getItem("theme") || "auto" } catch {}
-        const dark = theme === "dark" || (theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches)
-        document.documentElement.dataset.bsTheme = dark ? "dark" : "light"
-      })()
-    <% end %>
     <title><%= nav_title(@_navbar) %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
     <%= csrf_meta_tags %>

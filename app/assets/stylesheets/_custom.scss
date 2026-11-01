@@ -201,9 +201,12 @@ body {
   position: sticky;
   top: 80px;
   left: 0;
-  // All sections live here now: scroll inside the sidebar when taller than the viewport
+  // All sections live here now: scroll inside the sidebar when taller than the viewport.
+  // Right padding keeps the scrollbar off the items: overlay scrollbars (macOS)
+  // reserve no gutter and would draw over the buttons.
   max-height: calc(100svh - 90px);
   overflow-y: auto;
+  padding-right: 12px;
   flex-wrap: nowrap;
   padding-bottom: 15px;
 }
