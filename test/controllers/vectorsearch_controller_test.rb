@@ -45,6 +45,30 @@ class VectorsearchControllerTest < ActionController::TestCase
     assert_includes @response.body, "Task «From chat» creato"
   end
 
+  test "chat renders answers as sanitized markdown with links" do
+    Vectorsearch.new(@user.id).send(:save_message_in_memory, "assistant", "Vedi **[Progetto](/projects/show/1)** <script>alert(1)</script>")
+
+    get :chat
+
+    assert_includes @response.body, '<strong><a href="/projects/show/1">Progetto</a></strong>'
+    assert_not_includes @response.body, "<script>alert(1)"
+  end
+
+  test "chat shows user messages as plain text" do
+    Vectorsearch.new(@user.id).send(:save_message_in_memory, "user", "**non grassetto** <b>x</b>")
+
+    get :chat
+
+    assert_includes @response.body, "**non grassetto** &lt;b&gt;x&lt;/b&gt;"
+  end
+
+  test "send_message ignores blank messages" do
+    post :send_message, params: { message: "   " }
+
+    assert_response :success
+    assert_empty Vectorsearch.new(@user.id).messages
+  end
+
   test "communication_draft requires the crm policy" do
     communication = Communication.create!(contact: contacts(:one), campaign: campaigns(:one))
 

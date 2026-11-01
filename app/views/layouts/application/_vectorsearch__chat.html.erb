@@ -2,35 +2,60 @@
 
 vectorsearch ||= nil
 user_id = vectorsearch&.user_id || @session_user_id
+suggestions = [
+  'Quali task ho in scadenza questa settimana?',
+  'Riassumimi lo stato dei progetti attivi',
+  'Quali comunicazioni CRM sono da sollecitare?'
+]
 
 %>
 
 <%= turbo_frame_tag "vectorsearch_#{user_id}_chat" do %>
-  <div class="vectorsearch__chat" data-vectorsearch-target="chat">
+  <div class="vectorsearch__chat" data-vectorsearch-target="chat" aria-live="polite">
     <% if vectorsearch.messages.length.positive? %>
       <% vectorsearch.messages.each do |message| %>
-        <div class="vectorsearch__chat-message vectorsearch__chat-message--<%= message[:role] %>">
-          <%# sanitize, not raw: the answer can echo text from fetched web pages %>
-          <%= sanitize message[:content].to_s.gsub("\n", "<br />") %>
-
-          <%# proposals of the assistant: nothing is written until the user confirms %>
-          <% Array(message[:actions]).select { |action| vectorsearch.pending_action?(action[:id]) }.each do |action| %>
-            <%= button_to vectorsearch_confirm_action_path, params: { action_id: action[:id] }, class: "btn btn-sm btn-primary mt-2 text-start", form_class: "d-block" do %>
-              <i class="bi bi-check2"></i> Conferma: <%= action[:label] %>
+        <div class="vectorsearch__chat-row vectorsearch__chat-row--<%= message[:role] %>">
+          <div class="vectorsearch__chat-message vectorsearch__chat-message--<%= message[:role] %>">
+            <% if message[:role] == 'assistant' %>
+              <%# render_markdown sanitizes: the answer can echo text from fetched web pages %>
+              <div class="vectorsearch__chat-text" data-vectorsearch-target="text"><%= render_markdown(message[:content].to_s) %></div>
+            <% else %>
+              <div class="vectorsearch__chat-text"><%= simple_format(h(message[:content].to_s), {}, wrapper_tag: 'div') %></div>
             <% end %>
-          <% end %>
+
+            <%# proposals of the assistant: nothing is written until the user confirms %>
+            <% Array(message[:actions]).select { |action| vectorsearch.pending_action?(action[:id]) }.each do |action| %>
+              <%= button_to vectorsearch_confirm_action_path, params: { action_id: action[:id] }, class: "btn btn-sm btn-primary mt-2 text-start", form_class: "d-block", data: { turbo_submits_with: "Esecuzione in corso…" } do %>
+                <i class="bi bi-check2"></i> Conferma: <%= action[:label] %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <div class="vectorsearch__chat-meta">
+            <% if message[:at] %>
+              <time datetime="<%= message[:at].iso8601 %>"><%= l(message[:at], format: '%H:%M') %></time>
+            <% end %>
+            <% if message[:role] == 'assistant' %>
+              <button type="button" class="vectorsearch__chat-copy" data-action="vectorsearch#copy" aria-label="Copia risposta">
+                <i class="bi bi-clipboard"></i>
+              </button>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
       <% if vectorsearch.messages.last[:role] == 'user' %>
-        <div class="vectorsearch__chat-loading">
-          <div class="animation"><div></div><div></div><div></div><div></div></div>
-        </div>
+        <%= render 'layouts/application/vectorsearch__typing' %>
       <% end %>
     <% else %>
       <div class="vectorsearch__chat-empty">
         <i class="bi bi-robot"></i>
-       <span>Scrivi un messaggio e premi invio per iniziare la conversazione con l'assistente virtuale.</span>
+        <span>Chiedimi qualcosa su progetti, task e CRM. Le modifiche ai dati te le propongo e le esegui tu con un clic.</span>
+        <div class="vectorsearch__chat-suggestions">
+          <% suggestions.each do |suggestion| %>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-action="vectorsearch#suggest" data-vectorsearch-text-param="<%= suggestion %>"><%= suggestion %></button>
+          <% end %>
+        </div>
       </div>
     <% end %>
   </div>

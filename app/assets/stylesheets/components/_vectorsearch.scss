@@ -81,101 +81,222 @@
 .vectorsearch__chat {
   overflow-y: auto;
   max-height: 100%;
+  height: 100%;
   padding: 15px;
 }
 
-.vectorsearch__chat-message {
-  border-radius: 10px;
-  padding: 10px 15px;
+.vectorsearch__chat-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 100%;
   font-size: 14px;
-  margin-bottom: 10px;
-  max-width: 75%;
-  width: auto;
+  color: var(--bs-gray-600);
+}
+
+.vectorsearch__chat-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+
+  &--user {
+    align-items: flex-end;
+  }
+
+  &--assistant {
+    align-items: flex-start;
+  }
+}
+
+.vectorsearch__chat-message {
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 14px;
+  max-width: 80%;
+  overflow-wrap: anywhere;
 
   &--user {
     background-color: var(--bs-primary);
-    color: var(--bs-light);
-    margin-left: auto;
+    color: var(--bs-white);
+    border-bottom-right-radius: 4px;
+
+    a {
+      color: inherit;
+    }
   }
 
   &--assistant {
     background-color: var(--bs-light);
     color: var(--bs-dark);
-    margin-right: auto;
+    border-bottom-left-radius: 4px;
+  }
+
+  &--error {
+    background-color: rgba(var(--bs-danger-rgb), 0.08);
+    color: var(--bs-danger);
+    border: 1px solid rgba(var(--bs-danger-rgb), 0.25);
+  }
+}
+
+// Answers are rendered markdown: keep the blocks tight inside a bubble
+.vectorsearch__chat-text {
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  blockquote,
+  pre {
+    margin-bottom: 0.5rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.2rem;
+  }
+
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    font-size: 12px;
+  }
+}
+
+.vectorsearch__chat-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 2px;
+  padding: 0 4px;
+  font-size: 11px;
+  color: var(--bs-gray-600);
+  min-height: 18px;
+}
+
+.vectorsearch__chat-copy {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0 4px;
+  line-height: 1;
+  border-radius: var(--bs-border-radius-sm);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  .vectorsearch__chat-row:hover &,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--bs-primary);
+  }
+
+  // No hover on touch screens: always visible there
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.vectorsearch__chat-typing {
+  padding: 12px 16px;
+}
+
+.vectorsearch__chat-dots {
+  display: inline-flex;
+  gap: 4px;
+
+  span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--bs-gray-600);
+    animation: vectorsearchTyping 1.2s infinite ease-in-out;
+
+    &:nth-child(2) { animation-delay: 0.15s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+  }
+}
+
+@keyframes vectorsearchTyping {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vectorsearch__chat-dots span {
+    animation: none;
   }
 }
 
 .vectorsearch__chat-empty {
   text-align: center;
-  font-size: 18px;
-  color: var(--bs-gray-500);
+  font-size: 15px;
+  color: var(--bs-gray-600);
   width: 100%;
-  padding: 50px 0;
+  padding: 40px 10px;
 
-  i {
-    font-size: 80px;
+  > i {
+    font-size: 64px;
     margin-bottom: 10px;
     display: block;
+    color: var(--bs-gray-500);
   }
 }
 
-.vectorsearch__chat-loading {
-  width: 100%;
-  text-align: center;
+.vectorsearch__chat-suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+
+  .btn {
+    border-radius: 999px;
+    text-align: left;
+  }
 }
 
-.vectorsearch__chat-loading .animation {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
+// Composer
+.vectorsearch__textarea {
+  resize: none;
+  overflow-y: hidden;
+  max-height: 160px;
 }
-.vectorsearch__chat-loading .animation div {
-  position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: var(--bs-primary);
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
-}
-.vectorsearch__chat-loading .animation div:nth-child(1) {
-  left: 8px;
-  animation: vectorsearchChatLoadingAnim1 0.6s infinite;
-}
-.vectorsearch__chat-loading .animation div:nth-child(2) {
-  left: 8px;
-  animation: vectorsearchChatLoadingAnim2 0.6s infinite;
-}
-.vectorsearch__chat-loading .animation div:nth-child(3) {
-  left: 32px;
-  animation: vectorsearchChatLoadingAnim2 0.6s infinite;
-}
-.vectorsearch__chat-loading .animation div:nth-child(4) {
-  left: 56px;
-  animation: vectorsearchChatLoadingAnim3 0.6s infinite;
-}
-@keyframes vectorsearchChatLoadingAnim1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
+
+.vectorsearch__send {
+  width: 42px;
+  height: 38px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .spinner-border {
+    display: none;
   }
 }
-@keyframes vectorsearchChatLoadingAnim3 {
-  0% {
-    transform: scale(1);
+
+.vectorsearch__form.is-sending {
+  .vectorsearch__textarea {
+    opacity: 0.6;
   }
-  100% {
-    transform: scale(0);
-  }
-}
-@keyframes vectorsearchChatLoadingAnim2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
+
+  .vectorsearch__send {
+    .bi {
+      display: none;
+    }
+
+    .spinner-border {
+      display: inline-block;
+    }
   }
 }

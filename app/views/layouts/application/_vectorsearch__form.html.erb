@@ -1,21 +1,26 @@
 <%= turbo_frame_tag "vectorsearch_#{@session_user_id}_form" do %>
-  <%= form_tag vectorsearch_send_message_path, class: 'd-flex align-items-center' do %>
-    <div class="me-3" style="flex: 1">
+  <%= form_tag vectorsearch_send_message_path, class: 'vectorsearch__form', data: { vectorsearch_target: 'form' } do %>
+    <div class="d-flex align-items-end gap-2">
+      <label for="vectorsearch-message" class="visually-hidden">Messaggio per l'assistente</label>
       <textarea
-        class="form-control"
+        id="vectorsearch-message"
+        class="form-control vectorsearch__textarea"
         name="message"
-        rows="2"
+        rows="1"
         placeholder="Scrivi un messaggio..."
+        maxlength="4000"
         data-vectorsearch-target="textarea"
+        data-action="input->vectorsearch#resize keydown->vectorsearch#keydown"
       ></textarea>
-      <%# Hint tastiera: solo desktop, su mobile si tocca il bottone %>
-      <small class="text-muted d-none d-md-block mt-1">
-        <kbd class="c-kbd">Invio</kbd> invia &middot; <kbd class="c-kbd">Maiusc + Invio</kbd> a capo
-      </small>
-    </div>
 
-    <button type="submit" class="btn btn-primary" data-vectorsearch-target="submit" aria-label="Invia messaggio">
-      <i class="bi bi-send-fill"></i>
-    </button>
+      <button type="submit" class="btn btn-primary vectorsearch__send" data-vectorsearch-target="submit" aria-label="Invia messaggio" disabled>
+        <i class="bi bi-send-fill" aria-hidden="true"></i>
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+      </button>
+    </div>
+    <%# Hint tastiera: solo desktop, su mobile si tocca il bottone %>
+    <small class="text-muted d-none d-md-block mt-1">
+      <kbd class="c-kbd">Invio</kbd> invia &middot; <kbd class="c-kbd">Maiusc + Invio</kbd> a capo
+    </small>
   <% end %>
 <% end %>

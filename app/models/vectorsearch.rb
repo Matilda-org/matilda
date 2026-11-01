@@ -57,6 +57,9 @@ class Vectorsearch
   ##
 
   def send_message(content)
+    content = content.to_s.strip
+    return false if content.empty?
+
     # save user message in memory
     save_message_in_memory("user", content)
     send_ui_update
@@ -133,7 +136,7 @@ class Vectorsearch
   private
 
   def save_message_in_memory(role, content, actions = [])
-    Rails.cache.write("Vectorsearch/#{@user_id}/message_#{last_message_index + 1}", { role: role, content: content, actions: actions }, expires_in: 7.days)
+    Rails.cache.write("Vectorsearch/#{@user_id}/message_#{last_message_index + 1}", { role: role, content: content, actions: actions, at: Time.current }, expires_in: 7.days)
     Rails.cache.write("Vectorsearch/#{@user_id}/last_message_index", last_message_index + 1)
     @last_message_index = nil
     @messages = nil
@@ -144,7 +147,7 @@ class Vectorsearch
   end
 
   def no_api_key_message
-    "Ciao, sono l'<b>Assistente Virtuale</b>. Per utilizzarmi devi completare la configurazione in fase di registrazione di Matilda 🙂"
+    "Ciao, sono l'**Assistente Virtuale**. Per utilizzarmi devi completare la configurazione in fase di registrazione di Matilda 🙂"
   end
 
   def prompt_template
@@ -156,8 +159,9 @@ class Vectorsearch
     Stai chattando con l'utente di nome {{user_complete_name}}. Il suo ID è: {{user_id}}.\n
     Oggi è il giorno {{date}}.\n
     Le azioni che modificano i dati vengono solo proposte: l'utente le esegue con il pulsante Conferma. Non dire mai che un'azione è stata eseguita finché l'utente non la conferma.\n
-    Rispondi in modo naturale e formale. Puoi utilizzare emoji per esprimere emozioni.
-    Non utilizzare markdown o inviare codice.\n
+    Rispondi in modo naturale e formale, in modo conciso. Puoi utilizzare emoji per esprimere emozioni.\n
+    Puoi usare markdown leggero: **grassetto**, elenchi puntati e link. Non inviare codice né tabelle.\n
+    Quando citi un elemento di cui conosci l'ID, collegalo con un link markdown al suo percorso relativo: progetti /projects/show/ID, task /tasks/show/ID, board /procedures/show/ID, contatti /contacts/show/ID, campagne /campaigns/show/ID, utenti /users/show/ID.\n
     ".strip
   end
 end
