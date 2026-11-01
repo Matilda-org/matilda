@@ -12,7 +12,7 @@ contact ||= Contact.new
         <div class="c-list-item__body">
           <div class="c-list-item__title text-truncate">
             <%# stretched-link makes the whole row open the project %>
-            <a href="<%= projects_show_path(id: project.id) %>" data-turbo-frame="_top" class="text-decoration-none stretched-link" data-user-policies-target="item" data-policy="projects_show"><%= project.name %></a>
+            <a href="<%= projects_show_path(id: project.id) %>" data-turbo-frame="_top" class="text-decoration-none stretched-link" <%= policy_guard('projects_show') %>><%= project.name %></a>
           </div>
           <div class="c-list-item__meta">
             <span><i class="bi bi-file-earmark-text me-1"></i><%= project.complete_code %></span>

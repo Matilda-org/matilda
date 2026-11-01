@@ -128,8 +128,7 @@ search_has_results = false
                 data-turbo-frame="_top"
                 data-controller="tooltip"
                 data-tooltip="Task"
-                data-user-policies-target="item"
-                data-policy="tasks_index"
+                <%= policy_guard('tasks_index') %>
               >
                 <%= nav_icon('tasks') %>
               </a>
@@ -139,8 +138,7 @@ search_has_results = false
                 data-turbo-frame="_top"
                 data-controller="tooltip"
                 data-tooltip="Progetti"
-                data-user-policies-target="item"
-                data-policy="projects_index"
+                <%= policy_guard('projects_index') %>
               >
                 <%= nav_icon('projects') %>
               </a>
@@ -150,8 +148,7 @@ search_has_results = false
                 data-turbo-frame="_top"
                 data-controller="tooltip"
                 data-tooltip="Board"
-                data-user-policies-target="item"
-                data-policy="procedures_index"
+                <%= policy_guard('procedures_index') %>
               >
                 <%= nav_icon('procedures') %>
               </a>
@@ -161,8 +158,7 @@ search_has_results = false
                 data-turbo-frame="_top"
                 data-controller="tooltip"
                 data-tooltip="Credenziali"
-                data-user-policies-target="item"
-                data-policy="credentials_index"
+                <%= policy_guard('credentials_index') %>
               >
                 <%= nav_icon('credentials') %>
               </a>

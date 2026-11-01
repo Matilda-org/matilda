@@ -23,13 +23,13 @@ wrapper_class = context == 'overlay' ?
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
       <% if !task.completed && !task.repeat_original_task_id %>
-        <li data-user-policies-target="item" data-policy="tasks_edit">
+        <li <%= policy_guard('tasks_edit') %>>
           <a class="dropdown-item" href="<%= tasks_actions_path(type: 'postpone', id: task.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action">
             <i class="bi bi-calendar-range me-2"></i>Rimanda
           </a>
         </li>
       <% end %>
-      <li data-user-policies-target="item" data-policy="tasks_create">
+      <li <%= policy_guard('tasks_create') %>>
         <a class="dropdown-item" href="<%= tasks_actions_path(type: 'create', duplicate_id: task.id) %>" data-turbo-frame="action">
           <i class="bi bi-files me-2"></i>Duplica
         </a>
@@ -37,7 +37,7 @@ wrapper_class = context == 'overlay' ?
 
       <li><hr class="dropdown-divider"></li>
 
-      <li data-user-policies-target="item" data-policy="tasks_track">
+      <li <%= policy_guard('tasks_track') %>>
         <a class="dropdown-item" href="<%= tasks_actions_path(type: 'add-track', id: task.id) %>" data-turbo-frame="action">
           <i class="bi bi-plus-circle me-2"></i>Aggiungi tracking
         </a>
@@ -73,7 +73,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Apri dettagli"
       aria-label="Apri dettagli task"
-      data-user-policies-target="item" data-policy="tasks_show"
+      <%= policy_guard('tasks_show') %>
     ><i class="bi bi-arrows-fullscreen"></i></a>
   <% end %>
 
@@ -86,7 +86,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Riattiva"
       aria-label="Riattiva task"
-      data-user-policies-target="item" data-policy="tasks_uncomplete"
+      <%= policy_guard('tasks_uncomplete') %>
     ><i class="bi bi-arrow-counterclockwise"></i></a>
   <% elsif task.accepted %>
     <a
@@ -96,7 +96,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Completa"
       aria-label="Completa task"
-      data-user-policies-target="item" data-policy="tasks_complete"
+      <%= policy_guard('tasks_complete') %>
     ><i class="bi bi-check-circle-fill"></i></a>
   <% end %>
 
@@ -112,7 +112,7 @@ wrapper_class = context == 'overlay' ?
       data-action="click->action#closeModal"
       data-tooltip="Ferma tracking"
       aria-label="Ferma tracking task"
-      data-user-policies-target="item" data-policy="tasks_track"
+      <%= policy_guard('tasks_track') %>
     ><i class="bi bi-stop-circle-fill"></i></a>
   <% elsif task.accepted %>
     <a
@@ -124,7 +124,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Avvia tracking"
       aria-label="Avvia tracking task"
-      data-user-policies-target="item" data-policy="tasks_track"
+      <%= policy_guard('tasks_track') %>
     ><i class="bi bi-play-circle-fill"></i></a>
   <% end %>
 
@@ -137,7 +137,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Modifica originale"
       aria-label="Modifica task originale"
-      data-user-policies-target="item" data-policy="tasks_edit"
+      <%= policy_guard('tasks_edit') %>
     ><i class="bi bi-pencil"></i></a>
   <% else %>
     <a
@@ -147,7 +147,7 @@ wrapper_class = context == 'overlay' ?
       data-controller="tooltip"
       data-tooltip="Modifica"
       aria-label="Modifica task"
-      data-user-policies-target="item" data-policy="tasks_edit"
+      <%= policy_guard('tasks_edit') %>
     ><i class="bi bi-pencil"></i></a>
   <% end %>
 
@@ -159,7 +159,7 @@ wrapper_class = context == 'overlay' ?
     data-controller="tooltip"
     data-tooltip="Elimina"
     aria-label="Elimina task"
-    data-user-policies-target="item" data-policy="tasks_destroy"
+    <%= policy_guard('tasks_destroy') %>
   ><i class="bi bi-trash"></i></a>
 
 </div>

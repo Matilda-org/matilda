@@ -99,7 +99,7 @@ cold_count = campaign.communications.sent.includes(:communications_follow_ups).c
 
         <% if status == 'to_send' %>
           <div class="c-comm-board__footer">
-            <a href="<%= campaigns_actions_path(type: 'add-communication', id: campaign.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="crm">
+            <a href="<%= campaigns_actions_path(type: 'add-communication', id: campaign.id) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('crm') %>>
               <i class="bi bi-plus-circle me-1"></i>Aggiungi contatto
             </a>
           </div>

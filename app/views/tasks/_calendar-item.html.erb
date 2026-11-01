@@ -13,7 +13,7 @@ turbo_frame_key = dom_id(task, 'tasks-calendar-item')
         type="button"
         class="btn btn-sm btn-outline-primary kanban_controller-move-button"
         data-action="keydown->kanban#moveKeydown"
-        data-user-policies-target="item" data-policy="tasks_edit"
+        <%= policy_guard('tasks_edit') %>
         aria-label="Sposta il task <%= task.title %>. Usa le frecce sinistra/destra per cambiare giorno."
         aria-keyshortcuts="ArrowLeft ArrowRight"
         data-controller="tooltip"

@@ -23,7 +23,7 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
       <div
         class="ms-3 d-flex"
       >
-        <div class="dropdown" data-user-policies-target="item" data-policy="procedures_edit">
+        <div class="dropdown" <%= policy_guard('procedures_edit') %>>
           <button
             class="btn btn-sm btn-outline"
             type="button"
@@ -114,7 +114,7 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
             href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'left') %>"
             data-turbo-method="post"
             data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
-            data-user-policies-target="item" data-policy="procedures_edit"
+            <%= policy_guard('procedures_edit') %>
             data-controller="tooltip"
             data-tooltip="Sposta a sinistra"
             aria-label="Sposta stato <%= status.title %> a sinistra"
@@ -126,7 +126,7 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
             href="<%= procedures_move_status_action_path(id: procedure.id, status_id: status.id, direction: 'right') %>"
             data-turbo-method="post"
             data-turbo-frame="<%= dom_id(procedure, 'kanban') %>"
-            data-user-policies-target="item" data-policy="procedures_edit"
+            <%= policy_guard('procedures_edit') %>
             data-controller="tooltip"
             data-tooltip="Sposta a destra"
             aria-label="Sposta stato <%= status.title %> a destra"
@@ -139,20 +139,20 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
     <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>"><%= safe_join(items.map { |item| render("procedures/kanban-item", item: item, turbo_frame_status_key: turbo_frame_key) }) %></ul>
     <div class="card-footer d-flex">
       <% if procedure.resources_type_tasks? && !procedure.model %>
-        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="tasks_create">
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('tasks_create') %>>
           Aggiungi task
         </a>
       <% elsif procedure.resources_type_projects? && !procedure.model %>
-        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 me-1" data-user-policies-target="item" data-policy="projects_create">
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 me-1" <%= policy_guard('projects_create') %>>
           Nuovo
         </a>
         <a href="<%= procedures_actions_path(type: 'add-item-existing', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 ms-1" >Esistente</a>
       <% elsif procedure.resources_type_projects? && procedure.model %>
-        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="procedures_edit">
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('procedures_edit') %>>
           Aggiungi progetto
         </a>
       <% elsif procedure.resources_type_tasks? && procedure.model %>
-        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" data-user-policies-target="item" data-policy="procedures_edit">
+        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('procedures_edit') %>>
           Aggiungi task
         </a>
       <% end %>

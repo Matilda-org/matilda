@@ -36,16 +36,9 @@ body {
  * Policies
  */
 
+// Only broadcast renders (no session user) leave the policy check to the client
 [data-user-policies-target="item"] {
-  pointer-events: none;
-  
-  &[data-policy-hide] {
-    opacity: 0.25;
-  }
-
-  &:not([data-policy-hide]) {
-    display: none !important;
-  }
+  display: none !important;
 }
 
 /**

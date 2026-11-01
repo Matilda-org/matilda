@@ -22,12 +22,11 @@ turbo_frame_key = dom_id(item, 'kanban-item')
           </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action">Modifica</a></li>
-            <li data-user-policies-target="item" data-policy="procedures_edit"><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_status_key) %>" data-turbo-frame="action">Elimina</a></li>
+            <li <%= policy_guard('procedures_edit') %>><a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'remove-item', id: procedure.id, item_id: item.id, turbo_frame_key: turbo_frame_status_key) %>" data-turbo-frame="action">Elimina</a></li>
           </ul>
         </div>
         <button
-          data-user-policies-target="item"
-          data-policy="procedures_edit"
+          <%= policy_guard('procedures_edit') %>
           data-action="keydown->kanban#moveKeydown"
           class="btn btn-sm btn-outline-primary kanban_controller-move-button"
           type="button"

@@ -29,7 +29,7 @@ notes_tab_active = @active_tab == "notes"
     </div>
 
     <%# azioni della comunicazione: prima quelle di stato, poi le secondarie %>
-    <div class="d-flex align-items-center gap-1 flex-shrink-0" data-user-policies-target="item" data-policy="crm">
+    <div class="d-flex align-items-center gap-1 flex-shrink-0" <%= policy_guard('crm') %>>
       <% if communication.to_send? %>
         <a href="<%= campaigns_actions_path(type: 'send-communication', id: @campaign.id, communication_id: communication.id) %>" data-turbo-frame="action" class="btn btn-sm btn-primary">
           <i class="bi bi-send me-1"></i>Conferma invio
@@ -110,7 +110,7 @@ notes_tab_active = @active_tab == "notes"
         <% end %>
       </div>
 
-      <div class="d-flex gap-1 flex-shrink-0" data-user-policies-target="item" data-policy="crm">
+      <div class="d-flex gap-1 flex-shrink-0" <%= policy_guard('crm') %>>
         <a
           href="<%= campaigns_follow_up_communication_action_path(id: @campaign.id, communication_id: communication.id) %>"
           data-turbo-method="post"
@@ -128,7 +128,7 @@ notes_tab_active = @active_tab == "notes"
 
   <%# bozza AI: primo messaggio se da inviare, sollecito se in attesa di risposta %>
   <% if !communication.closed? && Setting.get('vectorsearch_openai_key') %>
-    <div class="mt-3" data-controller="communication-draft" data-communication-draft-id-value="<%= communication.id %>" data-user-policies-target="item" data-policy="crm">
+    <div class="mt-3" data-controller="communication-draft" data-communication-draft-id-value="<%= communication.id %>" <%= policy_guard('crm') %>>
       <button type="button" class="btn btn-sm btn-outline-primary" data-communication-draft-target="button" data-action="click->communication-draft#generate">
         <i class="bi bi-robot me-1"></i><%= communication.to_send? ? 'Bozza messaggio' : 'Bozza sollecito' %>
       </button>
@@ -198,7 +198,7 @@ notes_tab_active = @active_tab == "notes"
                     <% if follow_up.user %><span><i class="bi bi-person me-1"></i><%= follow_up.user.complete_name %></span><% end %>
                   </div>
                 </div>
-                <div class="c-list-item__actions" data-user-policies-target="item" data-policy="crm">
+                <div class="c-list-item__actions" <%= policy_guard('crm') %>>
                   <a
                     href="<%= campaigns_remove_communication_follow_up_action_path(id: @campaign.id, communication_id: communication.id, follow_up_id: follow_up.id) %>"
                     data-turbo-method="post"
@@ -248,8 +248,7 @@ notes_tab_active = @active_tab == "notes"
                       data-controller="tooltip"
                       data-tooltip="Elimina nota"
                       aria-label="Elimina nota"
-                      data-user-policies-target="item"
-                      data-policy="crm"
+                      <%= policy_guard('crm') %>
                     ><i class="bi bi-trash"></i></a>
                   </div>
                   <div class="c-comm-timeline__body trix-content">

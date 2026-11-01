@@ -4,8 +4,7 @@
     class="btn btn-primary"
     href="<%= users_actions_path(type: 'create') %>"
     data-turbo-frame="action"
-    data-user-policies-target="item"
-    data-policy="users_create"
+    <%= policy_guard('users_create') %>
     data-controller="tooltip"
     data-tooltip="Invita nuovo utente"
     aria-label="Invita nuovo utente"

@@ -4,8 +4,7 @@
     class="btn btn-primary"
     href="<%= procedures_actions_path(type: 'create') %>"
     data-turbo-frame="action"
-    data-user-policies-target="item"
-    data-policy="procedures_create"
+    <%= policy_guard('procedures_create') %>
     data-controller="tooltip"
     data-tooltip="Crea nuova board"
     aria-label="Crea nuova board"

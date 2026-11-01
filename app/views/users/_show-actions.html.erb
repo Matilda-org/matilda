@@ -21,19 +21,19 @@
         </div>
       </li>
 
-      <li data-user-policies-target="item" data-policy="users_edit">
+      <li <%= policy_guard('users_edit') %>>
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit', id: @user.id) %>" data-turbo-frame="action">
           Modifica profilo
         </a>
       </li>
       
-      <li data-user-policies-target="item" data-policy="users_edit_policies">
+      <li <%= policy_guard('users_edit_policies') %>>
         <a class="dropdown-item" href="<%= users_actions_path(type: 'edit-policies', id: @user.id) %>" data-turbo-frame="action">
           Modifica permessi
         </a>
       </li>
       
-      <li data-user-policies-target="item" data-policy="users_edit_password">
+      <li <%= policy_guard('users_edit_password') %>>
         <a class="dropdown-item" href="<%= users_actions_path(type: 'regenerate-password', id: @user.id) %>" data-turbo-frame="action">
           Rigenera password
         </a>
@@ -47,14 +47,14 @@
           </a>
         </li>
       <% else %>
-        <li data-user-policies-target="item" data-policy="users_edit_password">
+        <li <%= policy_guard('users_edit_password') %>>
           <a class="dropdown-item" href="<%= users_actions_path(type: 'regenerate-api-key', id: @user.id) %>" data-turbo-frame="action">
             Rigenera API Key
           </a>
         </li>
       <% end %>
 
-      <li data-user-policies-target="item" data-policy="users_destroy">
+      <li <%= policy_guard('users_destroy') %>>
         <a class="dropdown-item text-danger" href="<%= users_actions_path(type: 'destroy', id: @user.id) %>" data-turbo-frame="action">
           Elimina utente
         </a>

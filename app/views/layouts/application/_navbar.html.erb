@@ -23,7 +23,7 @@
             <ul class="navbar-nav mb-2 mt-3 mt-lg-0 mb-lg-0">
               <%= render 'layouts/application/menu' %>
 
-              <li class="nav-item" data-user-policies-target="item" data-policy="tools" data-policy-hide>
+              <li class="nav-item" <%= policy_guard('tools') %>>
                 <a
                   class="nav-link w-100 <%= @_navbar == 'tools' ? 'active' : '' %>"
                   href="<%= tools_path %>"
@@ -34,7 +34,7 @@
                 ><%= nav_icon('tools') %> <span class="d-lg-none ms-2">Strumenti</span></a>
               </li>
 
-              <li class="nav-item" data-user-policies-target="item" data-policy="settings" data-policy-hide>
+              <li class="nav-item" <%= policy_guard('settings') %>>
                 <a
                   class="nav-link w-100 <%= @_navbar == 'settings' ? 'active' : '' %>"
                   href="<%= settings_path %>"

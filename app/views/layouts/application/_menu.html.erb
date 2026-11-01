@@ -8,11 +8,11 @@ operative ||= false
   <a class="nav-link w-100 <%= @_navbar == 'dashboard' ? 'active' : '' %>" href="<%= users_show_path(@session_user_id) %>" data-turbo-frame="_top"><%= nav_icon('dashboard') %> <span class="ms-2">Dashboard</span></a>
 </li>
 
-<li class="nav-item <%= operative ? 'shadow-sm' : 'd-md-none' %>" data-user-policies-target="item" data-policy="tasks_index" data-policy-hide>
+<li class="nav-item <%= operative ? 'shadow-sm' : 'd-md-none' %>" <%= policy_guard('tasks_index') %>>
   <a class="nav-link w-100 <%= @_navbar == 'tasks' ? 'active' : '' %>" href="<%= tasks_path(user_id: @session_user_id) %>" data-turbo-frame="_top"><%= nav_icon('tasks') %> <span class="ms-2">Task</span></a>
 </li>
 
-<li class="nav-item <%= operative ? 'shadow-sm' : 'd-md-none' %> dropdown" data-user-policies-target="item" data-policy="projects_index" data-policy-hide>
+<li class="nav-item <%= operative ? 'shadow-sm' : 'd-md-none' %> dropdown" <%= policy_guard('projects_index') %>>
   <a class="nav-link w-100 <%= @_navbar == 'projects' ? 'active' : '' %>" href="#" data-bs-toggle="dropdown"><%= nav_icon('projects') %> <span class="ms-2">Progetti</span></a>
   <ul class="dropdown-menu mt-2 mt-md-0" style="border-bottom: none;">
     <li><a class="dropdown-item <%= @_navbar == 'projects' && !params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= projects_path %>" data-turbo-frame="_top">Tutti i progetti</a></li>
@@ -22,15 +22,15 @@ operative ||= false
 </li>
 
 <% unless operative %>
-  <li class="nav-item" data-user-policies-target="item" data-policy="posts_index" data-policy-hide>
+  <li class="nav-item" <%= policy_guard('posts_index') %>>
     <a class="nav-link w-100 <%= @_navbar == 'posts' ? 'active' : '' %>" href="<%= posts_path %>" data-turbo-frame="_top"><%= nav_icon('posts') %> <span class="ms-2">Bacheca</span></a>
   </li>
 
-  <li class="nav-item" data-user-policies-target="item" data-policy="users_index" data-policy-hide>
+  <li class="nav-item" <%= policy_guard('users_index') %>>
     <a class="nav-link w-100 <%= @_navbar == 'users' ? 'active' : '' %>" href="<%= users_path %>" data-turbo-frame="_top"><%= nav_icon('users') %> <span class="ms-2">Utenti</span></a>
   </li>
 
-  <li class="nav-item dropdown" data-user-policies-target="item" data-policy="crm" data-policy-hide>
+  <li class="nav-item dropdown" <%= policy_guard('crm') %>>
     <a class="nav-link w-100 <%= [ 'crm', 'contacts', 'campaigns' ].include?(@_navbar) ? 'active' : '' %>" href="#" data-bs-toggle="dropdown"><%= nav_icon('crm') %> <span class="ms-2">Crm</span></a>
     <ul class="dropdown-menu mt-2 mt-md-0">
       <li><a class="dropdown-item <%= @_navbar == 'crm' ? 'active' : '' %>" href="<%= crm_path %>" data-turbo-frame="_top">Dashboard</a></li>
@@ -39,11 +39,11 @@ operative ||= false
     </ul>
   </li>
 
-  <li class="nav-item" data-user-policies-target="item" data-policy="procedures_index" data-policy-hide>
+  <li class="nav-item" <%= policy_guard('procedures_index') %>>
     <a class="nav-link w-100 <%= @_navbar == 'procedures' ? 'active' : '' %>" href="<%= procedures_path %>" data-turbo-frame="_top"><%= nav_icon('procedures') %> <span class="ms-2">Board</span></a>
   </li>
 
-  <li class="nav-item dropdown" data-user-policies-target="item" data-policy="credentials_index" data-policy-hide>
+  <li class="nav-item dropdown" <%= policy_guard('credentials_index') %>>
     <a class="nav-link w-100 <%= @_navbar == 'credentials' ? 'active' : '' %>" href="#" data-bs-toggle="dropdown"><%= nav_icon('credentials') %> <span class="ms-2">Credenziali</span></a>
     <ul class="dropdown-menu mt-2 mt-md-0">
       <li><a class="dropdown-item" href="<%= credentials_path %>" data-turbo-frame="_top">Tutte le credenziali</a></li>

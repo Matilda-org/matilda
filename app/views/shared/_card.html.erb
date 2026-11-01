@@ -60,7 +60,7 @@ background = 'primary' if has_prefer
               data-controller="tooltip"
               data-tooltip="<%= custom_action[:label] %>"
               aria-label="<%= custom_action[:label] %>"
-              data-user-policies-target="item" data-policy="<%= custom_action[:policy] %>"
+              <%= policy_guard(custom_action[:policy]) %>
             ><i class="<%= custom_action[:icon] %>"></i></a>
           <% end %>
           <% if folders_item %>
@@ -71,7 +71,7 @@ background = 'primary' if has_prefer
               data-controller="tooltip"
               data-tooltip="<%= folders_item[:folder_id] ? folders_item[:folder_name] : 'Aggiungi a cartella' %>"
               aria-label="<%= folders_item[:folder_id] ? "Gestisci cartella #{folders_item[:folder_name]}" : 'Aggiungi a cartella' %>"
-              data-user-policies-target="item" data-policy="folders_manage_resources"
+              <%= policy_guard('folders_manage_resources') %>
             ><i class="bi <%= folders_item[:folder_id] ? 'bi-folder-fill' : 'bi-folder-plus' %>"></i></a>
           <% end %>
           <% if @session_user && resource_id && resource_type %>

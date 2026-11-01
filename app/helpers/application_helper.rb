@@ -18,6 +18,21 @@ module ApplicationHelper
       attributes: %w[href title]
     )
   end
+  # Hides markup the session user has no policy for. Rendered server side so
+  # nothing flickers in after page load; the controllers still enforce the policy.
+  def policy_guard(policy)
+    return if policy.blank?
+    # Broadcast renders have no session user and reach many users: the
+    # user-policies Stimulus controller decides on the client instead
+    return tag.attributes(data: { user_policies_target: "item", policy: policy }) unless @session_user
+
+    "hidden".html_safe unless @session_user.policy?(policy.to_s)
+  end
+
+  def policy?(policy)
+    @session_user&.policy?(policy.to_s)
+  end
+
   def nav_icon(key, classes = "")
     return raw "<i class=\"bi bi-people-fill #{classes}\"></i>" if key == "users"
     return raw "<i class=\"bi bi-file-earmark-text-fill #{classes}\"></i>" if key == "projects"

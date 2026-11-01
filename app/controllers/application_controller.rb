@@ -63,8 +63,11 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  # Policies are part of the key: views render only what the user may use,
+  # so a policy change must not serve a page built for the old set
   def current_cache_action_path
-    "#{Date.today.strftime('%Y%m%d-%H')}/#{@session_user_id}#{request.fullpath}"
+    policies_digest = Digest::MD5.hexdigest(@session_user&.cached_policies.to_a.sort.join(","))[0, 8]
+    "#{Date.today.strftime('%Y%m%d-%H')}/#{@session_user_id}/#{policies_digest}#{request.fullpath}"
   end
 
   def validate_session_user_id!

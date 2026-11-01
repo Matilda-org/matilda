@@ -141,7 +141,7 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
                       data-turbo-frame="tracks-list"
                       class="btn btn-sm btn-danger"
                       aria-label="Elimina tracking"
-                      data-user-policies-target="item" data-policy="tasks_track"
+                      <%= policy_guard('tasks_track') %>
                     ><i class="bi bi-trash"></i></a>
                   </td>
                 </tr>

@@ -3,8 +3,7 @@
     href="<%= campaigns_actions_path(type: 'add-communication', id: @campaign.id) %>"
     class="btn btn-primary me-2"
     data-turbo-frame="action"
-    data-user-policies-target="item"
-    data-policy="crm"
+    <%= policy_guard('crm') %>
     data-controller="tooltip"
     data-tooltip="Aggiungi comunicazione"
     aria-label="Aggiungi comunicazione"
@@ -17,27 +16,27 @@
       <i class="bi bi-three-dots"></i>
     </button>
     <ul class="dropdown-menu">
-      <li data-user-policies-target="item" data-policy="crm">
+      <li <%= policy_guard('crm') %>>
         <a class="dropdown-item" href="<%= campaigns_actions_path(type: 'edit', id: @campaign.id) %>" data-turbo-frame="action">
           Modifica campagna
         </a>
       </li>
 
       <% if @campaign.archived %>
-        <li data-user-policies-target="item" data-policy="crm">
+        <li <%= policy_guard('crm') %>>
           <a class="dropdown-item" href="<%= campaigns_actions_path(type: 'unarchive', id: @campaign.id) %>" data-turbo-frame="action">
             Ri-attiva campagna
           </a>
         </li>
       <% else %>
-        <li data-user-policies-target="item" data-policy="crm">
+        <li <%= policy_guard('crm') %>>
           <a class="dropdown-item" href="<%= campaigns_actions_path(type: 'archive', id: @campaign.id) %>" data-turbo-frame="action">
             Archivia campagna
           </a>
         </li>
       <% end %>
 
-      <li data-user-policies-target="item" data-policy="crm">
+      <li <%= policy_guard('crm') %>>
         <a class="dropdown-item text-danger" href="<%= campaigns_actions_path(type: 'destroy', id: @campaign.id) %>" data-turbo-frame="action">
           Elimina campagna
         </a>

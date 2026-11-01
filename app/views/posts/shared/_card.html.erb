@@ -16,10 +16,10 @@ post ||= Post.new
     <p class="card-text"><%= post.content %></p>
   </div>
   <div class="card-footer d-flex justify-content-end">
-    <a class="card-link d-flex align-items-center text-danger" href="<%= posts_actions_path(type: 'destroy', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_destroy">
+    <a class="card-link d-flex align-items-center text-danger" href="<%= posts_actions_path(type: 'destroy', id: post.id) %>" data-turbo-frame="action" <%= policy_guard('posts_destroy') %>>
       Elimina
     </a>
-    <a class="card-link d-flex align-items-center" href="<%= posts_actions_path(type: 'edit', id: post.id) %>" data-turbo-frame="action" data-user-policies-target="item" data-policy="posts_edit">
+    <a class="card-link d-flex align-items-center" href="<%= posts_actions_path(type: 'edit', id: post.id) %>" data-turbo-frame="action" <%= policy_guard('posts_edit') %>>
       Modifica
     </a>
     <% unless post.source_url.blank? %>

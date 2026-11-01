@@ -4,8 +4,7 @@
     class="btn btn-primary"
     href="<%= campaigns_actions_path(type: 'create') %>"
     data-turbo-frame="action"
-    data-user-policies-target="item"
-    data-policy="crm"
+    <%= policy_guard('crm') %>
     data-controller="tooltip"
     data-tooltip="Crea nuova campagna"
     aria-label="Crea nuova campagna"

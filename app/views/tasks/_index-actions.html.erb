@@ -42,8 +42,7 @@
     class="btn btn-primary"
     href="<%= tasks_actions_path(type: 'create', turbo_frame_key: "tasks-#{@mode}") %>"
     data-turbo-frame="action"
-    data-user-policies-target="item"
-    data-policy="tasks_create"
+    <%= policy_guard('tasks_create') %>
     data-controller="tooltip"
     data-tooltip="Crea nuovo task"
     aria-label="Crea nuovo task"

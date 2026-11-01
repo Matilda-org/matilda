@@ -39,12 +39,12 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       <% end %>
 
       <% if @procedure.resources_type_projects? && !@procedure.model %>
-        <li data-user-policies-target="item" data-policy="procedures_edit">
+        <li <%= policy_guard('procedures_edit') %>>
           <a class="dropdown-item" href="<%= procedures_remove_archived_projects_action_path(id: @procedure.id) %>" data-turbo-frame="_self" data-turbo-method="post">
             Rimuovi progetti archiviati
           </a>
         </li>
-        <li data-user-policies-target="item" data-policy="procedures_edit">
+        <li <%= policy_guard('procedures_edit') %>>
           <a class="dropdown-item" href="<%= procedures_toggle_show_archived_projects_action_path(id: @procedure.id) %>" data-turbo-frame="_self" data-turbo-method="post">
             <% if @procedure.show_archived_projects %>
               Nascondi progetti archiviati
@@ -55,13 +55,13 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
         </li>
       <% end %>
 
-      <li data-user-policies-target="item" data-policy="procedures_edit">
+      <li <%= policy_guard('procedures_edit') %>>
         <a class="dropdown-item" href="<%= procedures_actions_path(type: 'edit', id: @procedure.id) %>" data-turbo-frame="action">
           Modifica board
         </a>
       </li>
       <% if @procedure.clonable? %>
-        <li data-user-policies-target="item" data-policy="procedures_clone">
+        <li <%= policy_guard('procedures_clone') %>>
           <a class="dropdown-item" href="<%= procedures_actions_path(type: 'clone', id: @procedure.id) %>" data-turbo-frame="action">
             Clona board
           </a>
@@ -69,20 +69,20 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       <% end %>
       <% if @procedure.archivable? %>
         <% if @procedure.archived %>
-          <li data-user-policies-target="item" data-policy="procedures_unarchive">
+          <li <%= policy_guard('procedures_unarchive') %>>
             <a class="dropdown-item" href="<%= procedures_actions_path(type: 'unarchive', id: @procedure.id) %>" data-turbo-frame="action">
               Ri-attiva board
             </a>
           </li>
         <% else %>
-          <li data-user-policies-target="item" data-policy="procedures_archive">
+          <li <%= policy_guard('procedures_archive') %>>
             <a class="dropdown-item" href="<%= procedures_actions_path(type: 'archive', id: @procedure.id) %>" data-turbo-frame="action">
               Archivia board
             </a>
           </li>
         <% end %>
       <% end %>
-      <li data-user-policies-target="item" data-policy="procedures_destroy">
+      <li <%= policy_guard('procedures_destroy') %>>
         <a class="dropdown-item text-danger" href="<%= procedures_actions_path(type: 'destroy', id: @procedure.id) %>" data-turbo-frame="action">
           Elimina board
         </a>
@@ -110,8 +110,7 @@ has_prefer = @session_user.prefer?(@procedure.id, @procedure.class.name) if @ses
       href="<%= procedures_actions_path(type: 'add-status', id: @procedure.id) %>"
       data-turbo-frame="action"
       class="btn btn-primary"
-      data-user-policies-target="item"
-      data-policy="procedures_edit"
+      <%= policy_guard('procedures_edit') %>
       data-controller="tooltip"
       data-tooltip="Aggiungi stato"
       aria-label="Aggiungi stato"
