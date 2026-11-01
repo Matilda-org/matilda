@@ -23,7 +23,7 @@
 .vectorsearch__opener {
   position: fixed;
   bottom: 30px;
-  left: 30px;
+  right: 30px;
   z-index: 100;
   width: 60px;
   height: 60px;
@@ -45,7 +45,7 @@
 .vectorsearch__content {
   position: fixed;
   bottom: 15px;
-  left: 15px;
+  right: 15px;
   z-index: 9999;
   transition: all 0.3s ease-in-out;
   opacity: 0;

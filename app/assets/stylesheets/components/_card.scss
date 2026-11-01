@@ -145,8 +145,18 @@
 
 // Favourites stand out with an accent edge instead of a full colored background,
 // which turned a grid of favourites into a wall of color and hurt readability
-.c-card--preferred {
-  box-shadow: inset 4px 0 0 var(--bs-warning), 0 2px 6px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+// The edge is a pseudo-element, not a box-shadow: the hover lift replaces the
+// whole box-shadow and would wipe it out.
+.c-card--preferred::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background-color: var(--bs-warning);
+  z-index: 3;
+  pointer-events: none;
 }
 
 // Icon-only actions: at least 44x44px touch targets (WCAG 2.5.5), visually still an icon

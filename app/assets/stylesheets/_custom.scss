@@ -28,7 +28,7 @@ body {
 .vectorsearch__opener {
   // transition already defined in _vectorsearch.scss
   .modal-open & {
-    transform: translateX(-200%);
+    transform: translateX(200%);
   }
 }
 
