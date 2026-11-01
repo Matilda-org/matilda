@@ -1,0 +1,6 @@
+// Filter selects keep a readable width on desktop instead of shrinking to content
+@media (min-width: 992px) {
+  .c-filter-select {
+    width: 200px;
+  }
+}

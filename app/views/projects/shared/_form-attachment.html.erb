@@ -13,7 +13,7 @@ path ||= attachment.persisted? ? projects_edit_attachment_action_path(id: projec
 
   <div class="col col-6 mb-3">
     <label for="typology" class="form-label">Tipologia</label>
-    <%= select_tag :typology, options_for_select(Projects::Attachment.typologies.map {|key, value| [Projects::Attachment.typology_string(key.to_s), Projects::Attachment.typologies.key(value)]}, attachment.typology), class: 'form-control', required: true, onchange: 'projectAttachmentFormTypologyChange()' %>
+    <%= select_tag :typology, options_for_select(Projects::Attachment.typologies.map {|key, value| [Projects::Attachment.typology_string(key.to_s), Projects::Attachment.typologies.key(value)]}, attachment.typology), class: 'form-select', required: true, onchange: 'projectAttachmentFormTypologyChange()' %>
   </div>
 
   <div class="col col-6 mb-3">

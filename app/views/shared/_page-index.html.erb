@@ -27,7 +27,7 @@ empty_cta_policy ||= nil
               <label for="tags" class="col-form-label">Tag</label>
             </div>
             <div class="col">
-              <select id="tags" class="form-control" name="tags" data-action="change->filters#submit">
+              <select id="tags" class="form-select" name="tags" data-action="change->filters#submit">
                 <option value="">Seleziona un tag</option>
                 <% tags.each do |tag| %>
                   <option value="<%= tag %>" <%= params[:tags] == tag ? 'selected' : '' %>><%= tag %></option>
@@ -74,7 +74,7 @@ empty_cta_policy ||= nil
             <div class="col">
               <div class="input-group">
                 <span class="input-group-text">Ordina</span>
-                <select id="sort" class="form-control" name="sort" data-action="change->filters#submit">
+                <select id="sort" class="form-select" name="sort" data-action="change->filters#submit">
                   <% sorts.each do |sort| %>
                     <option value="<%= sort[:value] %>" <%= params[:sort] == sort[:value] || (params[:sort].blank? && sort[:default]) ? 'selected' : '' %>><%= sort[:label] %></option>
                   <% end %>

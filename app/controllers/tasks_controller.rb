@@ -46,6 +46,7 @@ class TasksController < ApplicationController
   def index
     return unless validate_policy!("tasks_index")
     @mode = params[:mode] || "calendar"
+    load_filter_options
 
     if @mode == "people"
       load_people_grouping
@@ -480,6 +481,11 @@ class TasksController < ApplicationController
   end
 
   # Build @tasks_per_user for the people board from the current filters.
+  def load_filter_options
+    @filter_projects = Project.not_archived.order(year: :asc, name: :asc).pluck(:name, :id)
+    @filter_users = User.order(surname: :asc, name: :asc).map { |u| [ u.complete_name, u.id ] }
+  end
+
   def load_people_grouping
     @date = safe_date(params[:date], Date.today)
     @project_id = params[:project_id]

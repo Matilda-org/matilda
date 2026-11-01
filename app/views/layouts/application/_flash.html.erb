@@ -1,8 +1,18 @@
+<%# Errors stay inline until dismissed; any other message is a self-hiding toast %>
 <% flash.each do |type, msg| %>
-  <div
-    class="alert mt-3 mb-3 alert-<%= type %>"
-    role="alert"
-  >
-    <%= msg %>
-  </div>
+  <% if type.to_s == 'danger' %>
+    <div class="alert alert-danger alert-dismissible fade show mt-3 mb-3" role="alert">
+      <%= msg %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+    </div>
+  <% else %>
+    <div class="toast-container position-fixed top-0 end-0 p-3 c-toast-container">
+      <div class="toast align-items-center text-bg-<%= type == 'notice' ? 'success' : type %> border-0" role="status" aria-live="polite" aria-atomic="true" data-controller="toast">
+        <div class="d-flex">
+          <div class="toast-body"><%= msg %></div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Chiudi"></button>
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>

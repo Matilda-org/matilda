@@ -7,7 +7,7 @@
     <%= form_tag campaigns_add_communication_action_path(@campaign), class: 'row', data: { controller: 'form-loading' } do %>
       <div class="col col-12 mb-3">
         <label for="contact_id" class="form-label">Contatto</label>
-        <%= select_tag 'contact_id', options_for_select(available_contacts.map { |c| [c.name, c.id] }), class: 'form-control', required: true %>
+        <%= select_tag 'contact_id', options_for_select(available_contacts.map { |c| [c.name, c.id] }), class: 'form-select', required: true %>
       </div>
 
       <p class="text-muted" style="font-size: 12px">La comunicazione viene creata nello stato <b>Da inviare</b>.</p>

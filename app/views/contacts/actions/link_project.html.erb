@@ -5,7 +5,7 @@
     <%= form_tag contacts_link_project_action_path(@contact), class: 'row', data: { controller: 'form-loading' } do %>
       <div class="col col-12 mb-3">
         <label for="project_id" class="form-label">Progetto</label>
-        <%= select_tag 'project_id', options_for_select(available_projects.map { |p| [p.complete_code_name, p.id] }), class: 'form-control', required: true %>
+        <%= select_tag 'project_id', options_for_select(available_projects.map { |p| [p.complete_code_name, p.id] }), class: 'form-select', required: true %>
       </div>
 
       <div class="d-flex justify-content-end align-items-center">

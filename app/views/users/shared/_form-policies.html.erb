@@ -20,7 +20,7 @@ user ||= User.new
 
   <div class="col col-12 mb-3">
     <label for="policies" class="form-label">Permessi</label>
-    <%= select_tag :policies, options_for_select(Users::Policy.policies.keys.map { |k| [k.humanize, k] }, user.cached_policies), class: 'form-control', multiple: true, style: 'height: 300px;', data: { user_policies_form_target: 'policies' } %>
+    <%= select_tag :policies, options_for_select(Users::Policy.policies.keys.map { |k| [k.humanize, k] }, user.cached_policies), class: 'form-select', multiple: true, style: 'height: 300px;', data: { user_policies_form_target: 'policies' } %>
   </div>
 
   <div class="d-flex justify-content-end">

@@ -11,7 +11,7 @@ procedure ||= Procedure.new
 
   <div class="col col-12 mb-3">
     <label for="procedure_id" class="form-label">Modello di partenza</label>
-    <%= select_tag 'procedure_id', options_for_select([''] + project.procedures_valid.map { |u| [u.name, u.id] }, ''), class: 'form-control', onchange: 'projectProcedureFormProcedureCloneChange()', required: true %>
+    <%= select_tag 'procedure_id', options_for_select([''] + project.procedures_valid.map { |u| [u.name, u.id] }, ''), class: 'form-select', onchange: 'projectProcedureFormProcedureCloneChange()', required: true %>
   </div>
 
   <div class="col col-12 mb-3">
@@ -28,7 +28,7 @@ procedure ||= Procedure.new
 
   <div class="col col-12 mb-3">
     <label for="user_id" class="form-label">Assegna i task a</label>
-    <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, ''), class: 'form-control' %>
+    <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + User.all.order(surname: :asc, name: :asc).map { |u| [u.complete_name, u.id] }, ''), class: 'form-select' %>
   </div>
 
   <div class="d-flex justify-content-end">

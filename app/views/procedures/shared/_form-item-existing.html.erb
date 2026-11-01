@@ -21,7 +21,7 @@ turbo_frame_key ||= nil
 
     <div class="col col-12 mb-3">
       <label for="resource_id" class="form-label">Progetto</label>
-      <%= select_tag 'resource_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }), class: 'form-control' %>
+      <%= select_tag 'resource_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }), class: 'form-select' %>
     </div>
 
     <div class="d-flex justify-content-end">

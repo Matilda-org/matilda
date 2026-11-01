@@ -6,7 +6,7 @@
       <div class="alert alert-info py-1 px-1" role="alert" style="font-size: 12px;">
         L'accettazione task permette di utilizzare e completare un task solo in seguito alla approvazione da parte di un utente autorizzato.
       </div>
-      <select class="form-control" id="functionalities_task_acceptance" name="functionalities_task_acceptance">
+      <select class="form-select" id="functionalities_task_acceptance" name="functionalities_task_acceptance">
         <option value="1" <%= Setting.get('functionalities_task_acceptance') ? 'selected' : '' %>>Attivo</option>
         <option value="0" <%= !Setting.get('functionalities_task_acceptance') ? 'selected' : '' %>>Disattivo</option>
       </select>

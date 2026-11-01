@@ -23,7 +23,7 @@ path ||= procedure.persisted? ? procedures_edit_action_path(procedure) : procedu
     <% unless procedure.persisted? %>
       <div class="col col-12 mb-3">
         <label for="resources_type" class="form-label">Utilizzabile con</label>
-        <%= select_tag :resources_type, options_for_select(Procedure.resources_types.map {|key, value| [Procedure.resources_type_string(key.to_s), Procedure.resources_types.key(value)]}.reverse, procedure.resources_type), class: 'form-control', required: true %>
+        <%= select_tag :resources_type, options_for_select(Procedure.resources_types.map {|key, value| [Procedure.resources_type_string(key.to_s), Procedure.resources_types.key(value)]}.reverse, procedure.resources_type), class: 'form-select', required: true %>
         <div class="form-text">Questa impostazione non potrà più essere modificata in seguito.</div>
       </div>
 

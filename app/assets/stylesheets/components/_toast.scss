@@ -1,0 +1,5 @@
+// Keep toasts below the fixed navbar
+.c-toast-container {
+  top: 60px !important;
+  z-index: 1090;
+}

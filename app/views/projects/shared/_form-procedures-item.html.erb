@@ -11,7 +11,7 @@ procedures_item ||= Procedures::Item.new
 
   <div class="col col-12 mb-3">
     <label for="procedure_id" class="form-label">Board</label>
-    <%= select_tag 'procedure_id', options_for_select(project.procedures_valid_as_item.map { |u| [u.name, u.id] }, procedures_item.procedure_id), class: 'form-control' %>
+    <%= select_tag 'procedure_id', options_for_select(project.procedures_valid_as_item.map { |u| [u.name, u.id] }, procedures_item.procedure_id), class: 'form-select' %>
   </div>
 
   <div class="d-flex justify-content-end">

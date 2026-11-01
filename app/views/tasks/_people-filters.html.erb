@@ -5,29 +5,38 @@ project_id ||= nil
 
 %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div>
+<div class="mb-4">
+  <div class="d-flex justify-content-between align-items-center gap-2">
     <h2 class="fs-4 mb-0"><%= date.strftime('%d/%m') %></h2>
-  </div>
-  <form class="row g-3" method="GET">
-    <input type="hidden" name="mode" value="people">
-
-    <div class="col-auto d-none d-lg-block" style="width: 150px">
-      <label for="project_id" class="visually-hidden">Project</label>
-      <%= select_tag 'project_id', options_for_select([['Progetto', '']] + Project.not_archived.order(year: :asc, name: :asc).map { |u| [u.name, u.id] }, project_id), class: 'form-control' %>
-    </div>
-    <div class="col-auto d-none d-lg-block">
-      <label for="date" class="visually-hidden">Date</label>
-      <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="<%= date %>" required data-controller="tasks-inputdate">
-    </div>
-    <div class="col-auto">
+    <div class="d-flex gap-1">
+      <button class="btn btn-outline-primary d-lg-none position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#tasks-people-filters" aria-expanded="false" aria-controls="tasks-people-filters">
+        <i class="bi bi-funnel"></i> Filtri
+        <% if project_id.present? %>
+          <span class="badge rounded-pill bg-primary ms-1">1</span>
+        <% end %>
+      </button>
       <%= link_to tasks_path(date: date - 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary', aria: { label: 'Giorno precedente' } do %>
         <i class="bi bi-arrow-left"></i>
       <% end %>
+      <%= link_to 'Oggi', tasks_path(project_id: project_id, mode: 'people'), class: "btn btn-outline-primary #{'disabled' if date == Date.today}", aria: { disabled: date == Date.today, label: 'Torna a oggi' } %>
       <%= link_to tasks_path(date: date + 1.days, project_id: project_id, mode: 'people'), class: 'btn btn-primary', aria: { label: 'Giorno successivo' } do %>
         <i class="bi bi-arrow-right"></i>
       <% end %>
-      <button type="submit" class="btn btn-primary d-none d-lg-inline-block">Applica</button>
+    </div>
+  </div>
+
+  <form id="tasks-people-filters" class="collapse d-lg-block mt-3" method="GET" data-controller="auto-submit" data-action="change->auto-submit#submit">
+    <input type="hidden" name="mode" value="people">
+
+    <div class="row g-2 justify-content-lg-end">
+      <div class="col-12 col-sm-6 col-lg-auto c-filter-select">
+        <label for="project_id" class="visually-hidden">Progetto</label>
+        <%= select_tag 'project_id', options_for_select([['Tutti i progetti', '']] + @filter_projects, project_id), class: 'form-select' %>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-auto">
+        <label for="date" class="visually-hidden">Data</label>
+        <input type="date" class="form-control" id="date" name="date" value="<%= date %>" required data-controller="tasks-inputdate">
+      </div>
     </div>
   </form>
 </div>

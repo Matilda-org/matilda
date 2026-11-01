@@ -9,7 +9,7 @@ item ||= Folders::Item.new
 <%= form_tag folders_manage_resource_action_path(resource_id: item.resource_id, resource_type: item.resource_type), class: 'row', data: { controller: 'form-loading' } do %>
   <div class="col col-12 mb-3">
     <label for="folder_id" class="form-label">Cartella</label>
-    <%= select_tag :folder_id, options_for_select([['NESSUNA CARTELLA', '']] + Folder.all.order(name: :asc).map {|f| [f.name, f.id]}, item.folder_id), class: 'form-control' %>
+    <%= select_tag :folder_id, options_for_select([['NESSUNA CARTELLA', '']] + Folder.all.order(name: :asc).map {|f| [f.name, f.id]}, item.folder_id), class: 'form-select' %>
   </div>
 
   <div class="d-flex justify-content-end">

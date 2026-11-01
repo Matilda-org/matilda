@@ -16,7 +16,7 @@ project_members_user_ids = project.projects_members.pluck(:user_id)
   <% if !member.persisted? %>
     <div class="col col-12 mb-3">
       <label for="user_id" class="form-label">Utente</label>
-      <%= select_tag 'user_id', options_for_select(users_for_select.reject { |u| project_members_user_ids.include?(u[1]) }, member.user_id), class: 'form-control', required: true %>
+      <%= select_tag 'user_id', options_for_select(users_for_select.reject { |u| project_members_user_ids.include?(u[1]) }, member.user_id), class: 'form-select', required: true %>
     </div>
   <% end %>
   

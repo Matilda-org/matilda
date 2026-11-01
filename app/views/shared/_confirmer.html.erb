@@ -1,18 +1,21 @@
 <%
 
 path ||= '#'
+# Destructive actions style the confirm button as danger
+danger ||= false
+label ||= danger ? 'Conferma' : 'Procedi'
 
 %>
 
 <div class="text-center">
   <h3 class="fs-5 mb-3">Sei sicuro di procedere con l'azione?</h3>
-  <p class="mb-4">Sei sempre in tempo per cambiare idea.</p>
+  <p class="mb-4"><%= danger ? "L'operazione non è reversibile." : 'Sei sempre in tempo per cambiare idea.' %></p>
   <%= form_tag path, class: 'row justify-content-center', data: { controller: 'form-loading' } do %>
     <div class="col-auto">
-      <a type="button" href="#" data-action="click->action#closeModal" class="btn btn-danger">Annulla</a>
+      <a type="button" href="#" data-action="click->action#closeModal" class="btn btn-outline-secondary">Annulla</a>
     </div>
     <div class="col-auto">
-      <button type="submit" class="btn btn-success" data-form-loading-target="submit">Procedi</button>
+      <button type="submit" class="btn <%= danger ? 'btn-danger' : 'btn-primary' %>" data-form-loading-target="submit"><%= label %></button>
     </div>
   <% end %>
 </div>
