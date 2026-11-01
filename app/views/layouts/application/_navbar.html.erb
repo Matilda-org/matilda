@@ -8,12 +8,20 @@
         </a>
 
         <% if @session_user %>
+          <%= form_tag users_show_path(@session_user_id), method: :get, class: "c-global-search d-none d-md-flex mx-3 flex-grow-1", role: "search", data: { turbo_frame: "_top", controller: "global-search", action: "keydown@window->global-search#focus" } do %>
+            <label for="global-search" class="visually-hidden">Cerca progetti, task, credenziali</label>
+            <i class="bi bi-search c-global-search__icon" aria-hidden="true"></i>
+            <input type="search" id="global-search" name="search" class="form-control form-control-sm" placeholder="Cerca progetti, task, credenziali" minlength="3" value="<%= params[:search] if @_is_dashboard %>" data-global-search-target="input">
+            <kbd class="c-kbd c-global-search__hint" data-global-search-target="hint">Ctrl K</kbd>
+          <% end %>
+
           <div class="d-flex align-items-center">
+            <a class="btn btn-link text-white d-md-none me-1 fs-5" href="<%= users_show_path(@session_user_id, anchor: "module-search") %>" data-turbo-frame="_top" aria-label="Cerca"><i class="bi bi-search"></i></a>
             <div class="me-2">
               <%= render 'tasks/tracker' %>
             </div>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Apri menu">
               <i class="bi bi-list"></i>
             </button>
           </div>
@@ -51,9 +59,9 @@
                   href="<%= authentication_logout_path %>"
                   data-turbo="false"
                   data-controller="tooltip"
-                  data-tooltip="Logout"
-                  aria-label="Logout"
-                ><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2">Logout</span></a>
+                  data-tooltip="Esci"
+                  aria-label="Esci"
+                ><i class="bi bi-door-closed-fill"></i> <span class="d-lg-none ms-2">Esci</span></a>
               </li>
             </ul>
           </div>

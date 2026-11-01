@@ -5,7 +5,7 @@ can_edit_tracks = @session_user&.policy?('tasks_track')
 
 %>
 
-<%= render 'shared/page-header', title: 'Tracking', back: true %>
+<%= render 'shared/page-header', title: 'Tracking', back: @task ? tasks_show_path(@task) : tasks_path %>
 
 <%= turbo_frame_tag 'tracks-list' do %>
 

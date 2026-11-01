@@ -3,7 +3,7 @@
   subtitle: @_is_dashboard ? render('shared/year_progress') : nil,
   image: @_is_dashboard ? nil : @user.image_profile_url,
   render_actions: 'users/show-actions',
-  back: !@_is_dashboard
+  back: @_is_dashboard ? false : users_path
 %>
 
 <% if @_is_dashboard %>
@@ -19,6 +19,7 @@
       <%= render 'shared/page-card',
         title: "Ricerca rapida",
         full: true,
+        always_open: true,
         render_content: 'users/shared/module-search',
         render_content_args: {
           search: @search,

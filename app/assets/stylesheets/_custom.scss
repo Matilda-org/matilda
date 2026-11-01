@@ -201,10 +201,28 @@ body {
   position: sticky;
   top: 80px;
   left: 0;
+  // All sections live here now: scroll inside the sidebar when taller than the viewport
+  max-height: calc(100svh - 90px);
+  overflow-y: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 15px;
+}
+
+.sidebar__group {
+  margin: 10px 0 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bs-gray-600);
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 .sidebar .nav-item {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   background-color: var(--bs-white);
   border-radius: var(--bs-border-radius);
   overflow: hidden;
@@ -215,7 +233,12 @@ body {
 .sidebar .nav-item .dropdown-menu {
   position: static !important;
   transform: none !important;
-  display: block !important;
+  display: none;
+  margin: 0 !important;
+
+  &.show {
+    display: block;
+  }
   border-radius: 0 !important;
   border-left: 0 !important;
   border-right: 0 !important;

@@ -1,4 +1,4 @@
-<%= render 'shared/page-header', title: 'Rischi progetto', subtitle: 'Progetti attivi con segnali operativi da controllare', back: true %>
+<%= render 'shared/page-header', title: 'Rischi progetto', subtitle: 'Progetti attivi con segnali operativi da controllare', back: tools_path %>
 
 <%= turbo_frame_tag 'projects-risks' do %>
   <% if @project_risks.length.positive? %>

@@ -1,7 +1,7 @@
 <%= render 'shared/page-header',
   title: @task.title,
   render_actions: 'tasks/show-actions',
-  back: true
+  back: @task.project ? projects_show_path(@task.project) : tasks_path
 %>
 
 <%= render 'shared/page-grid' do %>

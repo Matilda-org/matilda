@@ -4,7 +4,7 @@
   title: @project.complete_code,
   subtitle: folder_data && link_to(folder_data[:folder_name], folders_show_path(folder_data[:folder_id]), data: { turbo: false }),
   render_actions: 'projects/show-actions',
-  back: true
+  back: folder_data ? projects_for_folder_path(folder_data[:folder_id]) : projects_path
 %>
 
 <%= render 'projects/shared/stats', project: @project %>

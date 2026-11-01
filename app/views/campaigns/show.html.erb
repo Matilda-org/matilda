@@ -2,7 +2,7 @@
 <%= render 'shared/page-header',
   title: @campaign.name,
   render_actions: 'campaigns/show-actions',
-  back: true
+  back: campaigns_path
 %>
 
 <%= render 'campaigns/kanban', campaign: @campaign %>
