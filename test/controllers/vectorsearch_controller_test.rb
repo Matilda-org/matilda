@@ -129,9 +129,8 @@ class VectorsearchControllerTest < ActionController::TestCase
 
       assert_response :success
       assert_equal "Acme", response.parsed_body["name"]
-      parts = requests.first[:content]
-      assert_equal "Acme srl", parts.first[:text]
-      assert parts.last[:image_url][:url].start_with?("data:image/png;base64,")
+      assert_equal "Acme srl", requests.first[:content]
+      assert_equal "card.png", requests.first[:image].original_filename
     end
   end
 

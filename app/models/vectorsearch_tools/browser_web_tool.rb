@@ -3,14 +3,15 @@ require "resolv"
 require "uri"
 
 class VectorsearchTools::BrowserWebTool
-  extend Langchain::ToolDefinition
+  include VectorsearchTools::Definition
 
   define_function :fetch_url, description: "Fetch the content of an URL" do
     property :url, type: "string", description: "The URL to fetch", required: true
   end
 
   # Fetch the content of an URL using the REST client gem with a timeout of 5 seconds
-  def fetch_url(url:)
+  def fetch_url(data)
+    url = data[:url].to_s
     return "ERROR FETCHING URL" unless safe_url?(url)
 
     response = RestClient::Request.execute(method: :get, url: url, timeout: 5, open_timeout: 5, max_redirects: 0)

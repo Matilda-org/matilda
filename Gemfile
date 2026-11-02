@@ -59,8 +59,7 @@ gem "bootstrap", "~> 5.2.3"
 gem "actionpack-action_caching"
 
 # Use AIs
-gem "langchainrb"
-gem "ruby-openai"
+gem "ruby_llm", "~> 2.1"
 
 # Play with HTML and XML
 gem "nokogiri"

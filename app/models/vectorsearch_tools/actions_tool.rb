@@ -4,7 +4,7 @@
 # web pages, so without the confirmation an instruction hidden in a page could
 # act with the user's permissions.
 class VectorsearchTools::ActionsTool
-  extend Langchain::ToolDefinition
+  include VectorsearchTools::Definition
   include VectorsearchTools::Access
 
   ACTIONS = %w[tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze

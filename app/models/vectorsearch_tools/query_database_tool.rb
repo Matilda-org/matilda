@@ -1,5 +1,5 @@
 class VectorsearchTools::QueryDatabaseTool
-  extend Langchain::ToolDefinition
+  include VectorsearchTools::Definition
   include VectorsearchTools::Access
 
   # Max rows per tool result: results are re-sent to the model on every step of

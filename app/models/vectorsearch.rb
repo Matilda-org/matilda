@@ -4,26 +4,24 @@ class Vectorsearch
 
   attr_reader :user_id
 
-  # Shared OpenAI client for the assistant and the extraction helpers.
-  # On Chat Completions this model runs function calling only with reasoning off,
-  # and langchainrb drops params missing from its schema, so reasoning_effort is added there.
-  def self.llm(temperature:)
-    llm = Langchain::LLM::OpenAI.new(
-      api_key: Setting.get("vectorsearch_openai_key"),
-      default_options: { temperature: temperature, chat_model: CHAT_MODEL }
-    )
-    llm.chat_parameters.update(reasoning_effort: { default: "none" })
-    llm
+  # Shared OpenAI chat for the assistant and the extraction helpers. The key is
+  # a setting, so it goes in a per-call context instead of the global config.
+  # Reasoning stays off: the answers are short and it would only add latency and cost.
+  def self.chat(temperature:)
+    context = RubyLLM.context { |config| config.openai_api_key = Setting.get("vectorsearch_openai_key") }
+    RubyLLM.chat(model: CHAT_MODEL, provider: :openai, context: context)
+      .with_temperature(temperature)
+      .with_thinking(false)
   end
 
-  # Single-shot request for the form helpers: no tools, so no Assistant loop.
-  # content can be a string or an OpenAI content array (text + image_url parts).
+  # Single-shot request for the form helpers: no tools, so no loop.
+  # image is an uploaded file sent along with the text.
   # With json: true the model is forced to answer with a JSON object, returned parsed.
-  def self.ask(instructions:, content:, json: false, temperature: 0.25)
-    params = { messages: [ { role: "system", content: instructions }, { role: "user", content: content } ] }
-    params[:response_format] = { type: "json_object" } if json
+  def self.ask(instructions:, content:, image: nil, json: false, temperature: 0.25)
+    chat = chat(temperature: temperature).with_instructions(instructions)
+    chat.with_provider_options(text: { format: { type: "json_object" } }) if json
 
-    answer = llm(temperature: temperature).chat(params).chat_completion
+    answer = chat.ask(content, with: image).content
     json ? JSON.parse(answer) : answer.to_s.strip
   end
 
@@ -75,22 +73,20 @@ class Vectorsearch
     response_content = nil
     actions_tool = VectorsearchTools::ActionsTool.new(user)
     begin
-      llm = Vectorsearch.llm(temperature: 0.7)
+      chat = Vectorsearch.chat(temperature: 0.7)
+        .with_instructions(prompt_template.gsub("{{user_complete_name}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")))
+        .with_tools(
+          *VectorsearchTools::BrowserWebTool.new.ruby_llm_tools,
+          *VectorsearchTools::QueryDatabaseTool.new(self.user).ruby_llm_tools,
+          *actions_tool.ruby_llm_tools
+        )
 
-      assistant = Langchain::Assistant.new(
-        llm: llm,
-        instructions: prompt_template.gsub("{{user_complete_name}}", self.user.complete_name).gsub("{{user_id}}", self.user.id.to_s).gsub("{{date}}", Date.today.strftime("%d/%m/%Y")),
-        tools: [
-          VectorsearchTools::BrowserWebTool.new,
-          VectorsearchTools::QueryDatabaseTool.new(self.user),
-          actions_tool
-        ]
-      )
+      # history without the new message, which ask sends
+      *history, last = messages
+      history.each { |message| chat.add_message(role: message[:role], content: message[:content].to_s) if message[:content].present? }
 
-      messages.each { |message| assistant.add_message(role: message[:role], content: message[:content]) }
-
-      assistant.run(auto_tool_execution: true)
-      response_content = assistant.messages.last.content
+      response_content = chat.ask(last[:content]).content
+      raise "empty answer from the model" if response_content.blank?
     rescue StandardError => e
       Rails.logger.error("Error in Vectorsearch#send_message: #{e.message}")
       Rails.logger.error(e.backtrace.join("\n"))

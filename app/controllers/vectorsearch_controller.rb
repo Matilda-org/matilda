@@ -35,34 +35,21 @@ class VectorsearchController < ApplicationController
   end
 
   def text_to_checklist
-    llm = Vectorsearch.llm(temperature: 0.25)
-
-    assistant = Langchain::Assistant.new(
-      llm: llm,
+    answer = Vectorsearch.ask(
       instructions: "Extract a checklist from the user message. Each item should be a separate line. Do not add any other text or formatting. Do not add - or other characters before the items. User the same language as the user message.",
+      content: params[:text].to_s
     )
-    assistant.add_message(role: "user", content: params[:text])
-
-    assistant.run
-    checklist = assistant.messages.last.content.split("\n").map { |item| item.strip }.reject(&:empty?)
+    checklist = answer.split("\n").map { |item| item.strip }.reject(&:empty?)
 
     render json: checklist
   end
 
   def url_to_data
-    llm = Vectorsearch.llm(temperature: 0.25)
-
-    assistant = Langchain::Assistant.new(
-      llm: llm,
-      instructions: "Extract data from the URL provided by the user. The data should be in JSON format. The data should be formatted in this way: { content: 'String with a summary of the url content (max 200 characters)', tags: 'Comma separated list of tags', image_url: 'URL of the main image' }. Leave the fields empty if the data is not available. Do not add any other text or formatting. User the same language as the user message.",
-      tools: [
-        VectorsearchTools::BrowserWebTool.new
-      ]
-    )
-    assistant.add_message(role: "user", content: params[:url])
-
-    assistant.run(auto_tool_execution: true)
-    data = assistant.messages.last.content
+    data = Vectorsearch.chat(temperature: 0.25)
+      .with_instructions("Extract data from the URL provided by the user. The data should be in JSON format. The data should be formatted in this way: { content: 'String with a summary of the url content (max 200 characters)', tags: 'Comma separated list of tags', image_url: 'URL of the main image' }. Leave the fields empty if the data is not available. Do not add any other text or formatting. User the same language as the user message.")
+      .with_tools(*VectorsearchTools::BrowserWebTool.new.ruby_llm_tools)
+      .ask(params[:url].to_s)
+      .content
     data = JSON.parse(data) rescue nil
 
     render json: data || { error: "Invalid JSON format" }
@@ -118,10 +105,6 @@ class VectorsearchController < ApplicationController
       return render(json: { error: "L'immagine deve essere un file immagine di massimo 5 MB" }, status: :unprocessable_entity)
     end
 
-    content = []
-    content << { type: "text", text: params[:text] } if params[:text].present?
-    content << { type: "image_url", image_url: { url: "data:#{image.content_type};base64,#{Base64.strict_encode64(image.read)}" } } if image.present?
-
     data = Vectorsearch.ask(
       json: true,
       instructions: <<~PROMPT,
@@ -129,7 +112,8 @@ class VectorsearchController < ApplicationController
         name, description (what they do, max 200 characters), email, phone, vat_number, website, address.
         Use null for missing values, never invent them. Prefer the company name when both company and person are present.
       PROMPT
-      content: content
+      content: params[:text].presence,
+      image: image.presence
     )
 
     render json: data.slice("name", "description", "email", "phone", "vat_number", "website", "address")
