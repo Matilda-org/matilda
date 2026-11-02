@@ -115,9 +115,9 @@ class VectorsearchTools::QueryDatabaseToolTest < ActiveSupport::TestCase
   end
 
   test "tasks show the checklist" do
-    Task.create!(title: "With checks", tasks_checks_texts: [ "Write tests" ])
+    task = Task.create!(title: "With checks", tasks_checks_texts: [ "Write tests" ])
 
-    assert_includes VectorsearchTools::QueryDatabaseTool.new(users(:one)).tasks({ search: "With checks" }), "Write tests (da fare)"
+    assert_includes VectorsearchTools::QueryDatabaseTool.new(users(:one)).tasks({ search: "With checks" }), "Write tests (ID: #{task.tasks_checks.sole.id}, da fare)"
   end
 
   test "lists are capped and the model is told to narrow the filters" do

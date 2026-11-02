@@ -331,7 +331,7 @@ class VectorsearchTools::QueryDatabaseTool
     #{"Il task è stato stimato #{task.time_estimate_as_string} di lavoro." if task.time_estimate}
     #{"Il task ha richiesto #{task.time_spent_as_string} di lavoro." if task.time_spent}
     #{"Questa è la descrizione del task: #{task.description}." unless task.description.blank?}
-    #{"Checklist: #{task.tasks_checks.sort_by(&:order).map { |c| "#{c.text} (#{c.checked ? 'fatto' : 'da fare'})" }.join(', ')}." if task.tasks_checks.any?}
+    #{"Checklist: #{task.tasks_checks.sort_by(&:order).map { |c| "#{c.text} (ID: #{c.id}, #{c.checked ? 'fatto' : 'da fare'})" }.join(', ')}." if task.tasks_checks.any?}
     #{"Il task ha #{task.tasks_comments_count} commenti#{", l'ultimo attende una risposta dall'assegnatario" if task.unresolved}." if task.tasks_comments_count.positive?}
     #{"Questa è la lista delle board in cui si trova il task:\n#{procedures_as_item_infos}" unless procedures_as_item_infos.blank?}
     ".squish
@@ -405,8 +405,9 @@ class VectorsearchTools::QueryDatabaseTool
   def procedures_as_item_infos(procedures_items)
     procedures_as_item_infos = ""
 
-    procedures_items.includes(:procedure, :procedures_status).map do |procedure_item|
-      procedures_as_item_infos += "- Nella board #{procedure_item.procedure.name} si trova nello stato #{procedure_item.procedures_status.title}.\n"
+    procedures_items.includes(:procedures_status, procedure: :procedures_statuses).map do |procedure_item|
+      statuses = procedure_item.procedure.procedures_statuses.map { |s| "#{s.title} (ID: #{s.id})" }.join(", ")
+      procedures_as_item_infos += "- Nella board #{procedure_item.procedure.name} (ID: #{procedure_item.procedure_id}) si trova nello stato #{procedure_item.procedures_status.title}; stati della board: #{statuses}.\n"
     end
 
     procedures_as_item_infos

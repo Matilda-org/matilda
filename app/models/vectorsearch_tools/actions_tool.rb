@@ -7,10 +7,15 @@ class VectorsearchTools::ActionsTool
   include VectorsearchTools::Definition
   include VectorsearchTools::Access
 
-  ACTIONS = %w[projects_create projects_update projects_duplicate projects_log_create tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze
+  ACTIONS = %w[
+    projects_create projects_update projects_duplicate projects_log_create
+    tasks_create tasks_update tasks_move tasks_complete tasks_uncomplete tasks_comment tasks_track tasks_check
+    crm_contact_create crm_communication_create crm_communication_send crm_communication_close crm_communication_log_create crm_follow_up_create
+  ].freeze
   PROPOSAL_TTL = 1.day
   PROJECT_FIELDS = %i[name year code description contact_id budget_management budget_money budget_time].freeze
   PROJECT_FIELD_LABELS = { name: "nome", year: "anno", code: "codice", description: "descrizione", contact_id: "contatto", budget_management: "gestione budget", budget_money: "budget economico", budget_time: "budget tempo" }.freeze
+  CONTACT_FIELD_LABELS = { name: "nome", vat_number: "partita IVA", email: "email", phone: "telefono", website: "sito", address: "indirizzo", description: "descrizione" }.freeze
 
   # proposals stored during this run, shown as buttons under the answer
   attr_reader :proposals
@@ -112,6 +117,55 @@ class VectorsearchTools::ActionsTool
     propose(:tasks_complete, data)
   end
 
+  define_function :tasks_update, description: "Propose changes to a task, only the given fields change, the user confirms it" do
+    property :task_id, type: "integer", description: "Task ID", required: true
+    property :title, type: "string", description: "New task title", required: false
+    property :deadline, type: "string", description: "New task deadline (YYYY-MM-DD)", required: false
+    property :user_id, type: "integer", description: "New assignee user ID", required: false
+    property :time_estimate_minutes, type: "integer", description: "New time estimate in minutes", required: false
+  end
+
+  def tasks_update(data)
+    propose(:tasks_update, data)
+  end
+
+  define_function :tasks_move, description: "Propose to move a task to another status (column) of the board it is in, the user confirms it. The status automations run as when moving the card by hand" do
+    property :task_id, type: "integer", description: "Task ID", required: true
+    property :procedure_status_id, type: "integer", description: "ID of the target board status", required: true
+  end
+
+  def tasks_move(data)
+    propose(:tasks_move, data)
+  end
+
+  define_function :tasks_uncomplete, description: "Propose to reopen a completed task, the user confirms it" do
+    property :task_id, type: "integer", description: "Task ID", required: true
+  end
+
+  def tasks_uncomplete(data)
+    propose(:tasks_uncomplete, data)
+  end
+
+  define_function :tasks_track, description: "Propose to log time worked by the user on a task, the user confirms it" do
+    property :task_id, type: "integer", description: "Task ID", required: true
+    property :minutes, type: "integer", description: "Time worked in minutes", required: true
+    property :date, type: "string", description: "Day of the work (YYYY-MM-DD, default: today)", required: false
+  end
+
+  def tasks_track(data)
+    propose(:tasks_track, data)
+  end
+
+  define_function :tasks_check, description: "Propose to check or uncheck an item of a task checklist, the user confirms it" do
+    property :task_id, type: "integer", description: "Task ID", required: true
+    property :check_id, type: "integer", description: "Checklist item ID", required: true
+    property :checked, type: "boolean", description: "true to check the item, false to uncheck it", required: true
+  end
+
+  def tasks_check(data)
+    propose(:tasks_check, data)
+  end
+
   define_function :tasks_comment, description: "Propose a comment on a task, the user confirms it" do
     property :task_id, type: "integer", description: "Task ID", required: true
     property :content, type: "string", description: "Comment text (markdown)", required: true
@@ -123,6 +177,48 @@ class VectorsearchTools::ActionsTool
 
   # CRM
   ##
+
+  define_function :crm_contact_create, description: "Propose a new CRM contact (customer or lead), the user confirms it" do
+    property :name, type: "string", description: "Contact name", required: true
+    property :vat_number, type: "string", description: "VAT number", required: false
+    property :email, type: "string", description: "Email", required: false
+    property :phone, type: "string", description: "Phone", required: false
+    property :website, type: "string", description: "Website", required: false
+    property :address, type: "string", description: "Address", required: false
+    property :description, type: "string", description: "Description (max 255 characters)", required: false
+  end
+
+  def crm_contact_create(data)
+    propose(:crm_contact_create, data)
+  end
+
+  define_function :crm_communication_create, description: "Propose to add a contact to a CRM campaign (a new communication to send), the user confirms it" do
+    property :campaign_id, type: "integer", description: "Campaign ID", required: true
+    property :contact_id, type: "integer", description: "Contact ID", required: true
+  end
+
+  def crm_communication_create(data)
+    propose(:crm_communication_create, data)
+  end
+
+  define_function :crm_communication_send, description: "Propose to mark a CRM communication as sent, the user confirms it. It cannot be undone" do
+    property :communication_id, type: "integer", description: "Communication ID", required: true
+    property :date, type: "string", description: "Send date (YYYY-MM-DD, default: today)", required: false
+  end
+
+  def crm_communication_send(data)
+    propose(:crm_communication_send, data)
+  end
+
+  define_function :crm_communication_close, description: "Propose to register the outcome of a sent CRM communication, the user confirms it. It cannot be undone" do
+    property :communication_id, type: "integer", description: "Communication ID", required: true
+    property :outcome, type: "string", description: "won or lost", enum: %w[won lost], required: true
+    property :date, type: "string", description: "Outcome date (YYYY-MM-DD, default: today)", required: false
+  end
+
+  def crm_communication_close(data)
+    propose(:crm_communication_close, data)
+  end
 
   define_function :crm_communication_log_create, description: "Propose a note on a CRM communication, the user confirms it" do
     property :communication_id, type: "integer", description: "Communication ID", required: true
@@ -217,11 +313,100 @@ class VectorsearchTools::ActionsTool
     "Il task è già completato" if task.completed
   end
 
+  def check_tasks_update(data)
+    return "Non hai i permessi per modificare i task" unless @user.policy?("tasks_edit")
+    task = accessible_tasks.find_by(id: data[:task_id])
+    return "Task non trovato" unless task
+    return "Nessuna modifica indicata" if task_attributes(data).empty?
+    return "Utente assegnatario non trovato" if data[:user_id].present? && !User.exists?(data[:user_id])
+    return "Scadenza non valida, usa il formato YYYY-MM-DD" if data[:deadline].present? && !valid_date?(data[:deadline])
+    return "La stima non può essere negativa" if data[:time_estimate_minutes].to_i.negative?
+
+    task.assign_attributes(task_attributes(data))
+    "Task non valido: #{task.errors.full_messages.to_sentence}" unless task.valid?
+  end
+
+  # same policy and board scope as ProceduresController#move_item_action
+  def check_tasks_move(data)
+    return "Non hai i permessi per spostare i task nelle board" unless @user.policy?("procedures_edit")
+    task = accessible_tasks.find_by(id: data[:task_id])
+    return "Task non trovato" unless task
+    status = Procedures::Status.find_by(id: data[:procedure_status_id])
+    return "Stato della board non trovato" unless status && accessible_procedures.exists?(status.procedure_id)
+
+    item = task.procedures_items.find_by(procedure_id: status.procedure_id)
+    return "Il task non si trova nella board di questo stato" unless item
+
+    "Il task è già in questo stato" if item.procedures_status_id == status.id
+  end
+
+  def check_tasks_uncomplete(data)
+    return "Non hai i permessi per riaprire i task" unless @user.policy?("tasks_uncomplete")
+    task = accessible_tasks.find_by(id: data[:task_id])
+    return "Task non trovato" unless task
+
+    "Il task non è completato" unless task.completed
+  end
+
   def check_tasks_comment(data)
     return "Non hai i permessi per commentare i task" unless @user.policy?("tasks_comment")
     return "Task non trovato" unless accessible_tasks.exists?(data[:task_id])
 
     "Il commento non può essere vuoto" if data[:content].blank?
+  end
+
+  def check_tasks_track(data)
+    return "Non hai i permessi per registrare il tempo sui task" unless @user.policy?("tasks_track")
+    return "Task non trovato" unless accessible_tasks.exists?(data[:task_id])
+    return "La durata deve essere tra 1 e 1440 minuti" unless data[:minutes].to_i.between?(1, 24 * 60)
+    return "Data non valida, usa il formato YYYY-MM-DD" if data[:date].present? && !valid_date?(data[:date])
+
+    "Non si registra tempo su giorni futuri" if data[:date].present? && Date.iso8601(data[:date]).future?
+  end
+
+  def check_tasks_check(data)
+    return "Non hai i permessi per spuntare la checklist" unless @user.policy?("tasks_check")
+    task = accessible_tasks.find_by(id: data[:task_id])
+    return "Task non trovato" unless task
+    check = task.tasks_checks.find_by(id: data[:check_id])
+    return "Voce della checklist non trovata" unless check
+
+    "La voce è già #{check.checked ? 'spuntata' : 'da fare'}" if check.checked == !!data[:checked]
+  end
+
+  def check_crm_contact_create(data)
+    return "Non hai i permessi per usare il CRM" unless can_access_crm?
+
+    contact = Contact.new(contact_attributes(data))
+    "Contatto non valido: #{contact.errors.full_messages.to_sentence}" unless contact.valid?
+  end
+
+  def check_crm_communication_create(data)
+    return "Non hai i permessi per usare il CRM" unless can_access_crm?
+    return "Campagna non trovata" unless Campaign.exists?(data[:campaign_id])
+    return "Contatto non trovato" unless Contact.exists?(data[:contact_id])
+
+    communication = Communication.new(campaign_id: data[:campaign_id], contact_id: data[:contact_id])
+    "Comunicazione non valida: #{communication.errors.full_messages.to_sentence}" unless communication.valid?
+  end
+
+  def check_crm_communication_send(data)
+    return "Non hai i permessi per usare il CRM" unless can_access_crm?
+    communication = Communication.find_by(id: data[:communication_id])
+    return "Comunicazione non trovata" unless communication
+    return "Data non valida, usa il formato YYYY-MM-DD" if data[:date].present? && !valid_date?(data[:date])
+
+    "La comunicazione è già stata inviata" unless communication.to_send?
+  end
+
+  def check_crm_communication_close(data)
+    return "Non hai i permessi per usare il CRM" unless can_access_crm?
+    communication = Communication.find_by(id: data[:communication_id])
+    return "Comunicazione non trovata" unless communication
+    return "Esito non valido: usa won o lost" unless %w[won lost].include?(data[:outcome])
+    return "Data non valida, usa il formato YYYY-MM-DD" if data[:date].present? && !valid_date?(data[:date])
+
+    "L'esito si registra solo su comunicazioni inviate" unless communication.sent?
   end
 
   def check_crm_communication_log_create(data)
@@ -289,8 +474,57 @@ class VectorsearchTools::ActionsTool
     "completa il task «#{Task.find(data[:task_id]).title}»"
   end
 
+  def label_tasks_update(data)
+    changes = task_attributes(data).map do |field, value|
+      case field
+      when :title then "titolo «#{value.truncate(100)}»"
+      when :deadline then "scadenza #{Date.parse(value).strftime('%d/%m/%Y')}"
+      when :user_id then "assegnato a #{User.find(value).complete_name}"
+      when :time_estimate then "stima #{duration_label(value)}"
+      end
+    end
+    "modifica il task «#{Task.find(data[:task_id]).title}»: #{changes.join(', ')}"
+  end
+
+  def label_tasks_move(data)
+    status = Procedures::Status.includes(:procedure).find(data[:procedure_status_id])
+    "sposta il task «#{Task.find(data[:task_id]).title}» nello stato «#{status.title}» della board #{status.procedure.name}"
+  end
+
+  def label_tasks_uncomplete(data)
+    "riapri il task «#{Task.find(data[:task_id]).title}»"
+  end
+
   def label_tasks_comment(data)
     "commenta il task «#{Task.find(data[:task_id]).title}»: «#{data[:content].truncate(200)}»"
+  end
+
+  def label_tasks_track(data)
+    "registra #{duration_label(data[:minutes].to_i * 60)} di lavoro sul task «#{Task.find(data[:task_id]).title}» per il #{action_date(data).strftime('%d/%m/%Y')}"
+  end
+
+  def label_tasks_check(data)
+    task = Task.find(data[:task_id])
+    check = task.tasks_checks.find(data[:check_id])
+    "#{data[:checked] ? 'spunta' : 'togli la spunta a'} la voce «#{check.text}» del task «#{task.title}»"
+  end
+
+  def label_crm_contact_create(data)
+    details = contact_attributes(data).except(:name).map { |field, value| "#{CONTACT_FIELD_LABELS[field]} «#{value.truncate(100)}»" }
+    [ "crea il contatto «#{data[:name]}»", *details ].join(", ")
+  end
+
+  def label_crm_communication_create(data)
+    "aggiungi #{Contact.find(data[:contact_id]).name} alla campagna #{Campaign.find(data[:campaign_id]).name}, da inviare"
+  end
+
+  def label_crm_communication_send(data)
+    "segna come inviata il #{action_date(data).strftime('%d/%m/%Y')} la comunicazione #{communication_name(data)} (non si può annullare)"
+  end
+
+  def label_crm_communication_close(data)
+    outcome = Communication.status_string(data[:outcome]).downcase
+    "registra l'esito «#{outcome}» del #{action_date(data).strftime('%d/%m/%Y')} sulla comunicazione #{communication_name(data)} (non si può annullare)"
   end
 
   def label_crm_communication_log_create(data)
@@ -390,12 +624,82 @@ class VectorsearchTools::ActionsTool
     "Task «#{task.title}» completato."
   end
 
+  def perform_tasks_update(data)
+    task = Task.find(data[:task_id])
+    return "Task non modificato: #{task.errors.full_messages.to_sentence}" unless task.update(task_attributes(data))
+    # same acceptance rule as TasksController#edit_action
+    task.update(accepted: true) if @user.policy?("tasks_acceptance") && !task.accepted
+
+    "Task «#{task.title}» aggiornato."
+  end
+
+  def perform_tasks_move(data)
+    task = Task.find(data[:task_id])
+    status = Procedures::Status.find(data[:procedure_status_id])
+    item = task.procedures_items.find_by!(procedure_id: status.procedure_id)
+    # on top of the column, like a card dropped there; the automations run inside #move
+    return "Task non spostato: #{item.errors.full_messages.to_sentence}" unless item.move(status.id, 1)
+
+    "Task «#{task.title}» spostato nello stato «#{status.title}»."
+  end
+
+  def perform_tasks_uncomplete(data)
+    task = Task.find(data[:task_id])
+    return "Task non riaperto: #{task.errors.full_messages.to_sentence}" unless task.update(completed: false)
+
+    "Task «#{task.title}» riaperto."
+  end
+
+  def perform_tasks_track(data)
+    task = Task.find(data[:task_id])
+    duration = data[:minutes].to_i * 60
+    task.add_manual_track!(user: @user, date: action_date(data), duration: duration)
+
+    "Registrati #{duration_label(duration)} di lavoro sul task «#{task.title}»."
+  end
+
+  def perform_tasks_check(data)
+    task = Task.find(data[:task_id])
+    check = task.tasks_checks.find(data[:check_id])
+    check.update!(checked: !!data[:checked])
+
+    "Voce «#{check.text}» #{check.checked ? 'spuntata' : 'riaperta'}."
+  end
+
   def perform_tasks_comment(data)
     task = Task.find(data[:task_id])
     comment = task.tasks_comments.create(content: data[:content], user_id: @user.id)
     return "Commento non salvato: #{comment.errors.full_messages.to_sentence}" unless comment.persisted?
 
     "Commento aggiunto al task «#{task.title}»."
+  end
+
+  def perform_crm_contact_create(data)
+    contact = Contact.new(contact_attributes(data))
+    return "Contatto non creato: #{contact.errors.full_messages.to_sentence}" unless contact.save
+
+    "Contatto «#{contact.name}» creato (ID: #{contact.id})."
+  end
+
+  def perform_crm_communication_create(data)
+    communication = Communication.new(campaign_id: data[:campaign_id], contact_id: data[:contact_id])
+    return "Comunicazione non creata: #{communication.errors.full_messages.to_sentence}" unless communication.save
+
+    "Comunicazione #{communication_name(communication_id: communication.id)} creata (ID: #{communication.id})."
+  end
+
+  def perform_crm_communication_send(data)
+    communication = Communication.find(data[:communication_id])
+    return "Comunicazione non inviata: #{communication.errors.full_messages.to_sentence}" unless communication.mark_sent(action_date(data))
+
+    "Comunicazione #{communication_name(data)} segnata come inviata."
+  end
+
+  def perform_crm_communication_close(data)
+    communication = Communication.find(data[:communication_id])
+    return "Esito non registrato: #{communication.errors.full_messages.to_sentence}" unless communication.mark_closed(data[:outcome], action_date(data))
+
+    "Esito «#{communication.status_string.downcase}» registrato sulla comunicazione #{communication_name(data)}."
   end
 
   def perform_crm_communication_log_create(data)
@@ -422,6 +726,19 @@ class VectorsearchTools::ActionsTool
     data = data.to_h.symbolize_keys
     data[:budget_time] = data[:budget_hours].to_i * 3600 if data[:budget_hours].present?
     data.slice(*PROJECT_FIELDS).compact
+  end
+
+  def task_attributes(data)
+    {
+      title: data[:title].presence,
+      deadline: data[:deadline].presence,
+      user_id: data[:user_id].presence,
+      time_estimate: (data[:time_estimate_minutes].to_i * 60 unless data[:time_estimate_minutes].nil?)
+    }.compact
+  end
+
+  def contact_attributes(data)
+    data.to_h.symbolize_keys.slice(*CONTACT_FIELD_LABELS.keys).compact_blank
   end
 
   def duplicate_attributes(source, data)
@@ -482,6 +799,15 @@ class VectorsearchTools::ActionsTool
   def communication_name(data)
     communication = Communication.includes(:contact, :campaign).find(data[:communication_id])
     "con #{communication.contact.name} (campagna #{communication.campaign.name})"
+  end
+
+  def action_date(data)
+    data[:date].present? ? Date.iso8601(data[:date]) : Date.today
+  end
+
+  def duration_label(seconds)
+    hours, minutes = (seconds / 60).divmod(60)
+    [ ("#{hours}h" if hours.positive?), ("#{minutes}m" if minutes.positive?) ].compact.join(" ").presence || "0m"
   end
 
   def valid_date?(value)
