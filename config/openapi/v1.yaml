@@ -151,6 +151,35 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
+    post:
+      tags: [projects]
+      summary: Aggiungi una nota al progetto
+      description: |
+        Richiede la policy `projects_manage_logs`. La nota è attribuita all'utente della API key.
+        `content` è rich text: accetta HTML (paragrafi, liste, grassetto).
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string, maxLength: 255 }
+                date: { type: string, format: date, description: "Data della nota (default: oggi)" }
+                content: { type: string, description: "Contenuto (HTML rich text)" }
+      responses:
+        "201":
+          description: Nota creata
+          content:
+            application/json:
+              schema: { type: object }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/UnprocessableContent" }
 
   /tasks:
     get:

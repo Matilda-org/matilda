@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Projects API: read access to projects and their logs, creation.
+# Projects API: read access to projects and their logs, creation of both.
 class Api::V1::ProjectsController < Api::V1::BaseController
   # POST /api/v1/projects
   def create
@@ -38,5 +38,17 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
     project = query_projects_for_policy.find(params[:id])
     render_paginated(project.projects_logs.order(created_at: :desc))
+  end
+
+  # POST /api/v1/projects/:id/logs
+  def create_log
+    return unless require_policy!("projects_manage_logs")
+
+    project = query_projects_for_policy.find(params[:id])
+    log = project.projects_logs.new(params.permit(:title, :date, :content).merge(user: @current_user))
+    log.date = Date.today if params[:date].blank?
+    return render_record_errors(log) unless log.save
+
+    render json: log.as_json(with_content: true), status: :created
   end
 end

@@ -78,4 +78,26 @@ class Api::V1::ProjectsTest < ApiIntegrationTest
     assert_equal projects(:one).projects_logs.count, json_response["meta"]["total_count"]
     assert_includes json_response["data"].map { |l| l["id"] }, log.id
   end
+
+  test "create_log requires projects_manage_logs and writes the note as the api user" do
+    path = "/api/v1/projects/#{projects(:one).id}/logs"
+    assert_requires_policy :post, path, "projects_manage_logs",
+      params: { title: "kickoff", content: "<p>Fatto il <strong>kickoff</strong></p>" },
+      success_status: :created
+
+    log = projects(:one).projects_logs.find(json_response["id"])
+    assert_equal [ "Kickoff", @user.id, Date.today ], [ log.title, log.user_id, log.date ]
+    assert_includes json_response["content"], "<strong>kickoff</strong>"
+  end
+
+  test "create_log rejects invalid data and projects outside membership scope" do
+    give_policy "projects_manage_logs"
+    post "/api/v1/projects/#{projects(:one).id}/logs", params: { title: "Bad date", date: "domani" }, headers: api_headers
+    assert_response :unprocessable_content
+
+    other = Project.create!(code: "other", name: "Other project", year: 2026)
+    give_policy "only_data_projects_as_member"
+    post "/api/v1/projects/#{other.id}/logs", params: { title: "Nope" }, headers: api_headers
+    assert_response :not_found
+  end
 end

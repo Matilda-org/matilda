@@ -158,6 +158,15 @@ class Project < ApplicationRecord
     @archived_reason_string ||= Project.archived_reason_string(archived_reason)
   end
 
+  # The time budgets the project form offers, in seconds (a working day is 8 hours).
+  # "12 giorni" has always been 100 hours: kept, so saved projects still match an option.
+  BUDGET_TIMES = [ 2, 3, 4, 6, 8, 12, 16, 24, 32, 40, 48, 56, 64, 80, 100, 120, 160, 200, 240, 280, 320 ].map(&:hours).map(&:to_i).freeze
+
+  def self.budget_time_label(seconds)
+    hours = seconds / 3600
+    hours < 16 ? "#{hours} ore" : "#{hours / 8} giorni"
+  end
+
   def budget_money_per_time
     return 0 unless budget_management
     return 0 if budget_time.zero?

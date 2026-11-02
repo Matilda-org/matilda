@@ -82,29 +82,7 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
               </div>
               <div class="col col-6 mb-3" data-projects-form-target="budgetTimeInputContainer">
                 <label for="budget_time" class="form-label">Budget (tempo)</label>
-                <%= select_tag 'budget_time', options_for_select([
-                  [7200, '2 ore'].reverse,
-                  [10800, '3 ore'].reverse,
-                  [14400, '4 ore'].reverse,
-                  [21600, '6 ore'].reverse,
-                  [28800, '8 ore'].reverse,
-                  [43200, '12 ore'].reverse,
-                  [57600, '2 giorni'].reverse,
-                  [86400, '3 giorni'].reverse,
-                  [115200, '4 giorni'].reverse,
-                  [144000, '5 giorni'].reverse,
-                  [172800, '6 giorni'].reverse,
-                  [201600, '7 giorni'].reverse,
-                  [230400, '8 giorni'].reverse,
-                  [288000, '10 giorni'].reverse,
-                  [360000, '12 giorni'].reverse,
-                  [432000, '15 giorni'].reverse,
-                  [576000, '20 giorni'].reverse,
-                  [720000, '25 giorni'].reverse,
-                  [864000, '30 giorni'].reverse,
-                  [1008000, '35 giorni'].reverse,
-                  [1152000, '40 giorni'].reverse,
-                ], project.budget_time), class: 'form-control', data: { projects_form_target: 'budgetTimeInput' } %>
+                <%= select_tag 'budget_time', options_for_select(Project::BUDGET_TIMES.map { |seconds| [ Project.budget_time_label(seconds), seconds ] }, project.budget_time), class: 'form-control', data: { projects_form_target: 'budgetTimeInput' } %>
               </div>
               <div class="col col-6 mb-3" data-projects-form-target="budgetMoneyPerTimeContainer">
                 <label class="form-label">Prezzo orario</label>

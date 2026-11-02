@@ -215,6 +215,7 @@ Rails.application.routes.draw do
       resources :projects, only: [ :index, :show, :create ] do
         member do
           get :logs
+          post :logs, action: :create_log
         end
       end
       resources :tasks, only: [ :index, :show, :create, :update, :destroy ] do

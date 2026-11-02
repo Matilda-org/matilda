@@ -45,6 +45,13 @@ class Projects::Log < ApplicationRecord
     broadcast_replace_to dom_id(self), target: dom_id(self, "content"), partial: "projects/shared/log-content", locals: { log: self }
   end
 
+  # The rich text content is opt-in, so lists stay light
+  def as_json(options = {})
+    base = super(options)
+    base[:content] = content.to_s if options[:with_content]
+    base
+  end
+
   # HELPERS
   ############################################################
 

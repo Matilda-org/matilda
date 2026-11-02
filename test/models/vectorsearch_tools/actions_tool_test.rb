@@ -114,6 +114,7 @@ class VectorsearchTools::ActionsToolTest < ActiveSupport::TestCase
     assert_match "Non hai i permessi", tool.projects_create({ name: "New", year: 2026 })
     assert_match "Non hai i permessi", tool.projects_update({ project_id: @project.id, name: "Renamed" })
     assert_match "Non hai i permessi", tool.projects_duplicate({ source_project_id: @project.id, name: "Copy" })
+    assert_match "Non hai i permessi", tool.projects_log_create({ project_id: @project.id, title: "Kickoff" })
     assert_empty tool.proposals
   end
 
@@ -124,7 +125,7 @@ class VectorsearchTools::ActionsToolTest < ActiveSupport::TestCase
     assert_no_difference "Project.count" do
       tool.projects_create({ name: "New website", year: 2026, code: "imo", contact_id: contact.id })
     end
-    assert_equal "crea il progetto «New website» (2026), codice IMO, contatto Imola", tool.proposals.last[:label]
+    assert_equal "crea il progetto «New website» (2026), codice «IMO», contatto «Imola»", tool.proposals.last[:label]
 
     confirm_last_proposal
     project = Project.find_by!(name: "New website")
@@ -175,5 +176,32 @@ class VectorsearchTools::ActionsToolTest < ActiveSupport::TestCase
     assert_equal [ "Sviluppo", [ "Da fare" ] ], [ new_board.name, new_board.procedures_statuses.pluck(:title) ]
     assert_empty new_board.procedures_items
     assert_equal [ board.id ], @project.procedures.pluck(:id)
+  end
+
+  test "a confirmed project note is written as the confirming user" do
+    @user.update_policies([ "projects_manage_logs" ])
+    assert_match "Data non valida", tool.projects_log_create({ project_id: @project.id, title: "Kickoff", date: "domani" })
+
+    tool.projects_log_create({ project_id: @project.id, title: "Kickoff", content: "Riunione fatta\nProssimi passi", date: "2026-11-02" })
+    assert_equal "aggiungi la nota «Kickoff» al progetto «Project», del 02/11/2026, «Riunione fatta\nProssimi passi»", tool.proposals.last[:label]
+    confirm_last_proposal
+
+    log = @project.projects_logs.sole
+    assert_equal [ "Kickoff", @user.id, Date.new(2026, 11, 2) ], [ log.title, log.user_id, log.date ]
+    assert_includes log.content.to_s, "Riunione fatta\n<br>Prossimi passi"
+  end
+
+  test "the budget management is set with the time budgets the form offers" do
+    @user.update_policies([ "projects_edit" ])
+
+    assert_match "Budget tempo non valido", tool.projects_update({ project_id: @project.id, budget_hours: 10 })
+    assert_match "non può essere negativo", tool.projects_update({ project_id: @project.id, budget_money: -1 })
+
+    tool.projects_update({ project_id: @project.id, budget_management: true, budget_money: 5000, budget_hours: 100 })
+    assert_equal "modifica il progetto «Project»: gestione budget «attiva», budget economico «5000 €», budget tempo «12 giorni»", tool.proposals.last[:label]
+    confirm_last_proposal
+
+    @project.reload
+    assert_equal [ true, 5000, 360_000 ], [ @project.budget_management, @project.budget_money, @project.budget_time ]
   end
 end

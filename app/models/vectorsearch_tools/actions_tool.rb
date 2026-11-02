@@ -7,9 +7,10 @@ class VectorsearchTools::ActionsTool
   include VectorsearchTools::Definition
   include VectorsearchTools::Access
 
-  ACTIONS = %w[projects_create projects_update projects_duplicate tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze
+  ACTIONS = %w[projects_create projects_update projects_duplicate projects_log_create tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze
   PROPOSAL_TTL = 1.day
-  PROJECT_FIELDS = %i[name year code description contact_id].freeze
+  PROJECT_FIELDS = %i[name year code description contact_id budget_management budget_money budget_time].freeze
+  PROJECT_FIELD_LABELS = { name: "nome", year: "anno", code: "codice", description: "descrizione", contact_id: "contatto", budget_management: "gestione budget", budget_money: "budget economico", budget_time: "budget tempo" }.freeze
 
   # proposals stored during this run, shown as buttons under the answer
   attr_reader :proposals
@@ -39,6 +40,9 @@ class VectorsearchTools::ActionsTool
     property :code, type: "string", description: "Project code (generated when missing)", required: false
     property :description, type: "string", description: "Project description (max 255 characters)", required: false
     property :contact_id, type: "integer", description: "CRM contact ID of the customer", required: false
+    property :budget_management, type: "boolean", description: "Enable the budget management", required: false
+    property :budget_money, type: "integer", description: "Money budget in euro", required: false
+    property :budget_hours, type: "integer", description: "Time budget in hours (a working day is 8 hours)", enum: Project::BUDGET_TIMES.map { |seconds| seconds / 3600 }, required: false
   end
 
   def projects_create(data)
@@ -52,6 +56,9 @@ class VectorsearchTools::ActionsTool
     property :code, type: "string", description: "New project code", required: false
     property :description, type: "string", description: "New project description (max 255 characters)", required: false
     property :contact_id, type: "integer", description: "New CRM contact ID", required: false
+    property :budget_management, type: "boolean", description: "Enable the budget management", required: false
+    property :budget_money, type: "integer", description: "Money budget in euro", required: false
+    property :budget_hours, type: "integer", description: "Time budget in hours (a working day is 8 hours)", enum: Project::BUDGET_TIMES.map { |seconds| seconds / 3600 }, required: false
   end
 
   def projects_update(data)
@@ -68,6 +75,17 @@ class VectorsearchTools::ActionsTool
 
   def projects_duplicate(data)
     propose(:projects_duplicate, data)
+  end
+
+  define_function :projects_log_create, description: "Propose a note on a project, the user confirms it" do
+    property :project_id, type: "integer", description: "Project ID", required: true
+    property :title, type: "string", description: "Note title", required: true
+    property :content, type: "string", description: "Note text", required: false
+    property :date, type: "string", description: "Note date (YYYY-MM-DD, default: today)", required: false
+  end
+
+  def projects_log_create(data)
+    propose(:projects_log_create, data)
   end
 
   # Tasks
@@ -143,6 +161,7 @@ class VectorsearchTools::ActionsTool
   def check_projects_create(data)
     return "Non hai i permessi per creare progetti" unless @user.policy?("projects_create")
     return "Contatto CRM non trovato" if data[:contact_id].present? && !Contact.exists?(data[:contact_id])
+    return budget_error(data) if budget_error(data)
 
     project_errors(Project.new(project_attributes(data)))
   end
@@ -153,6 +172,7 @@ class VectorsearchTools::ActionsTool
     return "Progetto non trovato" unless project
     return "Nessuna modifica indicata" if project_attributes(data).empty?
     return "Contatto CRM non trovato" if data[:contact_id].present? && !Contact.exists?(data[:contact_id])
+    return budget_error(data) if budget_error(data)
 
     project.assign_attributes(project_attributes(data))
     project_errors(project)
@@ -164,6 +184,14 @@ class VectorsearchTools::ActionsTool
     return "Progetto da copiare non trovato" unless source
 
     project_errors(Project.new(duplicate_attributes(source, data)))
+  end
+
+  def check_projects_log_create(data)
+    return "Non hai i permessi per aggiungere note ai progetti" unless @user.policy?("projects_manage_logs")
+    return "Progetto non trovato" unless accessible_projects.exists?(data[:project_id])
+    return "Il titolo della nota è obbligatorio" if data[:title].blank?
+
+    "Data non valida, usa il formato YYYY-MM-DD" if data[:date].present? && !valid_date?(data[:date])
   end
 
   def check_tasks_create(data)
@@ -216,23 +244,12 @@ class VectorsearchTools::ActionsTool
   ##
 
   def label_projects_create(data)
-    contact = Contact.find_by(id: data[:contact_id]) if data[:contact_id].present?
-
-    [
-      "crea il progetto «#{data[:name]}» (#{data[:year]})",
-      ("codice #{data[:code].upcase}" if data[:code].present?),
-      ("contatto #{contact.name}" if contact)
-    ].compact.join(", ")
+    [ "crea il progetto «#{data[:name]}» (#{data[:year]})", *project_field_labels(project_attributes(data).except(:name, :year)) ].join(", ")
   end
 
   def label_projects_update(data)
     project = Project.find(data[:project_id])
-    changes = project_attributes(data).map do |field, value|
-      value = Contact.find_by(id: value)&.name || "nessuno" if field == :contact_id
-      "#{Project.human_attribute_name(field).downcase} «#{value.to_s.truncate(100)}»"
-    end
-
-    "modifica il progetto «#{project.name}»: #{changes.join(', ')}"
+    "modifica il progetto «#{project.name}»: #{project_field_labels(project_attributes(data)).join(', ')}"
   end
 
   def label_projects_duplicate(data)
@@ -245,6 +262,14 @@ class VectorsearchTools::ActionsTool
       ("contatto #{source.contact.name}" if source.contact),
       ("cartella #{source.folder.name}" if source.folder),
       ("#{copies.join(' e ')}" if copies.any?)
+    ].compact.join(", ")
+  end
+
+  def label_projects_log_create(data)
+    [
+      "aggiungi la nota «#{data[:title]}» al progetto «#{Project.find(data[:project_id]).name}»",
+      ("del #{Date.parse(data[:date]).strftime('%d/%m/%Y')}" if data[:date].present?),
+      ("«#{data[:content].truncate(200)}»" if data[:content].present?)
     ].compact.join(", ")
   end
 
@@ -322,6 +347,20 @@ class VectorsearchTools::ActionsTool
     "Progetto «#{project.name}» creato copiando «#{source.name}» (ID: #{project.id}, codice #{project.code})."
   end
 
+  def perform_projects_log_create(data)
+    project = Project.find(data[:project_id])
+    # rich text: simple_format keeps the line breaks and sanitizes the text
+    log = project.projects_logs.create(
+      title: data[:title],
+      date: data[:date].presence || Date.today,
+      content: (ActionController::Base.helpers.simple_format(data[:content]) if data[:content].present?),
+      user: @user
+    )
+    return "Nota non salvata: #{log.errors.full_messages.to_sentence}" unless log.persisted?
+
+    "Nota «#{log.title}» aggiunta al progetto «#{project.name}»."
+  end
+
   def perform_tasks_create(data)
     task = Task.new(
       user_id: data[:user_id],
@@ -380,7 +419,9 @@ class VectorsearchTools::ActionsTool
 
   # only the fields the model gave, so an update leaves the others untouched
   def project_attributes(data)
-    data.to_h.symbolize_keys.slice(*PROJECT_FIELDS).compact
+    data = data.to_h.symbolize_keys
+    data[:budget_time] = data[:budget_hours].to_i * 3600 if data[:budget_hours].present?
+    data.slice(*PROJECT_FIELDS).compact
   end
 
   def duplicate_attributes(source, data)
@@ -410,6 +451,28 @@ class VectorsearchTools::ActionsTool
       ("#{members} #{members == 1 ? "membro" : "membri"}" if members.positive?),
       ("#{boards} #{boards == 1 ? "board vuota" : "board vuote"}" if boards.positive?)
     ].compact
+  end
+
+  def budget_error(data)
+    if data[:budget_hours].present? && Project::BUDGET_TIMES.exclude?(data[:budget_hours].to_i * 3600)
+      return "Budget tempo non valido, scegli tra queste ore: #{Project::BUDGET_TIMES.map { |seconds| seconds / 3600 }.join(', ')}"
+    end
+
+    "Il budget economico non può essere negativo" if data[:budget_money].to_i.negative?
+  end
+
+  def project_field_labels(attributes)
+    attributes.map do |field, value|
+      value = case field
+      when :contact_id then Contact.find_by(id: value)&.name || "nessuno"
+      when :code then value.to_s.upcase
+      when :budget_management then value ? "attiva" : "disattivata"
+      when :budget_money then "#{value} €"
+      when :budget_time then Project.budget_time_label(value)
+      else value.to_s.truncate(100)
+      end
+      "#{PROJECT_FIELD_LABELS[field]} «#{value}»"
+    end
   end
 
   def project_errors(project)
