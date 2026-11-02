@@ -13,10 +13,10 @@ badge_type = 'primary' if badge_type.blank?
 <% end %>
 <% if procedure.resources_type_projects? %>
   <% procedure.cached_project_items.sample(3).each do |project| %>
-    <a class="badge bg-<%= badge_type %>" data-turbo-frame="_top" href="<%= projects_show_path(project[:id]) %>"><%= nav_icon('projects') %> <%= project[:name].truncate(40) %></a>
+    <a class="badge text-bg-<%= badge_type %>" data-turbo-frame="_top" href="<%= projects_show_path(project[:id]) %>"><%= nav_icon('projects') %> <%= project[:name].truncate(40) %></a>
   <% end %>
   <% if procedure.cached_project_items.size > 3 %>
-    <span class="badge bg-<%= badge_type %>">+ <%= procedure.cached_project_items.size - 3 %></span>
+    <span class="badge text-bg-<%= badge_type %>">+ <%= procedure.cached_project_items.size - 3 %></span>
   <% end %>
 <% end %>
 <% if procedure.resources_type_tasks? %>

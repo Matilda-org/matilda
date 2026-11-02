@@ -335,6 +335,11 @@ a.badge:hover {
   text-decoration: underline;
 }
 
+a.badge.bg-light:hover,
+a.badge.text-bg-light:hover {
+  color: var(--bs-dark);
+}
+
 .badge.bg-danger {
   background-color: rgba(var(--bs-danger-rgb), 0.9) !important;
 }
@@ -365,6 +370,16 @@ a.badge:hover {
 
 .badge.bg-light {
   background-color: rgba(var(--bs-light-rgb), 0.9) !important;
+  // default badge ink is white: unreadable on the light fill
+  color: var(--bs-dark);
+}
+
+// Inside cards the light fill matches the card itself: a faint primary tint
+// keeps the tags recognizable
+.c-card .badge.bg-light,
+.c-card .badge.text-bg-light {
+  background-color: rgba(var(--bs-primary-rgb), 0.08) !important;
+  color: var(--bs-primary) !important;
 }
 
 /**
