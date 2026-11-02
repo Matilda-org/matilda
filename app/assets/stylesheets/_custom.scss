@@ -12,6 +12,12 @@ html, body {
   background-color: var(--bs-light);
 }
 
+// Anchor jumps (e.g. the mobile search icon to #dashboard-search) stop below the
+// fixed navbar instead of under it
+html {
+  scroll-padding-top: 80px;
+}
+
 body {
   padding-top: 56px;
   font-family: 'Poppins', sans-serif !important;

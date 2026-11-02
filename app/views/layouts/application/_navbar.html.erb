@@ -16,7 +16,7 @@
           <% end %>
 
           <div class="d-flex align-items-center">
-            <a class="btn btn-link text-white d-md-none me-1 fs-5" href="<%= users_show_path(@session_user_id, anchor: "module-search") %>" data-turbo-frame="_top" aria-label="Cerca"><i class="bi bi-search"></i></a>
+            <a class="btn btn-link text-white d-md-none me-1 fs-5" href="<%= users_show_path(@session_user_id, anchor: "dashboard-search") %>" data-turbo-frame="_top" aria-label="Cerca"><i class="bi bi-search"></i></a>
             <div class="me-2">
               <%= render 'tasks/tracker' %>
             </div>

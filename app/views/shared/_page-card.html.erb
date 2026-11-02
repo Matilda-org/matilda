@@ -12,12 +12,13 @@ auto ||= false
 no_scroll ||= false # il modulo interno gestisce il proprio scroll (es. thread commenti)
 always_open ||= false
 classes ||= ''
+id ||= nil # anchor target, e.g. the mobile search icon jumps to the whole card
 content_id ||= "page-card-content-#{SecureRandom.hex(4)}"
 collapsed = !always_open
 
 %>
 
-<div class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card" data-page-card-key-value="<%= strip_tags(title.to_s) %>">
+<div <%= tag.attributes(id: id) %> class="c-page-card card w-100 shadow <%= auto ? '' : 'h-100' %> <%= classes %>" data-controller="page-card" data-page-card-key-value="<%= strip_tags(title.to_s) %>">
   <button
     type="button"
     data-page-card-target="header"
