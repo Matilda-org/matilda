@@ -1,7 +1,10 @@
 var URL = '<%=j root_url %>'
 var CACHE_NAME = '<%= APPLICATION_VERSION %>'
 
+// skipWaiting + clients.claim: an update replaces the old worker in open tabs
+// right away instead of after every tab is closed
 function onInstall(event) {
+  self.skipWaiting()
   event.waitUntil(
     caches.open(CACHE_NAME).then(function prefill(cache) {
       return cache.addAll([])
@@ -25,29 +28,37 @@ function onActivate(event) {
           return caches.delete(cacheName)
         })
       )
+    }).then(function() {
+      return self.clients.claim()
     })
   )
 }
 
+function isCacheable(request) {
+  return request.method === 'GET' && (
+    request.url.startsWith(URL + 'assets/') ||
+    request.url.startsWith(URL + 'statics/')
+  )
+}
+
+// Only the cached static files go through the worker. A fetch() made here is
+// checked against the worker's CSP connect-src, so proxying CDN files, fonts
+// or blob redirects to the bucket would block them: the browser loads those
+// itself, under the page's img-src/style-src/font-src.
 function onFetch(event) {
+  if (!isCacheable(event.request)) return
+
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.match(event.request).then(function (response) {
-        if (response) {
-          return response
+      return cache.match(event.request).then(function (cached) {
+        if (cached) {
+          return cached
         }
         return fetch(event.request).then(function(response) {
-          if (
-            event.request.url.startsWith(URL + 'assets') ||
-            event.request.url.startsWith(URL + 'statics')
-          ) {
-            console.log('[ServiceWorker] Saving', event.request.url)
+          if (response.ok) {
             cache.put(event.request, response.clone())
           }
           return response
-        }).catch(function (error) {
-          console.log('[ServiceWorker] Error while fetching data!', error)
-          return null
         })
       })
     })
