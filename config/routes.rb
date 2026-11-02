@@ -161,6 +161,7 @@ Rails.application.routes.draw do
   get "credentials/:folder_id", to: "credentials#index", as: "credentials_for_folder"
 
   # Folders
+  get "folders", to: "folders#index", as: "folders"
   get "folders/show/:id", to: "folders#show", as: "folders_show"
   get "folders/actions/:type", to: "folders#actions", as: "folders_actions"
   get "folders/actions/:type/:id", to: "folders#actions", as: "folders_actions_id"

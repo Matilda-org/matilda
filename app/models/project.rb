@@ -95,6 +95,8 @@ class Project < ApplicationRecord
     end
     cached_percentage_budget_used(true)
     cached_contact_name(true) if saved_change_to_contact_id?
+    # the sidebar lists only folders with active projects
+    GlobalCache.new.folders_reset if saved_change_to_archived? && folders_item
   end
   after_destroy_commit do
     procedures.each do |procedure|

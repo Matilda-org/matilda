@@ -25,4 +25,14 @@ class GlobalCacheTest < ActiveSupport::TestCase
     @global_cache.folders_reset
     assert_equal 3, @global_cache.folders.size
   end
+
+  test "folders count only active projects and follow archiving" do
+    project = Project.create!(code: "ACT", name: "Active", year: 2026)
+    @folder1.folders_items.create!(resource: project)
+    @folder1.folders_items.create!(resource: Project.create!(code: "ARC", name: "Archived", year: 2026, archived: true))
+    assert_equal [ 1, 0 ], GlobalCache.new.folders.map { |f| f[:items_active_projects_count] }
+
+    project.update!(archived: true)
+    assert_equal [ 0, 0 ], GlobalCache.new.folders.map { |f| f[:items_active_projects_count] }
+  end
 end

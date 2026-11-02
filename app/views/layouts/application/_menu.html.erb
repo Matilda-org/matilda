@@ -30,7 +30,7 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
   <ul class="dropdown-menu mt-2 mt-md-0 <%= submenu_class.call(projects_open) %>" style="border-bottom: none;">
     <li><a class="dropdown-item <%= projects_open && !params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= projects_path %>" data-turbo-frame="_top">Tutti i progetti</a></li>
     <li><a class="dropdown-item <%= projects_open && !!params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= projects_path(without_folder: 1) %>" data-turbo-frame="_top">Non assegnati</a></li>
-    <%= render 'layouts/application/navbar__folders', base_path: projects_path, active_folder_id: projects_open ? params[:folder_id] : nil, show_for: 'projects' %>
+    <%= render 'layouts/application/navbar__folders', base_path: projects_path, active_folder_id: projects_open ? params[:folder_id] : nil, count_key: :items_active_projects_count %>
   </ul>
 </li>
 
@@ -51,7 +51,7 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
   </ul>
 </li>
 
-<% if operative && %w[credentials_index posts_index users_index].any? { |p| policy?(p) } %>
+<% if operative %>
   <li class="sidebar__group" aria-hidden="true">Risorse</li>
 <% end %>
 
@@ -60,8 +60,12 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
   <ul class="dropdown-menu mt-2 mt-md-0 <%= submenu_class.call(credentials_open) %>">
     <li><a class="dropdown-item <%= credentials_open && !params[:without_folder] && !params[:folder_id] ? 'active' : '' %>" href="<%= credentials_path %>" data-turbo-frame="_top">Tutte le credenziali</a></li>
     <li><a class="dropdown-item <%= credentials_open && !!params[:without_folder] ? 'active' : '' %>" href="<%= credentials_path(without_folder: 1) %>" data-turbo-frame="_top">Non assegnate</a></li>
-    <%= render 'layouts/application/navbar__folders', base_path: credentials_path, active_folder_id: credentials_open ? params[:folder_id] : nil, show_for: 'credentials' %>
+    <%= render 'layouts/application/navbar__folders', base_path: credentials_path, active_folder_id: credentials_open ? params[:folder_id] : nil, count_key: :items_credentials_count %>
   </ul>
+</li>
+
+<li class="nav-item <%= item_class %>">
+  <a class="nav-link w-100 <%= @_navbar == 'folders' ? 'active' : '' %>" href="<%= folders_path %>" data-turbo-frame="_top"><%= nav_icon('folders') %> <span class="ms-2">Cartelle</span></a>
 </li>
 
 <li class="nav-item <%= item_class %>" <%= policy_guard('posts_index') %>>

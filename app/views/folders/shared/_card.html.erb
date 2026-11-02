@@ -1,0 +1,18 @@
+<%
+
+folder ||= Folder.new
+active_projects = @active_projects_counts[folder.id] || 0
+empty = folder.items_projects_count.zero? && folder.items_credentials_count.zero?
+
+%>
+
+<%= render 'shared/card',
+  nav_icon_key: 'folders',
+  title: folder.name,
+  subtitle: empty ? 'Vuota' : nil,
+  render_actions: 'folders/shared/card-actions',
+  render_actions_args: { folder: folder } do
+%>
+  <span class="badge bg-primary" <%= policy_guard('projects_index') %>><%= nav_icon('projects') %> <%= active_projects %> <%= active_projects == 1 ? 'progetto attivo' : 'progetti attivi' %></span>
+  <span class="badge bg-secondary" <%= policy_guard('credentials_index') %>><%= nav_icon('credentials') %> <%= folder.items_credentials_count %> <%= folder.items_credentials_count == 1 ? 'credenziale' : 'credenziali' %></span>
+<% end %>

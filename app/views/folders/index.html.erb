@@ -1,0 +1,22 @@
+<%= render 'shared/page-header', title: 'Cartelle', render_actions: 'folders/index-actions' %>
+
+<%= render 'shared/page-index',
+  query: @folders,
+  render_item: 'folders/shared/card',
+  render_item_param: :folder,
+  search: true,
+  filters: [
+    { label: 'Tutte', value: 'all', default: true },
+    { label: 'Piene', value: 'full' },
+    { label: 'Vuote', value: 'empty' }
+  ],
+  sorts: [
+    { label: 'Nome ASC', value: 'name_asc', default: true },
+    { label: 'Nome DESC', value: 'name_desc' }
+  ],
+  empty_message: 'Nessuna cartella qui',
+  empty_icon: 'folder2-open',
+  empty_cta_label: 'Crea la prima cartella',
+  empty_cta_href: folders_actions_path(type: 'create'),
+  empty_cta_policy: 'folders_create'
+%>

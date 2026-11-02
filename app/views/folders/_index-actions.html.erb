@@ -1,0 +1,14 @@
+<div class="btn-group" role="group">
+  <a
+    type="button"
+    class="btn btn-primary"
+    href="<%= folders_actions_path(type: 'create') %>"
+    data-turbo-frame="action"
+    <%= policy_guard('folders_create') %>
+    data-controller="tooltip"
+    data-tooltip="Crea nuova cartella"
+    aria-label="Crea nuova cartella"
+  >
+    <i class="bi bi-plus-circle"></i>
+  </a>
+</div>

@@ -3,6 +3,21 @@
 # FoldersController.
 class FoldersController < ApplicationController
   before_action :validate_session_user!
+  before_action do
+    @_navbar = "folders"
+  end
+
+  # Not action-cached: a folder created or filled must show up right away
+  def index
+    query = Folder.all
+    query = query.search(params[:search]) if params[:search].present?
+    query = query.with_items if params[:filters] == "full"
+    query = query.without_items if params[:filters] == "empty"
+    query = params[:sort] == "name_desc" ? query.order(name: :desc) : query.order(name: :asc)
+
+    @folders = paginate_query(query)
+    @active_projects_counts = Folders::Item.where(folder_id: @folders.map(&:id), resource_type: "Project", resource_id: query_projects_for_policy.not_archived.select(:id)).group(:folder_id).count
+  end
 
   caches_action :show, cache_path: -> { current_cache_action_path }, layout: false
   def show

@@ -13,6 +13,13 @@ class Folder < ApplicationRecord
   has_many :projects, through: :folders_items, source: :resource, source_type: "Project"
   has_many :credentials, through: :folders_items, source: :resource, source_type: "Credential"
 
+  # SCOPES
+  ############################################################
+
+  scope :search, ->(search) { where("LOWER(name) LIKE ?", "%#{sanitize_sql_like(search.downcase)}%") }
+  scope :with_items, -> { where(id: Folders::Item.select(:folder_id)) }
+  scope :without_items, -> { where.not(id: Folders::Item.where.not(folder_id: nil).select(:folder_id)) }
+
   # HOOKS
   ############################################################
 

@@ -3,11 +3,11 @@
 folders ||= @global_cache.folders
 base_path ||= '#'
 active_folder_id ||= nil
-show_for ||= nil
+count_key ||= nil
 
-# reorder folders to put folders with items_#{show_for}_count <= 0 at the end
-if show_for
-  folders = folders.partition { |folder| folder["items_#{show_for}_count".to_sym] > 0 }.flatten
+# only folders with something to show; the active one stays, even if empty
+if count_key
+  folders = folders.select { |folder| folder[count_key].to_i.positive? || folder[:id] == active_folder_id.to_i }
 end
 
 # reorder folders to put the active folder on top
@@ -31,7 +31,7 @@ end
             data-turbo-frame="_top"
           >
             <small>
-              <i class="bi <%= show_for && folder["items_#{show_for}_count".to_sym] <= 0 ? 'bi-folder' : 'bi-folder-fill' %> me-1"></i>
+              <i class="bi bi-folder-fill me-1"></i>
               <%= folder[:name] %>
             </small>
           </a>

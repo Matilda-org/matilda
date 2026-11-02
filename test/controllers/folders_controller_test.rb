@@ -18,6 +18,32 @@ class FoldersControllerTest < ActionController::TestCase
     matilda_controller_action_invalid
   end
 
+  def card_title(name)
+    %(<h5 class="card-title">#{name}</h5>)
+  end
+
+  test "index lists full and empty folders, counting only active projects the user can see" do
+    grant_policy("projects_index", "credentials_index")
+    full = Folder.create!(name: "Piena")
+    Folder.create!(name: "Vuota")
+    full.folders_items.create!(resource: Project.create!(code: "ACT", name: "Active", year: 2026))
+    full.folders_items.create!(resource: Project.create!(code: "ARC", name: "Archived", year: 2026, archived: true))
+
+    get :index
+    assert_response :success
+    assert_includes @response.body, card_title("Piena")
+    assert_includes @response.body, card_title("Vuota")
+    assert_includes @response.body, "1 progetto attivo"
+
+    get :index, params: { filters: "empty" }
+    assert_not_includes @response.body, card_title("Piena")
+    assert_includes @response.body, card_title("Vuota")
+
+    get :index, params: { filters: "full", search: "pie" }
+    assert_includes @response.body, card_title("Piena")
+    assert_not_includes @response.body, card_title("Vuota")
+  end
+
   test "show" do
     matilda_controller_endpoint(:get, :show,
       params: { id: folders(:one).id }
