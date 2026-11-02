@@ -7,8 +7,9 @@ class VectorsearchTools::ActionsTool
   include VectorsearchTools::Definition
   include VectorsearchTools::Access
 
-  ACTIONS = %w[tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze
+  ACTIONS = %w[projects_create projects_update projects_duplicate tasks_create tasks_complete tasks_comment crm_communication_log_create crm_follow_up_create].freeze
   PROPOSAL_TTL = 1.day
+  PROJECT_FIELDS = %i[name year code description contact_id].freeze
 
   # proposals stored during this run, shown as buttons under the answer
   attr_reader :proposals
@@ -27,6 +28,46 @@ class VectorsearchTools::ActionsTool
     return error if error
 
     send("perform_#{type}", data)
+  end
+
+  # Projects
+  ##
+
+  define_function :projects_create, description: "Propose a new project, the user confirms it. To start from an existing project use projects_duplicate" do
+    property :name, type: "string", description: "Project name", required: true
+    property :year, type: "integer", description: "Project year", required: true
+    property :code, type: "string", description: "Project code (generated when missing)", required: false
+    property :description, type: "string", description: "Project description (max 255 characters)", required: false
+    property :contact_id, type: "integer", description: "CRM contact ID of the customer", required: false
+  end
+
+  def projects_create(data)
+    propose(:projects_create, data)
+  end
+
+  define_function :projects_update, description: "Propose changes to a project, only the given fields change, the user confirms it" do
+    property :project_id, type: "integer", description: "Project ID", required: true
+    property :name, type: "string", description: "New project name", required: false
+    property :year, type: "integer", description: "New project year", required: false
+    property :code, type: "string", description: "New project code", required: false
+    property :description, type: "string", description: "New project description (max 255 characters)", required: false
+    property :contact_id, type: "integer", description: "New CRM contact ID", required: false
+  end
+
+  def projects_update(data)
+    propose(:projects_update, data)
+  end
+
+  define_function :projects_duplicate, description: "Propose a new project similar to an existing one: same contact, folder and members, and a new empty copy of each of its boards (same columns, no tasks). The user confirms it" do
+    property :source_project_id, type: "integer", description: "ID of the project to copy", required: true
+    property :name, type: "string", description: "New project name", required: true
+    property :year, type: "integer", description: "New project year (default: the source one)", required: false
+    property :code, type: "string", description: "New project code (generated when missing)", required: false
+    property :description, type: "string", description: "New project description (default: the source one)", required: false
+  end
+
+  def projects_duplicate(data)
+    propose(:projects_duplicate, data)
   end
 
   # Tasks
@@ -99,6 +140,32 @@ class VectorsearchTools::ActionsTool
   # Checks: nil when the action can run, otherwise the reason for the model
   ##
 
+  def check_projects_create(data)
+    return "Non hai i permessi per creare progetti" unless @user.policy?("projects_create")
+    return "Contatto CRM non trovato" if data[:contact_id].present? && !Contact.exists?(data[:contact_id])
+
+    project_errors(Project.new(project_attributes(data)))
+  end
+
+  def check_projects_update(data)
+    return "Non hai i permessi per modificare i progetti" unless @user.policy?("projects_edit")
+    project = accessible_projects.find_by(id: data[:project_id])
+    return "Progetto non trovato" unless project
+    return "Nessuna modifica indicata" if project_attributes(data).empty?
+    return "Contatto CRM non trovato" if data[:contact_id].present? && !Contact.exists?(data[:contact_id])
+
+    project.assign_attributes(project_attributes(data))
+    project_errors(project)
+  end
+
+  def check_projects_duplicate(data)
+    return "Non hai i permessi per creare progetti" unless @user.policy?("projects_create")
+    source = accessible_projects.find_by(id: data[:source_project_id])
+    return "Progetto da copiare non trovato" unless source
+
+    project_errors(Project.new(duplicate_attributes(source, data)))
+  end
+
   def check_tasks_create(data)
     return "Non hai i permessi per creare task" unless @user.policy?("tasks_create")
     return "Il titolo del task è obbligatorio" if data[:title].blank?
@@ -148,6 +215,39 @@ class VectorsearchTools::ActionsTool
   # button shows exactly what will run
   ##
 
+  def label_projects_create(data)
+    contact = Contact.find_by(id: data[:contact_id]) if data[:contact_id].present?
+
+    [
+      "crea il progetto «#{data[:name]}» (#{data[:year]})",
+      ("codice #{data[:code].upcase}" if data[:code].present?),
+      ("contatto #{contact.name}" if contact)
+    ].compact.join(", ")
+  end
+
+  def label_projects_update(data)
+    project = Project.find(data[:project_id])
+    changes = project_attributes(data).map do |field, value|
+      value = Contact.find_by(id: value)&.name || "nessuno" if field == :contact_id
+      "#{Project.human_attribute_name(field).downcase} «#{value.to_s.truncate(100)}»"
+    end
+
+    "modifica il progetto «#{project.name}»: #{changes.join(', ')}"
+  end
+
+  def label_projects_duplicate(data)
+    source = Project.find(data[:source_project_id])
+    attributes = duplicate_attributes(source, data)
+    copies = duplicate_copies(source)
+
+    [
+      "crea il progetto «#{attributes[:name]}» (#{attributes[:year]}) copiando «#{source.name}»",
+      ("contatto #{source.contact.name}" if source.contact),
+      ("cartella #{source.folder.name}" if source.folder),
+      ("#{copies.join(' e ')}" if copies.any?)
+    ].compact.join(", ")
+  end
+
   def label_tasks_create(data)
     procedure = Procedure.find_by(id: data[:procedure_id]) if data[:procedure_id].present?
     checklist = parse_checklist(data[:checklist])
@@ -178,6 +278,49 @@ class VectorsearchTools::ActionsTool
 
   # Performs: run only from #execute, after the checks
   ##
+
+  def perform_projects_create(data)
+    project = Project.new(project_attributes(data))
+    saved = Project.transaction do
+      next false unless project.save
+
+      # like the form default: the creator joins the project, so a
+      # member-restricted user can still see it
+      project.projects_members.create!(user: @user, role: " - ")
+      true
+    end
+    return "Progetto non creato: #{project.errors.full_messages.to_sentence}" unless saved
+
+    "Progetto «#{project.name}» creato (ID: #{project.id}, codice #{project.code})."
+  end
+
+  def perform_projects_update(data)
+    project = Project.find(data[:project_id])
+    return "Progetto non modificato: #{project.errors.full_messages.to_sentence}" unless project.update(project_attributes(data))
+
+    "Progetto «#{project.name}» aggiornato."
+  end
+
+  # Boards are never shared between projects: each one is cloned as a new,
+  # empty board of the new project.
+  def perform_projects_duplicate(data)
+    source = Project.find(data[:source_project_id])
+    project = Project.new(duplicate_attributes(source, data))
+
+    saved = Project.transaction do
+      next false unless project.save
+
+      source.folder.folders_items.create!(resource: project) if source.folder
+      members = copy_members?(source) ? source.projects_members : []
+      members.each { |member| project.projects_members.create!(user_id: member.user_id, role: member.role) }
+      project.projects_members.create!(user: @user, role: " - ") unless project.projects_members.exists?(user_id: @user.id)
+      boards_to_copy(source).each { |board| project.procedures.new.clone(board, board.name) }
+      true
+    end
+    return "Progetto non creato: #{project.errors.full_messages.to_sentence}" unless saved
+
+    "Progetto «#{project.name}» creato copiando «#{source.name}» (ID: #{project.id}, codice #{project.code})."
+  end
 
   def perform_tasks_create(data)
     task = Task.new(
@@ -234,6 +377,44 @@ class VectorsearchTools::ActionsTool
 
   # Helpers
   ##
+
+  # only the fields the model gave, so an update leaves the others untouched
+  def project_attributes(data)
+    data.to_h.symbolize_keys.slice(*PROJECT_FIELDS).compact
+  end
+
+  def duplicate_attributes(source, data)
+    {
+      name: data[:name],
+      year: data[:year].presence || source.year,
+      code: data[:code],
+      description: data[:description].presence || source.description,
+      contact_id: source.contact_id
+    }
+  end
+
+  # members and boards follow the same policies the project page asks for
+  def copy_members?(source)
+    @user.policy?("projects_manage_members") && source.projects_members.any?
+  end
+
+  def boards_to_copy(source)
+    @user.policy?("projects_manage_procedures") ? source.procedures.not_archived : Procedure.none
+  end
+
+  def duplicate_copies(source)
+    members = copy_members?(source) ? source.projects_members.count : 0
+    boards = boards_to_copy(source).count
+
+    [
+      ("#{members} #{members == 1 ? "membro" : "membri"}" if members.positive?),
+      ("#{boards} #{boards == 1 ? "board vuota" : "board vuote"}" if boards.positive?)
+    ].compact
+  end
+
+  def project_errors(project)
+    "Progetto non valido: #{project.errors.full_messages.to_sentence}" unless project.valid?
+  end
 
   def communication_name(data)
     communication = Communication.includes(:contact, :campaign).find(data[:communication_id])

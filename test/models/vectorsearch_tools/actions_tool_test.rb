@@ -109,4 +109,71 @@ class VectorsearchTools::ActionsToolTest < ActiveSupport::TestCase
     confirm_last_proposal
     assert_equal 1, communication.reload.follow_ups_count
   end
+
+  test "project actions need the project policies" do
+    assert_match "Non hai i permessi", tool.projects_create({ name: "New", year: 2026 })
+    assert_match "Non hai i permessi", tool.projects_update({ project_id: @project.id, name: "Renamed" })
+    assert_match "Non hai i permessi", tool.projects_duplicate({ source_project_id: @project.id, name: "Copy" })
+    assert_empty tool.proposals
+  end
+
+  test "a confirmed project creation adds the user as member" do
+    @user.update_policies([ "projects_create" ])
+    contact = Contact.create!(name: "Imola")
+
+    assert_no_difference "Project.count" do
+      tool.projects_create({ name: "New website", year: 2026, code: "imo", contact_id: contact.id })
+    end
+    assert_equal "crea il progetto «New website» (2026), codice IMO, contatto Imola", tool.proposals.last[:label]
+
+    confirm_last_proposal
+    project = Project.find_by!(name: "New website")
+    assert_equal [ "IMO", contact.id ], [ project.code, project.contact_id ]
+    assert project.projects_members.exists?(user: @user)
+  end
+
+  test "a project update changes only the given fields" do
+    @user.update_policies([ "projects_edit" ])
+    @project.update!(description: "Keep me")
+
+    assert_match "Nessuna modifica", tool.projects_update({ project_id: @project.id })
+    tool.projects_update({ project_id: @project.id, name: "Renamed" })
+    confirm_last_proposal
+
+    @project.reload
+    assert_equal [ "Renamed", "Keep me" ], [ @project.name, @project.description ]
+  end
+
+  test "member-restricted user cannot update or copy projects of others" do
+    @user.update_policies([ "projects_edit", "projects_create", "only_data_projects_as_member" ])
+
+    assert_equal "Progetto non trovato", tool.projects_update({ project_id: @project.id, name: "Renamed" })
+    assert_equal "Progetto da copiare non trovato", tool.projects_duplicate({ source_project_id: @project.id, name: "Copy" })
+  end
+
+  test "a duplicate gets new empty boards, never the source ones" do
+    @user.update_policies([ "projects_create", "projects_manage_members", "projects_manage_procedures" ])
+    contact = Contact.create!(name: "Imola")
+    folder = Folder.create!(name: "Clienti")
+    @project.update!(contact: contact)
+    folder.folders_items.create!(resource: @project)
+    @project.projects_members.create!(user: users(:two), role: "Developer")
+    board = @project.procedures.create!(name: "Sviluppo", resources_type: "tasks")
+    status = board.procedures_statuses.create!(title: "Da fare")
+    task = Task.create!(title: "Old task", project: @project)
+    task.procedures_items.create!(procedure: board, procedures_status: status)
+
+    tool.projects_duplicate({ source_project_id: @project.id, name: "Copy", year: 2027 })
+    assert_match "copiando «Project», contatto Imola, cartella Clienti, 1 membro e 1 board vuota", tool.proposals.last[:label]
+    confirm_last_proposal
+
+    copy = Project.find_by!(name: "Copy")
+    assert_equal [ 2027, contact.id, folder.id ], [ copy.year, copy.contact_id, copy.folder.id ]
+    assert_equal [ users(:two).id, @user.id ].sort, copy.projects_members.pluck(:user_id).sort
+    new_board = copy.procedures.sole
+    assert_not_equal board.id, new_board.id
+    assert_equal [ "Sviluppo", [ "Da fare" ] ], [ new_board.name, new_board.procedures_statuses.pluck(:title) ]
+    assert_empty new_board.procedures_items
+    assert_equal [ board.id ], @project.procedures.pluck(:id)
+  end
 end
