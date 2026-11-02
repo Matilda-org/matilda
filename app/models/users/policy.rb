@@ -25,7 +25,6 @@ class Users::Policy < ApplicationRecord
     projects_manage_procedures: 25,
     projects_manage_procedures_items: 26,
     projects_manage_events: 54,
-    projects_manage_repositories: 63,
 
     # Folders # OK
     folders_create: 14,

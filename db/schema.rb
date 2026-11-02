@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_01_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -268,18 +268,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_100000) do
     t.index ["user_id"], name: "index_projects_members_on_user_id"
   end
 
-  create_table "projects_repositories", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "default_branch"
-    t.string "name"
-    t.integer "project_id", null: false
-    t.integer "provider"
-    t.datetime "updated_at", null: false
-    t.string "url", null: false
-    t.index ["project_id", "url"], name: "index_projects_repositories_on_project_id_and_url", unique: true
-    t.index ["project_id"], name: "index_projects_repositories_on_project_id"
-  end
-
   create_table "settings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.json "data"
@@ -421,7 +409,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_100000) do
   add_foreign_key "projects_logs", "users"
   add_foreign_key "projects_members", "projects"
   add_foreign_key "projects_members", "users"
-  add_foreign_key "projects_repositories", "projects"
   add_foreign_key "tasks", "projects"
   add_foreign_key "tasks", "users"
   add_foreign_key "tasks_checks", "tasks"

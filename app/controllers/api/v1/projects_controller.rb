@@ -29,7 +29,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
     return unless require_policy!("projects_show")
 
     project = query_projects_for_policy.find(params[:id])
-    render json: project.as_json(include: [ :projects_members, :projects_attachments, :projects_repositories, :procedures ])
+    render json: project.as_json(include: [ :projects_members, :projects_attachments, :procedures ])
   end
 
   # GET /api/v1/projects/:id/logs

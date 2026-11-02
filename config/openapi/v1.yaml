@@ -123,7 +123,7 @@ paths:
   /projects/{id}:
     get:
       tags: [projects]
-      summary: Dettaglio progetto (con membri, allegati, repository, procedure)
+      summary: Dettaglio progetto (con membri, allegati, procedure)
       description: Richiede la policy `projects_show`.
       parameters:
         - $ref: "#/components/parameters/Id"
