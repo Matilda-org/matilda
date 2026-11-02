@@ -14,8 +14,10 @@
 // Excluded frames:
 // - `#action`: the shared modal frame has its own loader (action_loader_controller.js)
 // - `#tasks-tracker`: a tiny inline pill in the header, see the dedicated rule below
+// - `vectorsearch_*`: the assistant chat shows its own feedback (send button
+//   spinner, typing bubble), an overlay on top would duplicate it
 
-turbo-frame[busy]:not(#action):not(#tasks-tracker) {
+turbo-frame[busy]:not(#action):not(#tasks-tracker):not([id^="vectorsearch_"]) {
   display: block;
   position: relative;
 
