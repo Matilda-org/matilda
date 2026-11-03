@@ -2,6 +2,7 @@
 
 has_prefer = false
 has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session_user && @project
+folder_data = @project.cached_folder_item_data
 
 %>
 
@@ -46,6 +47,12 @@ has_prefer = @session_user.prefer?(@project.id, @project.class.name) if @session
       <li <%= policy_guard('projects_edit') %>>
         <a class="dropdown-item" href="<%= projects_actions_path(type: 'edit', id: @project.id) %>" data-turbo-frame="action">
           Modifica progetto
+        </a>
+      </li>
+
+      <li <%= policy_guard('folders_manage_resources') %>>
+        <a class="dropdown-item" href="<%= folders_actions_path(type: 'manage-resource', item_id: folder_data&.dig(:id), resource_id: @project.id, resource_type: @project.class.name) %>" data-turbo-frame="action">
+          <%= folder_data ? 'Sposta in altra cartella' : 'Aggiungi a cartella' %>
         </a>
       </li>
 

@@ -65,6 +65,18 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_includes @response.body, folders_show_path(folder.id)
   end
 
+  test "show links the folder change modal" do
+    @user.users_policies.create!(policy: "projects_show")
+    project = projects(:one)
+    item = project.create_folders_item!(folder: folders(:one))
+
+    get :show, params: { id: project.id }
+
+    assert_response :success
+    assert_includes @response.body, "Sposta in altra cartella"
+    assert_includes @response.body, ERB::Util.html_escape(folders_actions_path(type: "manage-resource", item_id: item.id, resource_id: project.id, resource_type: "Project"))
+  end
+
   test "show_attachment" do
     @user.users_policies.create!(policy: "projects_show")
     project = projects(:one)
