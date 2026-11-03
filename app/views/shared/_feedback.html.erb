@@ -19,18 +19,21 @@ undo ||= nil
   <% end %>
   <h3 class="fs-5 mb-1"><%= title %></h3>
   <p class="mb-4"><%= subtitle %></p>
-  <a
-    type="button"
-    href=""
-    data-turbo-frame="<%= turbo_frame %>"
-    <% if turbo_frame != '_top' %>
-      data-action="click->action#closeModal"
+  <%# Same order as shared/confirmer: secondary action on the left, primary on the right %>
+  <div class="d-flex justify-content-center gap-2">
+    <% if undo %>
+      <%= button_to undo[:label] || "Annulla", undo[:href], method: :post, form: { data: { turbo_frame: "action" } }, class: "btn btn-outline-danger" %>
     <% end %>
-    class="btn btn-primary"
-  >Va bene</a>
-  <% if undo %>
-    <%= button_to undo[:label] || "Annulla", undo[:href], method: :post, form: { class: "d-inline-block ms-2", data: { turbo_frame: "action" } }, class: "btn btn-outline-secondary" %>
-  <% end %>
+    <a
+      type="button"
+      href=""
+      data-turbo-frame="<%= turbo_frame %>"
+      <% if turbo_frame != '_top' %>
+        data-action="click->action#closeModal"
+      <% end %>
+      class="btn btn-primary"
+    >Va bene</a>
+  </div>
 </div>
 
 <% if render_content %>
