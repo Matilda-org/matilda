@@ -47,7 +47,8 @@ class AuthenticationControllerTest < ActionController::TestCase
     assert_response :redirect
     token = @response.redirect_url.split("/").last
     assert_redirected_to authentication_update_password_path(token)
-    assert_not_includes @response.redirect_url, "/#{@user.id}"
+    # Compare the whole segment: a random token may start with the user id digits
+    assert_not_equal @user.id.to_s, token
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal @user.id, Rails.cache.read("AuthenticationController/recover_password/#{token}")[:user_id]
   end
