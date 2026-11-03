@@ -247,24 +247,6 @@ body {
   min-height: 0;
 }
 
-.sidebar__group {
-  margin: 8px 0 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--bs-gray-600);
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  // Short screens: the labels give their room to the folder list
-  @media (max-height: 800px) {
-    display: none;
-  }
-}
-
 .sidebar .nav-item {
   margin-bottom: 6px;
   background-color: var(--bs-white);

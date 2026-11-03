@@ -13,10 +13,6 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
 
 %>
 
-<% if operative %>
-  <li class="sidebar__group" aria-hidden="true">Lavoro</li>
-<% end %>
-
 <li class="nav-item <%= item_class %>">
   <a class="nav-link w-100 <%= @_navbar == 'dashboard' ? 'active' : '' %>" href="<%= users_show_path(@session_user_id) %>" data-turbo-frame="_top"><%= nav_icon('dashboard') %> <span class="ms-2">Dashboard</span></a>
 </li>
@@ -38,10 +34,6 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
   <a class="nav-link w-100 <%= @_navbar == 'procedures' ? 'active' : '' %>" href="<%= procedures_path %>" data-turbo-frame="_top"><%= nav_icon('procedures') %> <span class="ms-2">Board</span></a>
 </li>
 
-<% if operative && policy?('crm') %>
-  <li class="sidebar__group" aria-hidden="true">Relazioni</li>
-<% end %>
-
 <li class="nav-item <%= item_class %> dropdown" <%= policy_guard('crm') %>>
   <a class="nav-link w-100 <%= crm_open ? 'active' : '' %>" href="#" data-bs-toggle="dropdown" aria-expanded="<%= operative && crm_open %>" <%= tag.attributes(submenu_toggle) %>><%= nav_icon('crm') %> <span class="ms-2">CRM</span></a>
   <ul class="dropdown-menu mt-2 mt-md-0 <%= submenu_class.call(crm_open) %>">
@@ -50,10 +42,6 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
     <li><a class="dropdown-item <%= @_navbar == 'campaigns' ? 'active' : '' %>" href="<%= campaigns_path %>" data-turbo-frame="_top">Campagne</a></li>
   </ul>
 </li>
-
-<% if operative %>
-  <li class="sidebar__group" aria-hidden="true">Risorse</li>
-<% end %>
 
 <li class="nav-item <%= item_class %> dropdown" <%= policy_guard('credentials_index') %>>
   <a class="nav-link w-100 <%= credentials_open ? 'active' : '' %>" href="#" data-bs-toggle="dropdown" aria-expanded="<%= operative && credentials_open %>" <%= tag.attributes(submenu_toggle) %>><%= nav_icon('credentials') %> <span class="ms-2">Credenziali</span></a>
