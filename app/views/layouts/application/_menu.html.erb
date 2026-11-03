@@ -43,6 +43,11 @@ submenu_toggle = operative ? { 'data-bs-auto-close': 'false' } : {}
   </ul>
 </li>
 
+<% if operative %>
+  <%# Primary work above, secondary sections below %>
+  <li class="sidebar__divider" aria-hidden="true"></li>
+<% end %>
+
 <li class="nav-item <%= item_class %> dropdown" <%= policy_guard('credentials_index') %>>
   <a class="nav-link w-100 <%= credentials_open ? 'active' : '' %>" href="#" data-bs-toggle="dropdown" aria-expanded="<%= operative && credentials_open %>" <%= tag.attributes(submenu_toggle) %>><%= nav_icon('credentials') %> <span class="ms-2">Credenziali</span></a>
   <ul class="dropdown-menu mt-2 mt-md-0 <%= submenu_class.call(credentials_open) %>">

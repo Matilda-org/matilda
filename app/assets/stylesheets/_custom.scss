@@ -247,6 +247,11 @@ body {
   min-height: 0;
 }
 
+.sidebar__divider {
+  margin: 6px 0 12px;
+  border-top: 1px solid var(--bs-gray-400);
+}
+
 .sidebar .nav-item {
   margin-bottom: 6px;
   background-color: var(--bs-white);
