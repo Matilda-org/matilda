@@ -333,19 +333,21 @@ end
 # Credentials
 ##
 
+# last view spread over the badge thresholds: recent, stale (warning), forgotten (danger), never seen
 [
-  [ "Hosting - Hotel Bescolo", "admin@hotelbescolo.it" ],
-  [ "Registrar - dominio arcori.com", "gestione@umbrellastudio.it" ],
-  [ "Meta Business - Sammontana", "ads@umbrellastudio.it" ],
-  [ "SMTP transazionale - BuyMyDay", "noreply@buymyday.com" ],
-  [ "Dashboard analytics - Macox", "analytics@umbrellastudio.it" ]
-].each do |name, username|
-  Credential.create!(
+  [ "Hosting - Hotel Bescolo", "admin@hotelbescolo.it", 2.days.ago ],
+  [ "Registrar - dominio arcori.com", "gestione@umbrellastudio.it", 120.days.ago ],
+  [ "Meta Business - Sammontana", "ads@umbrellastudio.it", 10.days.ago ],
+  [ "SMTP transazionale - BuyMyDay", "noreply@buymyday.com", 200.days.ago ],
+  [ "Dashboard analytics - Macox", "analytics@umbrellastudio.it", nil ]
+].each do |name, username, last_viewed_at|
+  credential = Credential.create!(
     name: name,
     secure_username: username,
     secure_password: SecureRandom.base58(16),
     secure_content: "Credenziali di servizio generate per l'ambiente demo."
   )
+  credential.update_column(:last_viewed_at, last_viewed_at)
 end
 
 # CRM (contacts / campaigns / communications)

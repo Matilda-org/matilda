@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matilda - Project manager for better companies</title>
-    <meta name="description" content="Matilda è un project manager open source e self-hosted: task, progetti, board kanban, credenziali e integrazioni in un'unica piattaforma.">
+    <meta name="description" content="Matilda è un project manager open source e self-hosted: task, progetti, board kanban, CRM, credenziali e assistente AI in un'unica piattaforma.">
     <link rel="icon" href="./favicon.ico">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,6 +94,8 @@
                 </a>
                 <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
                     <a href="#features" class="hover:text-light/70 transition">Funzionalità</a>
+                    <a href="#crm" class="hover:text-light/70 transition">CRM</a>
+                    <a href="#ai" class="hover:text-light/70 transition">Assistente AI</a>
                     <a href="#modules" class="hover:text-light/70 transition">Moduli</a>
                     <a href="#integrations" class="hover:text-light/70 transition">Integrazioni</a>
                     <a href="#opensource" class="hover:text-light/70 transition">Open Source</a>
@@ -118,7 +120,7 @@
                 <span class="glow-text">for better companies</span>
             </h1>
             <p class="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="100">
-                Task, progetti, board kanban e processi aziendali in un'unica applicazione web.
+                Task, progetti, board kanban, CRM e un assistente AI in un'unica applicazione web.
                 Senza canoni per utente, sui tuoi server.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16" data-aos="fade-up" data-aos-delay="200">
@@ -152,6 +154,25 @@
                 <p class="text-lg text-dark/60 max-w-2xl mx-auto">
                     Matilda unisce pianificazione, esecuzione e controllo: niente più fogli di calcolo, tool scollegati e informazioni sparse.
                 </p>
+            </div>
+
+            <!-- Feature 0: dashboard and navigation -->
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-24">
+                <div class="lg:order-2" data-aos="fade-left">
+                    <span class="inline-block bg-accent/10 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">Ogni giorno</span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-4">La tua giornata in una schermata</h3>
+                    <p class="text-dark/70 mb-6">
+                        La dashboard raccoglie le task assegnate e seguite, i progetti attivi e le scorciatoie. Una sidebar unica porta a ogni sezione e la ricerca globale trova tutto al volo.
+                    </p>
+                    <ul class="space-y-3 text-dark/80">
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Ricerca globale su progetti, task e credenziali con <kbd class="px-1.5 py-0.5 rounded bg-light text-primary text-xs font-semibold">⌘K</kbd></li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Dettagli in finestre con link diretto, da condividere con un collega</li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Azioni reversibili con annullamento immediato, senza conferme inutili</li>
+                    </ul>
+                </div>
+                <div class="lg:order-1 screenshot-frame card-hover" data-aos="fade-right">
+                    <img src="./screenshots/dashboard.jpg" alt="Dashboard personale" class="w-full block" loading="lazy">
+                </div>
             </div>
 
             <!-- Feature 1: task calendar -->
@@ -198,7 +219,7 @@
                     <span class="inline-block bg-accent/10 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">Progetti</span>
                     <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-4">Ogni progetto è un hub completo</h3>
                     <p class="text-dark/70 mb-6">
-                        Budget economico e orario, note condivisibili con il cliente, allegati, partecipanti e board operative: tutta la commessa in una pagina.
+                        Budget economico e orario, note condivisibili con il cliente, allegati, partecipanti e board operative: tutta la commessa in una pagina, collegata al contatto del CRM e alla sua cartella.
                     </p>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-light/50 rounded-xl p-4"><div class="font-bold text-primary mb-1">💰 Budget</div><p class="text-sm text-dark/70">Monitoraggio di costi e ore in tempo reale</p></div>
@@ -249,6 +270,80 @@
         </div>
     </section>
 
+    <!-- CRM -->
+    <section id="crm" class="py-24 bg-white">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-accent font-semibold uppercase tracking-widest text-sm">CRM</span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary mt-3 mb-5">Dai contatti alle commesse</h2>
+                <p class="text-lg text-dark/60 max-w-2xl mx-auto">
+                    Anagrafica clienti, campagne commerciali e follow-up nello stesso posto dei progetti: quando un preventivo va a buon fine, il lavoro è già collegato al suo contatto.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-24">
+                <div data-aos="fade-right">
+                    <span class="inline-block bg-accent/10 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">Campagne</span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-4">Ogni comunicazione, un passo alla volta</h3>
+                    <p class="text-dark/70 mb-6">
+                        Ogni campagna è una board: da inviare, inviata, persa, vinta. Le comunicazioni avanzano solo in avanti e ogni passaggio resta datato, così le statistiche di conversione sono affidabili.
+                    </p>
+                    <ul class="space-y-3 text-dark/80">
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Segnalazione delle comunicazioni rimaste in silenzio troppo a lungo</li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Follow-up datati e annullabili, note in rich text</li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Dashboard con campagne attive, invii da fare ed esiti in attesa</li>
+                    </ul>
+                </div>
+                <div class="screenshot-frame card-hover" data-aos="fade-left">
+                    <img src="./screenshots/crm-campaign.jpg" alt="Board di una campagna commerciale" class="w-full block" loading="lazy">
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="screenshot-frame card-hover" data-aos="fade-up">
+                    <img src="./screenshots/crm-dashboard.jpg" alt="Dashboard CRM" class="w-full block" loading="lazy">
+                </div>
+                <div class="screenshot-frame card-hover" data-aos="fade-up" data-aos-delay="100">
+                    <img src="./screenshots/crm-communication.jpg" alt="Dettaglio di una comunicazione con timeline e follow-up" class="w-full block" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI assistant -->
+    <section id="ai" class="py-24 hero-bg text-white">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-light/70 font-semibold uppercase tracking-widest text-sm">Assistente AI</span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-3 mb-5">Chiedi, e conferma tu</h2>
+                <p class="text-lg text-white/70 max-w-2xl mx-auto">
+                    Un assistente che conosce i tuoi progetti, rispetta i permessi di chi lo usa e non modifica nulla senza il tuo ok.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-8" data-aos="fade-up">
+                    <div class="text-3xl mb-4">💬</div>
+                    <h3 class="text-xl font-bold mb-3">Domande in linguaggio naturale</h3>
+                    <p class="text-white/70 text-sm">Interroga progetti, task, note e CRM: "cosa scade questa settimana?", "quali campagne sono ferme?". Vede solo ciò che vedi tu.</p>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-8" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-3xl mb-4">✅</div>
+                    <h3 class="text-xl font-bold mb-3">Azioni da confermare</h3>
+                    <p class="text-white/70 text-sm">Crea e duplica progetti, aggiorna e sposta task, aggiunge note, avanza le comunicazioni. Ogni modifica arriva come proposta con un pulsante "Conferma".</p>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-8" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-3xl mb-4">✍️</div>
+                    <h3 class="text-xl font-bold mb-3">Form compilati per te</h3>
+                    <p class="text-white/70 text-sm">Genera checklist, trasforma un testo in task, un biglietto da visita in contatto, prepara la bozza di una comunicazione commerciale.</p>
+                </div>
+            </div>
+            <p class="text-center text-sm text-white/60 mt-10" data-aos="fade-up">
+                Si attiva solo su richiesta: nessuna chiamata automatica, nessun token speso se nessuno lo usa. Funziona con la tua chiave OpenAI.
+            </p>
+        </div>
+    </section>
+
     <!-- Modules -->
     <section id="modules" class="py-24 bg-white">
         <div class="mx-auto max-w-6xl px-4 sm:px-6">
@@ -260,36 +355,49 @@
                 </p>
             </div>
 
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-16">
+                <div data-aos="fade-right">
+                    <span class="inline-block bg-accent/10 text-accent text-sm font-semibold px-3 py-1 rounded-full mb-4">🔐 Credenziali</span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-4">Gli accessi aziendali, al sicuro e in ordine</h3>
+                    <p class="text-dark/70 mb-6">
+                        Password e accessi crittografati, con contenuti offuscati a schermo e permessi dedicati. Matilda registra l'ultima apertura di ogni credenziale e segnala quelle dimenticate, pronte da revocare.
+                    </p>
+                    <ul class="space-y-3 text-dark/80">
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Badge colorati per le credenziali mai viste o ferme da mesi</li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Ordinamento "Meno usate" per fare pulizia</li>
+                        <li class="flex items-start"><span class="text-accent mr-3 mt-1">●</span>Storico delle visualizzazioni per utente</li>
+                    </ul>
+                </div>
+                <div class="screenshot-frame card-hover" data-aos="fade-left">
+                    <img src="./screenshots/credentials.jpg" alt="Elenco credenziali con badge di ultima visualizzazione" class="w-full block" loading="lazy">
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up">
-                    <div class="text-3xl mb-4">🔐</div>
-                    <h3 class="text-lg font-bold text-primary mb-2">Credenziali</h3>
-                    <p class="text-dark/70 text-sm">Password e accessi aziendali crittografati, con contenuti offuscati a schermo e permessi dedicati.</p>
-                </div>
-                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="50">
                     <div class="text-3xl mb-4">📊</div>
                     <h3 class="text-lg font-bold text-primary mb-2">Strumenti &amp; analisi</h3>
                     <p class="text-dark/70 text-sm">Report sui rischi di progetto, rendicontazione del tempo e monitoraggio dei progetti fermi.</p>
                 </div>
-                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="100">
+                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="50">
                     <div class="text-3xl mb-4">📣</div>
                     <h3 class="text-lg font-bold text-primary mb-2">Bacheca</h3>
                     <p class="text-dark/70 text-sm">Comunicazioni e annunci aziendali con tag e ricerca, visibili a tutto il team.</p>
                 </div>
-                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up">
+                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="100">
                     <div class="text-3xl mb-4">🗂️</div>
                     <h3 class="text-lg font-bold text-primary mb-2">Cartelle</h3>
-                    <p class="text-dark/70 text-sm">Organizza progetti e credenziali in cartelle per cliente, area o reparto.</p>
+                    <p class="text-dark/70 text-sm">Organizza progetti e credenziali in cartelle per cliente, area o reparto, con un indice dedicato e lo spostamento direttamente dal progetto.</p>
                 </div>
                 <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="50">
                     <div class="text-3xl mb-4">👤</div>
                     <h3 class="text-lg font-bold text-primary mb-2">Utenti e permessi</h3>
                     <p class="text-dark/70 text-sm">Policy granulari per ogni funzionalità: ognuno vede e modifica solo ciò che deve.</p>
                 </div>
-                <div class="rounded-2xl border border-accent/30 bg-accent/5 p-7 card-hover" data-aos="fade-up" data-aos-delay="100">
-                    <div class="text-3xl mb-4">✨</div>
-                    <h3 class="text-lg font-bold text-primary mb-2">Assistente AI</h3>
-                    <p class="text-dark/70 text-sm">Interroga progetti, task e note in linguaggio naturale, sempre nel rispetto dei permessi utente.</p>
+                <div class="rounded-2xl border border-light p-7 card-hover bg-white" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-3xl mb-4">🛡️</div>
+                    <h3 class="text-lg font-bold text-primary mb-2">Sicurezza</h3>
+                    <p class="text-dark/70 text-sm">Content Security Policy, sessioni invalidate al cambio password e gli stessi permessi applicati a interfaccia, API e assistente AI.</p>
                 </div>
             </div>
         </div>
@@ -310,7 +418,7 @@
                 <div class="rounded-2xl bg-white/5 border border-white/10 p-8" data-aos="fade-up">
                     <div class="text-3xl mb-4">🔌</div>
                     <h3 class="text-xl font-bold mb-3">API REST</h3>
-                    <p class="text-white/70 text-sm">API JSON documentate con OpenAPI e protette da API key personali: leggi e aggiorna task, progetti e commenti.</p>
+                    <p class="text-white/70 text-sm">API JSON documentate con OpenAPI e Swagger UI, protette da API key personali: task, progetti, note, contatti, campagne e comunicazioni.</p>
                 </div>
                 <div class="rounded-2xl bg-white/5 border border-white/10 p-8" data-aos="fade-up" data-aos-delay="100">
                     <div class="text-3xl mb-4">📨</div>
