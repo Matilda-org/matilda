@@ -68,7 +68,7 @@ document.addEventListener('turbo:before-cache', (e) => {
  * stays on the same side) must not reload: it would drop whatever the user typed.
  */
 
-const mobileQuery = window.matchMedia('(max-width: 768px)')
+const mobileQuery = window.matchMedia('(max-width: 767.98px)')
 mobileQuery.addEventListener('change', () => {
   const busy = document.querySelector('.modal.show') || document.activeElement?.matches('input, textarea, select, trix-editor')
   if (!busy) Turbo.visit(window.location.href, { action: 'replace' })

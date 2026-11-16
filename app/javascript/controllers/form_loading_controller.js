@@ -10,7 +10,8 @@ import { Controller } from "@hotwired/stimulus"
  * How it works:
  * When the form is submitted, the turbo:before-fetch-request event is listened to.
  * When the event is triggered, the submit button is disabled and a loading spinner is added to it.
- * When the fetch request is completed, the submit button is enabled again and the loading spinner is removed.
+ * On turbo:submit-end the button is enabled again and the spinner removed. Unlike
+ * turbo:before-fetch-response it also fires on network errors, so the button never stays stuck.
  */
 export default class extends Controller {
   static targets = [
@@ -19,23 +20,25 @@ export default class extends Controller {
 
   connect() {
     this.beforeFetchRequest = this.beforeFetchRequest.bind(this)
-    this.beforeFetchResponse = this.beforeFetchResponse.bind(this)
+    this.submitEnd = this.submitEnd.bind(this)
     this.element.addEventListener('turbo:before-fetch-request', this.beforeFetchRequest)
-    this.element.addEventListener('turbo:before-fetch-response', this.beforeFetchResponse)
+    this.element.addEventListener('turbo:submit-end', this.submitEnd)
   }
 
   disconnect() {
     this.element.removeEventListener('turbo:before-fetch-request', this.beforeFetchRequest)
-    this.element.removeEventListener('turbo:before-fetch-response', this.beforeFetchResponse)
+    this.element.removeEventListener('turbo:submit-end', this.submitEnd)
   }
 
   beforeFetchRequest() {
     this.submitTarget.disabled = true
+    if (this.submitTarget.querySelector('.spinner-border')) return
+
     this.submitTarget.insertAdjacentHTML('beforeend', '<span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>')
   }
 
-  beforeFetchResponse() {
+  submitEnd() {
     this.submitTarget.disabled = false
-    this.submitTarget.querySelector('.spinner-border').remove()
+    this.submitTarget.querySelector('.spinner-border')?.remove()
   }
 }

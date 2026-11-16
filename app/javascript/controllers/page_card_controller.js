@@ -14,7 +14,7 @@ export default class extends Controller {
   static values = { key: String }
 
   connect() {
-    this.isMobile = window.matchMedia('(max-width: 768px)').matches
+    this.isMobile = window.matchMedia('(max-width: 767.98px)').matches
     this.headerTarget.disabled = !this.isMobile || this.contentTarget.hasAttribute('always-open')
     this.setExpanded(!this.contentTarget.hasAttribute('closed'))
 

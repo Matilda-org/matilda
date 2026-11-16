@@ -1,6 +1,8 @@
 <%
 
 task ||= Task.new
+draft ||= nil
+error ||= nil
 
 # Oltre questa soglia il commento nasce collassato: il JS verifica poi se
 # l'altezza reale giustifica davvero il toggle.
@@ -75,11 +77,12 @@ long_comment_chars = 700
                     data-controller="tooltip"
                     data-tooltip="<%= comment.created_at.strftime('%d/%m/%Y %H:%M') %>"
                   ><%= time_ago_in_words(comment.created_at) %> fa</small>
-                  <% if @session_user&.policy?('tasks_comment') %>
+                  <% if @session_user&.policy?('tasks_comment') && comment.deletable_by?(@session_user_id) %>
                     <a
                       href="<%= tasks_destroy_comment_action_path(task, comment) %>"
                       data-turbo-frame="_self"
                       data-turbo-method="post"
+                      data-turbo-confirm="Vuoi eliminare questo commento?"
                       class="c-comment__delete btn btn-sm btn-link text-danger p-0 ms-auto ps-2"
                       data-controller="tooltip"
                       data-tooltip="Elimina commento"
@@ -126,9 +129,13 @@ long_comment_chars = 700
           rows="1"
           placeholder="Scrivi un commento..."
           data-skip-autofocus
+          required
           data-comment-form-target="input"
           data-action="input->comment-form#grow keydown->comment-form#keydown"
-        ></textarea>
+        ><%= draft %></textarea>
+        <% if error.present? %>
+          <div class="text-danger small mt-1" role="alert"><%= error %></div>
+        <% end %>
         <div class="c-comment-form__footer d-flex align-items-center justify-content-between gap-2 mt-2">
           <%# Hint tastiera: inutile su mobile, dove si tocca il bottone %>
           <small class="text-muted d-none d-md-inline"><kbd class="c-kbd">Ctrl/⌘ + Invio</kbd> per inviare</small>

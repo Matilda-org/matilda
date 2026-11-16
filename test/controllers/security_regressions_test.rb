@@ -77,6 +77,32 @@ class SecurityRegressionsTest < ActionDispatch::IntegrationTest
     assert_includes @response.body, "&lt;img src=x onerror=alert(1)&gt;"
   end
 
+  test "members-only users don't see other projects' tasks on the calendar and people boards" do
+    task = tasks(:one)
+    task.update_columns(project_id: projects(:one).id, user_id: users(:two).id, deadline: Date.today)
+    grant(@user, "tasks_index", "only_data_projects_as_member")
+    sign_in_as(@user)
+
+    get tasks_path
+    assert_response :success
+    assert_not_includes @response.body, task.title
+
+    get tasks_path(mode: "people")
+    assert_response :success
+    assert_not_includes @response.body, task.title
+  end
+
+  test "users can't delete comments written by someone else" do
+    task = tasks(:one)
+    comment = task.tasks_comments.create!(content: "Not yours", user_id: users(:two).id)
+    grant(@user, "tasks_comment")
+    sign_in_as(@user)
+
+    post tasks_destroy_comment_action_path(task, comment)
+
+    assert Tasks::Comment.exists?(comment.id)
+  end
+
   private
 
   def sign_in_as(user)

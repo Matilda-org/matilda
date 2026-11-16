@@ -49,13 +49,18 @@ export default class extends Controller {
   }
 
   closeModal(e) {
+    this.modal.hide()
+    // The hide was vetoed (unsaved changes kept, see action-loader): leave the frame alone
+    if (this.modal._isShown) {
+      e?.preventDefault()
+      return
+    }
+
     if (e?.currentTarget?.getAttribute('data-turbo-frame') == '_top') {
-      this.modal.hide()
       // hide.bs.modal already dropped ?modal= from the url (action-loader)
       Turbo.visit(window.location.href, { action: "replace" })
       e.preventDefault()
     } else {
-      this.modal.hide()
       setTimeout(() => {
         const action = this.modalDOM.querySelector('#action')
         if (!action) return

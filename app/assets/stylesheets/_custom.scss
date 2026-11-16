@@ -25,7 +25,7 @@ body {
   overscroll-behavior: contain;
   overflow-x: hidden;
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 767.98px) {
   body {
     padding-top: 65px;
   }
@@ -55,7 +55,7 @@ body {
   max-width: 1920px;
   padding: 0 30px;
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 767.98px) {
   .container-fluid {
     padding: 0 15px;
   }
@@ -70,7 +70,7 @@ body {
   // Softer, near-horizontal gradient instead of the 45° diagonal
   background: linear-gradient(100deg, var(--bs-primary) 0%, var(--bs-secondary) 140%);
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 767.98px) {
   .navbar {
     padding: 12px 0;
   }
@@ -143,7 +143,7 @@ body {
   background-color: var(--bs-white);
   color: var(--bs-primary);
 }
-@media screen and (max-width: 998px) {
+@media screen and (max-width: 767.98px) {
   .navbar .navbar-nav .nav-link {
     padding: 5px 15px;
     margin: 5px 0;
@@ -164,7 +164,7 @@ body {
   display: flex;
   align-items: center;
 }
-@media screen and (max-width: 998px) {
+@media screen and (max-width: 767.98px) {
   .navbar .navbar-nav {
     max-height: calc(100svh - 88px);
     overflow-y: auto;
@@ -197,7 +197,7 @@ body {
   position: relative;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767.98px) {
   .sidebar {
     display: none;
   }
@@ -419,7 +419,7 @@ a.badge.text-bg-light:hover {
   font-size: 12px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767.98px) {
   .btn-form-submit {
     width: 100%;
     padding-top: 12px;
@@ -436,7 +436,7 @@ a.badge.text-bg-light:hover {
 }
 
 .modal-dialog-centered {
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 767.98px) {
     align-items: flex-end;
   }
 }

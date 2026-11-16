@@ -39,6 +39,18 @@ class TasksControllerTest < ActionController::TestCase
     )
   end
 
+  test "a failed comment keeps the draft and shows the error" do
+    grant_policy("tasks_comment")
+    task = tasks(:one)
+    task.tasks_comments.create!(content: "Mine", user_id: @user.id)
+
+    post :create_comment_action, params: { id: task.id, content: " " }
+
+    assert_response :unprocessable_entity
+    assert_select "div[role=alert]"
+    assert_select "a.c-comment__delete", 1
+  end
+
   test "show" do
     task = tasks(:one)
     matilda_controller_endpoint(:get, :show,

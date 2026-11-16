@@ -25,6 +25,12 @@ class Tasks::Comment < ApplicationRecord
   after_create :sync_task_comment_state
   after_destroy :sync_task_comment_state
 
+  # Users delete only their own comments; service comments (no author) stay
+  # deletable by anyone allowed to comment
+  def deletable_by?(user_id)
+    self.user_id.nil? || self.user_id == user_id
+  end
+
   private
 
   # Keeps the task denormalized comment data aligned with the last comment:

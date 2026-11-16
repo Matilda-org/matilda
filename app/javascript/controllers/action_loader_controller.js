@@ -19,7 +19,8 @@ import { Controller } from '@hotwired/stimulus'
  * It also owns the modal lifecycle shared by every action:
  * - a page opened with ?modal=<path> (see action_controller#mirrorUrl) reopens it;
  * - clicking the backdrop closes the modal until a form inside it is edited,
- *   then the backdrop turns static so typed data is never lost by a stray click.
+ *   then the backdrop turns static so typed data is never lost by a stray click;
+ *   Esc and the close button ask before discarding those edits.
  */
 export default class extends Controller {
   connect() {
@@ -30,10 +31,12 @@ export default class extends Controller {
     this.onFormEdit = this.onFormEdit.bind(this)
     this.onHide = this.onHide.bind(this)
     this.onHidden = this.onHidden.bind(this)
+    this.onSubmitEnd = this.onSubmitEnd.bind(this)
 
     this.frame.addEventListener('turbo:before-fetch-request', this.onFetchStart)
     this.element.addEventListener('input', this.onFormEdit)
     this.element.addEventListener('trix-change', this.onFormEdit)
+    this.element.addEventListener('turbo:submit-end', this.onSubmitEnd)
     this.element.addEventListener('hide.bs.modal', this.onHide)
     this.element.addEventListener('hidden.bs.modal', this.onHidden)
 
@@ -46,6 +49,7 @@ export default class extends Controller {
     this.frame.removeEventListener('turbo:before-fetch-request', this.onFetchStart)
     this.element.removeEventListener('input', this.onFormEdit)
     this.element.removeEventListener('trix-change', this.onFormEdit)
+    this.element.removeEventListener('turbo:submit-end', this.onSubmitEnd)
     this.element.removeEventListener('hide.bs.modal', this.onHide)
     this.element.removeEventListener('hidden.bs.modal', this.onHidden)
   }
@@ -86,9 +90,20 @@ export default class extends Controller {
 
     // Bootstrap reads the config on every backdrop click, so switching it live works
     this.modal._config.backdrop = 'static'
+    this.dirty = true
   }
 
-  onHide() {
+  // A saved form has nothing left to lose
+  onSubmitEnd(event) {
+    if (event.detail.success) this.dirty = false
+  }
+
+  onHide(event) {
+    if (this.dirty && !window.confirm('Chiudere senza salvare? Le modifiche andranno perse.')) {
+      event.preventDefault()
+      return
+    }
+
     const url = new URL(window.location)
     if (!url.searchParams.has('modal')) return
 
@@ -98,6 +113,7 @@ export default class extends Controller {
 
   onHidden() {
     this.modal._config.backdrop = true
+    this.dirty = false
   }
 
   get modal() {

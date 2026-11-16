@@ -387,7 +387,7 @@ class TasksController < ApplicationController
 
     @comment = @task.tasks_comments.build(comment_params)
     @comment.user_id = @session_user_id
-    @comment.save
+    return render partial: "tasks/shared/comments", locals: { task: @task } if @comment.save
 
     render partial: "tasks/shared/comments", locals: { task: @task }
   end
@@ -397,9 +397,12 @@ class TasksController < ApplicationController
     return unless task_finder
 
     comment = @task.tasks_comments.find_by(id: params[:comment_id])
-    comment&.destroy
+    comment.destroy if comment&.deletable_by?(@session_user_id)
 
-    render partial: "tasks/shared/comments", locals: { task: @task }
+    # Keep the draft in the composer so a failed save never loses the text
+    render partial: "tasks/shared/comments",
+           locals: { task: @task, draft: @comment.content, error: @comment.errors.full_messages.to_sentence },
+           status: :unprocessable_entity
   end
 
   private
@@ -457,7 +460,7 @@ class TasksController < ApplicationController
     @user_id = params[:user_id]
     @project_id = params[:project_id]
 
-    tasks = Task.where(deadline: (@date_start..@date_end)).includes(:tasks_checks)
+    tasks = query_tasks_for_policy.where(deadline: (@date_start..@date_end)).includes(:tasks_checks)
     tasks = tasks.where(user_id: @user_id) unless @user_id.blank?
     tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
     @tasks_per_date = tasks.group_by(&:deadline)
@@ -485,7 +488,7 @@ class TasksController < ApplicationController
 
   # Build @tasks_per_user for the people board from the current filters.
   def load_filter_options
-    @filter_projects = Project.not_archived.order(year: :asc, name: :asc).pluck(:name, :id)
+    @filter_projects = query_projects_for_policy.not_archived.order(year: :asc, name: :asc).pluck(:name, :id)
     @filter_users = User.order(surname: :asc, name: :asc).map { |u| [ u.complete_name, u.id ] }
   end
 
@@ -493,7 +496,7 @@ class TasksController < ApplicationController
     @date = safe_date(params[:date], Date.today)
     @project_id = params[:project_id]
 
-    tasks = Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil))
+    tasks = query_tasks_for_policy.and(Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil)))
     tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
     tasks = tasks.order(deadline: :asc, title: :asc)
     @tasks_per_user = tasks.group_by(&:user_id)
