@@ -26,6 +26,7 @@ path ||= contact.persisted? ? contacts_edit_action_path(contact) : contacts_crea
             <input type="file" class="form-control form-control-sm" accept="image/*" aria-label="Foto del biglietto da visita" data-contacts-form-target="aiImage">
             <button type="button" class="btn btn-sm btn-outline-primary flex-shrink-0" data-action="click->contacts-form#onClickFill">Compila campi</button>
           </div>
+          <small class="text-danger d-block mt-1" role="alert" data-contacts-form-target="aiError"></small>
         </div>
       </div>
     <% end %>

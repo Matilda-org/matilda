@@ -3,15 +3,16 @@ import { Controller } from "@hotwired/stimulus"
 // Lets the assistant fill the contact form from a pasted email signature
 // and/or a photo of a business card. Each field target is matched by its name.
 export default class extends Controller {
-  static targets = ['aiText', 'aiImage', 'field']
+  static targets = ['aiText', 'aiImage', 'field', 'aiError']
 
   onClickFill(e) {
     e.preventDefault()
+    this.aiErrorTarget.textContent = ''
 
     const text = this.aiTextTarget.value.trim()
     const image = this.aiImageTarget.files[0]
     if (!text && !image) {
-      alert('Incolla un testo o scegli un\'immagine prima di compilare i campi.')
+      this.aiErrorTarget.textContent = 'Incolla un testo o scegli un\'immagine prima di compilare i campi.'
       return
     }
 
@@ -42,7 +43,7 @@ export default class extends Controller {
       })
     }).catch((error) => {
       console.error(error)
-      alert(error.message || 'Si è verificato un errore durante la compilazione dei campi.')
+      this.aiErrorTarget.textContent = error.message || 'Si è verificato un errore durante la compilazione dei campi.'
     }).finally(() => {
       button.innerText = originalButtonText
       button.removeAttribute('disabled')

@@ -1,57 +1,60 @@
-import { Controller } from "@hotwired/stimulus"
-import { crypt, decrypt } from 'libs/crypter'
+import { Controller } from '@hotwired/stimulus'
+import { decrypt } from 'libs/crypter'
+import { storedCryptPassword, unlockCryptPassword } from 'libs/crypt_password'
 
 export default class extends Controller {
   static targets = [
+    'content',
     'input',
-    'copyPassword'
+    'unlock',
+    'unlockPassword',
+    'unlockError',
+    'password',
+    'passwordToggle'
   ]
 
   static values = {
     phrase: { type: String, default: '' }
   }
 
-  connect() {
-    if (!this.loadCryptPassword()) {
-      this.actionInstance = this.application.getControllerForElementAndIdentifier(document.getElementById('action-controller'), 'action')
-      setTimeout(() => this.actionInstance?.closeModal(), 500)
+  connect () {
+    const cryptPassword = storedCryptPassword(this.phraseValue)
+    if (cryptPassword) {
+      this.reveal(cryptPassword)
+    } else {
+      this.unlockTarget.hidden = false
+      this.unlockPasswordTarget.focus()
+    }
+  }
+
+  unlock (e) {
+    e.preventDefault()
+
+    const cryptPassword = unlockCryptPassword(this.phraseValue, this.unlockPasswordTarget.value)
+    if (!cryptPassword) {
+      this.unlockErrorTarget.textContent = 'Password non valida, riprova.'
+      this.unlockPasswordTarget.setAttribute('aria-invalid', 'true')
+      this.unlockPasswordTarget.select()
       return
     }
 
-    this.inputTargets.forEach((target) => {
-      target.value = decrypt(target.dataset.value, this.cryptPassword)
-      if (target.name != 'password') return
-      if (target.value.length < 1) return
-      if (!this.hasCopyPasswordTarget) return
-
-      // copy target value to clipboard
-      navigator.clipboard.writeText(target.value)
-      this.copyPasswordTarget.classList.remove('d-none')
-
-      setTimeout(() => {
-        this.copyPasswordTarget.classList.add('d-none')
-      }, 2500)
-    })
+    this.unlockTarget.hidden = true
+    this.unlockPasswordTarget.value = ''
+    this.reveal(cryptPassword)
   }
 
-  loadCryptPassword() {
-    // load crypt password
-    let cryptPassword = localStorage.getItem('credentials_password')
-    if (!cryptPassword) {
-      cryptPassword = prompt('Inserisci la password di criptazione')
-    }
+  reveal (cryptPassword) {
+    this.inputTargets.forEach((target) => {
+      target.value = decrypt(target.dataset.value, cryptPassword)
+    })
+    this.contentTarget.hidden = false
+  }
 
-    // validate crypt password
-    const decryptedPhrase = decrypt(this.phraseValue, cryptPassword)
-    if (decryptedPhrase != 'Matilda') {
-      alert('Password non valida')
-      return false
-    }
-
-    // save crypt password
-    localStorage.setItem('credentials_password', cryptPassword)
-    this.cryptPassword = cryptPassword
-
-    return true
+  togglePassword () {
+    const visible = this.passwordTarget.type === 'password'
+    this.passwordTarget.type = visible ? 'text' : 'password'
+    this.passwordToggleTarget.setAttribute('aria-label', visible ? 'Nascondi password' : 'Mostra password')
+    this.passwordToggleTarget.setAttribute('aria-pressed', visible)
+    this.passwordToggleTarget.querySelector('i').className = visible ? 'bi bi-eye-slash' : 'bi bi-eye'
   }
 }

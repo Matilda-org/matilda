@@ -132,6 +132,7 @@ notes_tab_active = @active_tab == "notes"
       <button type="button" class="btn btn-sm btn-outline-primary" data-communication-draft-target="button" data-action="click->communication-draft#generate">
         <i class="bi bi-robot me-1"></i><%= communication.to_send? ? 'Bozza messaggio' : 'Bozza sollecito' %>
       </button>
+      <small class="text-danger d-block mt-1" role="alert" data-communication-draft-target="error"></small>
 
       <div class="d-none mt-2" data-communication-draft-target="output">
         <label for="communication-draft-<%= tabs_id %>" class="visually-hidden">Bozza generata</label>

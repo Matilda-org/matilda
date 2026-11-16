@@ -33,6 +33,8 @@ class CredentialsController < ApplicationController
       query = query.least_recently_viewed
     elsif params[:sort] == "name_desc"
       query = query.order(name: :desc)
+    elsif params[:sort] == "updated_desc"
+      query = query.order(updated_at: :desc)
     else
       query = query.order(name: :asc)
     end

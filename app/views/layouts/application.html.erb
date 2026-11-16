@@ -91,6 +91,8 @@
       <%= render 'layouts/application/background', primary: true %>
     <% end %>
 
+    <a class="visually-hidden-focusable c-skip-link" href="#main">Vai al contenuto</a>
+
     <% unless @_navbar_disabled %>
       <header>
         <%= render 'layouts/application/navbar' %>
@@ -103,7 +105,7 @@
           <%= render 'layouts/application/sidebar' %>
         </aside>
       <% end %>
-      <main class="container-fluid flex-1" style="min-height: calc(100svh - 58px);">
+      <main id="main" tabindex="-1" class="container-fluid flex-1" style="min-height: calc(100svh - 58px);">
         <%= render 'layouts/application/flash' unless @_flash_disabled %>
 
         <%= yield %>

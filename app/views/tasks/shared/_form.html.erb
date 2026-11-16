@@ -26,8 +26,9 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
       <%= rich_text_area_tag :content, task.content %>
 
       <% if Setting.get('vectorsearch_openai_key') %>
-        <div class="d-flex justify-content-end mt-2">
-          <div class="btn-group btn-group-sm" role="group" aria-label="Assistant actions">
+        <div class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2">
+          <small class="text-danger text-end" role="alert" data-tasks-form-target="aiError"></small>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Azioni assistente">
             <div class="btn btn-secondary">
               <i class="bi bi-robot"></i>
             </div>

@@ -17,6 +17,8 @@ class ContactsController < ApplicationController
     query = query.search(params[:search]) unless params[:search].blank?
     if params[:sort] == "name_desc"
       query = query.order(name: :desc)
+    elsif params[:sort] == "updated_desc"
+      query = query.order(updated_at: :desc)
     else
       query = query.order(name: :asc)
     end

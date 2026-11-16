@@ -37,6 +37,8 @@ class ProjectsController < ApplicationController
       query = query.order(year: :asc, name: :asc)
     elsif params[:sort] == "year_desc"
       query = query.order(year: :desc, name: :asc)
+    elsif params[:sort] == "updated_desc"
+      query = query.order(updated_at: :desc)
     else
       query = query.order(name: :asc)
     end

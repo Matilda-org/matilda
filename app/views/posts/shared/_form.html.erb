@@ -48,8 +48,9 @@ path ||= post.persisted? ? posts_edit_action_path(post) : posts_create_action_pa
     </div>
 
     <% if Setting.get('vectorsearch_openai_key') %>
-      <div class="d-flex justify-content-end mb-3">
-        <div class="btn-group btn-group-sm" role="group" aria-label="Assistant actions">
+      <div class="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-3">
+        <small class="text-danger text-end" role="alert" data-posts-form-target="aiError"></small>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Azioni assistente">
           <div class="btn btn-secondary">
             <i class="bi bi-robot"></i>
           </div>

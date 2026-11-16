@@ -15,7 +15,7 @@ addressable ||= false
   <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-<%= size %> <%= classes %>" id="action-controller" data-controller="action"<% if addressable %> data-action-url-value="<%= request.fullpath %>"<% end %>>
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title fs-5"><%= title %></h3>
+        <h3 class="modal-title fs-5" id="action-modal-title"><%= title %></h3>
         <%# Wrapper unico per hint + X: il btn-close di Bootstrap ha già ms-auto,
             due margini auto separati spartirebbero lo spazio centrando il kbd %>
         <div class="ms-auto d-flex align-items-center gap-2">
@@ -34,7 +34,11 @@ addressable ||= false
               aria-label="Chiudi"
             ></a>
           <% else %>
-            <a class="btn-close h-cursor-pointer" <%= turbo_frame ? "href=# data-turbo-frame=#{turbo_frame}" : '' %> data-action="click->action#closeModal" aria-label="Chiudi"></a>
+            <% if turbo_frame %>
+              <a class="btn-close h-cursor-pointer" href="#" data-turbo-frame="<%= turbo_frame %>" data-action="click->action#closeModal" aria-label="Chiudi"></a>
+            <% else %>
+              <button type="button" class="btn-close" data-action="click->action#closeModal" aria-label="Chiudi"></button>
+            <% end %>
           <% end %>
         </div>
       </div>

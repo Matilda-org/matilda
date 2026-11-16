@@ -6,7 +6,8 @@ export default class extends Controller {
     'imagePreview',
     'sourceUrlInput',
     'contentInput',
-    'tagsInput'
+    'tagsInput',
+    'aiError'
   ]
 
   connect() {
@@ -29,10 +30,11 @@ export default class extends Controller {
 
   onClickPopulateFromSourceUrl(e) {
     e.preventDefault()
+    this.aiErrorTarget.textContent = ''
 
     const sourceUrl = this.sourceUrlInputTarget.value
     if (!sourceUrl) {
-      alert('Please enter a source URL.')
+      this.aiErrorTarget.textContent = 'Inserisci un link sorgente prima di generare i dati.'
       return
     }
 
@@ -51,9 +53,8 @@ export default class extends Controller {
     }).then((response) => {
       return response.json()
     }).then((response) => {
-      console.log(response)
       if (response.error) {
-        alert(response.error)
+        this.aiErrorTarget.textContent = response.error
         button.innerText = originalButtonText
         button.removeAttribute('disabled')
         return
@@ -85,8 +86,7 @@ export default class extends Controller {
       button.removeAttribute('disabled')
     }).catch((error) => {
       console.error(error)
-
-      alert('An error occurred while populating the form from the source URL.')
+      this.aiErrorTarget.textContent = 'Si è verificato un errore durante la generazione dei dati dal link sorgente.'
       button.innerText = originalButtonText
       button.removeAttribute('disabled')
     })

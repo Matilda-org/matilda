@@ -89,7 +89,7 @@ class ActionController::TestCase
     get :actions, params: { type: type, id: id }.merge(other_params)
     assert_response :success
     assert @response.body.include?("id=\"action-controller\"")
-    assert @response.body.include?("<h3 class=\"modal-title fs-5\">#{title}</h3>") if title
+    assert @response.body.include?("<h3 class=\"modal-title fs-5\" id=\"action-modal-title\">#{title}</h3>") if title
 
     # test invalid id
     if id
@@ -103,7 +103,7 @@ class ActionController::TestCase
     get :actions, params: { type: "invalid_type" }
     assert_response :success
     assert @response.body.include?("id=\"action-controller\"")
-    assert @response.body.include?("<h3 class=\"modal-title fs-5\">Errore</h3>")
+    assert @response.body.include?("<h3 class=\"modal-title fs-5\" id=\"action-modal-title\">Errore</h3>")
   end
 
   def matilda_controller_endpoint(method, endpoint, params: {}, policy: nil, title: nil, feedback: nil, redirect: nil, debug: false)
@@ -120,7 +120,7 @@ class ActionController::TestCase
     if title
       assert_response :success
       assert @response.body.include?("id=\"action-controller\"")
-      assert @response.body.include?("<h3 class=\"modal-title fs-5\">#{title}</h3>")
+      assert @response.body.include?("<h3 class=\"modal-title fs-5\" id=\"action-modal-title\">#{title}</h3>")
       if feedback
         assert @response.body.include?("<h3 class=\"fs-5 mb-1\">#{feedback}</h3>")
       end

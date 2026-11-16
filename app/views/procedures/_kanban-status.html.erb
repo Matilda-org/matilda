@@ -4,6 +4,8 @@ status ||= Procedure::Status.new
 procedure = status.procedure
 turbo_frame_key = dom_id(status, 'kanban-status')
 items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : []
+# Loaded once per column so each card's "Sposta in" menu doesn't query the statuses again
+statuses = procedure.procedures_statuses.order(order: :asc).to_a
 
 %>
 
@@ -11,14 +13,15 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
   <div class="c-kanban__status card d-flex flex-direction-column justify-content-between me-3">
     <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
       <div
-        class="d-flex align-items-center w-50"
+        class="d-flex align-items-center flex-grow-1 min-w-0"
         <% unless status.description.blank? %>
         data-controller="tooltip"
         data-tooltip="<%= status.description %>"
         <% end %>
       >
-        <span class="d-inline-block me-1 border border-white border-2" style="width: 18px; height: 18px; border-radius: 50%; background-color: <%= status.color %>;"></span>
-        <span class="fw-bold h-text-oneline" style="flex: 1;"><%= status.title.truncate(18) %></span>
+        <span class="d-inline-block flex-shrink-0 me-1 border border-white border-2" style="width: 18px; height: 18px; border-radius: 50%; background-color: <%= status.color %>;"></span>
+        <span class="fw-bold text-truncate min-w-0" title="<%= status.title %>"><%= status.title %></span>
+        <span class="badge rounded-pill text-white flex-shrink-0 ms-2 h-fs-xxs <%= items.any? ? 'bg-info' : 'bg-dark' %>" aria-label="<%= pluralize(items.length, 'elemento', plural: 'elementi') %>"><%= items.length %></span>
       </div>
       <div
         class="ms-3 d-flex"
@@ -136,7 +139,7 @@ items = status.persisted? ? status.procedures_items_ordered_and_filtered.to_a : 
     </div>
     <%# safe_join keeps the <ul> free of stray whitespace, so :empty (and its %>
     <%# "drop here" hint) matches when the column has no items %>
-    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>"><%= safe_join(items.map { |item| render("procedures/kanban-item", item: item, turbo_frame_status_key: turbo_frame_key) }) %></ul>
+    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>"><%= safe_join(items.map { |item| render("procedures/kanban-item", item: item, turbo_frame_status_key: turbo_frame_key, statuses: statuses) }) %></ul>
     <div class="card-footer d-flex">
       <% if procedure.resources_type_tasks? && !procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('tasks_create') %>>

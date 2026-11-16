@@ -3,11 +3,12 @@ import { Controller } from "@hotwired/stimulus"
 // Asks the assistant for a draft of a CRM communication (first message or
 // reminder) and shows it in an editable textarea, ready to be copied.
 export default class extends Controller {
-  static targets = ['button', 'output', 'text']
+  static targets = ['button', 'output', 'text', 'error']
   static values = { id: Number }
 
   generate(e) {
     e.preventDefault()
+    this.errorTarget.textContent = ''
 
     const button = e.currentTarget
     const originalButtonHtml = button.innerHTML
@@ -31,7 +32,7 @@ export default class extends Controller {
       this.buttonTarget.classList.add('d-none')
     }).catch((error) => {
       console.error(error)
-      alert(error.message || 'Si è verificato un errore durante la generazione della bozza.')
+      this.errorTarget.textContent = error.message || 'Si è verificato un errore durante la generazione della bozza.'
     }).finally(() => {
       button.innerHTML = originalButtonHtml
       button.removeAttribute('disabled')

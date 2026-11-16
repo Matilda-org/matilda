@@ -509,3 +509,23 @@ a.badge.text-bg-light:hover {
 .protector--masked .protector__hint {
   display: block;
 }
+
+/**
+ * Skip link: hidden until focused, then shown above the fixed navbar
+ */
+
+.c-skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1100;
+  padding: 8px 16px;
+  background-color: var(--bs-white);
+  color: var(--bs-primary);
+  border-radius: var(--bs-border-radius);
+  box-shadow: var(--bs-box-shadow);
+}
+
+#main:focus {
+  outline: none;
+}

@@ -27,6 +27,7 @@ end
         >
           <a
             class="dropdown-item <%= active_folder_id&.to_i == folder[:id] ? 'active' : '' %> h-text-oneline"
+            <%= tag.attributes('aria-current': ('page' if active_folder_id&.to_i == folder[:id])) %>
             href="<%= base_path %>/<%= folder[:id] %>"
             data-turbo-frame="_top"
           >

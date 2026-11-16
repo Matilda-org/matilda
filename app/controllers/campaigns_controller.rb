@@ -19,6 +19,8 @@ class CampaignsController < ApplicationController
       query = query.order(name: :desc)
     elsif params[:sort] == "created_desc"
       query = query.order(created_at: :desc)
+    elsif params[:sort] == "updated_desc"
+      query = query.order(updated_at: :desc)
     else
       query = query.order(name: :asc)
     end

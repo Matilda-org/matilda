@@ -10,9 +10,16 @@ export default class extends Controller {
 
   connect() {
     this._submitDebounced = debounce(this.submit.bind(this), 500)
+    this.beforeSubmit = this.beforeSubmit.bind(this)
+    this.afterSubmit = this.afterSubmit.bind(this)
 
-    this.element.addEventListener('turbo:submit-start', this.beforeSubmit.bind(this))
-    this.element.addEventListener('turbo:submit-end', this.afterSubmit.bind(this))
+    this.element.addEventListener('turbo:submit-start', this.beforeSubmit)
+    this.element.addEventListener('turbo:submit-end', this.afterSubmit)
+  }
+
+  disconnect() {
+    this.element.removeEventListener('turbo:submit-start', this.beforeSubmit)
+    this.element.removeEventListener('turbo:submit-end', this.afterSubmit)
   }
 
   submitDebounced(e) {
@@ -44,8 +51,11 @@ export default class extends Controller {
         url.searchParams.delete(key)
       }
     }
+    // New filters restart from the first page: a stale page could be empty
+    url.searchParams.delete('page')
 
-    window.history.replaceState({}, '', url)
+    // Keep Turbo's restoration state, so Back and scroll restoration still work
+    window.history.replaceState(window.history.state, '', url)
   }
 
   submit() {

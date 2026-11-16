@@ -33,7 +33,7 @@
 
               <li class="nav-item" <%= policy_guard('tools') %>>
                 <a
-                  class="nav-link w-100 <%= @_navbar == 'tools' ? 'active' : '' %>"
+                  class="nav-link w-100 <%= @_navbar == 'tools' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'tools')) %>
                   href="<%= tools_path %>"
                   data-turbo-frame="_top"
                   data-controller="tooltip"
@@ -44,7 +44,7 @@
 
               <li class="nav-item" <%= policy_guard('settings') %>>
                 <a
-                  class="nav-link w-100 <%= @_navbar == 'settings' ? 'active' : '' %>"
+                  class="nav-link w-100 <%= @_navbar == 'settings' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'settings')) %>
                   href="<%= settings_path %>"
                   data-turbo-frame="_top"
                   data-controller="tooltip"

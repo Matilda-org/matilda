@@ -15,6 +15,11 @@ empty_cta_label ||= nil
 empty_cta_href ||= nil
 empty_cta_policy ||= nil
 
+# A filter counts as active only when it narrows the default view
+default_filter = filters.find { |filter| filter[:default] }&.dig(:value)
+filtered = params[:search].present? || params[:tags].present? ||
+  (params[:filters].present? && params[:filters] != default_filter)
+
 %>
 
 <% if search || filters.any? || sorts.any? %>
@@ -54,7 +59,7 @@ empty_cta_policy ||= nil
                   placeholder="Ricerca"
                   aria-label="Ricerca"
                   data-filters-target="inputToClear"
-                  data-action="keyup->filters#submitDebounced"
+                  data-action="input->filters#submitDebounced"
                   value="<%= params[:search] || '' %>"
                 >
                 <button class="btn btn-secondary" type="button" data-filters-target="buttonClear" data-action="click->filters#clear" aria-label="Cancella ricerca"><i class="bi bi-x-circle"></i></button>
@@ -116,6 +121,15 @@ empty_cta_policy ||= nil
 
 <% if query.length.positive? %>
 
+<% if query.respond_to?(:total_count) %>
+  <div class="d-flex align-items-center gap-2 small text-muted mb-2">
+    <span role="status"><%= pluralize(query.total_count, 'risultato', plural: 'risultati') %></span>
+    <% if filtered %>
+      <a href="<%= request.path %>" data-turbo-frame="_top">Rimuovi filtri</a>
+    <% end %>
+  </div>
+<% end %>
+
 <div class="row align-items-stretch">
   <% query.each do |item| %>
     <div class="col col-12 col-md-12 col-lg-6 col-xl-4 mb-3 d-flex align-items-stretch">
@@ -133,8 +147,10 @@ empty_cta_policy ||= nil
 <% else %>
 
 <div class="text-center pt-5 pb-5">
-  <% if params[:search].present? %>
-    <%= render 'shared/placeholder', message: 'Nessun risultato per la ricerca', icon: 'search' %>
+  <% if filtered %>
+    <% message = params[:search].present? ? "Nessun risultato per \"#{params[:search]}\"" : 'Nessun elemento con questi filtri' %>
+    <%= render 'shared/placeholder', message: message, icon: params[:search].present? ? 'search' : 'funnel' %>
+    <a class="btn btn-outline-primary" href="<%= request.path %>" data-turbo-frame="_top">Rimuovi filtri</a>
   <% else %>
     <%= render 'shared/placeholder',
         message: empty_message || 'Nessun elemento da visualizzare',

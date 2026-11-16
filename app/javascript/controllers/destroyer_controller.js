@@ -1,19 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Enables the submit only once the user typed the confirmation word.
+// Listens to `input`, so pasting and autofill count too.
 export default class extends Controller {
   static targets = ['submit']
-
-  connect() {
-    
-  }
+  static values = { word: { type: String, default: 'elimina' } }
 
   update(e) {
-    const value = e.target.value.toLowerCase()
-    // Supporta sia "elimina" che "rigenera"
-    if (value === 'elimina' || value === 'rigenera') {
-      this.submitTarget.disabled = false
-    } else {
-      this.submitTarget.disabled = true
-    }
+    this.submitTarget.disabled = e.target.value.trim().toLowerCase() !== this.wordValue.toLowerCase()
   }
 }

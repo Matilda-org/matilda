@@ -413,25 +413,29 @@ class ProceduresController < ApplicationController
     return unless procedure_finder
     return unless procedures_item_finder
 
-    p = params.permit(:procedures_status_id, :order)
+    p = params.permit(:procedures_status_id, :order, :render_columns)
     target_status = @procedure.procedures_statuses.find_by(id: p[:procedures_status_id])
+    source_status = @item.procedures_status
+    # The card menu ("Sposta in") sends no order: append to the bottom of the target column
+    order = p[:order].presence || (target_status && target_status.procedures_items.where.not(id: @item.id).count + 1)
 
-    if target_status && @item.move(target_status.id, p[:order])
-      # Success: the client already applied the move optimistically and the model
+    if target_status && @item.move(target_status.id, order)
+      # Drag & drop: the client already applied the move optimistically and the model
       # broadcasts the affected columns to every board subscriber (including the
       # actor), so the HTTP response must be an empty stream to avoid a second,
       # redundant re-render of the moved item.
-      render turbo_stream: []
+      # Card menu (render_columns): nothing moved client side, so answer with the
+      # affected columns too, without depending on the broadcast connection.
+      return render turbo_stream: [] if p[:render_columns].blank?
+
+      render turbo_stream: kanban_status_streams([ source_status, target_status ])
     else
       # Failure: revert the optimistic move by re-rendering the involved columns
       # from the persisted state and surface the reason to the user.
       message = @item.errors.full_messages.first || "Impossibile spostare l'elemento."
       @item.reload
 
-      statuses = [ @item.procedures_status, target_status ].compact.uniq
-      streams = statuses.map do |status|
-        turbo_stream.replace(dom_id(status, "kanban-status"), partial: "procedures/kanban-status", locals: { status: status })
-      end
+      streams = kanban_status_streams([ @item.procedures_status, target_status ])
       streams << turbo_stream.append(dom_id(@procedure, "kanban-flash"), partial: "procedures/kanban-flash", locals: { message: message })
 
       render turbo_stream: streams, status: :unprocessable_entity
@@ -439,6 +443,12 @@ class ProceduresController < ApplicationController
   end
 
   private
+
+  def kanban_status_streams(statuses)
+    statuses.compact.uniq.map do |status|
+      turbo_stream.replace(dom_id(status, "kanban-status"), partial: "procedures/kanban-status", locals: { status: status.reload })
+    end
+  end
 
   def procedure_params
     params.permit(:name, :description, :resources_type, :model, :project_primary)

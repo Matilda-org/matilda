@@ -52,7 +52,7 @@ class VectorsearchController < ApplicationController
       .content
     data = JSON.parse(data) rescue nil
 
-    render json: data || { error: "Invalid JSON format" }
+    render json: data || { error: "L'assistente non ha restituito dati validi, riprova." }
   end
 
   # Drafts the first message (to_send) or the reminder (sent) of a CRM communication.

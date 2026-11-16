@@ -261,4 +261,53 @@ class ProceduresControllerTest < ActionController::TestCase
     assert_response :unprocessable_content
     assert_equal original_status_id, item.reload.procedures_status_id
   end
+
+  test "show renders column counts and the card move menu" do
+    @user.users_policies.create!(policy: "procedures_show")
+    procedure = procedures(:one)
+    source = procedure.procedures_statuses.first
+    target = procedure.procedures_statuses.create!(title: "Target status")
+    # Task boards only show items backed by a task
+    item = procedure.procedures_items.create!(procedures_status: source, title: "With task", resource: tasks(:one), order: 1)
+
+    get :show, params: { id: procedure.id }
+
+    assert_response :success
+    assert_select "##{ActionView::RecordIdentifier.dom_id(source, "kanban-status")} .badge", text: "1"
+    assert_select "##{ActionView::RecordIdentifier.dom_id(target, "kanban-status")} .badge", text: "0"
+    assert_select "form[action='#{procedures_move_item_action_path(id: procedure.id, item_id: item.id)}'] input[name='procedures_status_id'][value='#{target.id}']"
+    assert_select "form[action='#{procedures_move_item_action_path(id: procedure.id, item_id: item.id)}'] input[name='procedures_status_id'][value='#{source.id}']", count: 0
+  end
+
+  test "move_item_action from the card menu appends to the target and re-renders both columns" do
+    @user.users_policies.create!(policy: "procedures_edit")
+    procedure = procedures(:one)
+    item = procedure.procedures_items.first
+    source = item.procedures_status
+    target = procedure.procedures_statuses.create!(title: "Target status")
+    existing = procedure.procedures_items.create!(procedures_status: target, title: "Existing", order: 1)
+
+    post :move_item_action, params: { id: procedure.id, item_id: item.id, procedures_status_id: target.id, render_columns: 1 }, format: :turbo_stream
+
+    assert_response :success
+    item.reload
+    assert_equal target.id, item.procedures_status_id
+    assert_equal 2, item.order
+    assert_equal 1, existing.reload.order
+    assert_includes response.body, %(target="#{ActionView::RecordIdentifier.dom_id(source, "kanban-status")}")
+    assert_includes response.body, %(target="#{ActionView::RecordIdentifier.dom_id(target, "kanban-status")}")
+  end
+
+  test "move_item_action from drag and drop answers with an empty stream" do
+    @user.users_policies.create!(policy: "procedures_edit")
+    procedure = procedures(:one)
+    item = procedure.procedures_items.first
+    target = procedure.procedures_statuses.create!(title: "Target status")
+
+    post :move_item_action, params: { id: procedure.id, item_id: item.id, procedures_status_id: target.id, order: 1 }, format: :turbo_stream
+
+    assert_response :success
+    assert_equal target.id, item.reload.procedures_status_id
+    assert_not_includes response.body, "kanban-status"
+  end
 end

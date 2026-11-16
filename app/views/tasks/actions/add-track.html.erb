@@ -8,7 +8,8 @@ durations = [
   ['4 h', 14400],
   ['6 h', 21600],
   ['8 h', 28800],
-  ['12 h', 43200]
+  ['12 h', 43200],
+  ['Personalizzato', 'custom']
 ]
 
 %>
@@ -23,7 +24,7 @@ durations = [
         class: 'c-modal-form', data: { controller: 'manual-track form-loading' } do %>
 
     <div class="c-modal-form__fields">
-      <p class="text-muted">Registra del tempo di lavoro per questo task scegliendo il giorno e una durata.</p>
+      <p class="text-muted">Registra del tempo di lavoro per questo task scegliendo il giorno e una durata, oppure inserendone una personalizzata.</p>
 
       <div class="mb-3">
         <label for="date" class="form-label">Giorno</label>
@@ -40,20 +41,58 @@ durations = [
 
       <div class="mb-2">
         <label class="form-label">Durata</label>
-        <input type="hidden" name="duration" data-manual-track-target="duration">
+        <input type="hidden" name="duration" value="<%= params[:duration] %>" data-manual-track-target="duration">
         <div class="row row-cols-4 g-2">
-          <% durations.each do |label, seconds| %>
-            <div class="col">
+          <% durations.each do |label, value| %>
+            <div class="<%= value == 'custom' ? 'col-12' : 'col' %>">
               <button
                 type="button"
-                class="btn btn-outline-primary w-100"
+                class="btn btn-outline-primary w-100<%= ' active' if params[:duration].to_s == value.to_s %>"
                 data-manual-track-target="button"
-                data-seconds="<%= seconds %>"
+                data-seconds="<%= value %>"
                 data-action="click->manual-track#select"
               ><%= label %></button>
             </div>
           <% end %>
         </div>
+
+        <div class="mt-3" data-manual-track-target="custom" <%= 'hidden' unless params[:duration] == 'custom' %>>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control<%= ' is-invalid' if @duration_error %>"
+              id="hours"
+              name="hours"
+              value="<%= params[:hours] %>"
+              min="0"
+              max="24"
+              step="1"
+              inputmode="numeric"
+              placeholder="0"
+              aria-label="Ore"
+              data-manual-track-target="hours"
+            >
+            <span class="input-group-text">h</span>
+            <input
+              type="number"
+              class="form-control<%= ' is-invalid' if @duration_error %>"
+              id="minutes"
+              name="minutes"
+              value="<%= params[:minutes] %>"
+              min="0"
+              max="59"
+              step="1"
+              inputmode="numeric"
+              placeholder="0"
+              aria-label="Minuti"
+            >
+            <span class="input-group-text">min</span>
+          </div>
+        </div>
+
+        <% if @duration_error %>
+          <div class="invalid-feedback d-block"><%= @duration_error %></div>
+        <% end %>
       </div>
     </div>
 
@@ -63,7 +102,7 @@ durations = [
         class="btn btn-primary btn-form-submit"
         data-manual-track-target="submit"
         data-form-loading-target="submit"
-        disabled
+        <%= "disabled" if params[:duration].blank? %>
       >Aggiungi tempo</button>
     </div>
 

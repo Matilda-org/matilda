@@ -13,7 +13,8 @@ export default class extends Controller {
     'deadlineInput',
     'deadlineInfo',
     'timeEstimateInput',
-    'timeEstimateBtn'
+    'timeEstimateBtn',
+    'aiError'
   ]
 
   connect() {
@@ -197,10 +198,11 @@ export default class extends Controller {
 
   onClickConvertContentToChecklist(e) {
     e.preventDefault()
+    this.aiErrorTarget.textContent = ''
 
     const contentValue = this.element.querySelector('input[name="content"]').value
     if (!contentValue) {
-      alert('Please enter a task content before converting it to a checklist.')
+      this.aiErrorTarget.textContent = 'Scrivi o incolla un testo nel contenuto del task prima di convertirlo in checklist.'
       return
     }
 
@@ -219,6 +221,8 @@ export default class extends Controller {
     }).then((response) => {
       return response.json()
     }).then((response) => {
+      if (response.error) throw new Error(response.error)
+
       const checklistAccordion = this.element.querySelector('#formTaskAccordionChecks')
       if (!checklistAccordion.classList.contains('show')) {
         const checklistAccordionButton = this.element.querySelector('button[data-bs-target="#formTaskAccordionChecks"]')
@@ -237,7 +241,7 @@ export default class extends Controller {
     }).catch((error) => {
       console.error(error)
 
-      alert('An error occurred while converting the content to a checklist.')
+      this.aiErrorTarget.textContent = error.message || 'Si è verificato un errore durante la conversione in checklist.'
       button.innerText = originalButtonText
       button.removeAttribute('disabled')
     })
@@ -247,10 +251,11 @@ export default class extends Controller {
   // title, deadline, estimate, assignee and checklist. The content is kept as is.
   onClickFillFromContent(e) {
     e.preventDefault()
+    this.aiErrorTarget.textContent = ''
 
     const contentValue = this.element.querySelector('input[name="content"]').value
     if (!contentValue) {
-      alert('Scrivi o incolla un testo nel contenuto del task prima di compilare i campi.')
+      this.aiErrorTarget.textContent = 'Scrivi o incolla un testo nel contenuto del task prima di compilare i campi.'
       return
     }
 
@@ -284,7 +289,7 @@ export default class extends Controller {
       this._appendChecks(response.checklist || [])
     }).catch((error) => {
       console.error(error)
-      alert(error.message || 'Si è verificato un errore durante la compilazione dei campi.')
+      this.aiErrorTarget.textContent = error.message || 'Si è verificato un errore durante la compilazione dei campi.'
     }).finally(() => {
       button.innerText = originalButtonText
       button.removeAttribute('disabled')

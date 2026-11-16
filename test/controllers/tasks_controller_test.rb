@@ -329,4 +329,35 @@ class TasksControllerTest < ActionController::TestCase
 
     assert_equal start_at.to_date, track.reload.start_at.to_date
   end
+
+  test "add_track_action with a custom duration" do
+    task = tasks(:one)
+    before = task.time_spent
+    matilda_controller_endpoint(:post, :add_track_action,
+      params: { id: task.id, date: Date.today.strftime("%Y-%m-%d"), duration: "custom", hours: "1", minutes: "30" },
+      policy: "tasks_track",
+      title: "Aggiungi tempo",
+      feedback: "Tempo aggiunto"
+    )
+
+    task.reload
+    assert_equal before + 90.minutes.to_i, task.time_spent
+    assert_equal 90.minutes.to_i, task.tasks_tracks.order(:created_at).last.time_spent
+  end
+
+  test "add_track_action with an invalid custom duration shows an inline error" do
+    task = tasks(:one)
+    @user.users_policies.create!(policy: "tasks_track")
+    before = task.time_spent
+
+    [ { hours: "0", minutes: "0" }, { hours: "1", minutes: "75" }, { hours: "24", minutes: "30" }, { hours: "abc", minutes: "" } ].each do |custom|
+      post :add_track_action, params: { id: task.id, date: Date.today.strftime("%Y-%m-%d"), duration: "custom" }.merge(custom)
+
+      assert_response :unprocessable_content
+      assert_includes response.body, "Inserisci una durata valida"
+      assert_includes response.body, "is-invalid"
+    end
+
+    assert_equal before, task.reload.time_spent
+  end
 end

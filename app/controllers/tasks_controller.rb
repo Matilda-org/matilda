@@ -275,11 +275,22 @@ class TasksController < ApplicationController
     return unless task_finder
 
     date = safe_date(params[:date], Date.today)
-    duration = params[:duration].to_i
+    duration =
+      if params[:duration] == "custom"
+        # base 10 so "08"/"09" are not parsed as octal; nil on anything non-numeric
+        hours = Integer(params[:hours].to_s.presence || "0", 10, exception: false)
+        minutes = Integer(params[:minutes].to_s.presence || "0", 10, exception: false)
+        hours && minutes && hours >= 0 && minutes.between?(0, 59) ? (hours * 3600) + (minutes * 60) : 0
+      else
+        params[:duration].to_i
+      end
+
+    unless duration.between?(1, 24 * 3600)
+      @duration_error = "Inserisci una durata valida, da 1 minuto a 24 ore."
+      return render "tasks/actions/add-track", status: :unprocessable_content
+    end
 
     begin
-      raise ArgumentError, "Durata non valida" unless duration.positive?
-
       @task.add_manual_track!(user: @session_user, date: date, duration: duration)
     rescue StandardError => e
       Rails.logger.error e
@@ -389,7 +400,10 @@ class TasksController < ApplicationController
     @comment.user_id = @session_user_id
     return render partial: "tasks/shared/comments", locals: { task: @task } if @comment.save
 
-    render partial: "tasks/shared/comments", locals: { task: @task }
+    # Keep the draft in the composer so a failed save never loses the text
+    render partial: "tasks/shared/comments",
+           locals: { task: @task, draft: @comment.content, error: @comment.errors.full_messages.to_sentence },
+           status: :unprocessable_entity
   end
 
   def destroy_comment_action
@@ -399,10 +413,7 @@ class TasksController < ApplicationController
     comment = @task.tasks_comments.find_by(id: params[:comment_id])
     comment.destroy if comment&.deletable_by?(@session_user_id)
 
-    # Keep the draft in the composer so a failed save never loses the text
-    render partial: "tasks/shared/comments",
-           locals: { task: @task, draft: @comment.content, error: @comment.errors.full_messages.to_sentence },
-           status: :unprocessable_entity
+    render partial: "tasks/shared/comments", locals: { task: @task }
   end
 
   private
