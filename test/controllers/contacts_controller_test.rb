@@ -133,4 +133,70 @@ class ContactsControllerTest < ActionController::TestCase
     )
     assert_nil project.reload.contact_id
   end
+
+  # BULK ACTIONS
+  ##############################################################################
+
+  test "bulk_action archives contacts and the undo restores them" do
+    grant_policy("crm")
+    one = contacts(:one)
+    two = Contact.create!(name: "Contact Two")
+
+    post :bulk_action, params: { operation: "archive", ids: [ one.id, two.id, 99_999 ] }
+
+    assert_response :success
+    assert_includes @response.body, "<h3 class=\"fs-5 mb-1\">2 contatti archiviati</h3>"
+    assert one.reload.archived
+    assert two.reload.archived
+
+    # Replay the undo the feedback offers
+    undo_href = CGI.unescapeHTML(@response.body[%r{action="([^"]*bulk-action[^"]*)"}, 1])
+    undo_params = Rack::Utils.parse_nested_query(URI.parse(undo_href).query)
+    assert_equal "unarchive", undo_params["operation"]
+
+    post :bulk_action, params: undo_params
+
+    assert_response :success
+    assert_includes @response.body, "2 contatti ripristinati"
+    assert_not one.reload.archived
+    assert_not two.reload.archived
+    assert_not_includes @response.body, "operation=archive"
+  end
+
+  test "bulk_action only touches contacts not already in the target state" do
+    grant_policy("crm")
+    one = contacts(:one)
+    archived = Contact.create!(name: "Archived", archived: true)
+
+    post :bulk_action, params: { operation: "archive", ids: [ one.id, archived.id ] }
+
+    assert_includes @response.body, "1 contatto archiviato"
+    assert_includes @response.body, "ids%5B%5D=#{one.id}"
+    assert_not_includes @response.body, "ids%5B%5D=#{archived.id}"
+  end
+
+  test "bulk_action requires the crm policy and a known operation" do
+    contact = contacts(:one)
+
+    post :bulk_action, params: { operation: "archive", ids: [ contact.id ] }
+    assert_redirected_to root_path
+    assert_not contact.reload.archived
+
+    grant_policy("crm")
+    Rails.cache.clear
+    post :bulk_action, params: { operation: "destroy", ids: [ contact.id ] }
+    assert_includes @response.body, "id=\"action-modal-title\">Errore</h3>"
+    assert Contact.exists?(contact.id)
+  end
+
+  test "index renders the selection mode without the folder action" do
+    grant_policy("crm")
+
+    get :index
+
+    assert_response :success
+    assert_includes @response.body, "data-controller=\"bulk-select\""
+    assert_includes @response.body, "aria-label=\"Seleziona #{contacts(:one).name}\""
+    assert_not_includes @response.body, "Sposta in cartella"
+  end
 end

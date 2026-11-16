@@ -1,0 +1,23 @@
+<%= render 'shared/action-container', title: 'Sposta in cartella' do %>
+  <% if @projects.any? %>
+    <%= form_tag projects_bulk_action_path, class: 'row', data: { controller: 'form-loading' } do %>
+      <%= hidden_field_tag :operation, 'move', id: nil %>
+      <% @projects.each do |project| %>
+        <%= hidden_field_tag 'ids[]', project.id, id: nil %>
+      <% end %>
+
+      <p class="col col-12"><%= pluralize(@projects.size, 'progetto selezionato', plural: 'progetti selezionati') %>: <%= @projects.map(&:name).to_sentence(last_word_connector: ' e ', two_words_connector: ' e ') %>.</p>
+
+      <div class="col col-12 mb-3">
+        <label for="bulk_folder_id" class="form-label">Cartella</label>
+        <%= select_tag :folder_id, options_for_select([['NESSUNA CARTELLA', '']] + Folder.order(name: :asc).map { |f| [f.name, f.id] }), id: 'bulk_folder_id', class: 'form-select' %>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary btn-form-submit" data-form-loading-target="submit">Conferma</button>
+      </div>
+    <% end %>
+  <% else %>
+    <%= render 'shared/placeholder', message: 'Nessun progetto selezionato', icon: 'folder2-open' %>
+  <% end %>
+<% end %>

@@ -395,4 +395,149 @@ class ProjectsControllerTest < ActionController::TestCase
 
     assert_not project.projects_attachments.where(id: attachment.id).exists?
   end
+
+  # BULK ACTIONS
+  ##############################################################################
+
+  test "bulk_action archives the selected projects and offers an undo" do
+    grant_policy("projects_archive", "projects_unarchive")
+    one = projects(:one)
+    two = Project.create!(code: "two", name: "Project Two", year: 2024)
+
+    post :bulk_action, params: { operation: "archive", ids: [ one.id, two.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "<h3 class=\"fs-5 mb-1\">2 progetti archiviati</h3>"
+    assert one.reload.archived
+    assert two.reload.archived
+    assert_includes @response.body, "operation=unarchive"
+  end
+
+  test "bulk_action undo restores the same projects without a further undo" do
+    grant_policy("projects_archive", "projects_unarchive")
+    one = projects(:one)
+    two = Project.create!(code: "two", name: "Project Two", year: 2024)
+    one.update!(archived: true)
+    two.update!(archived: true)
+
+    post :bulk_action, params: { operation: "unarchive", ids: [ one.id, two.id ], undo: 1 }
+
+    assert_response :success
+    assert_includes @response.body, "2 progetti ripristinati"
+    assert_not one.reload.archived
+    assert_not two.reload.archived
+    assert_not_includes @response.body, "operation=archive"
+  end
+
+  test "bulk_action requires the policy of the operation" do
+    grant_policy("projects_unarchive", "folders_manage_resources")
+    project = projects(:one)
+
+    post :bulk_action, params: { operation: "archive", ids: [ project.id ] }
+
+    assert_redirected_to root_path
+    assert_not project.reload.archived
+  end
+
+  test "bulk_action rejects unknown operations" do
+    grant_policy("projects_archive")
+    project = projects(:one)
+
+    post :bulk_action, params: { operation: "destroy", ids: [ project.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "id=\"action-modal-title\">Errore</h3>"
+    assert Project.exists?(project.id)
+  end
+
+  test "bulk_action ignores projects outside the membership limit" do
+    grant_policy("projects_archive", "only_data_projects_as_member")
+    mine = projects(:one)
+    mine.projects_members.create!(user: @user, role: "member")
+    other = Project.create!(code: "other", name: "Other Project", year: 2024)
+
+    post :bulk_action, params: { operation: "archive", ids: [ mine.id, other.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "1 progetto archiviato"
+    assert mine.reload.archived
+    assert_not other.reload.archived
+  end
+
+  test "bulk_action without the reverse policy offers no undo" do
+    grant_policy("projects_archive")
+
+    post :bulk_action, params: { operation: "archive", ids: [ projects(:one).id ] }
+
+    assert_response :success
+    assert projects(:one).reload.archived
+    assert_not_includes @response.body, "operation=unarchive"
+  end
+
+  test "bulk_action moves projects to a folder and the undo puts them back" do
+    grant_policy("folders_manage_resources")
+    folder = folders(:one)
+    previous_folder = Folder.create!(name: "Previous Folder")
+    one = projects(:one)
+    two = Project.create!(code: "two", name: "Project Two", year: 2024)
+    two.create_folders_item!(folder: previous_folder)
+
+    post :bulk_action, params: { operation: "move", ids: [ one.id, two.id ], folder_id: folder.id }
+
+    assert_response :success
+    assert_includes @response.body, "2 progetti spostati"
+    assert_equal folder.id, one.reload.folders_item.folder_id
+    assert_equal folder.id, two.reload.folders_item.folder_id
+
+    # Replay the undo the feedback offers
+    undo_href = CGI.unescapeHTML(@response.body[%r{action="([^"]*bulk-action[^"]*)"}, 1])
+    undo_params = Rack::Utils.parse_nested_query(URI.parse(undo_href).query)
+    assert_equal "1", undo_params["undo"]
+
+    post :bulk_action, params: undo_params
+
+    assert_response :success
+    assert_nil one.reload.folders_item
+    assert_equal previous_folder.id, two.reload.folders_item.folder_id
+  end
+
+  test "bulk_action move ignores unknown folders and hidden projects" do
+    grant_policy("folders_manage_resources", "only_data_projects_as_member")
+    mine = projects(:one)
+    mine.projects_members.create!(user: @user, role: "member")
+    other = Project.create!(code: "other", name: "Other Project", year: 2024)
+
+    post :bulk_action, params: { operation: "move", ids: [ mine.id ], folder_id: 99_999 }
+    assert_includes @response.body, "Nessun progetto spostato"
+    assert_nil mine.reload.folders_item
+
+    post :bulk_action, params: { operation: "move", ids: [ mine.id, other.id ], folder_id: folders(:one).id }
+    assert_includes @response.body, "1 progetto spostato"
+    assert_equal folders(:one).id, mine.reload.folders_item.folder_id
+    assert_nil other.reload.folders_item
+  end
+
+  test "bulk-move modal lists only the visible selected projects" do
+    grant_policy("projects_show", "only_data_projects_as_member")
+    mine = projects(:one)
+    mine.projects_members.create!(user: @user, role: "member")
+    other = Project.create!(code: "other", name: "Other Project", year: 2024)
+
+    get :actions, params: { type: "bulk-move", ids: [ mine.id, other.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "id=\"action-modal-title\">Sposta in cartella</h3>"
+    assert_includes @response.body, mine.name
+    assert_not_includes @response.body, other.name
+  end
+
+  test "index renders the selection mode for bulk actions" do
+    grant_policy("projects_index", "projects_archive")
+
+    get :index
+
+    assert_response :success
+    assert_includes @response.body, "data-controller=\"bulk-select\""
+    assert_includes @response.body, "aria-label=\"Seleziona #{projects(:one).name}\""
+  end
 end

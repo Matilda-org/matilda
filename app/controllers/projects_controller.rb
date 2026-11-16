@@ -2,6 +2,14 @@
 
 # ProjectsController.
 class ProjectsController < ApplicationController
+  include BulkActions
+
+  BULK_POLICIES = {
+    "archive" => "projects_archive",
+    "unarchive" => "projects_unarchive",
+    "move" => "folders_manage_resources"
+  }.freeze
+
   before_action :validate_session_user!, except: :show_log
   before_action do
     @_navbar = "projects"
@@ -95,6 +103,10 @@ class ProjectsController < ApplicationController
     return render "projects/actions/destroy" if @type == "destroy"
     return render "projects/actions/add_procedure" if @type == "add-procedure"
     return render "projects/actions/add_procedures_item" if @type == "add-procedures-item"
+    if @type == "bulk-move"
+      @projects = query_projects_for_policy.where(id: bulk_ids).order(name: :asc)
+      return render "projects/actions/bulk_move"
+    end
 
     return render "projects/actions/add_member" if @type == "add-member"
     if @type == "edit-member"
@@ -228,6 +240,17 @@ class ProjectsController < ApplicationController
         type: "success"
       }
     }
+  end
+
+  # Selection mode of the index: archive, unarchive or move many projects at once.
+  # Same policies and visibility as the single-record actions.
+  def bulk_action
+    policy = BULK_POLICIES[params[:operation]]
+    return render partial: "shared/action-error" unless policy
+    return unless validate_policy!(policy)
+
+    projects = query_projects_for_policy.where(id: bulk_ids)
+    params[:operation] == "move" ? bulk_move(projects) : bulk_archive(projects, params[:operation] == "archive")
   end
 
   def destroy_action
@@ -533,6 +556,50 @@ class ProjectsController < ApplicationController
   end
 
   private
+
+  def bulk_archive(projects, archived)
+    changed = bulk_set_archived(projects, archived, archived_reason: nil)
+    return render_bulk_feedback(title: "Nessun progetto modificato", success: false) if changed.empty?
+
+    reverse = archived ? "unarchive" : "archive"
+    render_bulk_feedback(
+      title: archived ? helpers.pluralize(changed.size, "progetto archiviato", plural: "progetti archiviati") : helpers.pluralize(changed.size, "progetto ripristinato", plural: "progetti ripristinati"),
+      subtitle: archived ? "Visibili nel filtro Archiviati." : "Di nuovo visibili tra gli Attivi.",
+      undo_href: bulk_undo_allowed?(BULK_POLICIES[reverse]) && projects_bulk_action_path(operation: reverse, ids: changed.map(&:id), undo: 1)
+    )
+  end
+
+  # A move sends one folder_id for every project (blank = no folder); its undo
+  # sends each project's previous folder as folders[project_id]
+  def bulk_move(projects)
+    targets = params[:folders].respond_to?(:permit) ? params[:folders].permit(*bulk_ids.map(&:to_s)).to_h : nil
+    folder_ids = Folder.pluck(:id).map(&:to_s)
+    previous = {}
+
+    projects.includes(:folders_item).each do |project|
+      target = targets ? targets[project.id.to_s] : params[:folder_id].to_s
+      next if target.nil? || (target.present? && !folder_ids.include?(target))
+
+      current = project.folders_item&.folder_id.to_s
+      next if current == target
+
+      previous[project.id] = current
+      project.folders_item&.destroy
+      Folders::Item.create!(resource: project, folder_id: target) if target.present?
+    end
+    return render_bulk_feedback(title: "Nessun progetto spostato", success: false) if previous.empty?
+
+    folder = Folder.find_by(id: params[:folder_id]) unless targets
+    render_bulk_feedback(
+      title: helpers.pluralize(previous.size, "progetto spostato", plural: "progetti spostati"),
+      subtitle: if targets
+                  "Ripristinata la cartella precedente di ogni progetto."
+                else
+                  folder ? "Destinazione: #{folder.name}." : "Rimossi dalla cartella."
+                end,
+      undo_href: bulk_undo_allowed?("folders_manage_resources") && projects_bulk_action_path(operation: "move", ids: previous.keys, folders: previous, undo: 1)
+    )
+  end
 
   def project_params
     params.permit(:code, :name, :year, :description, :budget_management, :budget_money, :budget_time, :contact_id)

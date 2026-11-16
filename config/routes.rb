@@ -44,6 +44,7 @@ Rails.application.routes.draw do
   post "projects/archive-action/:id", to: "projects#archive_action", as: "projects_archive_action"
   post "projects/unarchive-action/:id", to: "projects#unarchive_action", as: "projects_unarchive_action"
   post "projects/destroy-action/:id", to: "projects#destroy_action", as: "projects_destroy_action"
+  post "projects/bulk-action", to: "projects#bulk_action", as: "projects_bulk_action"
   post "projects/add-procedure-action/:id", to: "projects#add_procedure_action", as: "projects_add_procedure_action"
   post "projects/add-procedures-item-action/:id", to: "projects#add_procedures_item_action", as: "projects_add_procedures_item_action"
   post "projects/add-member-action/:id", to: "projects#add_member_action", as: "projects_add_member_action"
@@ -101,6 +102,7 @@ Rails.application.routes.draw do
   post "contacts/destroy-action/:id", to: "contacts#destroy_action", as: "contacts_destroy_action"
   post "contacts/archive-action/:id", to: "contacts#archive_action", as: "contacts_archive_action"
   post "contacts/unarchive-action/:id", to: "contacts#unarchive_action", as: "contacts_unarchive_action"
+  post "contacts/bulk-action", to: "contacts#bulk_action", as: "contacts_bulk_action"
   post "contacts/link-project-action/:id", to: "contacts#link_project_action", as: "contacts_link_project_action"
   post "contacts/unlink-project-action/:id/:project_id", to: "contacts#unlink_project_action", as: "contacts_unlink_project_action"
 

@@ -1,0 +1,64 @@
+// Selection mode of shared/page-index (bulk-select controller).
+// Cards keep their normal layout: the checkbox only shows while selecting and sits
+// on the card's top-left corner, outside the card, so nothing inside it moves.
+
+.c-bulk-select__item {
+  position: relative;
+}
+
+.c-bulk-select__check {
+  display: none;
+  position: absolute;
+  top: -0.5rem;
+  left: calc(var(--bs-gutter-x) * 0.5 - 0.5rem);
+  z-index: 3;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.c-bulk-select--active {
+  .c-bulk-select__check {
+    display: block;
+  }
+
+  .c-bulk-select__item {
+    cursor: pointer;
+  }
+
+  .c-bulk-select__item:has(.c-bulk-select__check:checked) .c-card {
+    box-shadow: 0 0 0 0.25rem var(--bs-primary);
+  }
+}
+
+.c-bulk-select__bar {
+  bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  // Clears the AI assistant opener (60px, fixed 30px from the bottom-right corner)
+  margin-right: 5.5rem;
+}
+
+.c-bulk-select__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+
+  // Underlined like the other text links of the app (e.g. card "Visualizza")
+  .btn-link {
+    padding: 0;
+  }
+}
+
+.c-bulk-select__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

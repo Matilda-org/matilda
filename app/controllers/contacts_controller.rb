@@ -2,6 +2,8 @@
 
 # ContactsController.
 class ContactsController < ApplicationController
+  include BulkActions
+
   before_action :validate_session_user!
   before_action do
     @_navbar = "contacts"
@@ -142,6 +144,22 @@ class ContactsController < ApplicationController
         type: "success"
       }
     }
+  end
+
+  # Selection mode of the index: archive or unarchive many contacts at once
+  def bulk_action
+    return unless validate_policy!("crm")
+    return render partial: "shared/action-error" unless %w[archive unarchive].include?(params[:operation])
+
+    archived = params[:operation] == "archive"
+    changed = bulk_set_archived(Contact.where(id: bulk_ids), archived)
+    return render_bulk_feedback(title: "Nessun contatto modificato", success: false) if changed.empty?
+
+    render_bulk_feedback(
+      title: archived ? helpers.pluralize(changed.size, "contatto archiviato", plural: "contatti archiviati") : helpers.pluralize(changed.size, "contatto ripristinato", plural: "contatti ripristinati"),
+      subtitle: archived ? "Visibili nel filtro Archiviati." : "Di nuovo visibili tra gli Attivi.",
+      undo_href: bulk_undo_allowed?("crm") && contacts_bulk_action_path(operation: archived ? "unarchive" : "archive", ids: changed.map(&:id), undo: 1)
+    )
   end
 
   # PROJECTS

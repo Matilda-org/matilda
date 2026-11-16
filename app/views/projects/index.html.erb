@@ -27,5 +27,13 @@
   empty_icon: 'folder2-open',
   empty_cta_label: 'Crea il primo progetto',
   empty_cta_href: projects_actions_path(type: 'create', folder_id: @folder&.id),
-  empty_cta_policy: 'projects_create'
+  empty_cta_policy: 'projects_create',
+  bulk: {
+    path: projects_bulk_action_path,
+    policy: %w[projects_archive projects_unarchive folders_manage_resources].find { |policy| @session_user&.policy?(policy) } || 'projects_archive',
+    archive_policy: 'projects_archive',
+    unarchive_policy: 'projects_unarchive',
+    move_href: projects_actions_path(type: 'bulk-move'),
+    move_policy: 'folders_manage_resources'
+  }
 %>
