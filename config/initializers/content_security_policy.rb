@@ -14,8 +14,8 @@ Rails.application.configure do
     policy.frame_ancestors :none
     policy.object_src  :none
     policy.script_src  :self, "https://ga.jspm.io", "https://cdn.jsdelivr.net", "https://unpkg.com"
-    policy.style_src   :self, :unsafe_inline, "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://unpkg.com"
-    policy.font_src    :self, :data, "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"
+    policy.style_src   :self, :unsafe_inline, "https://unpkg.com"
+    policy.font_src    :self, :data
     policy.img_src     :self, :data, :blob, :https
     policy.media_src   :self, :data, :blob, :https
     policy.connect_src :self, :wss, "https://ga.jspm.io"
