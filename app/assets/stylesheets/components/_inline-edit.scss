@@ -1,0 +1,57 @@
+// Click-to-edit values of the task detail (tasks/shared/_inline-field).
+// The trigger keeps the look of the read-only value: only a soft highlight
+// and a pencil appear on hover/focus.
+turbo-frame.c-inline-edit {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.c-inline-edit__trigger {
+  // inline-flex keeps the pencil on the value's line: as an inline-block the
+  // hidden pencil wrapped to an invisible second line and added a gap
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  max-width: 100%;
+  // Short values (deadline, assignee, estimate) stay on one line; only the title wraps
+  white-space: nowrap;
+  margin: -0.1rem -0.25rem;
+  padding: 0.1rem 0.25rem;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0.25rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(var(--bs-body-color-rgb), 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 1px;
+  }
+}
+
+.c-inline-edit__icon {
+  flex-shrink: 0;
+  font-size: 0.75em;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+
+  .c-inline-edit__trigger:hover &,
+  .c-inline-edit__trigger:focus-visible & {
+    opacity: 0.6;
+  }
+
+  // touch screens have no hover: keep the affordance visible
+  @media (hover: none) {
+    opacity: 0.4;
+  }
+}
+
+h3 > .c-inline-edit__trigger {
+  white-space: normal;
+}

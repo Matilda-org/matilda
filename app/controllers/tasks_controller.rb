@@ -2,6 +2,9 @@
 
 # TasksController.
 class TasksController < ApplicationController
+  # Fields the task detail can edit inline (update_field_action)
+  INLINE_FIELDS = %w[title deadline user_id time_estimate].freeze
+
   before_action :validate_session_user!
   before_action do
     @_navbar = "tasks"
@@ -137,8 +140,7 @@ class TasksController < ApplicationController
     return unless task_finder
 
     @projects_for_position = query_projects_for_policy.not_archived.order(name: :asc)
-    return render "tasks/actions/edit" unless @task.update(task_params)
-    @task.update(accepted: true) if @session_user.policy?("tasks_acceptance") && !@task.accepted
+    return render "tasks/actions/edit" unless update_task(task_params)
 
     render partial: "shared/action-feedback", locals: {
       title: "Modifica task",
@@ -151,6 +153,29 @@ class TasksController < ApplicationController
         type: "success"
       }
     }
+  end
+
+  # Click-to-edit on the task detail: saves a single whitelisted field and answers
+  # with its turbo-frame, re-rendered as text (or still open with the error).
+  def update_field_action
+    return unless validate_policy!("tasks_edit")
+    return unless task_finder
+
+    field = params[:field].to_s
+    frame = params[:frame].to_s[/\A\h{1,16}\z/]
+    return head :bad_request unless INLINE_FIELDS.include?(field) && frame
+
+    value = params[:value].to_s
+    error = inline_field_error(field, value)
+    if error.nil? && !update_task(field => value.presence)
+      error = (@task.errors.messages_for(field).presence || @task.errors.full_messages).to_sentence.upcase_first
+      @task.restore_attributes
+    end
+
+    locals = { task: @task, field: field, frame: frame }
+    return render partial: "tasks/shared/inline-field", locals: locals.merge(focus: true) unless error
+
+    render partial: "tasks/shared/inline-field", locals: locals.merge(value: value, error: error), status: :unprocessable_entity
   end
 
   def destroy_action
@@ -419,6 +444,35 @@ class TasksController < ApplicationController
   end
 
   private
+
+  # Shared by the edit form and the inline editor, so both trigger the same side effects
+  def update_task(attributes)
+    return false unless @task.update(attributes)
+
+    @task.update(accepted: true) if @session_user.policy?("tasks_acceptance") && !@task.accepted
+    true
+  end
+
+  # Values the model would silently cast to nil (bad date, unknown user/estimate) are rejected here
+  def inline_field_error(field, value)
+    return if value.blank?
+
+    case field
+    when "deadline"
+      "Data non valida" unless iso_date?(value)
+    when "user_id"
+      "Utente non valido" unless User.exists?(id: value)
+    when "time_estimate"
+      "Stima non valida" unless Task::TIME_ESTIMATE_OPTIONS.any? { |_label, seconds| seconds.to_s == value }
+    end
+  end
+
+  def iso_date?(value)
+    Date.iso8601(value)
+    true
+  rescue Date::Error
+    false
+  end
 
   def task_params
     params.permit(

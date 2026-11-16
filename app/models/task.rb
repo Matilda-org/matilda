@@ -12,6 +12,25 @@ class Task < ApplicationRecord
   enum :repeat_type, { weekly: 0, monthly: 1 }, prefix: true
   enum :repeat_monthday, { first: 0, last: 1, middle: 2 }, prefix: true
 
+  # Time estimate choices (label, seconds) offered by the task form and the inline editor
+  TIME_ESTIMATE_OPTIONS = [
+    [ "15 minuti", 900 ],
+    [ "30 minuti", 1800 ],
+    [ "1 ora", 3600 ],
+    [ "2 ore", 7200 ],
+    [ "3 ore", 10800 ],
+    [ "4 ore", 14400 ],
+    [ "6 ore", 21600 ],
+    [ "8 ore", 28800 ],
+    [ "12 ore", 43200 ],
+    [ "2 giorni", 57600 ],
+    [ "3 giorni", 86400 ],
+    [ "5 giorni", 144000 ],
+    [ "10 giorni", 288000 ],
+    [ "20 giorni", 576000 ],
+    [ "40 giorni", 1152000 ]
+  ].freeze
+
   # VALIDATIONS
   ############################################################
 

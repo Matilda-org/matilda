@@ -9,8 +9,8 @@ tabs_id = SecureRandom.hex(3)
 <%# column-reverse su mobile: le azioni restano in cima, non in fondo ai commenti %>
 <div class="c-task-overlay d-flex flex-column-reverse flex-md-row-reverse">
   <div class="c-task-overlay__main">
-    <h3 class="fs-5 mb-1"><%= @task.title %></h3>
-    <h4 class="fs-6 text-muted mb-0"><%= @task.completed ? @task.completed_at_in_words : @task.deadline_in_words %></h4>
+    <%= render 'tasks/shared/inline-field', task: @task, field: 'title', frame_class: 'd-block mb-1' %>
+    <%= render 'tasks/shared/inline-field', task: @task, field: 'deadline', frame_class: 'd-block' %>
 
     <%# Task e commenti competevano per lo stesso spazio: separati in due tab %>
     <ul class="nav nav-tabs mt-3 flex-shrink-0" role="tablist">
@@ -50,7 +50,7 @@ tabs_id = SecureRandom.hex(3)
         id="task-tab-details-<%= tabs_id %>"
         role="tabpanel"
       >
-        <%= render 'tasks/shared/card-content', task: @task %>
+        <%= render 'tasks/shared/card-content', task: @task, editable: true %>
         <% unless @task.description.blank? %>
           <hr>
           <%= @task.content %>

@@ -2,6 +2,7 @@
 
 task ||= Task.new
 hide_project ||= false
+inline ||= false # task detail: time estimate is click-to-edit
 badge_type = task.color_type
 badge_type = 'secondary' if badge_type.blank?
 
@@ -49,7 +50,9 @@ badge_type = 'secondary' if badge_type.blank?
   ><i class="bi bi-repeat-1"></i> ripetuto</span>
 <% end %>
 
-<% if task.time_estimate&.positive? %>
+<% if inline %>
+  <%= render 'tasks/shared/inline-field', task: task, field: 'time_estimate' %>
+<% elsif task.time_estimate&.positive? %>
   <span
     class="badge bg-<%= badge_type %>"
     data-controller="tooltip"

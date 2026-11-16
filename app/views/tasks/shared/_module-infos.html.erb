@@ -1,6 +1,6 @@
-<h3 class="fs-5"><%= task.title %></h3>
-<h4 class="fs-6 text-muted"><%= task.completed ? task.completed_at_in_words : task.deadline_in_words %></h4>
-<%= render 'tasks/shared/card-content', task: task %>
+<%= render 'tasks/shared/inline-field', task: task, field: 'title', frame_class: 'd-block mb-2' %>
+<%= render 'tasks/shared/inline-field', task: task, field: 'deadline', frame_class: 'd-block mb-2' %>
+<%= render 'tasks/shared/card-content', task: task, editable: true %>
 
 <hr />
 <% if task.description.blank? %>

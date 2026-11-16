@@ -1,0 +1,99 @@
+<%
+
+# Click-to-edit value of the task detail (title, deadline, assignee, time estimate).
+# Without the tasks_edit policy it renders the plain value, as before.
+task ||= Task.new
+field ||= 'title'
+frame ||= SecureRandom.hex(3)
+frame_class ||= '' # spacing lives on the frame: the server re-renders only its content
+value ||= nil # submitted value, kept on validation errors
+error ||= nil
+focus ||= false
+
+editable = task.persisted? && policy?('tasks_edit') && !(field == 'deadline' && task.completed)
+wrapper_tag, wrapper_class = { 'title' => [ :h3, 'fs-5 mb-0' ], 'deadline' => [ :h4, 'fs-6 text-muted mb-0' ] }[field] || [ :span, nil ]
+
+display = capture do
+  case field
+  when 'title'
+    concat task.title
+  when 'deadline'
+    concat task.completed ? task.completed_at_in_words : task.deadline_in_words
+  when 'user_id'
+    if task.user_id
+      concat render('users/shared/preview', user_id: task.user_id, size: 'sm', type: 'light')
+    else
+      concat tag.span('Non assegnato', class: 'text-muted')
+    end
+  when 'time_estimate'
+    label = task.time_estimate&.positive? ? "#{distance_of_time_in_words(task.time_estimate)} stimati" : 'nessuna stima'
+    concat tag.span(safe_join([ tag.i(class: 'bi bi-alarm-fill'), label ], ' '), class: "badge bg-#{task.color_type.presence || 'secondary'}")
+  end
+end
+
+%>
+<% unless editable %>
+  <%= tag.div(content_tag(wrapper_tag, display, class: wrapper_class), class: frame_class.presence) %>
+<% else %>
+<%
+  frame_id = "task_#{task.id}_#{field}_#{frame}"
+  current_value = { 'title' => task.title, 'deadline' => task.deadline&.iso8601, 'user_id' => task.user_id, 'time_estimate' => task.time_estimate }[field]
+  input_value = value.nil? ? current_value : value
+  value_label = case field
+                when 'title' then task.title
+                when 'deadline' then task.deadline ? task.deadline.strftime('%d/%m/%Y') : 'nessuna'
+                when 'user_id' then task.user_id ? User.cached_preview_data(task.user_id)[:complete_name] : 'nessuno'
+                when 'time_estimate' then task.time_estimate&.positive? ? distance_of_time_in_words(task.time_estimate) : 'nessuno'
+                end
+  field_label, trigger_label = { 'title' => [ 'Titolo', 'titolo' ], 'deadline' => [ 'Scadenza', 'scadenza' ], 'user_id' => [ 'Assegnato a', 'assegnatario' ], 'time_estimate' => [ 'Tempo stimato', 'tempo stimato' ] }[field]
+  mode = { 'title' => 'text', 'deadline' => 'date' }[field] || 'select'
+  input_class = [
+    'c-inline-edit__input',
+    { 'text' => 'form-control', 'date' => 'form-control form-control-sm w-auto', 'select' => 'form-select form-select-sm w-auto' }[mode],
+    ('is-invalid' if error)
+  ]
+  input_options = {
+    id: "#{frame_id}_input",
+    class: input_class,
+    aria: { label: field_label, describedby: [ "#{frame_id}_hint", ("#{frame_id}_error" if error) ].compact.join(' '), invalid: (true if error) },
+    data: { task_inline_edit_target: 'input', action: 'keydown->task-inline-edit#keydown blur->task-inline-edit#blur change->task-inline-edit#change' }
+  }
+%>
+<%= turbo_frame_tag frame_id, class: [ "c-inline-edit", frame_class.presence ] do %>
+  <div
+    data-controller="task-inline-edit"
+    data-task-inline-edit-mode-value="<%= mode %>"
+    data-task-inline-edit-editing-value="<%= error.present? %>"
+    data-task-inline-edit-focus-value="<%= focus %>"
+    data-task-inline-edit-original-value="<%= current_value %>"
+  >
+    <%= content_tag wrapper_tag, class: wrapper_class, hidden: error.present?, data: { task_inline_edit_target: 'display' } do %><button
+        type="button"
+        class="c-inline-edit__trigger"
+        aria-label="Modifica <%= trigger_label %>: <%= value_label %>"
+        data-task-inline-edit-target="trigger"
+        data-action="task-inline-edit#edit"
+      ><%= display %><i class="bi bi-pencil c-inline-edit__icon" aria-hidden="true"></i></button><% end %>
+
+    <%= form_with url: tasks_update_field_action_path(task), method: :post, class: 'c-inline-edit__form', html: { hidden: error.blank? }, data: { task_inline_edit_target: 'form', action: 'submit->task-inline-edit#submit' } do %>
+      <%= hidden_field_tag :field, field, id: nil %>
+      <%= hidden_field_tag :frame, frame, id: nil %>
+      <% case field %>
+      <% when 'title' %>
+        <%= text_field_tag :value, input_value, input_options.merge(maxlength: 200, autocomplete: 'off') %>
+      <% when 'deadline' %>
+        <%= date_field_tag :value, input_value, input_options %>
+      <% when 'user_id' %>
+        <%= select_tag :value, options_for_select([ [ 'NESSUNO', '' ] ] + users_for_select, input_value), input_options %>
+      <% when 'time_estimate' %>
+        <% known = Task::TIME_ESTIMATE_OPTIONS.any? { |_label, seconds| seconds.to_s == input_value.to_s } %>
+        <%= select_tag :value, options_for_select(Task::TIME_ESTIMATE_OPTIONS, input_value), input_options.merge(prompt: ('Nessuna stima' unless known)) %>
+      <% end %>
+      <% if error %>
+        <div class="invalid-feedback" id="<%= frame_id %>_error"><%= error %></div>
+      <% end %>
+      <span class="visually-hidden" id="<%= frame_id %>_hint"><%= mode == 'select' ? 'La scelta viene salvata subito, Esc per annullare' : 'Invio per salvare, Esc per annullare' %></span>
+    <% end %>
+  </div>
+<% end %>
+<% end %>

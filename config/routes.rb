@@ -139,6 +139,7 @@ Rails.application.routes.draw do
   get "tasks/actions/:type/:id", to: "tasks#actions", as: "tasks_actions_id"
   post "tasks/create-action", to: "tasks#create_action", as: "tasks_create_action"
   post "tasks/edit-action/:id", to: "tasks#edit_action", as: "tasks_edit_action"
+  post "tasks/update-field-action/:id", to: "tasks#update_field_action", as: "tasks_update_field_action"
   post "tasks/destroy-action/:id", to: "tasks#destroy_action", as: "tasks_destroy_action"
   post "tasks/complete-action/:id", to: "tasks#complete_action", as: "tasks_complete_action"
   post "tasks/postpone-action/:id", to: "tasks#postpone_action", as: "tasks_postpone_action"

@@ -2,13 +2,20 @@
 
 task ||= Task.new
 hide_project ||= false
+# task detail only: assignee and time estimate become click-to-edit (cards never pass it)
+editable ||= false
+inline = editable && task.persisted? && policy?('tasks_edit')
 
 %>
 
-<% if task.user %>
+<% if inline %>
+  <div class="mb-1 d-flex align-items-center">
+    <%= render 'tasks/shared/inline-field', task: task, field: 'user_id' %>
+  </div>
+<% elsif task.user %>
   <div class="mb-1 d-flex align-items-center">
     <%= render 'users/shared/preview', user_id: task.user_id, size: 'sm', type: hide_project ? task.color_type : 'light' %>
   </div>
 <% end %>
 
-<%= render 'tasks/shared/card-content-tags', task: task, hide_project: hide_project %>
+<%= render 'tasks/shared/card-content-tags', task: task, hide_project: hide_project, inline: inline %>

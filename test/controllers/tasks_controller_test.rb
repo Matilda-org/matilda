@@ -401,4 +401,134 @@ class TasksControllerTest < ActionController::TestCase
     overdue_stream = response.body[/<turbo-stream action="replace" target="tasks-calendar-status-overdue">.*?<\/turbo-stream>/m]
     assert_not_includes overdue_stream, %(data-item="#{task.id}")
   end
+
+  # update_field_action (inline editing on the task detail)
+
+  def update_field(task, field, value)
+    post :update_field_action, params: { id: task.id, field: field, value: value, frame: "abc123" }
+  end
+
+  test "update_field_action updates the title and re-renders its frame" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+
+    update_field(task, "title", "Renamed")
+
+    assert_response :success
+    assert_equal "Renamed", task.reload.title
+    assert_includes response.body, %(id="task_#{task.id}_title_abc123")
+    assert_includes response.body, "Modifica titolo: Renamed"
+  end
+
+  test "update_field_action updates and clears the deadline" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+    target = Date.new(2026, 8, 25)
+
+    update_field(task, "deadline", target.iso8601)
+    assert_response :success
+    assert_equal target, task.reload.deadline
+    assert_includes response.body, "Modifica scadenza: 25/08/2026"
+
+    update_field(task, "deadline", "")
+    assert_response :success
+    assert_nil task.reload.deadline
+  end
+
+  test "update_field_action assigns and unassigns the task" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+
+    assert_difference -> { Notification.where(user_id: users(:two).id, typology: :task_assigned).count } do
+      update_field(task, "user_id", users(:two).id)
+    end
+    assert_response :success
+    assert_equal users(:two).id, task.reload.user_id
+
+    update_field(task, "user_id", "")
+    assert_response :success
+    assert_nil task.reload.user_id
+  end
+
+  test "update_field_action updates the time estimate" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+
+    update_field(task, "time_estimate", 7200)
+
+    assert_response :success
+    assert_equal 7200, task.reload.time_estimate
+  end
+
+  test "update_field_action keeps the input open with the error on invalid values" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+
+    update_field(task, "title", "")
+    assert_response :unprocessable_entity
+    assert_equal "Task one", task.reload.title
+    assert_includes response.body, "is-invalid"
+    assert_includes response.body, "invalid-feedback"
+    assert_includes response.body, %(data-task-inline-edit-editing-value="true")
+    assert_includes response.body, "Non può essere lasciato in bianco"
+
+    { "deadline" => "not-a-date", "user_id" => "999999", "time_estimate" => "42" }.each do |field, value|
+      update_field(task, field, value)
+      assert_response :unprocessable_entity
+      assert_includes response.body, "invalid-feedback"
+      assert_includes response.body, %(value="#{value}") if field == "deadline"
+    end
+    assert_equal tasks(:one).time_estimate, task.reload.time_estimate
+  end
+
+  test "update_field_action rejects fields outside the whitelist" do
+    grant_policy("tasks_edit")
+    task = tasks(:one)
+
+    update_field(task, "completed", "1")
+    assert_response :bad_request
+    assert_not task.reload.completed
+
+    post :update_field_action, params: { id: task.id, field: "title", value: "X", frame: "<script>" }
+    assert_response :bad_request
+  end
+
+  test "update_field_action requires the tasks_edit policy" do
+    task = tasks(:one)
+
+    update_field(task, "title", "Forbidden")
+
+    assert_redirected_to root_path
+    assert_equal "Task one", task.reload.title
+  end
+
+  test "update_field_action respects the members-only scoping" do
+    grant_policy("tasks_edit", "only_data_projects_as_member")
+    task = tasks(:one)
+    task.update_columns(project_id: projects(:one).id, user_id: nil)
+
+    update_field(task, "title", "Out of scope")
+
+    assert_redirected_to tasks_path
+    assert_equal "Task one", task.reload.title
+  end
+
+  test "task detail renders inline editors only with tasks_edit" do
+    grant_policy("tasks_show")
+    task = tasks(:one)
+
+    get :actions, params: { type: "show", id: task.id }
+    assert_not_includes response.body, "c-inline-edit__trigger"
+
+    Rails.cache.clear
+    grant_policy("tasks_edit")
+    get :actions, params: { type: "show", id: task.id }
+    %w[titolo scadenza assegnatario tempo\ stimato].each do |label|
+      assert_includes response.body, "aria-label=\"Modifica #{label}:"
+    end
+
+    get :show, params: { id: task.id }
+    assert_response :success
+    assert_includes response.body, "aria-label=\"Modifica titolo: Task one\""
+  end
 end
