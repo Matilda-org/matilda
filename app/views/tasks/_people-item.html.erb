@@ -24,6 +24,6 @@ turbo_frame_key = dom_id(task, 'tasks-people-item')
     </div>
     <%# hidden link the kanban controller rewrites (adds assignee_id/item_id/order) and clicks on drop %>
     <a class="d-none kanban_controller-item-updater" href="<%= tasks_move_action_path(task.id, move_context) %>" data-turbo-method="post" data-turbo-frame="tasks-people"></a>
-    <%= render 'tasks/shared/card-compact', task: task, turbo_frame_key: 'tasks-people' %>
+    <%= render 'tasks/shared/card', task: task, turbo_frame_key: 'tasks-people' %>
   </li>
 <% end %>

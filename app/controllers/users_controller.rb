@@ -24,7 +24,7 @@ class UsersController < ApplicationController
 
     # load general data
     @projects = @user.projects_as_member.not_archived.order(name: :asc).sort_by { |p| p.user_prefer?(@session_user)  ? -1 : 1 }
-    @tasks = @user.tasks.not_completed.includes(:tasks_checks).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
+    @tasks = @user.tasks.not_completed.includes(:project, :procedures_as_item, :tasks_checks).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
     @tasks = @tasks.where(project_id: params[:tasks_project_id]) if params[:tasks_project_id].present?
     @tasks_projects = Project.joins(:tasks).where(tasks: { user_id: @user.id, completed: false }).includes(folders_item: :folder).select("projects.*, COUNT(tasks.id) AS _total_tasks").group("projects.id").sort_by { |p| p._total_tasks }.reverse
     @tasks_followed = Task.joins(:tasks_followers).where(tasks_followers: { user_id: @user.id }).not_completed.includes(:tasks_checks).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)

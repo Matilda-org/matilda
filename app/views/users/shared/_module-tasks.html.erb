@@ -51,13 +51,13 @@ sections = [
       <% section_tasks = grouped_tasks[key] %>
       <% next if section_tasks.blank? %>
       <section class="mt-3" aria-label="<%= label %>">
-        <h6 class="c-task-compact-section__header d-flex align-items-center gap-2 mb-2">
+        <h6 class="c-task-group__header d-flex align-items-center gap-2 mb-2">
           <span><%= label %></span>
           <span class="badge rounded-pill bg-<%= color %>"><%= section_tasks.length %></span>
         </h6>
         <% section_tasks.each do |task| %>
-          <div class="mb-2">
-            <%= render 'tasks/shared/card-compact', task: task, turbo_frame_key: turbo_frame_key %>
+          <div class="mb-3">
+            <%= render 'tasks/shared/card', task: task, turbo_frame_key: turbo_frame_key %>
           </div>
         <% end %>
       </section>
