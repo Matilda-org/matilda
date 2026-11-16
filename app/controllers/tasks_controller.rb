@@ -75,8 +75,10 @@ class TasksController < ApplicationController
       deadline = safe_date(params[:deadline], nil)
       @task.update(deadline: deadline) if deadline
       load_calendar_grouping
-      affected = [ old_deadline, @task.deadline ].compact.uniq
-      render turbo_stream: affected.map { |date| calendar_status_stream(date) }
+      # dates before the visible week live in the overdue column, which is always
+      # re-rendered: a task may leave it, or be dropped on it (a no-op move)
+      affected = [ old_deadline, @task.deadline ].compact.uniq.select { |date| date >= @date_start }
+      render turbo_stream: [ calendar_overdue_stream ] + affected.map { |date| calendar_status_stream(date) }
     end
   end
 
@@ -471,19 +473,33 @@ class TasksController < ApplicationController
     @user_id = params[:user_id]
     @project_id = params[:project_id]
 
-    tasks = query_tasks_for_policy.where(deadline: (@date_start..@date_end)).includes(:tasks_checks)
+    tasks = query_tasks_for_policy.includes(:tasks_checks)
     tasks = tasks.where(user_id: @user_id) unless @user_id.blank?
     tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
-    @tasks_per_date = tasks.group_by(&:deadline)
+    @tasks_per_date = tasks.where(deadline: (@date_start..@date_end)).group_by(&:deadline)
+    # unfinished tasks due before the visible week, shown in the fixed "Scaduti" column
+    @overdue_tasks = tasks.not_completed.where(deadline: ...@date_start).order(deadline: :asc, title: :asc).to_a
+  end
+
+  def calendar_move_context
+    { mode: "calendar", date_start: @date_start, date_end: @date_end, user_id: @user_id, project_id: @project_id }
   end
 
   # Turbo Stream to replace a single calendar day column with its current tasks.
   def calendar_status_stream(date)
-    move_context = { mode: "calendar", date_start: @date_start, date_end: @date_end, user_id: @user_id, project_id: @project_id }
     turbo_stream.replace(
       "tasks-calendar-status-#{date.strftime('%Y-%m-%d')}",
       partial: "tasks/calendar-status",
-      locals: { date: date, tasks: @tasks_per_date[date] || [], move_context: move_context }
+      locals: { date: date, tasks: @tasks_per_date[date] || [], move_context: calendar_move_context }
+    )
+  end
+
+  # Turbo Stream to replace the fixed "Scaduti" column of the calendar board.
+  def calendar_overdue_stream
+    turbo_stream.replace(
+      "tasks-calendar-status-overdue",
+      partial: "tasks/calendar-status",
+      locals: { date: @date_start, tasks: @overdue_tasks, move_context: calendar_move_context, overdue: true }
     )
   end
 
@@ -509,7 +525,7 @@ class TasksController < ApplicationController
 
     tasks = query_tasks_for_policy.and(Task.where(deadline: @date).or(Task.where(deadline: nil, completed: false).where.not(user_id: nil)))
     tasks = tasks.where(project_id: @project_id) unless @project_id.blank?
-    tasks = tasks.order(deadline: :asc, title: :asc)
+    tasks = tasks.order(deadline: :asc, title: :asc).includes(:tasks_checks)
     @tasks_per_user = tasks.group_by(&:user_id)
   end
 

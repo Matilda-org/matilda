@@ -76,3 +76,6 @@ Ruby on Rails project management app. Uses Hotwire, Stimulus, Bootstrap, Sprocke
 
 - Detail modals pass `addressable: true` to `shared/action-container`: their url is mirrored in `?modal=` and reopened on load.
 - Reversible actions skip the confirm modal and offer an undo in `shared/feedback` (`undo: { label:, href: }`); `shared/confirmer` takes `danger: true` for destructive ones; `shared/destroyer` (type "ELIMINA") is reserved for records with cascades.
+- Form fields with model validations use `field_error_class` / `field_error_feedback` (`FormErrorsHelper`) for per-field Bootstrap errors; required labels get `form-label required` (CSS asterisk). Forms with collapsed sections attach `form-reveal` (`invalid->form-reveal#reveal:capture`) so an invalid field inside a closed collapse is opened and focused.
+- Cross-section search lives in `GlobalSearch` (policy scopes passed in by the caller): the dashboard search and the navbar palette (`GET /search`, `global-search` controller) share it.
+- Task lists on dashboard and boards use `tasks/shared/_card-compact`; the full `tasks/shared/_card` stays for detail contexts.

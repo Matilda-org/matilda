@@ -3,6 +3,7 @@
 date_start ||= Date.today
 date_end ||= Date.today
 tasks_per_date ||= {}
+overdue_tasks ||= []
 user_id ||= nil
 project_id ||= nil
 
@@ -23,6 +24,7 @@ move_context = { mode: "calendar", date_start: date_start, date_end: date_end, u
   >
     <button type="button" class="c-kanban__nav c-kanban__nav--prev" data-kanban-target="prev" data-action="kanban#scrollPrev" aria-label="Scorri a sinistra"><i class="bi bi-arrow-left-circle"></i></button>
     <div data-kanban-target="scrollable" class="c-kanban__scrollable">
+      <%= render 'tasks/calendar-status', date: date_start, tasks: overdue_tasks, move_context: move_context, overdue: true %>
       <% (date_start..date_end).each do |date| %>
         <%= render 'tasks/calendar-status', date: date, tasks: tasks_per_date[date], move_context: move_context %>
       <% end %>

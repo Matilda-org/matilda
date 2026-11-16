@@ -126,6 +126,39 @@ class CampaignsControllerTest < ActionController::TestCase
     assert communication.to_send?
   end
 
+  test "add_communication_action adds every selected contact and skips existing or archived ones" do
+    campaign = campaigns(:one)
+    campaign.communications.create!(contact: contacts(:one))
+    second = Contact.create!(name: "Contact Two")
+    third = Contact.create!(name: "Contact Three")
+    archived = Contact.create!(name: "Contact Archived", archived: true)
+    @user.users_policies.create!(policy: "crm")
+
+    assert_difference -> { campaign.communications.count }, 2 do
+      post :add_communication_action, params: { id: campaign.id, contact_ids: [ contacts(:one).id, second.id, third.id, archived.id ] }
+    end
+
+    assert_response :success
+    assert_includes @response.body, "<h3 class=\"fs-5 mb-1\">2 comunicazioni create</h3>"
+    assert_includes @response.body, "2 contatti ignorati"
+    assert campaign.communications.where(contact: [ second, third ]).all?(&:to_send?)
+    assert_not campaign.communications.exists?(contact: archived)
+  end
+
+  test "add_communication_action with only already added contacts shows an error" do
+    campaign = campaigns(:one)
+    campaign.communications.create!(contact: contacts(:one))
+    Contact.create!(name: "Contact Two")
+    @user.users_policies.create!(policy: "crm")
+
+    assert_no_difference -> { Communication.count } do
+      post :add_communication_action, params: { id: campaign.id, contact_ids: [ contacts(:one).id ] }
+    end
+
+    assert_response :success
+    assert_includes @response.body, "Seleziona almeno un contatto"
+  end
+
   test "send_communication_action stores the confirmed date" do
     campaign = campaigns(:one)
     communication = campaign.communications.create!(contact: contacts(:one))

@@ -78,4 +78,22 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_nil User.find_by(id: user.id)
   end
+
+  test "dashboard groups assigned tasks by deadline and hides empty groups" do
+    Task.create!(title: "Dash overdue", user: @user, deadline: Date.today - 2, accepted: true)
+    Task.create!(title: "Dash upcoming", user: @user, project: projects(:one), deadline: Date.today + 2, accepted: true)
+    Task.create!(title: "Dash no deadline", user: @user, accepted: true)
+
+    get :show, params: { id: @user.id }
+
+    assert_response :success
+    assert_select "turbo-frame#module-tasks-assigned" do
+      assert_select "section[aria-label='Scaduti']", text: /Dash overdue/
+      assert_select "section[aria-label='Prossimi']", text: /Dash upcoming/
+      assert_select "section[aria-label='Senza scadenza']", text: /Dash no deadline/
+      assert_select "section[aria-label='Oggi']", count: 0
+      assert_select "select[name='tasks_project_id'] option", text: projects(:one).name
+    end
+    assert_select "turbo-frame#module-tasks-followed"
+  end
 end

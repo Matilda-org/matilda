@@ -5,7 +5,15 @@ item ||= ApplicationRecord.new
 %>
 
 <% if item.errors.any? %>
-  <div class="alert alert-danger mb-3">
-    <%= item.errors.full_messages.to_sentence %>
+  <div class="alert alert-danger mb-3" role="alert">
+    <% if item.errors.count == 1 %>
+      <%= item.errors.full_messages.first %>
+    <% else %>
+      <ul class="mb-0 ps-3">
+        <% item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
   </div>
 <% end %>

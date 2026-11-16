@@ -4,16 +4,42 @@
   <% if available_contacts.any? %>
     <%= render 'shared/form-errors', item: @communication if @communication %>
 
-    <%= form_tag campaigns_add_communication_action_path(@campaign), class: 'row', data: { controller: 'form-loading' } do %>
+    <% selected_ids = Array(params[:contact_ids]).map(&:to_i) %>
+
+    <%= form_tag campaigns_add_communication_action_path(@campaign), class: 'row', data: { controller: 'form-loading multi-select' } do %>
       <div class="col col-12 mb-3">
-        <label for="contact_id" class="form-label">Contatto</label>
-        <%= select_tag 'contact_id', options_for_select(available_contacts.map { |c| [c.name, c.id] }), class: 'form-select', required: true %>
+        <label for="add-communication-filter" class="form-label">Contatti</label>
+        <input type="search" id="add-communication-filter" class="form-control mb-2" placeholder="Filtra per nome o email" autocomplete="off"
+          aria-controls="add-communication-contacts"
+          data-multi-select-target="filter" data-action="input->multi-select#filter">
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <button type="button" class="btn btn-sm btn-link px-0" data-action="multi-select#selectVisible">Seleziona tutti i visibili</button>
+          <span class="text-muted h-fs-xs" data-multi-select-target="counter" aria-live="polite">0 selezionati</span>
+        </div>
+
+        <div class="c-multi-select list-group" id="add-communication-contacts" role="group" aria-label="Contatti disponibili">
+          <% available_contacts.each do |contact| %>
+            <label class="c-multi-select__option list-group-item" data-multi-select-target="option" data-search="<%= [contact.name, contact.email].compact.join(' ').downcase %>">
+              <input type="checkbox" class="form-check-input flex-shrink-0 mt-1" name="contact_ids[]" value="<%= contact.id %>"
+                <%= 'checked' if selected_ids.include?(contact.id) %>
+                data-multi-select-target="checkbox" data-action="multi-select#update">
+              <span class="c-multi-select__text">
+                <span class="d-block text-truncate"><%= contact.name %></span>
+                <% if contact.email.present? %>
+                  <span class="d-block text-truncate text-muted h-fs-xs"><%= contact.email %></span>
+                <% end %>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <p class="text-muted h-fs-xs mt-2 mb-0" hidden data-multi-select-target="empty">Nessun contatto corrisponde al filtro.</p>
       </div>
 
-      <p class="text-muted h-fs-xs">La comunicazione viene creata nello stato <b>Da inviare</b>.</p>
+      <p class="text-muted h-fs-xs">Viene creata una comunicazione per ogni contatto selezionato, nello stato <b>Da inviare</b>.</p>
 
       <div class="d-flex justify-content-end align-items-center">
-        <button type="submit" class="btn btn-primary" data-form-loading-target="submit">Conferma</button>
+        <button type="submit" class="btn btn-primary" data-form-loading-target="submit" data-multi-select-target="submit">Conferma</button>
       </div>
     <% end %>
   <% else %>

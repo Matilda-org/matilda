@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   get "authentication/first-run", to: "authentication#first_run", as: "authentication_first_run"
   post "authentication/first-run-action", to: "authentication#first_run_action", as: "authentication_first_run_action"
 
+  # Search (navbar palette)
+  get "search", to: "search#index", as: "search"
+
   # User
   get "users", to: "users#index", as: "users"
   get "users/show/:id", to: "users#show", as: "users_show"
@@ -80,6 +83,7 @@ Rails.application.routes.draw do
   post "procedures/toggle-status-automation-action/:id/:status_id", to: "procedures#toggle_status_automation_action", as: "procedures_toggle_status_automation_action"
   post "procedures/take-tasks-to-status-action/:id/:status_id", to: "procedures#take_tasks_to_status_action", as: "procedures_take_tasks_to_status_action"
   post "procedures/add-item-action/:id", to: "procedures#add_item_action", as: "procedures_add_item_action"
+  post "procedures/quick-add-item-action/:id", to: "procedures#quick_add_item_action", as: "procedures_quick_add_item_action"
   post "procedures/edit-item-action/:id/:item_id", to: "procedures#edit_item_action", as: "procedures_edit_item_action"
   post "procedures/remove-item-action/:id/:item_id", to: "procedures#remove_item_action", as: "procedures_remove_item_action"
   post "procedures/move-item-action/:id/:item_id", to: "procedures#move_item_action", as: "procedures_move_item_action"

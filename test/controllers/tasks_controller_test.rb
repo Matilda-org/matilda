@@ -70,6 +70,15 @@ class TasksControllerTest < ActionController::TestCase
     assert Task.exists?(title: "New Task")
   end
 
+  test "create_action with invalid data marks the title" do
+    grant_policy("tasks_create")
+    post :create_action, params: { title: "" }
+
+    assert_response :success
+    assert_select "input#title.is-invalid + .invalid-feedback"
+    assert_select "select#user_id"
+  end
+
   test "edit_action" do
     task = tasks(:one)
     matilda_controller_endpoint(:post, :edit_action,
@@ -359,5 +368,37 @@ class TasksControllerTest < ActionController::TestCase
     end
 
     assert_equal before, task.reload.time_spent
+  end
+
+  test "calendar overdue column lists unfinished overdue tasks of the visible filter" do
+    grant_policy("tasks_index")
+    week_start = Date.today.at_beginning_of_week
+    overdue = Task.create!(title: "Overdue open", user: @user, deadline: week_start - 3, accepted: true)
+    Task.create!(title: "Overdue done", user: @user, deadline: week_start - 3, accepted: true, completed: true, completed_at: Time.current)
+    Task.create!(title: "Overdue other user", user: users(:two), deadline: week_start - 3, accepted: true)
+
+    get :index, params: { user_id: @user.id, date_start: week_start, date_end: week_start + 6 }
+
+    assert_response :success
+    assert_select "turbo-frame#tasks-calendar-status-overdue" do
+      assert_select "turbo-frame[data-item='#{overdue.id}']"
+      assert_select "*", text: /Overdue done/, count: 0
+      assert_select "*", text: /Overdue other user/, count: 0
+    end
+  end
+
+  test "move_action from the overdue column re-renders it without the moved task" do
+    grant_policy("tasks_edit")
+    week_start = Date.today.at_beginning_of_week
+    task = Task.create!(title: "Late task", user: @user, deadline: week_start - 2, accepted: true)
+
+    post :move_action, params: { id: task.id, mode: "calendar", deadline: week_start.strftime("%Y-%m-%d"), date_start: week_start, date_end: week_start + 6 }
+
+    assert_response :success
+    assert_equal week_start, task.reload.deadline
+    assert_includes response.body, %(target="tasks-calendar-status-overdue")
+    assert_includes response.body, %(target="tasks-calendar-status-#{week_start.strftime('%Y-%m-%d')}")
+    overdue_stream = response.body[/<turbo-stream action="replace" target="tasks-calendar-status-overdue">.*?<\/turbo-stream>/m]
+    assert_not_includes overdue_stream, %(data-item="#{task.id}")
   end
 end

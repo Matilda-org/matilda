@@ -3,50 +3,70 @@
 date ||= Date.today
 tasks ||= []
 move_context ||= {}
-turbo_frame_key = "tasks-calendar-status-#{date.strftime("%Y-%m-%d")}"
+# overdue: the fixed "Scaduti" column, holding unfinished tasks due before `date` (the visible week's start)
+overdue ||= false
+turbo_frame_key = overdue ? "tasks-calendar-status-overdue" : "tasks-calendar-status-#{date.strftime("%Y-%m-%d")}"
 
 time_estimate_sum = tasks.sum(&:time_estimate)
 time_spent_sum = tasks.sum(&:time_spent)
 
-sorted_tasks = tasks.sort_by { |t| t.title.downcase }.sort_by { |t| t.completed ? 1 : 0 }
+sorted_tasks = if overdue
+  tasks.sort_by { |t| [ t.deadline, t.title.downcase ] }
+else
+  tasks.sort_by { |t| t.title.downcase }.sort_by { |t| t.completed ? 1 : 0 }
+end
+status_title = overdue ? "Scaduti" : "#{l(date, format: '%a').capitalize} #{date.strftime('%d/%m/%Y')}"
 
 %>
 
 <%= turbo_frame_tag turbo_frame_key do %>
-  <div class="c-kanban__status card d-flex flex-direction-column justify-content-between me-3">
+  <div class="c-kanban__status card d-flex flex-direction-column justify-content-between me-3 <%= overdue ? 'border-danger' : '' %>">
     <div class="c-kanban__status-header card-header d-flex align-items-center justify-content-between border-bottom-0 rounded-bottom">
       <div class="h-text-oneline">
-        <%= raw "<b>#{l(date, format: '%a').capitalize}</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>#{date.strftime('%d/%m/%Y')}</small>" %>
+        <% if overdue %>
+          <b class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Scaduti</b> <small class="text-muted">prima del <%= date.strftime('%d/%m') %></small>
+        <% else %>
+          <%= raw "<b>#{l(date, format: '%a').capitalize}</b> <small class='#{date == Date.today ? 'text-dark fw-bold' : 'text-muted'}'>#{date.strftime('%d/%m/%Y')}</small>" %>
+        <% end %>
       </div>
       <div class="ms-3 d-flex align-items-center gap-1">
-        <% if date <= Date.today %>
+        <% if overdue %>
           <span
-            class="badge rounded-pill text-white bg-primary h-fs-xxs"
-           
+            class="badge rounded-pill text-white <%= tasks.length.positive? ? 'bg-danger' : 'bg-dark' %>"
+            style="font-size: 10px;"
             data-controller="tooltip"
-            data-tooltip="Tempo consumato"
+            data-tooltip="Task non completati con scadenza passata"
+          ><%= tasks.length %></span>
+        <% else %>
+          <% if date <= Date.today %>
+            <span
+              class="badge rounded-pill text-white bg-primary h-fs-xxs"
+              data-controller="tooltip"
+              data-tooltip="Tempo consumato"
+            >
+              <i class="bi bi-hourglass-split"></i>
+              <%= track_time time_spent_sum %>
+            </span>
+          <% end %>
+          <span
+            class="badge rounded-pill text-white bg-<%= tasks_time_estimate_color(tasks) %>"
+            style="font-size: 10px;"
+            data-controller="tooltip"
+            data-tooltip="Tempo stimato"
           >
-            <i class="bi bi-hourglass-split"></i>
-            <%= track_time time_spent_sum %>
+            <i class="bi bi-alarm-fill"></i>
+            <%= track_time time_estimate_sum %>
+          </span>
+          <span
+            class="badge rounded-pill text-white <%= tasks.length.positive? ? 'bg-info' : 'bg-dark' %>"
+            style="font-size: 10px;"
+          >
+            <%= tasks.select(&:completed).length %> / <%= tasks.length %>
           </span>
         <% end %>
-        <span
-          class="badge rounded-pill text-white bg-<%= tasks_time_estimate_color(tasks) %>"
-          style="font-size: 10px;"
-          data-controller="tooltip"
-          data-tooltip="Tempo stimato"
-        >
-          <i class="bi bi-alarm-fill"></i>
-          <%= track_time time_estimate_sum %>
-        </span>
-        <span
-          class="badge rounded-pill text-white <%= tasks.length.positive? ? 'bg-info' : 'bg-dark' %>"
-          style="font-size: 10px;"
-        >
-          <%= tasks.select(&:completed).length %> / <%= tasks.length %>
-        </span>
       </div>
     </div>
-    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= date.strftime('%Y-%m-%d') %>" data-status-title="<%= "#{l(date, format: '%a').capitalize} #{date.strftime('%d/%m/%Y')}" %>"><%= safe_join(sorted_tasks.map { |task| render("tasks/calendar-item", task: task, move_context: move_context) }) %></ul>
+    <%# The overdue column is a drag source like the days (its tasks can be dropped on a day). Its blank data-container makes a drop on it a no-op: move_action ignores a blank deadline and re-renders this column. %>
+    <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= overdue ? '' : date.strftime('%Y-%m-%d') %>" data-status-title="<%= status_title %>"><%= safe_join(sorted_tasks.map { |task| render("tasks/calendar-item", task: task, move_context: move_context) }) %></ul>
   </div>
 <% end %>

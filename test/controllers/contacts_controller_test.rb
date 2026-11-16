@@ -60,6 +60,15 @@ class ContactsControllerTest < ActionController::TestCase
     assert_not_nil Contact.find_by(name: "Test Contact")
   end
 
+  test "create_action with invalid data marks the name" do
+    grant_policy("crm")
+    post :create_action, params: { name: "" }
+
+    assert_response :success
+    assert_select "input#name.is-invalid + .invalid-feedback"
+    assert_select "input#email:not(.is-invalid)"
+  end
+
   test "edit_action" do
     contact = contacts(:one)
     matilda_controller_endpoint(:post, :edit_action,

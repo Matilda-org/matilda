@@ -11,7 +11,7 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
 
 <%= render 'shared/form-errors', item: task %>
 
-<%= form_tag path, class: 'c-modal-form', data: { controller: 'tasks-form form-loading' } do %>
+<%= form_tag path, class: 'c-modal-form', data: { controller: 'tasks-form form-loading form-reveal', action: 'invalid->form-reveal#reveal:capture' } do %>
   <div class="c-modal-form__fields row">
     <% if procedures_status_id %>
       <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
@@ -20,7 +20,7 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
       <input type="hidden" name="turbo_frame_key" value="<%= turbo_frame_key %>">
     <% end %>
 
-    <%= render 'tasks/shared/form-inputs-base', task: task, show_default: !task.persisted? %>
+    <%= render 'tasks/shared/form-inputs-base', task: task, show_default: !task.persisted?, assignment_user_id: procedures_status&.assignment_user_id %>
 
     <div class="col col-12 mb-3">
       <%= rich_text_area_tag :content, task.content %>
@@ -59,7 +59,7 @@ procedures_status = procedures_status_id.blank? ? nil : Procedures::Status.find_
 
     <div class="accordion mb-3" id="formTaskAccordion">
       <%= render 'tasks/shared/form-inputs-accordion-checks', task: task %>
-      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task, assignment_user_id: procedures_status&.assignment_user_id, follow_user_id: procedures_status&.follow_user_id || @session_user_id %>
+      <%= render 'tasks/shared/form-inputs-accordion-assign', task: task, follow_user_id: procedures_status&.follow_user_id || @session_user_id %>
       <% if task.repeat_original_task_id.nil? %>
         <%= render 'tasks/shared/form-inputs-accordion-repetition', task: task %>
       <% end %>

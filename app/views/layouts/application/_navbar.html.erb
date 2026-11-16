@@ -8,15 +8,23 @@
         </a>
 
         <% if @session_user %>
-          <%= form_tag users_show_path(@session_user_id), method: :get, class: "c-global-search d-none d-md-flex mx-3 flex-grow-1", role: "search", data: { turbo_frame: "_top", controller: "global-search", action: "keydown@window->global-search#focus" } do %>
-            <label for="global-search" class="visually-hidden">Cerca progetti, task, credenziali</label>
-            <i class="bi bi-search c-global-search__icon" aria-hidden="true"></i>
-            <input type="search" id="global-search" name="search" class="form-control form-control-sm" placeholder="Cerca progetti, task, credenziali" minlength="3" value="<%= params[:search] if @_is_dashboard %>" data-global-search-target="input">
-            <kbd class="c-kbd c-global-search__hint" data-global-search-target="hint">Ctrl K</kbd>
+          <%= form_tag users_show_path(@session_user_id), method: :get, class: "c-global-search mx-3 flex-grow-1", role: "search", data: { turbo_frame: "_top", controller: "global-search", global_search_url_value: search_path, action: "keydown@window->global-search#shortcut click@window->global-search#clickOutside turbo:frame-load->global-search#loaded" } do %>
+            <div class="c-global-search__field">
+              <label for="global-search" class="visually-hidden">Cerca progetti, task, credenziali</label>
+              <i class="bi bi-search c-global-search__icon" aria-hidden="true"></i>
+              <input type="search" id="global-search" name="search" class="form-control form-control-sm" placeholder="Cerca progetti, task, credenziali" minlength="3" autocomplete="off" value="<%= params[:search] if @_is_dashboard %>" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="global-search-results" data-global-search-target="input" data-action="input->global-search#search keydown->global-search#navigate focus->global-search#reopen">
+              <kbd class="c-kbd c-global-search__hint" data-global-search-target="hint">Ctrl K</kbd>
+              <button type="button" class="btn-close btn-close-white c-global-search__close" aria-label="Chiudi ricerca" data-action="global-search#close"></button>
+            </div>
+            <div class="c-global-search__panel" data-global-search-target="panel" hidden>
+              <turbo-frame id="global-search-results" role="listbox" aria-label="Risultati ricerca" data-global-search-target="results">
+                <%= render "search/hint" %>
+              </turbo-frame>
+            </div>
           <% end %>
 
           <div class="d-flex align-items-center">
-            <a class="btn btn-link text-white d-md-none me-1 fs-5" href="<%= users_show_path(@session_user_id, anchor: "dashboard-search") %>" data-turbo-frame="_top" aria-label="Cerca"><i class="bi bi-search"></i></a>
+            <a class="btn btn-link text-white d-md-none me-1 fs-5" href="<%= users_show_path(@session_user_id, anchor: "dashboard-search") %>" data-turbo="false" data-global-search-open aria-controls="global-search" aria-label="Cerca"><i class="bi bi-search"></i></a>
             <div class="me-2">
               <%= render 'tasks/tracker' %>
             </div>

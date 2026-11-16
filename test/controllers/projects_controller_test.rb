@@ -115,6 +115,17 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_equal 2024, project.year
   end
 
+  test "create_action with invalid data marks fields and opens their section" do
+    grant_policy("projects_create")
+    post :create_action, params: { code: "PRJ-INVALID", name: "", year: "" }
+
+    assert_response :success
+    assert_select "input#name.is-invalid + .invalid-feedback"
+    assert_select "input#year.is-invalid + .invalid-feedback"
+    assert_select "#formProjectAccordionArchive.collapse.show"
+    assert_select ".alert-danger li", minimum: 2
+  end
+
   test "edit_action" do
     project = projects(:one)
     matilda_controller_endpoint(:post, :edit_action,

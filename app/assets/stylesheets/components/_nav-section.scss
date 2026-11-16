@@ -1,0 +1,97 @@
+/**
+ * Menu sections with a submenu: the label links to the section page, the
+ * chevron next to it toggles the submenu (shared by sidebar and mobile navbar)
+ */
+
+.nav-item.c-nav-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  > .dropdown-menu {
+    grid-column: 1 / -1;
+  }
+}
+
+.c-nav-section__toggle {
+  border: 0;
+  background: transparent;
+  padding-left: 12px;
+  padding-right: 12px;
+
+  .bi {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  &[aria-expanded="true"] .bi {
+    transform: rotate(180deg);
+  }
+}
+
+/**
+ * Collapsible sidebar: an icon-only rail, labels kept for screen readers
+ */
+
+.sidebar {
+  transition: width 0.2s ease;
+}
+
+.sidebar .nav {
+  height: 100%;
+}
+
+.sidebar__collapse {
+  padding-top: 6px;
+
+  .btn {
+    color: var(--bs-secondary);
+  }
+
+  .bi {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+}
+
+html.sidebar-collapsed {
+  .sidebar {
+    width: 72px;
+  }
+
+  .sidebar .nav-link > span,
+  .sidebar__collapse span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .sidebar .c-nav-section__toggle,
+  .sidebar .dropdown-menu,
+  .sidebar__divider {
+    display: none !important;
+  }
+
+  .sidebar .nav-item.c-nav-section {
+    display: block;
+  }
+
+  .sidebar .nav-link {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .sidebar__collapse .bi {
+    transform: rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .c-nav-section__toggle .bi,
+  .sidebar__collapse .bi {
+    transition: none;
+  }
+}

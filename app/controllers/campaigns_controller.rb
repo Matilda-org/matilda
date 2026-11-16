@@ -163,10 +163,23 @@ class CampaignsController < ApplicationController
     return unless validate_policy!("crm")
     return unless campaign_finder
 
-    @communication = @campaign.communications.new(contact_id: params[:contact_id])
-    return render "campaigns/actions/add_communication" unless @communication.save
+    # contact_ids[] comes from the multi-select; contact_id is kept for single-contact callers.
+    # Only available contacts are used, so duplicates and archived contacts are skipped.
+    contact_ids = Array(params[:contact_ids]).push(params[:contact_id]).compact_blank.uniq
+    contacts = @campaign.contacts_available.where(id: contact_ids).to_a
+    if contacts.empty?
+      @communication = @campaign.communications.new
+      @communication.errors.add(:base, "Seleziona almeno un contatto non ancora presente nella campagna")
+      return render "campaigns/actions/add_communication"
+    end
 
-    render_communication_feedback("Aggiungi comunicazione", "Comunicazione creata", "La comunicazione con #{@communication.contact.name} è pronta per l'invio.")
+    created = contacts.select { |contact| @campaign.communications.create(contact: contact).persisted? }
+    skipped = contact_ids.size - created.size
+    feedback_title = created.one? ? "Comunicazione creata" : "#{created.size} comunicazioni create"
+    subtitle = created.one? ? "La comunicazione con #{created.first.name} è pronta per l'invio." : "#{created.size} comunicazioni pronte per l'invio."
+    subtitle += " #{skipped} contatti ignorati perché già presenti o non disponibili." if skipped.positive?
+
+    render_communication_feedback("Aggiungi comunicazione", feedback_title, subtitle)
   end
 
   def send_communication_action

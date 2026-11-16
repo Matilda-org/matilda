@@ -2,12 +2,14 @@
 
 task ||= Task.new
 show_default ||= false
+assignment_user_id ||= nil
 
 %>
 
 <div class="col col-12 mb-3">
-  <label for="title" class="form-label">Titolo</label>
-  <input type="text" class="form-control" id="title" name="title" value="<%= task.title %>" required>
+  <label for="title" class="form-label required">Titolo</label>
+  <input type="text" class="form-control <%= field_error_class(task, :title) %>" id="title" name="title" value="<%= task.title %>" required>
+  <%= field_error_feedback(task, :title) %>
 </div>
 
 <div class="col col-12 col-lg-7 mb-3">
@@ -114,4 +116,9 @@ show_default ||= false
       15m
     </button>
   </div>
+</div>
+
+<div class="col col-12 mb-3">
+  <label for="user_id" class="form-label">Assegnato a</label>
+  <%= select_tag 'user_id', options_for_select([['NESSUNO', '']] + users_for_select, task.persisted? ? task.user_id : (task.user_id || assignment_user_id || @session_user_id)), class: 'form-select' %>
 </div>

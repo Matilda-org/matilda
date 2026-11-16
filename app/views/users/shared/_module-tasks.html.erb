@@ -6,54 +6,62 @@ type ||= 'assigned'
 
 turbo_frame_key = "module-tasks-#{type}"
 
+today = Date.today
+grouped_tasks = tasks.group_by do |task|
+  if task.deadline.nil? then :none
+  elsif task.deadline < today then :expired
+  elsif task.deadline == today then :today
+  else :upcoming
+  end
+end
+sections = [
+  [ :expired, 'Scaduti', 'danger' ],
+  [ :today, 'Oggi', 'warning' ],
+  [ :upcoming, 'Prossimi', 'info' ],
+  [ :none, 'Senza scadenza', 'secondary' ]
+]
+
 %>
 
 <%= turbo_frame_tag turbo_frame_key do %>
 
-  <% if tasks.length.positive? %>
-    <div class="pt-1 pb-2 border-bottom d-flex align-items-center justify-content-between c-sticky-toolbar c-sticky-toolbar--bleed">
-      <ul class="nav nav-pills d-flex flex-row flex-nowrap" style="overflow-x: auto; overflow-y: hidden; flex: 1;">
-        <li class="nav-item">
-          <a class="nav-link h-text-oneline <%= params[:tasks_project_id].blank? ? 'active' : '' %>" href="?" data-turbo-frame="<%= turbo_frame_key %>">TUTTI</a>
-        </li>
-        <% tasks_projects.each_with_index do |project, index| %>
-          <% next if index > 4 %>
-          <li class="nav-item">
-            <a
-              class="nav-link h-text-oneline <%= project.id == params[:tasks_project_id].to_i ? 'active' : '' %>"
-              style="font-family: monospace;"
-              href="?tasks_project_id=<%= project.id %>"
-              data-turbo-frame="<%= turbo_frame_key %>"
-              data-controller="tooltip"
-              data-tooltip="<%= project.name %>"
-            ><%= project.name_2chars %></a>
-          </li>
-        <% end %>
-        <% if tasks_projects.length > 5 %>
-          <li class="nav-item">
-            <a
-              class="nav-link h-text-oneline border-0 bg-transparent"
-              data-controller="tooltip"
-              data-tooltip="<%= tasks_projects[5..].map(&:name).join(', ') %>"
-            >+ <%= tasks_projects.length - 5 %></a>
-          </li>
-        <% end %>
-      </ul>
+  <% if tasks.length.positive? || tasks_projects.any? %>
+    <div class="pt-1 pb-2 border-bottom d-flex align-items-center justify-content-between gap-2 c-sticky-toolbar c-sticky-toolbar--bleed">
+      <% if tasks_projects.any? %>
+        <form method="get" action="<%= request.path %>" class="flex-grow-1" data-controller="auto-submit" data-action="change->auto-submit#submit">
+          <select name="tasks_project_id" class="form-select form-select-sm" aria-label="Filtra task per progetto">
+            <option value="">Tutti i progetti</option>
+            <%= options_for_select(tasks_projects.map { |project| [ project.name, project.id ] }, params[:tasks_project_id]) %>
+          </select>
+        </form>
+      <% else %>
+        <span></span>
+      <% end %>
 
       <span
-        class="badge rounded-pill bg-primary ms-2"
+        class="badge rounded-pill bg-primary"
         data-controller="tooltip"
         data-tooltip="Ci sono <%= tasks.length %> attività da completare"
       ><%= tasks.length %></span>
     </div>
+  <% end %>
 
-    <div class="mt-3">
-      <% tasks.each do |task| %>
-        <div class="mb-3">
-          <%= render 'tasks/shared/card', task: task, turbo_frame_key: turbo_frame_key %>
-        </div>
-      <% end %>
-    </div>
+  <% if tasks.length.positive? %>
+    <% sections.each do |key, label, color| %>
+      <% section_tasks = grouped_tasks[key] %>
+      <% next if section_tasks.blank? %>
+      <section class="mt-3" aria-label="<%= label %>">
+        <h6 class="c-task-compact-section__header d-flex align-items-center gap-2 mb-2">
+          <span><%= label %></span>
+          <span class="badge rounded-pill bg-<%= color %>"><%= section_tasks.length %></span>
+        </h6>
+        <% section_tasks.each do |task| %>
+          <div class="mb-2">
+            <%= render 'tasks/shared/card-compact', task: task, turbo_frame_key: turbo_frame_key %>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
   <% else %>
     <%= render 'shared/placeholder' %>
   <% end %>

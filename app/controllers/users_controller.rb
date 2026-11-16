@@ -24,24 +24,18 @@ class UsersController < ApplicationController
 
     # load general data
     @projects = @user.projects_as_member.not_archived.order(name: :asc).sort_by { |p| p.user_prefer?(@session_user)  ? -1 : 1 }
-    @tasks = @user.tasks.not_completed.includes(:project, :procedures_as_item).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
-    @tasks = @tasks.where(project_id: params[:tasks_project_id]) if params[:tasks_project_id]
+    @tasks = @user.tasks.not_completed.includes(:tasks_checks).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
+    @tasks = @tasks.where(project_id: params[:tasks_project_id]) if params[:tasks_project_id].present?
     @tasks_projects = Project.joins(:tasks).where(tasks: { user_id: @user.id, completed: false }).includes(folders_item: :folder).select("projects.*, COUNT(tasks.id) AS _total_tasks").group("projects.id").sort_by { |p| p._total_tasks }.reverse
-    @tasks_followed = Task.joins(:tasks_followers).where(tasks_followers: { user_id: @user.id }).not_completed.order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
+    @tasks_followed = Task.joins(:tasks_followers).where(tasks_followers: { user_id: @user.id }).not_completed.includes(:tasks_checks).order(deadline: :asc, alghoritmic_order: :asc, title: :asc)
 
     # manage search
-    if params[:search] && params[:search].length >= 3
-      @search = params[:search]
-      @search_results = {}
-      @search_results[:projects] = query_projects_for_policy.not_archived.search(params[:search]).order(name: :asc).limit(25).load_async
-      @search_results[:credentials] = (@session_user.policy?("credentials_index") ? Credential.all : Credential.none).search(params[:search]).order(name: :asc).limit(25).load_async
-      @search_results[:tasks] = query_tasks_for_policy.not_completed.search(params[:search]).order(deadline: :asc, alghoritmic_order: :asc, title: :asc).limit(25).load_async
-      @search_results[:procedures] = query_procedures_for_policy.not_as_model.not_archived.search(params[:search]).where(projects: { archived: [ nil, false ] }).order(name: :asc).limit(25).load_async
-      @search_results[:projects_archived] = query_projects_for_policy.archived.search(params[:search]).order(name: :asc).limit(25).load_async
-
-      if @search_results[:projects].count.positive? || @search_results[:credentials].count.positive? || @search_results[:tasks].count.positive? || @search_results[:procedures].count.positive?
-        @session_user.log_search(@search)
-      end
+    global_search = GlobalSearch.new(params[:search], user: @session_user,
+      projects: query_projects_for_policy, tasks: query_tasks_for_policy, procedures: query_procedures_for_policy)
+    if global_search.valid?
+      @search = global_search.search
+      @search_results = global_search.results.transform_values(&:load_async)
+      @session_user.log_search(@search) if @search_results.except(:projects_archived).values.any?(&:any?)
     end
   end
 

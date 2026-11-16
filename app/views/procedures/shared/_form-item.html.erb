@@ -12,7 +12,7 @@ path ||= item.persisted? ? procedures_edit_item_action_path(id: procedure.id, it
 <% if !procedure.model && procedure.resources_type_projects? %>
   <%= render 'projects/shared/form', project: item.resource || Project.new, procedures_status_id: procedures_status_id, turbo_frame_key: turbo_frame_key %>
 <% elsif !procedure.model && procedure.resources_type_tasks? %>
-  <%= render 'tasks/shared/form', task: item.resource || Task.new, procedures_status_id: procedures_status_id, turbo_frame_key: turbo_frame_key %>
+  <%= render 'tasks/shared/form', task: item.resource || Task.new(title: item.title), procedures_status_id: procedures_status_id, turbo_frame_key: turbo_frame_key %>
 <% elsif procedure.model && procedure.resources_type_tasks? %>
   <%= render 'shared/form-errors', item: item %>
 

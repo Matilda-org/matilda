@@ -19,4 +19,14 @@ class CrmControllerTest < ActionController::TestCase
       policy: "crm"
     )
   end
+
+  test "index stat tiles link to the communication lists" do
+    @user.users_policies.create!(policy: "crm")
+    get :index
+
+    assert_response :success
+    assert_includes @response.body, "href=\"#crm-to-send\""
+    assert_includes @response.body, "id=\"crm-to-send\""
+    assert_includes @response.body, "id=\"crm-waiting\""
+  end
 end

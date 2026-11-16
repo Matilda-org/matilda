@@ -2,4 +2,4 @@
 
 <%= render 'tasks/calendar-filters', date_start: @date_start, date_end: @date_end, user_id: @user_id, project_id: @project_id %>
 
-<%= render 'tasks/calendar', date_start: @date_start, date_end: @date_end, tasks_per_date: @tasks_per_date %>
+<%= render 'tasks/calendar', date_start: @date_start, date_end: @date_end, tasks_per_date: @tasks_per_date, overdue_tasks: @overdue_tasks, user_id: @user_id, project_id: @project_id %>

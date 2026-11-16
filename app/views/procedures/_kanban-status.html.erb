@@ -142,9 +142,40 @@ statuses = procedure.procedures_statuses.order(order: :asc).to_a
     <ul class="list-group list-group-flush h-fullscroll c-kanban__container" data-kanban-target="container" data-container="<%= status.id %>" data-status-title="<%= status.title %>"><%= safe_join(items.map { |item| render("procedures/kanban-item", item: item, turbo_frame_status_key: turbo_frame_key, statuses: statuses) }) %></ul>
     <div class="card-footer d-flex">
       <% if procedure.resources_type_tasks? && !procedure.model %>
-        <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100" <%= policy_guard('tasks_create') %>>
-          Aggiungi task
-        </a>
+        <%# The column is re-rendered (stream/broadcast) on every add: the controller %>
+        <%# keeps open state and draft per status across those replacements %>
+        <div
+          class="w-100"
+          data-controller="kanban-quick-add"
+          data-kanban-quick-add-key-value="<%= status.id %>"
+          <%= policy_guard('tasks_create') %>
+        >
+          <button type="button" class="btn btn-outline-primary btn-sm w-100" data-kanban-quick-add-target="toggle" data-action="kanban-quick-add#open">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i> Aggiungi
+          </button>
+          <%= form_tag procedures_quick_add_item_action_path(id: procedure.id), hidden: true, data: { kanban_quick_add_target: "form", action: "turbo:submit-start->kanban-quick-add#submitStart turbo:submit-end->kanban-quick-add#submitEnd" } do %>
+            <input type="hidden" name="procedures_status_id" value="<%= status.id %>">
+            <input
+              type="text"
+              name="title"
+              class="form-control form-control-sm"
+              placeholder="Titolo del task"
+              aria-label="Titolo del nuovo task in <%= status.title %>"
+              maxlength="200"
+              autocomplete="off"
+              required
+              data-kanban-quick-add-target="input"
+              data-action="input->kanban-quick-add#input keydown->kanban-quick-add#keydown"
+            >
+            <div class="d-flex align-items-center justify-content-between mt-1">
+              <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="small" data-kanban-quick-add-target="details" data-action="kanban-quick-add#details">Più dettagli</a>
+              <small class="text-muted d-none d-md-inline">Invio per aggiungere</small>
+              <button type="button" class="btn btn-sm btn-link text-dark p-0" data-action="kanban-quick-add#close" aria-label="Chiudi aggiunta rapida">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+              </button>
+            </div>
+          <% end %>
+        </div>
       <% elsif procedure.resources_type_projects? && !procedure.model %>
         <a href="<%= procedures_actions_path(type: 'add-item', id: procedure.id, procedures_status_id: status.id, turbo_frame_key: turbo_frame_key) %>" data-turbo-frame="action" class="btn btn-primary w-100 me-1" <%= policy_guard('projects_create') %>>
           Nuovo

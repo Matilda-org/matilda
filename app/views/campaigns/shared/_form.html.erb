@@ -11,13 +11,15 @@ path ||= campaign.persisted? ? campaigns_edit_action_path(campaign) : campaigns_
 <%= form_tag path, class: 'row', data: { controller: 'form-loading' } do %>
 
   <div class="col col-12 mb-3">
-    <label for="name" class="form-label">Nome</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= campaign.name %>" required>
+    <label for="name" class="form-label required">Nome</label>
+    <input type="text" class="form-control <%= field_error_class(campaign, :name) %>" id="name" name="name" value="<%= campaign.name %>" required>
+    <%= field_error_feedback(campaign, :name) %>
   </div>
 
   <div class="col col-12 mb-3">
     <label for="description" class="form-label">Breve descrizione</label>
-    <textarea class="form-control" rows="3" id="description" name="description"><%= campaign.description %></textarea>
+    <textarea class="form-control <%= field_error_class(campaign, :description) %>" rows="3" id="description" name="description"><%= campaign.description %></textarea>
+    <%= field_error_feedback(campaign, :description) %>
   </div>
 
   <div class="d-flex justify-content-end align-items-center">

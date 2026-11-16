@@ -5,13 +5,13 @@ procedures_status_id ||= nil
 turbo_frame_key ||= nil
 
 path ||= project.persisted? ? projects_edit_action_path(project) : projects_create_action_path(folder_id: params[:folder_id])
-
+archive_open = field_errors?(project, :code, :year)
 
 %>
 
 <%= render 'shared/form-errors', item: project %>
 
-<%= form_tag path, class: 'c-modal-form', data: { controller: 'projects-form form-loading' } do %>
+<%= form_tag path, class: 'c-modal-form', data: { controller: 'projects-form form-loading form-reveal', action: 'invalid->form-reveal#reveal:capture' } do %>
   <div class="c-modal-form__fields row">
     <% if procedures_status_id %>
       <input type="hidden" name="procedures_status_id" value="<%= procedures_status_id %>">
@@ -21,13 +21,15 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
     <% end %>
 
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
-      <input type="text" class="form-control" id="name" name="name" value="<%= project.name %>" required>
+      <label for="name" class="form-label required">Nome</label>
+      <input type="text" class="form-control <%= field_error_class(project, :name) %>" id="name" name="name" value="<%= project.name %>" required>
+      <%= field_error_feedback(project, :name) %>
     </div>
 
     <div class="col col-12 mb-3">
       <label for="description" class="form-label">Breve descrizione</label>
-      <textarea class="form-control" rows="5" id="description" name="description"><%= project.description %></textarea>
+      <textarea class="form-control <%= field_error_class(project, :description) %>" rows="5" id="description" name="description"><%= project.description %></textarea>
+      <%= field_error_feedback(project, :description) %>
     </div>
 
     <div class="col col-12 mb-3">
@@ -38,20 +40,22 @@ path ||= project.persisted? ? projects_edit_action_path(project) : projects_crea
     <div class="accordion mb-3" id="formProjectAccordion">
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#formProjectAccordionArchive" aria-expanded="true" aria-controls="formProjectAccordionArchive">
+          <button class="accordion-button <%= 'collapsed' unless archive_open %>" type="button" data-bs-toggle="collapse" data-bs-target="#formProjectAccordionArchive" aria-expanded="<%= archive_open %>" aria-controls="formProjectAccordionArchive">
             Archiviazione
           </button>
         </h2>
-        <div id="formProjectAccordionArchive" class="accordion-collapse collapse" data-bs-parent="#formProjectAccordion">
+        <div id="formProjectAccordionArchive" class="accordion-collapse collapse <%= 'show' if archive_open %>" data-bs-parent="#formProjectAccordion">
           <div class="accordion-body">
             <div class="row">
               <div class="col col-7 mb-3">
-                <label for="code" class="form-label">Codice</label>
-                <input type="text" class="form-control" id="code" name="code" value="<%= project.code || Project.default_code %>" required>
+                <label for="code" class="form-label required">Codice</label>
+                <input type="text" class="form-control <%= field_error_class(project, :code) %>" id="code" name="code" value="<%= project.code || Project.default_code %>" required>
+                <%= field_error_feedback(project, :code) %>
               </div>
               <div class="col col-5 mb-3">
-                <label for="year" class="form-label">Anno</label>
-                <input type="number" class="form-control" id="year" name="year" min="2000" max="2100" value="<%= project.year || Date.today.year %>" required>
+                <label for="year" class="form-label required">Anno</label>
+                <input type="number" class="form-control <%= field_error_class(project, :year) %>" id="year" name="year" min="2000" max="2100" value="<%= project.year || Date.today.year %>" required>
+                <%= field_error_feedback(project, :year) %>
               </div>
             </div>
           </div>

@@ -1,0 +1,21 @@
+// Searchable checkbox list (multi_select_controller.js)
+.c-multi-select {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.c-multi-select__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  // the filter hides options with the hidden attribute: keep it winning over display: flex
+  &[hidden] {
+    display: none;
+  }
+}
+
+.c-multi-select__text {
+  min-width: 0;
+}

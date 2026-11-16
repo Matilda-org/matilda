@@ -12,17 +12,19 @@ path ||= procedure.persisted? ? procedures_edit_action_path(procedure) : procedu
 <%= form_tag path, class: 'c-modal-form', data: { controller: 'form-loading' } do %>
   <div class="c-modal-form__fields row">
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
-      <input type="text" class="form-control" id="name" name="name" value="<%= procedure.name %>" required>
+      <label for="name" class="form-label required">Nome</label>
+      <input type="text" class="form-control <%= field_error_class(procedure, :name) %>" id="name" name="name" value="<%= procedure.name %>" required>
+      <%= field_error_feedback(procedure, :name) %>
     </div>
     <div class="col col-12 mb-3">
       <label for="description" class="form-label">Breve descrizione</label>
-      <textarea class="form-control" rows="5" id="description" name="description"><%= procedure.description %></textarea>
+      <textarea class="form-control <%= field_error_class(procedure, :description) %>" rows="5" id="description" name="description"><%= procedure.description %></textarea>
+      <%= field_error_feedback(procedure, :description) %>
     </div>
 
     <% unless procedure.persisted? %>
       <div class="col col-12 mb-3">
-        <label for="resources_type" class="form-label">Utilizzabile con</label>
+        <label for="resources_type" class="form-label required">Utilizzabile con</label>
         <%= select_tag :resources_type, options_for_select(Procedure.resources_types.map {|key, value| [Procedure.resources_type_string(key.to_s), Procedure.resources_types.key(value)]}.reverse, procedure.resources_type), class: 'form-select', required: true %>
         <div class="form-text">Questa impostazione non potrà più essere modificata in seguito.</div>
       </div>

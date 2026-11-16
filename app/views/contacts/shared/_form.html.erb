@@ -32,38 +32,45 @@ path ||= contact.persisted? ? contacts_edit_action_path(contact) : contacts_crea
     <% end %>
 
     <div class="col col-12 mb-3">
-      <label for="name" class="form-label">Nome</label>
-      <input type="text" class="form-control" id="name" name="name" value="<%= contact.name %>" required data-contacts-form-target="field">
+      <label for="name" class="form-label required">Nome</label>
+      <input type="text" class="form-control <%= field_error_class(contact, :name) %>" id="name" name="name" value="<%= contact.name %>" required data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :name) %>
     </div>
 
     <div class="col col-12 mb-3">
       <label for="description" class="form-label">Breve descrizione</label>
-      <textarea class="form-control" rows="3" id="description" name="description" data-contacts-form-target="field"><%= contact.description %></textarea>
+      <textarea class="form-control <%= field_error_class(contact, :description) %>" rows="3" id="description" name="description" data-contacts-form-target="field"><%= contact.description %></textarea>
+      <%= field_error_feedback(contact, :description) %>
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" name="email" value="<%= contact.email %>" data-contacts-form-target="field">
+      <input type="email" class="form-control <%= field_error_class(contact, :email) %>" id="email" name="email" value="<%= contact.email %>" data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :email) %>
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="phone" class="form-label">Telefono</label>
-      <input type="text" class="form-control" id="phone" name="phone" value="<%= contact.phone %>" data-contacts-form-target="field">
+      <input type="text" class="form-control <%= field_error_class(contact, :phone) %>" id="phone" name="phone" value="<%= contact.phone %>" data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :phone) %>
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="vat_number" class="form-label">Partita IVA</label>
-      <input type="text" class="form-control" id="vat_number" name="vat_number" value="<%= contact.vat_number %>" data-contacts-form-target="field">
+      <input type="text" class="form-control <%= field_error_class(contact, :vat_number) %>" id="vat_number" name="vat_number" value="<%= contact.vat_number %>" data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :vat_number) %>
     </div>
 
     <div class="col col-12 col-md-6 mb-3">
       <label for="website" class="form-label">Sito web</label>
-      <input type="text" class="form-control" id="website" name="website" value="<%= contact.website %>" data-contacts-form-target="field">
+      <input type="text" class="form-control <%= field_error_class(contact, :website) %>" id="website" name="website" value="<%= contact.website %>" data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :website) %>
     </div>
 
     <div class="col col-12 mb-3">
       <label for="address" class="form-label">Indirizzo</label>
-      <input type="text" class="form-control" id="address" name="address" value="<%= contact.address %>" data-contacts-form-target="field">
+      <input type="text" class="form-control <%= field_error_class(contact, :address) %>" id="address" name="address" value="<%= contact.address %>" data-contacts-form-target="field">
+      <%= field_error_feedback(contact, :address) %>
     </div>
   </div>
 

@@ -12,7 +12,7 @@ path ||= post.persisted? ? posts_edit_action_path(post) : posts_create_action_pa
 <%= form_tag path, class: 'c-modal-form', multipart: true, data: { controller: 'posts-form form-loading' } do %>
   <div class="c-modal-form__fields row">
     <div class="col col-12 mb-3">
-      <label for="content" class="form-label">Contenuto</label>
+      <label for="content" class="form-label required">Contenuto</label>
       <textarea
         type="text"
         class="form-control"

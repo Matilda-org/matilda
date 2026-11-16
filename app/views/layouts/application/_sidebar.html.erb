@@ -1,5 +1,17 @@
 <div class="sidebar h-100" data-controller="sidebar" data-action="show.bs.dropdown->sidebar#closeOthers">
   <ul class="nav flex-column ps-3">
     <%= render 'layouts/application/menu', operative: true %>
+
+    <li class="sidebar__collapse mt-auto">
+      <button
+        type="button"
+        class="btn btn-sm btn-link text-decoration-none"
+        data-sidebar-target="toggle"
+        data-action="sidebar#toggleCollapsed"
+        aria-pressed="false"
+        aria-label="Riduci menu"
+        title="Riduci menu"
+      ><i class="bi bi-chevron-double-left" aria-hidden="true"></i> <span class="ms-1">Riduci</span></button>
+    </li>
   </ul>
 </div>

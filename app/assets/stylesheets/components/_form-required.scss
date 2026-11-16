@@ -1,0 +1,6 @@
+// Required marker on labels: the inputs carry `required`, so assistive tech
+// already announces it and the asterisk stays purely visual.
+.form-label.required::after {
+  content: "\00a0*";
+  color: var(--bs-danger);
+}
