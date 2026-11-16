@@ -33,23 +33,25 @@
 }
 
 .c-bulk-select__bar {
-  bottom: 1rem;
+  // Sits on the shared bottom line of the floating controls, as tall as the AI
+  // assistant opener, and stops 1rem before it (the page gutter is already there)
+  bottom: var(--app-bottom-offset);
+  min-height: var(--app-floating-control-size);
+  margin-right: calc(var(--app-bottom-offset) + var(--app-floating-control-size) + 1rem - var(--app-page-gutter));
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--app-bottom-offset);
   padding: 0.5rem 0.75rem;
-  // Clears the AI assistant opener (60px, fixed 30px from the bottom-right corner)
-  margin-right: 5.5rem;
 }
 
 .c-bulk-select__summary {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem 0.75rem;
+  gap: 0.25rem 0.6rem;
 
   // Underlined like the other text links of the app (e.g. card "Visualizza")
   .btn-link {

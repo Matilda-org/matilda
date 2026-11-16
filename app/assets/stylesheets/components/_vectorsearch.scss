@@ -22,11 +22,11 @@
 
 .vectorsearch__opener {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: var(--app-bottom-offset);
+  right: var(--app-bottom-offset);
   z-index: 100;
-  width: 60px;
-  height: 60px;
+  width: var(--app-floating-control-size);
+  height: var(--app-floating-control-size);
   border-radius: 50%;
   background-color: var(--bs-primary);
   color: var(--bs-light);

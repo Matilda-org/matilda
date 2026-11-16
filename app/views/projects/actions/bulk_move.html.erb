@@ -6,7 +6,7 @@
         <%= hidden_field_tag 'ids[]', project.id, id: nil %>
       <% end %>
 
-      <p class="col col-12"><%= pluralize(@projects.size, 'progetto selezionato', plural: 'progetti selezionati') %>: <%= @projects.map(&:name).to_sentence(last_word_connector: ' e ', two_words_connector: ' e ') %>.</p>
+      <p class="col col-12"><%= pluralize(@projects.size, 'progetto selezionato', plural: 'progetti selezionati') %>.</p>
 
       <div class="col col-12 mb-3">
         <label for="bulk_folder_id" class="form-label">Cartella</label>

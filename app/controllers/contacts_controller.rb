@@ -47,6 +47,10 @@ class ContactsController < ApplicationController
     return render "contacts/actions/archive" if @type == "archive"
     return render "contacts/actions/unarchive" if @type == "unarchive"
     return render "contacts/actions/destroy" if @type == "destroy"
+    if @type == "bulk-archive"
+      @contacts = Contact.where(id: bulk_ids)
+      return render "contacts/actions/bulk_archive"
+    end
 
     return render "contacts/actions/link_project" if @type == "link-project"
     if @type == "unlink-project"

@@ -199,4 +199,18 @@ class ContactsControllerTest < ActionController::TestCase
     assert_includes @response.body, "aria-label=\"Seleziona #{contacts(:one).name}\""
     assert_not_includes @response.body, "Sposta in cartella"
   end
+
+  test "bulk-archive asks for confirmation before archiving contacts" do
+    grant_policy("crm")
+    contact = contacts(:one)
+
+    get :actions, params: { type: "bulk-archive", ids: [ contact.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "id=\"action-modal-title\">Archivia contatti</h3>"
+    assert_includes @response.body, "1 contatto verrà archiviato"
+    assert_select "form[action='#{contacts_bulk_action_path}'] input[name=operation][value=archive]"
+    assert_select "input[type=hidden][name='ids[]'][value='#{contact.id}']"
+    assert_not contact.reload.archived
+  end
 end

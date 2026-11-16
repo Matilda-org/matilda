@@ -517,7 +517,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_nil other.reload.folders_item
   end
 
-  test "bulk-move modal lists only the visible selected projects" do
+  test "bulk-move modal counts and submits only the visible selected projects" do
     grant_policy("projects_show", "only_data_projects_as_member")
     mine = projects(:one)
     mine.projects_members.create!(user: @user, role: "member")
@@ -527,8 +527,27 @@ class ProjectsControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_includes @response.body, "id=\"action-modal-title\">Sposta in cartella</h3>"
-    assert_includes @response.body, mine.name
-    assert_not_includes @response.body, other.name
+    assert_includes @response.body, "1 progetto selezionato."
+    assert_not_includes @response.body, mine.name
+    assert_select "input[type=hidden][name='ids[]'][value='#{mine.id}']"
+    assert_select "input[type=hidden][name='ids[]'][value='#{other.id}']", 0
+  end
+
+  test "bulk-archive asks for confirmation before archiving the visible selected projects" do
+    grant_policy("projects_show", "only_data_projects_as_member")
+    mine = projects(:one)
+    mine.projects_members.create!(user: @user, role: "member")
+    other = Project.create!(code: "other", name: "Other Project", year: 2024)
+
+    get :actions, params: { type: "bulk-archive", ids: [ mine.id, other.id ] }
+
+    assert_response :success
+    assert_includes @response.body, "id=\"action-modal-title\">Archivia progetti</h3>"
+    assert_includes @response.body, "1 progetto verrà archiviato"
+    assert_select "form[action='#{projects_bulk_action_path}'] input[name=operation][value=archive]"
+    assert_select "input[type=hidden][name='ids[]'][value='#{mine.id}']"
+    assert_select "input[type=hidden][name='ids[]'][value='#{other.id}']", 0
+    assert_not mine.reload.archived
   end
 
   test "index renders the selection mode for bulk actions" do

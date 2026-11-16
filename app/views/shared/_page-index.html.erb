@@ -18,6 +18,7 @@ empty_cta_policy ||= nil
 #   path: POST endpoint taking ids[] + operation
 #   policy: policy guarding the "Seleziona" toggle
 #   archive_policy / unarchive_policy: policies of the archive / restore buttons
+#   archive_confirm_href: optional confirm modal before archiving (GET, receives ids[])
 #   move_href / move_policy: optional "Sposta in cartella" modal (GET, receives ids[])
 bulk ||= nil
 archived_view = params[:filters] == 'archived'
@@ -141,7 +142,8 @@ filtered = params[:search].present? || params[:tags].present? ||
   <% end %>
 <% end %>
 
-<%= turbo_frame_tag "page-index", class: 'w-100', data: (bulk ? { action: 'turbo:frame-load->bulk-select#frameLoaded' } : {}) do %>
+<%# d-block: turbo-frame is inline by default, which breaks the sticky bulk bar inside it %>
+<%= turbo_frame_tag "page-index", class: 'd-block w-100', data: (bulk ? { action: 'turbo:frame-load->bulk-select#frameLoaded' } : {}) do %>
 
 <% if query.length.positive? %>
 
@@ -190,24 +192,28 @@ filtered = params[:search].present? || params[:tags].present? ||
         secondary before primary, as in shared/confirmer %>
     <div class="c-bulk-select__summary">
       <span class="fw-semibold" data-bulk-select-target="count">0 selezionati</span>
-      <button type="button" class="btn btn-link btn-sm" data-action="bulk-select#selectAll">Seleziona tutti in pagina</button>
+      <button type="button" class="btn btn-link btn-sm" data-action="bulk-select#selectAll" aria-label="Seleziona tutti in questa pagina">Seleziona tutti</button>
       <button type="button" class="btn btn-link btn-sm" data-action="bulk-select#clearSelection">Deseleziona</button>
     </div>
     <div class="c-bulk-select__actions">
       <% if bulk[:move_href] %>
         <div <%= policy_guard(bulk[:move_policy]) %>>
           <%= form_tag bulk[:move_href], method: :get, data: { turbo_frame: 'action', action: 'submit->bulk-select#fillIds' } do %>
-            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-folder-symlink me-1" aria-hidden="true"></i>Sposta in cartella…</button>
+            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-folder-symlink me-1" aria-hidden="true"></i>Sposta in cartella…</button>
           <% end %>
         </div>
       <% end %>
       <div <%= policy_guard(archived_view ? bulk[:unarchive_policy] : bulk[:archive_policy]) %>>
-        <%= form_tag bulk[:path], data: { turbo_frame: 'action', action: 'submit->bulk-select#fillIds' } do %>
-          <%= hidden_field_tag :operation, archived_view ? 'unarchive' : 'archive', id: nil %>
-          <% if archived_view %>
-            <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Ripristina</button>
-          <% else %>
-            <button type="submit" class="btn btn-primary"><i class="bi bi-archive me-1" aria-hidden="true"></i>Archivia</button>
+        <% if archived_view %>
+          <%= form_tag bulk[:path], data: { turbo_frame: 'action', action: 'submit->bulk-select#fillIds' } do %>
+            <%= hidden_field_tag :operation, 'unarchive', id: nil %>
+            <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Ripristina</button>
+          <% end %>
+        <% else %>
+          <%# Archiving asks for confirmation first (the modal posts to bulk[:path]) %>
+          <%= form_tag bulk[:archive_confirm_href] || bulk[:path], method: bulk[:archive_confirm_href] ? :get : :post, data: { turbo_frame: 'action', action: 'submit->bulk-select#fillIds' } do %>
+            <%= hidden_field_tag :operation, 'archive', id: nil unless bulk[:archive_confirm_href] %>
+            <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-archive me-1" aria-hidden="true"></i>Archivia</button>
           <% end %>
         <% end %>
       </div>

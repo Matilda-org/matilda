@@ -4,13 +4,22 @@ path ||= '#'
 # Destructive actions style the confirm button as danger
 danger ||= false
 label ||= danger ? 'Conferma' : 'Procedi'
+# Optional: a sentence saying what will happen, and hidden fields to submit
+# (an array value becomes one field per item, e.g. 'ids[]' => [1, 2])
+message ||= nil
+fields ||= {}
 
 %>
 
 <div class="text-center">
   <h3 class="fs-5 mb-3">Sei sicuro di procedere con l'azione?</h3>
-  <p class="mb-4"><%= danger ? "L'operazione non è reversibile." : 'Sei sempre in tempo per cambiare idea.' %></p>
+  <p class="mb-4"><%= message || (danger ? "L'operazione non è reversibile." : 'Sei sempre in tempo per cambiare idea.') %></p>
   <%= form_tag path, class: 'row justify-content-center', data: { controller: 'form-loading' } do %>
+    <% fields.each do |name, value| %>
+      <% Array(value).each do |item| %>
+        <%= hidden_field_tag name, item, id: nil %>
+      <% end %>
+    <% end %>
     <div class="col-auto">
       <button type="button" data-action="click->action#closeModal" class="btn btn-outline-secondary">Annulla</button>
     </div>

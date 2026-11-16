@@ -107,6 +107,10 @@ class ProjectsController < ApplicationController
       @projects = query_projects_for_policy.where(id: bulk_ids).order(name: :asc)
       return render "projects/actions/bulk_move"
     end
+    if @type == "bulk-archive"
+      @projects = query_projects_for_policy.where(id: bulk_ids)
+      return render "projects/actions/bulk_archive"
+    end
 
     return render "projects/actions/add_member" if @type == "add-member"
     if @type == "edit-member"

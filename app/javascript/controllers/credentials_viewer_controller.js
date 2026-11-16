@@ -10,7 +10,8 @@ export default class extends Controller {
     'unlockPassword',
     'unlockError',
     'password',
-    'passwordToggle'
+    'passwordToggle',
+    'copyNotice'
   ]
 
   static values = {
@@ -48,6 +49,25 @@ export default class extends Controller {
       target.value = decrypt(target.dataset.value, cryptPassword)
     })
     this.contentTarget.hidden = false
+    this.copyPassword()
+  }
+
+  // Opening a credential is mostly about its password: copy it right away
+  copyPassword () {
+    const password = this.hasPasswordTarget ? this.passwordTarget.value : ''
+    if (!password || !navigator.clipboard) return
+
+    navigator.clipboard.writeText(password).then(() => {
+      if (!this.hasCopyNoticeTarget) return
+
+      this.copyNoticeTarget.textContent = 'Password copiata negli appunti.'
+      clearTimeout(this.copyNoticeTimer)
+      this.copyNoticeTimer = setTimeout(() => { this.copyNoticeTarget.textContent = '' }, 2500)
+    }).catch(() => {})
+  }
+
+  disconnect () {
+    clearTimeout(this.copyNoticeTimer)
   }
 
   togglePassword () {

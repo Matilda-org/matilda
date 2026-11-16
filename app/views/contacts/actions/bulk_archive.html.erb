@@ -1,0 +1,11 @@
+<%= render 'shared/action-container', title: 'Archivia contatti' do %>
+  <% if @contacts.any? %>
+    <%= render 'shared/confirmer',
+        path: contacts_bulk_action_path,
+        label: 'Archivia',
+        message: "#{@contacts.size == 1 ? '1 contatto verrà archiviato' : "#{@contacts.size} contatti verranno archiviati"}. Potrai ripristinarli dal filtro Archiviati.",
+        fields: { operation: 'archive', 'ids[]' => @contacts.map(&:id) } %>
+  <% else %>
+    <%= render 'shared/placeholder', message: 'Nessun contatto selezionato', icon: 'archive' %>
+  <% end %>
+<% end %>

@@ -12,11 +12,18 @@
   --app-sidebar-collapsed-width: 72px;
   // Clearance below the fixed navbar for sticky elements and anchor jumps
   --app-sticky-offset: 80px;
+  // Shared bottom line of the floating controls: AI assistant opener (and its
+  // height), sidebar "Riduci menu", bulk selection bar
+  --app-bottom-offset: 30px;
+  --app-floating-control-size: 60px;
+  // Horizontal padding of the page container
+  --app-page-gutter: 30px;
 }
 @media screen {
   @include media-breakpoint-down(md) {
     :root {
       --app-navbar-height: 65px;
+      --app-page-gutter: 15px;
     }
   }
 }
@@ -88,14 +95,7 @@ body {
 
 .container-fluid {
   max-width: $app-max-width;
-  padding: 0 30px;
-}
-@media screen {
-  @include media-breakpoint-down(md) {
-    .container-fluid {
-      padding: 0 15px;
-    }
-  }
+  padding: 0 var(--app-page-gutter);
 }
 
 /**
@@ -257,7 +257,9 @@ body {
   max-height: calc(100svh - 90px);
   overflow: hidden;
   flex-wrap: nowrap;
-  padding-bottom: 15px;
+  // The nav ends 10px above the viewport (max-height above): this puts the
+  // "Riduci menu" button on the shared bottom line
+  padding-bottom: calc(var(--app-bottom-offset) - 10px);
 }
 
 .sidebar .nav > * {

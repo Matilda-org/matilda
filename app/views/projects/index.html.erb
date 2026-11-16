@@ -33,6 +33,7 @@
     policy: %w[projects_archive projects_unarchive folders_manage_resources].find { |policy| @session_user&.policy?(policy) } || 'projects_archive',
     archive_policy: 'projects_archive',
     unarchive_policy: 'projects_unarchive',
+    archive_confirm_href: projects_actions_path(type: 'bulk-archive'),
     move_href: projects_actions_path(type: 'bulk-move'),
     move_policy: 'folders_manage_resources'
   }

@@ -1,0 +1,11 @@
+<%= render 'shared/action-container', title: 'Archivia progetti' do %>
+  <% if @projects.any? %>
+    <%= render 'shared/confirmer',
+        path: projects_bulk_action_path,
+        label: 'Archivia',
+        message: "#{@projects.size == 1 ? '1 progetto verrà archiviato' : "#{@projects.size} progetti verranno archiviati"}. Potrai ripristinarli dal filtro Archiviati.",
+        fields: { operation: 'archive', 'ids[]' => @projects.map(&:id) } %>
+  <% else %>
+    <%= render 'shared/placeholder', message: 'Nessun progetto selezionato', icon: 'archive' %>
+  <% end %>
+<% end %>
