@@ -17,7 +17,10 @@ class SearchController < ApplicationController
       procedures: query_procedures_for_policy,
       limit: PALETTE_LIMIT
     )
-    @results = @global_search.results.slice(*PALETTE_GROUPS).transform_values(&:load_async)
+    results = @global_search.results.slice(*PALETTE_GROUPS)
+    # Boards show their project in the result row
+    results[:procedures] = results[:procedures].includes(:project) if results[:procedures]
+    @results = results.transform_values(&:load_async)
 
     render layout: false
   end

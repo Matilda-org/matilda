@@ -7,7 +7,7 @@ const DEBOUNCE_MS = 250
 // or submits to the dashboard search. Ctrl/⌘+K focuses it from anywhere; on
 // mobile the navbar search icon opens it as a full-width sheet.
 export default class extends Controller {
-  static targets = ['input', 'hint', 'panel', 'results']
+  static targets = ['input', 'hint', 'panel', 'results', 'status']
   static values = { url: String }
 
   connect () {
@@ -42,6 +42,17 @@ export default class extends Controller {
 
   loaded () {
     this.highlight(-1)
+    this.announce()
+  }
+
+  // The frame content is replaced, so a live region inside it would not be
+  // announced: a persistent one outside says how many results arrived
+  announce () {
+    if (!this.hasStatusTarget) return
+
+    const results = this.resultsTarget.querySelectorAll('[role="option"]:not(.c-global-search__option--all)').length
+    const state = this.resultsTarget.querySelector('.c-global-search__state-title')?.textContent.trim()
+    this.statusTarget.textContent = results ? `${results} ${results === 1 ? 'risultato' : 'risultati'}` : (state || '')
   }
 
   // A prefilled field (dashboard search) has no results loaded yet

@@ -16,6 +16,7 @@
               <kbd class="c-kbd c-global-search__hint" data-global-search-target="hint">Ctrl K</kbd>
               <button type="button" class="btn-close btn-close-white c-global-search__close" aria-label="Chiudi ricerca" data-action="global-search#close"></button>
             </div>
+            <div class="visually-hidden" role="status" aria-live="polite" data-global-search-target="status"></div>
             <div class="c-global-search__panel" data-global-search-target="panel" hidden>
               <turbo-frame id="global-search-results" role="listbox" aria-label="Risultati ricerca" data-global-search-target="results">
                 <%= render "search/hint" %>

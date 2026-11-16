@@ -76,12 +76,16 @@
     position: absolute;
     top: calc(100% + 0.4rem);
     left: 0;
-    right: 0;
     z-index: 1080;
+    // Wider than the field so titles and their context fit on one line each
+    width: 36rem;
+    min-width: 100%;
+    max-width: calc(100vw - 2rem);
     max-height: 70vh;
     overflow-y: auto;
-    padding: 0.35rem;
-    background-color: var(--bs-body-bg);
+    overscroll-behavior: contain;
+    padding: 0.35rem 0.35rem 0;
+    background-color: var(--bs-white);
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius-lg);
     box-shadow: var(--bs-box-shadow);
@@ -105,84 +109,268 @@
     &__panel {
       position: static;
       flex: 1;
+      width: auto;
+      max-width: none;
       max-height: none;
       margin-top: 0.75rem;
     }
   }
+}
 
+// Results (search/index): groups of two-line options, a sticky footer with
+// the full-search link and the keyboard hints
+.c-global-search {
   turbo-frame {
     display: block;
   }
 
-  turbo-frame[aria-busy="true"] {
-    opacity: 0.6;
+  // Thin progress bar while a query is loading; the old results stay readable
+  &__panel:has(turbo-frame[aria-busy="true"])::before {
+    content: "";
+    position: sticky;
+    top: -0.35rem;
+    display: block;
+    height: 2px;
+    margin: -0.35rem -0.35rem 0.33rem;
+    background: linear-gradient(90deg, transparent, var(--bs-primary), transparent);
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    animation: c-global-search-progress 1s ease-in-out infinite;
   }
 
-  &__group {
-    padding: 0.5rem 0.6rem 0.25rem;
+  &__group + &__group {
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+    border-top: 1px solid var(--bs-gray-200);
+  }
+
+  &__group-label {
+    padding: 0.5rem 0.6rem 0.3rem;
     font-size: 0.7rem;
     font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--bs-secondary-color);
+    color: var(--bs-gray-600);
   }
 
   &__option {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.6rem;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0.45rem 0.6rem;
     color: var(--bs-body-color);
     text-decoration: none;
     border-radius: var(--bs-border-radius);
+    // Keeps the highlighted row clear of the sticky footer while arrowing down
+    scroll-margin: 0.35rem 0 6rem;
 
-    &:hover,
-    &.is-active {
+    &:hover {
       color: var(--bs-body-color);
-      background-color: var(--bs-tertiary-bg);
+      background-color: var(--bs-gray-100);
     }
 
     &.is-active {
+      color: var(--bs-body-color);
+      background-color: rgba(var(--bs-primary-rgb), 0.08);
       box-shadow: inset 3px 0 0 var(--bs-primary);
     }
 
-    &--all {
-      margin-top: 0.25rem;
-      border-top: 1px solid var(--bs-border-color);
-      border-radius: 0;
+    // Matches the inset bar: a clear ring for forced-colors / high contrast
+    @media (forced-colors: active) {
+      &.is-active {
+        outline: 2px solid Highlight;
+      }
+    }
+  }
+
+  // Icon tile telling the result type apart at a glance
+  &__type {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.95rem;
+    color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+    border-radius: var(--bs-border-radius);
+  }
+
+  &__option.is-active &__type {
+    color: var(--bs-white);
+    background-color: var(--bs-primary);
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+  }
+
+  &__title,
+  &__meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--bs-gray-600);
+
+    > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // Only the leading, longest part (project name) gives way; counts and
+    // dates after it stay whole
+    > span:not(:first-child) {
+      flex-shrink: 0;
+    }
+  }
+
+  &__dot {
+    flex-shrink: 0;
+    color: var(--bs-gray-400);
+  }
+
+  &__deadline {
+    flex-shrink: 0;
+    font-weight: 600;
+
+    &.is-overdue {
+      color: var(--bs-danger);
+    }
+  }
+
+  &__match {
+    padding: 0;
+    color: inherit;
+    font-weight: 700;
+    background-color: rgba(var(--bs-warning-rgb), 0.35);
+    border-radius: 2px;
+  }
+
+  // Shown only on the highlighted row: Enter opens it
+  &__enter {
+    flex-shrink: 0;
+    color: var(--bs-primary);
+    opacity: 0;
+  }
+
+  &__option.is-active &__enter {
+    opacity: 1;
+  }
+
+  &__footer {
+    position: sticky;
+    bottom: 0;
+    margin: 0.35rem -0.35rem 0;
+    padding: 0.35rem;
+    background-color: var(--bs-white);
+    border-top: 1px solid var(--bs-gray-200);
+    border-radius: 0 0 var(--bs-border-radius-lg) var(--bs-border-radius-lg);
+  }
+
+  &__option--all {
+    min-height: 2.5rem;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--bs-primary);
+
+    &:hover,
+    &.is-active {
       color: var(--bs-primary);
     }
   }
 
-  &__option-icon {
-    flex-shrink: 0;
-    color: var(--bs-secondary-color);
-  }
-
-  &__option-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__option-subtitle {
-    margin-left: auto;
-    padding-left: 0.5rem;
-    overflow: hidden;
-    font-size: 0.8rem;
-    color: var(--bs-secondary-color);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__empty {
-    padding: 0.6rem;
-    font-size: 0.875rem;
-    color: var(--bs-secondary-color);
-  }
-
   &__shortcuts {
-    margin-top: 0.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.35rem 0.6rem 0.15rem;
     font-size: 0.75rem;
+    color: var(--bs-gray-600);
+
+    .c-kbd + .c-kbd {
+      margin-left: 0.15rem;
+    }
+
+    .c-kbd {
+      margin-right: 0.25rem;
+    }
+
+    @media (max-width: 767.98px) {
+      display: none;
+    }
+  }
+
+  &__state {
+    padding: 1.5rem 1rem 1.25rem;
+    text-align: center;
+  }
+
+  &__state-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.1rem;
+    color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+    border-radius: 50%;
+  }
+
+  &__state-title {
+    margin-bottom: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+    overflow-wrap: anywhere;
+  }
+
+  &__state-text {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    color: var(--bs-gray-600);
+  }
+
+  // Bigger tap targets in the mobile sheet
+  @media (max-width: 767.98px) {
+    &__option {
+      min-height: 3.25rem;
+    }
+
+    &__enter {
+      display: none;
+    }
+  }
+}
+
+@keyframes c-global-search-progress {
+  from { background-position: -50% 0; }
+  to { background-position: 150% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-global-search__panel:has(turbo-frame[aria-busy="true"])::before {
+    animation: none;
+    background: var(--bs-primary);
+    opacity: 0.5;
   }
 }

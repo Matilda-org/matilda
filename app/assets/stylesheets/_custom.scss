@@ -1,3 +1,10 @@
+// Bootstrap 5.3 tokens some components use; the app ships Bootstrap 5.2, which lacks
+// them, so they are defined here with the 5.3 defaults
+:root {
+  --bs-secondary-color: rgba(var(--bs-body-color-rgb), 0.75);
+  --bs-tertiary-bg: var(--bs-gray-100);
+}
+
 ::-moz-selection {
   color: var(--bs-white);
   background: var(--bs-primary);

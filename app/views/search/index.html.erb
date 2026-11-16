@@ -1,10 +1,39 @@
 <%
 
+query = @global_search.search
+
+# Each group: where a result opens and the secondary line under its title
 groups = [
-  { key: :projects, label: "Progetti", icon: "projects", href: ->(r) { projects_show_path(r) }, frame: "_top", title: ->(r) { r.name }, subtitle: ->(r) { r.code } },
-  { key: :tasks, label: "Task", icon: "tasks", href: ->(r) { tasks_actions_path(type: "show", id: r.id) }, frame: "action", title: ->(r) { r.title }, subtitle: ->(r) { r.cached_project_name } },
-  { key: :procedures, label: "Board", icon: "procedures", href: ->(r) { procedures_show_path(r) }, frame: "_top", title: ->(r) { r.name }, subtitle: ->(_r) { nil } },
-  { key: :credentials, label: "Credenziali", icon: "credentials", href: ->(r) { credentials_actions_path(type: "show", id: r.id) }, frame: "action", title: ->(r) { r.name }, subtitle: ->(_r) { nil } }
+  {
+    key: :projects, label: "Progetti", icon: "projects", frame: "_top",
+    href: ->(r) { projects_show_path(r) },
+    title: ->(r) { r.name },
+    meta: ->(r) { [ search_highlight(r.code, query), r.year, r.cached_contact_name.presence ] }
+  },
+  {
+    key: :tasks, label: "Task", icon: "tasks", frame: "action",
+    href: ->(r) { tasks_actions_path(type: "show", id: r.id) },
+    title: ->(r) { r.title },
+    meta: lambda { |r|
+      deadline = search_deadline(r)
+      [
+        r.cached_project_name.presence,
+        deadline && tag.span(deadline[:label], class: [ "c-global-search__deadline", ("is-overdue" if deadline[:overdue]) ])
+      ]
+    }
+  },
+  {
+    key: :procedures, label: "Board", icon: "procedures", frame: "_top",
+    href: ->(r) { procedures_show_path(r) },
+    title: ->(r) { r.name },
+    meta: ->(r) { [ r.project&.name || "Board generale", pluralize(r.items_count, "elemento", plural: "elementi") ] }
+  },
+  {
+    key: :credentials, label: "Credenziali", icon: "credentials", frame: "action",
+    href: ->(r) { credentials_actions_path(type: "show", id: r.id) },
+    title: ->(r) { r.name },
+    meta: ->(r) { [ r.last_view_label ] }
+  }
 ]
 
 %>
@@ -12,18 +41,34 @@ groups = [
 <%= turbo_frame_tag "global-search-results" do %>
   <% if !@global_search.valid? %>
     <%= render "search/hint" %>
+  <% elsif @results.values.all?(&:empty?) %>
+    <div class="c-global-search__state">
+      <span class="c-global-search__state-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+      <p class="c-global-search__state-title">Nessun risultato per “<%= query %>”</p>
+      <p class="c-global-search__state-text">Controlla di aver scritto bene, oppure prova con un termine più breve.</p>
+    </div>
+    <div class="c-global-search__footer">
+      <a
+        href="<%= users_show_path(@session_user_id, search: query) %>"
+        id="global-search-option-all"
+        class="c-global-search__option c-global-search__option--all"
+        role="option"
+        aria-selected="false"
+        tabindex="-1"
+        data-turbo-frame="_top"
+      >
+        <i class="bi bi-archive" aria-hidden="true"></i>
+        <span>Cerca anche nei progetti archiviati</span>
+      </a>
+    </div>
   <% else %>
-    <% if @results.values.all?(&:empty?) %>
-      <div class="c-global-search__empty">Nessun risultato per “<%= @global_search.search %>”</div>
-    <% end %>
-
     <% groups.each do |group| %>
       <% records = @results[group[:key]] %>
       <% next if records.empty? %>
-      <div role="group" aria-labelledby="global-search-group-<%= group[:key] %>">
-        <div class="c-global-search__group" id="global-search-group-<%= group[:key] %>" role="presentation"><%= group[:label] %></div>
+      <div class="c-global-search__group" role="group" aria-labelledby="global-search-group-<%= group[:key] %>">
+        <div class="c-global-search__group-label" id="global-search-group-<%= group[:key] %>" role="presentation"><%= group[:label] %></div>
         <% records.each do |record| %>
-          <% subtitle = group[:subtitle].call(record) %>
+          <% meta = Array(group[:meta].call(record)).compact_blank %>
           <a
             href="<%= group[:href].call(record) %>"
             id="global-search-option-<%= group[:key] %>-<%= record.id %>"
@@ -34,27 +79,33 @@ groups = [
             data-turbo-frame="<%= group[:frame] %>"
             data-turbo-prefetch="false"
           >
-            <%= nav_icon(group[:icon], "c-global-search__option-icon") %>
-            <span class="c-global-search__option-title"><%= group[:title].call(record) %></span>
-            <% if subtitle.present? %>
-              <span class="c-global-search__option-subtitle"><%= subtitle %></span>
-            <% end %>
+            <span class="c-global-search__type" aria-hidden="true"><%= nav_icon(group[:icon]) %></span>
+            <span class="c-global-search__body">
+              <span class="c-global-search__title"><%= search_highlight(group[:title].call(record), query) %></span>
+              <% if meta.any? %>
+                <span class="c-global-search__meta"><%= safe_join(meta.map { |part| tag.span(part) }, tag.span("·", class: "c-global-search__dot", "aria-hidden": "true")) %></span>
+              <% end %>
+            </span>
+            <span class="c-global-search__enter" aria-hidden="true"><i class="bi bi-arrow-return-left"></i></span>
           </a>
         <% end %>
       </div>
     <% end %>
 
-    <a
-      href="<%= users_show_path(@session_user_id, search: @global_search.search) %>"
-      id="global-search-option-all"
-      class="c-global-search__option c-global-search__option--all"
-      role="option"
-      aria-selected="false"
-      tabindex="-1"
-      data-turbo-frame="_top"
-    >
-      <i class="bi bi-search c-global-search__option-icon" aria-hidden="true"></i>
-      <span class="c-global-search__option-title">Vedi tutti i risultati</span>
-    </a>
+    <div class="c-global-search__footer">
+      <a
+        href="<%= users_show_path(@session_user_id, search: query) %>"
+        id="global-search-option-all"
+        class="c-global-search__option c-global-search__option--all"
+        role="option"
+        aria-selected="false"
+        tabindex="-1"
+        data-turbo-frame="_top"
+      >
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <span>Vedi tutti i risultati per “<%= query %>”</span>
+      </a>
+      <%= render "search/shortcuts" %>
+    </div>
   <% end %>
 <% end %>
