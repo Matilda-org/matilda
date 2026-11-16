@@ -119,7 +119,7 @@
 
 html.sidebar-collapsed {
   .sidebar {
-    width: 72px;
+    width: var(--app-sidebar-collapsed-width);
   }
 
   .sidebar .nav-link > span,
@@ -161,13 +161,5 @@ html.sidebar-animating {
 
   .sidebar__collapse-btn .bi {
     transition: transform 0.25s ease;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.sidebar-animating .sidebar,
-  html.sidebar-animating .sidebar__collapse-btn .bi,
-  .c-nav-section__toggle .bi {
-    transition: none;
   }
 }

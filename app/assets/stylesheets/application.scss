@@ -26,6 +26,19 @@ $modal-backdrop-opacity: 0.75;
 $gradient: linear-gradient(45deg, $primary, $secondary);
 $gradient_secondary: linear-gradient(45deg, $secondary 0%, $primary 150%);
 
+// Breakpoints that don't match Bootstrap's ($grid-breakpoints), kept at their exact
+// values so no layout shifts. Use the media-breakpoint-* mixins for standard ones.
+// Defined here, not in _custom.scss, because _helpers.scss is imported before it.
+$breakpoint-phone-narrow: 390px;   // max-width: phones too narrow for a 360px column
+$breakpoint-brand-label: 400px;    // min-width: navbar brand label shown
+$breakpoint-sm-max: 575px;         // max-width, 0.98px short of Bootstrap sm-down
+$breakpoint-sm-max-incl: 576px;    // max-width, includes 576px itself
+$breakpoint-md-max: 767px;         // max-width, 0.98px short of Bootstrap md-down
+$breakpoint-md-max-incl: 768px;    // max-width, includes 768px itself
+$breakpoint-page-header: 1024px;   // max-width: page header stacks title and subtitle
+$breakpoint-tasks-tracker: 1280px; // min-width: tasks tracker shows its titles
+$app-max-width: 1920px;            // .container-fluid cap; beyond it the navbar clears the sidebar
+
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 @import "bootstrap";
 @import "trix";

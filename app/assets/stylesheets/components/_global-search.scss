@@ -9,7 +9,7 @@
   justify-content: center;
   max-width: 420px;
 
-  @media (max-width: 767.98px) {
+  @include media-breakpoint-down(md) {
     display: none;
 
     &.is-open {
@@ -36,7 +36,7 @@
     padding-left: 2rem;
     padding-right: 3.5rem;
     color: var(--bs-body-color);
-    background-color: rgba(255, 255, 255, 0.92);
+    background-color: rgba(var(--bs-white-rgb), 0.92);
     border-color: transparent;
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
 
@@ -47,7 +47,7 @@
     &:focus {
       background-color: var(--bs-white);
       border-color: transparent;
-      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 0 0.2rem rgba(var(--bs-white-rgb), 0.35);
     }
   }
 
@@ -88,10 +88,9 @@
     background-color: var(--bs-white);
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius-lg);
-    box-shadow: var(--bs-box-shadow);
   }
 
-  @media (max-width: 767.98px) {
+  @include media-breakpoint-down(md) {
     &__hint {
       display: none;
     }
@@ -313,7 +312,7 @@
       margin-right: 0.25rem;
     }
 
-    @media (max-width: 767.98px) {
+    @include media-breakpoint-down(md) {
       display: none;
     }
   }
@@ -351,7 +350,7 @@
   }
 
   // Bigger tap targets in the mobile sheet
-  @media (max-width: 767.98px) {
+  @include media-breakpoint-down(md) {
     &__option {
       min-height: 3.25rem;
     }

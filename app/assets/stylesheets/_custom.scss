@@ -5,6 +5,34 @@
   --bs-tertiary-bg: var(--bs-gray-100);
 }
 
+// App layout dimensions shared by the fixed navbar, the sidebar and sticky elements
+:root {
+  --app-navbar-height: 56px;
+  --app-sidebar-width: 250px;
+  --app-sidebar-collapsed-width: 72px;
+  // Clearance below the fixed navbar for sticky elements and anchor jumps
+  --app-sticky-offset: 80px;
+}
+@media screen {
+  @include media-breakpoint-down(md) {
+    :root {
+      --app-navbar-height: 65px;
+    }
+  }
+}
+
+// Every transition and animation becomes instant for users who ask for less motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 ::-moz-selection {
   color: var(--bs-white);
   background: var(--bs-primary);
@@ -22,20 +50,20 @@ html, body {
 // Anchor jumps (e.g. the mobile search icon to #dashboard-search) stop below the
 // fixed navbar instead of under it
 html {
-  scroll-padding-top: 80px;
+  scroll-padding-top: var(--app-sticky-offset);
 }
 
 body {
-  padding-top: 56px;
+  padding-top: var(--app-navbar-height);
   font-family: 'Poppins', sans-serif !important;
   position: relative;
   overscroll-behavior: contain;
   overflow-x: hidden;
 }
-@media screen and (max-width: 767.98px) {
-  body {
-    padding-top: 65px;
-  }
+
+// 58px, not --app-navbar-height (56px): kept as it always was
+.c-main {
+  min-height: calc(100svh - 58px);
 }
 
 .vectorsearch__opener {
@@ -59,12 +87,14 @@ body {
  */
 
 .container-fluid {
-  max-width: 1920px;
+  max-width: $app-max-width;
   padding: 0 30px;
 }
-@media screen and (max-width: 767.98px) {
-  .container-fluid {
-    padding: 0 15px;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .container-fluid {
+      padding: 0 15px;
+    }
   }
 }
 
@@ -77,14 +107,16 @@ body {
   // Softer, near-horizontal gradient instead of the 45° diagonal
   background: linear-gradient(100deg, var(--bs-primary) 0%, var(--bs-secondary) 140%);
 }
-@media screen and (max-width: 767.98px) {
-  .navbar {
-    padding: 12px 0;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .navbar {
+      padding: 12px 0;
+    }
   }
 }
-@media screen and (min-width: 1920px) {
+@media screen and (min-width: $app-max-width) {
   .navbar {
-    padding-left: 250px;
+    padding-left: var(--app-sidebar-width);
   }
 }
 
@@ -101,7 +133,7 @@ body {
   span {
     display: none;
 
-    @media (min-width: 400px) {
+    @media (min-width: $breakpoint-brand-label) {
       display: inline-block;
     }
   }
@@ -142,7 +174,7 @@ body {
   letter-spacing: 1px;
 }
 .navbar .navbar-nav .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(var(--bs-white-rgb), 0.15);
 }
 
 .navbar .navbar-nav .nav-link.active {
@@ -150,16 +182,17 @@ body {
   background-color: var(--bs-white);
   color: var(--bs-primary);
 }
-@media screen and (max-width: 767.98px) {
-  .navbar .navbar-nav .nav-link {
-    padding: 5px 15px;
-    margin: 5px 0;
-    font-size: 20px;
-    justify-content: flex-start;
-    margin: 0;
-  }
-  .navbar .navbar-nav .nav-link span {
-    font-size: 18px;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .navbar .navbar-nav .nav-link {
+      padding: 5px 15px;
+      font-size: 20px;
+      justify-content: flex-start;
+      margin: 0;
+    }
+    .navbar .navbar-nav .nav-link span {
+      font-size: 18px;
+    }
   }
 }
 
@@ -171,18 +204,20 @@ body {
   display: flex;
   align-items: center;
 }
-@media screen and (max-width: 767.98px) {
-  .navbar .navbar-nav {
-    max-height: calc(100svh - 88px);
-    overflow-y: auto;
-    width: calc(100% + 30px);
-    margin: 0 -15px;
-    padding: 0 15px;
-  }
-  .navbar .navbar-nav .nav-item {
-    margin: 4px 0;
-    border-bottom: solid 1px rgba(var(--bs-white-rgb), 0.2);
-    padding-bottom: 8px;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .navbar .navbar-nav {
+      max-height: calc(100svh - 88px);
+      overflow-y: auto;
+      width: calc(100% + 30px);
+      margin: 0 -15px;
+      padding: 0 15px;
+    }
+    .navbar .navbar-nav .nav-item {
+      margin: 4px 0;
+      border-bottom: solid 1px rgba(var(--bs-white-rgb), 0.2);
+      padding-bottom: 8px;
+    }
   }
 }
 
@@ -200,19 +235,21 @@ body {
  */
 
 .sidebar {
-  width: 250px;
+  width: var(--app-sidebar-width);
   position: relative;
 }
 
-@media screen and (max-width: 767.98px) {
-  .sidebar {
-    display: none;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .sidebar {
+      display: none;
+    }
   }
 }
 
 .sidebar .nav {
   position: sticky;
-  top: 80px;
+  top: var(--app-sticky-offset);
   left: 0;
   // The sidebar itself never scrolls: every section stays in view. When the
   // viewport is short, only the folder list of the open section shrinks and
@@ -341,32 +378,10 @@ a.badge.text-bg-light:hover {
   color: var(--bs-dark);
 }
 
-.badge.bg-danger {
-  background-color: rgba(var(--bs-danger-rgb), 0.9) !important;
-}
-
-.badge.bg-warning {
-  background-color: rgba(var(--bs-warning-rgb), 0.9) !important;
-}
-
-.badge.bg-success {
-  background-color: rgba(var(--bs-success-rgb), 0.9) !important;
-}
-
-.badge.bg-info {
-  background-color: rgba(var(--bs-info-rgb), 0.9) !important;
-}
-
-.badge.bg-primary {
-  background-color: rgba(var(--bs-primary-rgb), 0.9) !important;
-}
-
-.badge.bg-secondary {
-  background-color: rgba(var(--bs-secondary-rgb), 0.9) !important;
-}
-
-.badge.bg-dark {
-  background-color: rgba(var(--bs-dark-rgb), 0.9) !important;
+@each $color in danger, warning, success, info, primary, secondary, dark {
+  .badge.bg-#{$color} {
+    background-color: rgba(var(--bs-#{$color}-rgb), 0.9) !important;
+  }
 }
 
 .badge.bg-light {
@@ -427,11 +442,13 @@ a.badge.text-bg-light:hover {
   font-size: 12px;
 }
 
-@media screen and (max-width: 767.98px) {
-  .btn-form-submit {
-    width: 100%;
-    padding-top: 12px;
-    padding-bottom: 12px;
+@media screen {
+  @include media-breakpoint-down(md) {
+    .btn-form-submit {
+      width: 100%;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
   }
 }
 
@@ -444,8 +461,10 @@ a.badge.text-bg-light:hover {
 }
 
 .modal-dialog-centered {
-  @media screen and (max-width: 767.98px) {
-    align-items: flex-end;
+  @media screen {
+    @include media-breakpoint-down(md) {
+      align-items: flex-end;
+    }
   }
 }
 
@@ -531,7 +550,6 @@ a.badge.text-bg-light:hover {
   background-color: var(--bs-white);
   color: var(--bs-primary);
   border-radius: var(--bs-border-radius);
-  box-shadow: var(--bs-box-shadow);
 }
 
 #main:focus {

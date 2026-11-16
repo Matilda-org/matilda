@@ -16,7 +16,7 @@
 
     &:checked + .c-input-color__label .c-input-color__circle {
       transform: scale(1.1);
-      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+      box-shadow: 0 0 0 3px rgba($blue, 0.25);
     }
 
     &:focus + .c-input-color__label .c-input-color__circle {
@@ -75,7 +75,7 @@
   }
 
   // Responsive
-  @media (max-width: 576px) {
+  @media (max-width: $breakpoint-sm-max-incl) {
     &__circle {
       width: 2rem;
       height: 2rem;

@@ -7,7 +7,7 @@
 .c-kanban__status {
   width: 360px;
 
-  @media screen and (max-width: 390px) {
+  @media screen and (max-width: $breakpoint-phone-narrow) {
     width: calc(100vw - 30px);
   }
 }
@@ -16,7 +16,7 @@
   background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: $breakpoint-md-max-incl) {
   .c-kanban { /** per presenza sidebar */
     max-width: 100%;
   }
@@ -69,7 +69,7 @@
 // On touch / small screens the native horizontal swipe (and SortableJS
 // auto-scroll while dragging) already cover scrolling, so the arrows are hidden
 // to avoid overlapping the cards.
-@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+@media (max-width: $breakpoint-md-max-incl), (hover: none) and (pointer: coarse) {
   .c-kanban__nav { display: none; }
 }
 

@@ -31,7 +31,7 @@
   margin: 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: $breakpoint-md-max-incl) {
   .h-md-less-border-end-none {
     border-right-width: 0 !important;
   }

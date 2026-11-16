@@ -65,7 +65,7 @@
     padding: 0;
   }
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: $breakpoint-md-max) {
     width: calc(100% - 30px);
 
     .card {
@@ -229,12 +229,6 @@
 @keyframes vectorsearchTyping {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
   30% { transform: translateY(-4px); opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .vectorsearch__chat-dots span {
-    animation: none;
-  }
 }
 
 .vectorsearch__chat-empty {

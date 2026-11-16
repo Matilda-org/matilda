@@ -44,5 +44,5 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(25, 64, 93, 0.12);
+  background: rgba(var(--bs-secondary-rgb), 0.12);
 }

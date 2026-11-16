@@ -24,11 +24,13 @@
   overflow: hidden;
 
   // desktop: le quattro colonne si dividono la riga (25% ciascuna)
-  @media screen and (min-width: 992px) {
-    min-width: 0;
+  @media screen {
+    @include media-breakpoint-up(lg) {
+      min-width: 0;
+    }
   }
 
-  @media screen and (max-width: 390px) {
+  @media screen and (max-width: $breakpoint-phone-narrow) {
     min-width: calc(100vw - 60px);
   }
 }

@@ -1,5 +1,4 @@
 .c-page-card__header {
-  background-color: var(--color-primary);
   background: $gradient_secondary;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -16,7 +15,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md-max) {
   .c-page-card__header {
     padding-top: 18px;
     padding-bottom: 18px;
@@ -70,7 +69,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md-max) {
   .c-page-card__body {
     height: auto;
     overflow-y: initial;
