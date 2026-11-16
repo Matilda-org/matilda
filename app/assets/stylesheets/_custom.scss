@@ -224,8 +224,9 @@ body {
 .sidebar .nav > .nav-item.dropdown:has(> .dropdown-menu.show .sidebar__folders) {
   flex-shrink: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
+  // Rows, not a flex column: the header row keeps label and chevron side by side
+  // (see components/_nav-section.scss), the submenu row shrinks
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .sidebar .nav-item .dropdown-menu.show {

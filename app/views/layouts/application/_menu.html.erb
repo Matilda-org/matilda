@@ -14,10 +14,10 @@ submenu_class = ->(open) { operative && open ? 'show' : '' }
 section_header = lambda do |key, label, href, open|
   toggle_data = { bs_toggle: 'dropdown' }
   toggle_data[:bs_auto_close] = 'false' if operative
-  link = tag.a(href: href, class: "nav-link flex-grow-1 #{'active' if open}", title: label, data: { turbo_frame: '_top' }) do
+  link = tag.a(href: href, class: "nav-link flex-grow-1 #{'active' if open}", data: { turbo_frame: '_top' }) do
     safe_join([nav_icon(key), ' ', tag.span(label, class: 'ms-2')])
   end
-  toggle = tag.button(type: 'button', class: "nav-link c-nav-section__toggle #{'active' if open}", data: toggle_data, aria: { expanded: (operative && open).to_s, label: "Mostra sottomenu #{label}" }) do
+  toggle = tag.button(type: 'button', class: "nav-link c-nav-section__toggle #{'active' if open}", data: toggle_data, aria: { expanded: (operative && open).to_s, label: "Sottomenu #{label}" }) do
     tag.i(class: 'bi bi-chevron-down', 'aria-hidden': 'true')
   end
   safe_join([link, toggle])
@@ -26,11 +26,11 @@ end
 %>
 
 <li class="nav-item <%= item_class %>">
-  <a class="nav-link w-100 <%= @_navbar == 'dashboard' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'dashboard')) %> href="<%= users_show_path(@session_user_id) %>" data-turbo-frame="_top" title="Dashboard"><%= nav_icon('dashboard') %> <span class="ms-2">Dashboard</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'dashboard' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'dashboard')) %> href="<%= users_show_path(@session_user_id) %>" data-turbo-frame="_top"><%= nav_icon('dashboard') %> <span class="ms-2">Dashboard</span></a>
 </li>
 
 <li class="nav-item <%= item_class %>" <%= policy_guard('tasks_index') %>>
-  <a class="nav-link w-100 <%= @_navbar == 'tasks' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'tasks')) %> href="<%= tasks_path(user_id: @session_user_id) %>" data-turbo-frame="_top" title="Task"><%= nav_icon('tasks') %> <span class="ms-2">Task</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'tasks' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'tasks')) %> href="<%= tasks_path(user_id: @session_user_id) %>" data-turbo-frame="_top"><%= nav_icon('tasks') %> <span class="ms-2">Task</span></a>
 </li>
 
 <li class="nav-item <%= item_class %> dropdown c-nav-section" <%= policy_guard('projects_index') %>>
@@ -43,7 +43,7 @@ end
 </li>
 
 <li class="nav-item <%= item_class %>" <%= policy_guard('procedures_index') %>>
-  <a class="nav-link w-100 <%= @_navbar == 'procedures' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'procedures')) %> href="<%= procedures_path %>" data-turbo-frame="_top" title="Board"><%= nav_icon('procedures') %> <span class="ms-2">Board</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'procedures' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'procedures')) %> href="<%= procedures_path %>" data-turbo-frame="_top"><%= nav_icon('procedures') %> <span class="ms-2">Board</span></a>
 </li>
 
 <li class="nav-item <%= item_class %> dropdown c-nav-section" <%= policy_guard('crm') %>>
@@ -70,13 +70,13 @@ end
 </li>
 
 <li class="nav-item <%= item_class %>">
-  <a class="nav-link w-100 <%= @_navbar == 'folders' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'folders')) %> href="<%= folders_path %>" data-turbo-frame="_top" title="Cartelle"><%= nav_icon('folders') %> <span class="ms-2">Cartelle</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'folders' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'folders')) %> href="<%= folders_path %>" data-turbo-frame="_top"><%= nav_icon('folders') %> <span class="ms-2">Cartelle</span></a>
 </li>
 
 <li class="nav-item <%= item_class %>" <%= policy_guard('posts_index') %>>
-  <a class="nav-link w-100 <%= @_navbar == 'posts' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'posts')) %> href="<%= posts_path %>" data-turbo-frame="_top" title="Bacheca"><%= nav_icon('posts') %> <span class="ms-2">Bacheca</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'posts' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'posts')) %> href="<%= posts_path %>" data-turbo-frame="_top"><%= nav_icon('posts') %> <span class="ms-2">Bacheca</span></a>
 </li>
 
 <li class="nav-item <%= item_class %>" <%= policy_guard('users_index') %>>
-  <a class="nav-link w-100 <%= @_navbar == 'users' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'users')) %> href="<%= users_path %>" data-turbo-frame="_top" title="Utenti"><%= nav_icon('users') %> <span class="ms-2">Utenti</span></a>
+  <a class="nav-link w-100 <%= @_navbar == 'users' ? 'active' : '' %>" <%= tag.attributes('aria-current': ('page' if @_navbar == 'users')) %> href="<%= users_path %>" data-turbo-frame="_top"><%= nav_icon('users') %> <span class="ms-2">Utenti</span></a>
 </li>

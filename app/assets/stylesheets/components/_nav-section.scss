@@ -28,13 +28,53 @@
   }
 }
 
+// Mobile navbar: label and chevron read as one pill, not two
+.navbar .navbar-nav .c-nav-section {
+  > .nav-link:not(.c-nav-section__toggle) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
+
+  > .c-nav-section__toggle {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+  }
+}
+
 /**
- * Collapsible sidebar: an icon-only rail, labels kept for screen readers
+ * Sidebar details shared by expanded and collapsed states
  */
 
-.sidebar {
-  transition: width 0.2s ease;
+// Labels never wrap: while the width animates they are clipped, not reflowed
+.sidebar .nav-link,
+.sidebar__collapse-btn {
+  white-space: nowrap;
 }
+
+.sidebar .nav-link > span {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+// nav-item clips its overflow, so the focus ring is drawn inside the link
+.sidebar .nav-link:focus-visible,
+.sidebar .dropdown-item:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.sidebar .nav-link.active:focus-visible,
+.sidebar .dropdown-item.active:focus-visible {
+  outline-color: var(--bs-white);
+  outline-offset: -4px;
+}
+
+/**
+ * Collapse toggle at the bottom of the sidebar
+ */
 
 .sidebar .nav {
   height: 100%;
@@ -42,16 +82,40 @@
 
 .sidebar__collapse {
   padding-top: 6px;
+}
 
-  .btn {
-    color: var(--bs-secondary);
+.sidebar__collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--bs-border-radius);
+  background: transparent;
+  color: var(--bs-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow: hidden;
+
+  &:hover {
+    background-color: var(--bs-gray-200);
+    color: var(--bs-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
   }
 
   .bi {
-    display: inline-block;
-    transition: transform 0.2s ease;
+    flex-shrink: 0;
   }
 }
+
+/**
+ * Collapsed sidebar: an icon-only rail, labels kept for screen readers
+ */
 
 html.sidebar-collapsed {
   .sidebar {
@@ -59,7 +123,7 @@ html.sidebar-collapsed {
   }
 
   .sidebar .nav-link > span,
-  .sidebar__collapse span {
+  .sidebar__collapse-btn span {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -69,8 +133,7 @@ html.sidebar-collapsed {
   }
 
   .sidebar .c-nav-section__toggle,
-  .sidebar .dropdown-menu,
-  .sidebar__divider {
+  .sidebar .dropdown-menu {
     display: none !important;
   }
 
@@ -78,20 +141,33 @@ html.sidebar-collapsed {
     display: block;
   }
 
-  .sidebar .nav-link {
+  .sidebar .nav-link,
+  .sidebar__collapse-btn {
     justify-content: center;
     text-align: center;
   }
 
-  .sidebar__collapse .bi {
+  .sidebar__collapse-btn .bi {
     transform: rotate(180deg);
   }
 }
 
+// Width and chevron animate only while the user toggles (sidebar_controller),
+// so a page that loads collapsed doesn't slide in
+html.sidebar-animating {
+  .sidebar {
+    transition: width 0.25s ease;
+  }
+
+  .sidebar__collapse-btn .bi {
+    transition: transform 0.25s ease;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .sidebar,
-  .c-nav-section__toggle .bi,
-  .sidebar__collapse .bi {
+  html.sidebar-animating .sidebar,
+  html.sidebar-animating .sidebar__collapse-btn .bi,
+  .c-nav-section__toggle .bi {
     transition: none;
   }
 }
