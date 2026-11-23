@@ -277,7 +277,7 @@ class ProceduresControllerTest < ActionController::TestCase
     assert_select "##{ActionView::RecordIdentifier.dom_id(target, "kanban-status")} .badge", text: "0"
     assert_select "form[action='#{procedures_move_item_action_path(id: procedure.id, item_id: item.id)}'] input[name='procedures_status_id'][value='#{target.id}']"
     assert_select "form[action='#{procedures_move_item_action_path(id: procedure.id, item_id: item.id)}'] input[name='procedures_status_id'][value='#{source.id}']", count: 0
-    assert_select "form[action='#{procedures_quick_add_item_action_path(id: procedure.id)}'] input[name='procedures_status_id'][value='#{target.id}']"
+    assert_select "a[href='#{procedures_actions_path(type: "add-item", id: procedure.id, procedures_status_id: target.id, turbo_frame_key: ActionView::RecordIdentifier.dom_id(target, "kanban-status"))}'][data-turbo-frame=action]", text: "Aggiungi task"
   end
 
   test "move_item_action from the card menu appends to the target and re-renders both columns" do
@@ -310,68 +310,5 @@ class ProceduresControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal target.id, item.reload.procedures_status_id
     assert_not_includes response.body, "kanban-status"
-  end
-
-  test "quick_add_item_action creates a task in the column status and re-renders it" do
-    grant_policy("procedures_show", "tasks_create")
-    procedure = procedures(:one)
-    procedure.update!(project: projects(:one))
-    target = procedure.procedures_statuses.create!(title: "Target status")
-
-    assert_difference -> { Task.count } => 1, -> { target.procedures_items.count } => 1 do
-      post :quick_add_item_action, params: { id: procedure.id, procedures_status_id: target.id, title: "  Quick task  " }, format: :turbo_stream
-    end
-
-    assert_response :success
-    task = Task.order(:id).last
-    assert_equal "Quick task", task.title
-    assert_equal Date.today, task.deadline
-    assert_equal @user.id, task.user_id
-    assert_equal projects(:one).id, task.project_id
-    assert_includes response.body, %(target="#{ActionView::RecordIdentifier.dom_id(target, "kanban-status")}")
-  end
-
-  test "quick_add_item_action is denied without the tasks_create policy" do
-    grant_policy("procedures_show")
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-
-    assert_no_difference -> { Task.count } do
-      post :quick_add_item_action, params: { id: procedure.id, procedures_status_id: status.id, title: "Quick task" }, format: :turbo_stream
-    end
-
-    assert_controller_invalid_policy
-  end
-
-  test "quick_add_item_action keeps the column on an invalid title" do
-    grant_policy("procedures_show", "tasks_create")
-    procedure = procedures(:one)
-    status = procedure.procedures_statuses.first
-
-    assert_no_difference -> { Task.count } do
-      post :quick_add_item_action, params: { id: procedure.id, procedures_status_id: status.id, title: " " }, format: :turbo_stream
-    end
-
-    assert_response :unprocessable_content
-    assert_not_includes response.body, "kanban-status"
-  end
-
-  test "quick_add_item_action refuses model boards" do
-    grant_policy("procedures_show", "tasks_create")
-    procedure = procedures(:two)
-
-    post :quick_add_item_action, params: { id: procedure.id, procedures_status_id: procedure.procedures_statuses.first.id, title: "Quick task" }, format: :turbo_stream
-
-    assert_response :unprocessable_content
-  end
-
-  test "add-item modal is prefilled with the quick add title" do
-    grant_policy("procedures_show")
-    procedure = procedures(:one)
-
-    get :actions, params: { type: "add-item", id: procedure.id, procedures_status_id: procedure.procedures_statuses.first.id, title: "Typed title" }
-
-    assert_response :success
-    assert_select "input[name=title][value=?]", "Typed title"
   end
 end

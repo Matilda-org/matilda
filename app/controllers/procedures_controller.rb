@@ -63,11 +63,7 @@ class ProceduresController < ApplicationController
       return render "procedures/actions/show_status_assignments"
     end
 
-    if @type == "add-item"
-      # "Più dettagli" from the column quick add carries the typed title
-      @item = Procedures::Item.new(title: params[:title])
-      return render "procedures/actions/add_item"
-    end
+    return render "procedures/actions/add_item" if @type == "add-item"
     return render "procedures/actions/add_item_existing" if @type == "add-item-existing"
     if @type == "edit-item"
       return unless procedures_item_finder
@@ -373,37 +369,6 @@ class ProceduresController < ApplicationController
         type: "success"
       }
     }
-  end
-
-  # Inline "+ Aggiungi" at the bottom of a task column: creates a task from its
-  # title alone, with the defaults the full form would submit, and re-renders the column.
-  # Same gates as the full path: the modal (procedures_show) and TasksController#create_action (tasks_create).
-  def quick_add_item_action
-    return unless validate_policy!("procedures_show")
-    return unless validate_policy!("tasks_create")
-    return unless procedure_finder
-    return head :unprocessable_content if @procedure.model || !@procedure.resources_type_tasks?
-
-    status = @procedure.procedures_statuses.find_by(id: params[:procedures_status_id])
-    return head :not_found unless status
-
-    task = Task.new(
-      title: params[:title].to_s.strip,
-      deadline: Date.today,
-      time_estimate: 900,
-      user_id: status.assignment_user_id || @session_user_id,
-      tasks_followers_user_ids: [ status.follow_user_id || @session_user_id ]
-    )
-    task.accepted = false if Setting.get("functionalities_task_acceptance") && !@session_user.policy?("tasks_acceptance")
-
-    if task.save
-      # The item hooks link the task to the board's project
-      @procedure.procedures_items.create!(procedures_status: status, resource_id: task.id)
-      render turbo_stream: kanban_status_streams([ status ])
-    else
-      # Leave the column alone, so the typed title stays in the input
-      render turbo_stream: turbo_stream.append(dom_id(@procedure, "kanban-flash"), partial: "procedures/kanban-flash", locals: { message: task.errors.full_messages.first }), status: :unprocessable_content
-    end
   end
 
   def edit_item_action
