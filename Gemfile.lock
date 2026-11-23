@@ -114,7 +114,7 @@ GEM
     bootstrap5-kaminari-views (0.0.1)
       kaminari (>= 0.13)
       rails (>= 3.1)
-    brakeman (8.1.0)
+    brakeman (8.1.1)
       racc
     builder (3.3.0)
     capybara (3.40.0)
@@ -500,7 +500,7 @@ DEPENDENCIES
   web-console (~> 4.2)
 
 RUBY VERSION
-   ruby 3.4.12p148
+   ruby 3.4.13p195
 
 BUNDLED WITH
    2.5.23
